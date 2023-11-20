@@ -21,10 +21,9 @@ jobs:
           uses: 'google-github-actions/auth@v1'
           with:
             credentials_json: '${{secrets.GCP_SERVICE_ACCOUNT}}'
-    
-        - id: 'upload-folder'
-          uses: 'google-github-actions/upload-cloud-storage@v1'
-          with:
-            path: 'web'
-            destination: '013.team'
-            parent: false
+
+        - name: 'Set up Cloud SDK'
+          uses: 'google-github-actions/setup-gcloud@v0'
+      
+        - name: 'Use gcloud CLI'
+          run: 'gsutil -m rsync -R -d web gs://013.team/'
