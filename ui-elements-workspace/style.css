@@ -1,0 +1,22 @@
+body {
+    line-height: 1.5;
+    font-family: 'Open Sans', sans-serif;
+    display: flex;
+    justify-content: center;
+}
+* {
+    box-sizing: border-box;
+}
+.container {
+    max-width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+
+
+
+
+
