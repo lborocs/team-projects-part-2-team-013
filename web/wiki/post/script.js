@@ -12,7 +12,7 @@ console.log("query param : " + postID);
 
 
 async function getPostData(postID){
-    const data = await get_api(`/api/forum/posts.php/post/${postID}`);
+    const data = await get_api(`/api/wiki/post.php/post/${postID}`);
     console.log(data.data)
     console.log(document.getElementById("title"))
     document.querySelector(".title").innerText = data.data.title
