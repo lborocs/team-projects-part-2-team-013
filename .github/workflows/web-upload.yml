@@ -26,4 +26,4 @@ jobs:
           uses: 'google-github-actions/setup-gcloud@v0'
       
         - name: 'Use gcloud CLI'
-          run: 'gsutil -m rsync -h "Cache-Control:no-cache" -R -d web gs://013.team/'
+          run: 'gsutil -m -h "Cache-Control:no-cache" rsync -R -d web gs://013.team/'
