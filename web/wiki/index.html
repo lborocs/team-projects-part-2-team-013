@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wiki</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/6db9ef03e0.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <script src="../global-ui.js" type="module"></script>
+    <script src="client.js" type="module"></script>
+    <script src="../../api.js"></script>
+</head>
+<body>
+    <div class="fullscreen">
+
+        <header class="topbar">
+
+            <div class="left">
+                <div class="item" id="hamburger">
+                    <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+                </div>
+                <div class="breadcrumb">
+                    Wiki
+                </div>
+            </div>
+            
+            <div class="right">
+                <div class="user-both">
+                    <div class="item" id="user-name"></div>
+                    <div class="item" id="user-icon">
+                    <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+                <div class="item" id="inbox-icon">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+                
+            </div>
+
+        </header>
+        <div class="sidebar-container">
+            <div class="sidebar">
+                <div class="sidebar-item" id="home">
+                    <i class="fa-solid fa-home"></i> <p class="norender">Projects</p>
+                </div>
+                <div class="sidebar-item" id="mylist">
+                    <i class="fa-solid fa-list-check"></i> <p class="norender">My List</p>
+                </div>
+                <div class="sidebar-item selected" id="wiki">
+                    <i class="fa-solid fa-book"></i> <p class="norender">Wiki</p>
+                </div>
+                <div class="sidebar-item manager-only norender" id="workload">
+                    <i class="fa-solid fa-users"></i> <p class="norender">Workload</p>
+                </div>
+                <div class="sidebar-item" id="logout">
+                    <i class="fa-solid fa-sign-out"></i> <p class="norender">Logout</p>
+                </div>
+
+            </div>
+            <div class="main">
+                <div class="container">
+                    <div class="left-nav">
+                        <div class="items">
+                            <div class="type-of-post">
+                             <div class="category">
+                                    <input type="radio" name="category" id="technical" value="1" class="norender" checked>
+                                    <label for="technical">Technical</label>
+                                </div>
+                                <div class="category">
+                                    <input type="radio" name="category" id="non-technical" value="0" class="norender">
+                                    <label for="non-technical">Non-Technical</label>
+                                </div>
+                            </div>
+
+                            
+                            <div class="divider"></div>
+
+                            <div class="filters">  
+                                <div class="tag-selection">
+                                    <div class="tag" is-technical="1" name="HTML"><i class="fa-solid fa-tag"></i>
+                                        HTML
+                                    </div>
+                                    <div class="tag" is-technical="1" name="CSS"><i class="fa-solid fa-tag"></i>
+                                        CSS
+                                    </div>
+                                    <div class="tag" is-technical="1" name="JavaScript"><i class="fa-solid fa-tag"></i>
+                                        JavaScript
+                                    </div>
+                                    <div class="tag" is-technical="1" name="Python"><i class="fa-solid fa-tag"></i>
+                                        Python
+                                    </div>
+                                    <div class="tag" is-technical="1" name="Java"><i class="fa-solid fa-tag"></i>
+                                        Java
+                                    </div>
+                                    <div class="tag" is-technical="1" class="unselected" name="C++"><i class="fa-solid fa-tag"></i>
+                                        C++
+                                    </div>
+                                    <div class="tag" is-technical="1" class="unselected" name="Ruby"><i class="fa-solid fa-tag"></i>
+                                        Ruby
+                                    </div>
+                                    <div class="tag" is-technical="1" class="unselected" name="PHP"><i class="fa-solid fa-tag"></i>
+                                        PHP
+                                    </div>
+                                    <div class="tag" is-technical="1" class="unselected" name="Swift"><i class="fa-solid fa-tag"></i>
+                                        Swift
+                                    </div>
+                                    <div class="tag" is-technical="1" class="unselected" name="Kotlin"><i class="fa-solid fa-tag"></i>
+                                        Kotlin
+                                    </div>
+                                    <div class="tag" is-technical="1" class="unselected" name="TypeScript"><i class="fa-solid fa-tag"></i>
+                                        TypeScript
+                                    </div>
+                                    <div class="tag" is-technical="1" class="unselected" name="Go"><i class="fa-solid fa-tag"></i>
+                                        Go
+                                    </div>
+
+
+                                    <div class="tag norender" is-technical="0" name="Printer"><i class="fa-solid fa-tag"></i>
+                                        Printer
+                                    </div>
+                                    <div class="tag norender" is-technical="0" name="Stationary"><i class="fa-solid fa-tag"></i>
+                                        Stationary
+                                    </div>
+                                    <div class="tag norender" is-technical="0" name="Meeting Rooms"><i class="fa-solid fa-tag"></i>
+                                        Meeting Rooms
+                                    </div>
+                                    <div class="tag norender" is-technical="0" name="Office Supplies"><i class="fa-solid fa-tag"></i>
+                                        Office Supplies
+                                    </div>
+                                    <div class="tag norender" is-technical="0" name="Filing"><i class="fa-solid fa-tag"></i>
+                                        Filing
+                                    </div>
+                                    <div class="tag norender" is-technical="0" name="Cleaning"><i class="fa-solid fa-tag"></i>
+                                        Cleaning
+                                    </div>
+                                    <div class="tag norender" is-technical="0" name="Mail"><i class="fa-solid fa-tag"></i>
+                                        Mail
+                                    </div>
+                                    <div class="tag norender" is-technical="0" name="Reception"><i class="fa-solid fa-tag"></i>
+                                        Reception
+                                    </div>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="posts">
+                        <div class="search-and-button">
+                            <div class="post-search">
+                                <i class="fa-solid fa-magnifying-glass fa-rotate-90"></i>
+                                <input id="inputField" type="text" placeholder="Search knowledgebase...">
+                            </div>
+                            <button id="newPost" class="buttons" onclick="window.location.href='create/index.html';">
+                                <i class="fa-solid fa-plus"></i>&nbsp New post<p class="norender">New post</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup">
+    </div>
+</body>
+</html>
+
+

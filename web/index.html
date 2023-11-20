@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in</title>
+    <script defer src="api.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/6db9ef03e0.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <script defer src="script.js"></script>
+    <script src="api.js"></script>
+</head>
+<body>
+    <div class="fullscreen">
+        <div class="box">
+            <h1>Sign in</h1>
+            <div class="login-container">
+                <input type="text" placeholder="Username" id="username" class="textfield">
+                <input type="password" placeholder="Password" id="password" class="textfield">
+                <i class="fa-solid fa-eye-slash" id="togglePassword"></i>
+            </div>
+            <br>
+            <button id="login">Log in</button>
+            <p class="register-prompt">Don't have an account? <a href="register/">Register</a></p>
+            <div id="status"></div>
+            <div class="forgot-password">Forgot password? Click here to reset.</div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+@media screen and (max-width: 1450px) and (min-width: 856px) {
+    .dashboard {
+        display: grid;
+        grid-template-areas:
+            "active-tasks project-progress task-completions"
+            "active-tasks project-progress recently-finished"
+            "active-tasks outstanding-tasks recently-finished";
+        grid-template-columns: 2fr 3fr auto;
+        grid-template-rows: auto 1fr 2fr;
+        gap: 15px;
+        padding: 15px;
+        padding-top: 0;
+        height: 100%;
+        width: 100%;
+        background-color: rgb(244, 244, 244); 
+    }
+    
+    .selection-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 15px;
+        transition: 0.1s ease-out;
+        background-color: rgb(244, 244, 244); 
+        gap: 15px;
+        flex: 0 0 60px;
+    }
+
+    .recently-finished-list {
+        overflow-y: scroll;
+    }
+
+    .progress-chart-container {
+        width: 80%;
+        max-width: 300px;
+        margin: 0;
+    }
+
+    .progress-chart-legend {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin: 5px;
+    }
+
+    .legend-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        font-weight: 500;
+        gap: 5px;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        margin-top: 10px;
+    }
+
+    .legend-text {
+        font-size: 14px;
+        font-weight: 600;
+        padding-left: 0;
+    }
+
+    .outstanding-tasks-list {
+        max-height: 100px;
+        overflow-y: scroll;
+    }
+
+    .active-tasks {
+        min-width: 220px;
+    }
+}
+
+

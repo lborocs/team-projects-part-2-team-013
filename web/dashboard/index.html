@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/6db9ef03e0.js" crossorigin="anonymous"></script>
+    <script src="client.js" type="module"></script>
+    <script src="../global-ui.js" type="module"></script>
+    <script src="../api.js"></script>
+    <!--import mobile css-->
+    <link rel="stylesheet" href="mobile.css">
+    <!-- import medium.css -->
+    <link rel="stylesheet" href="medium.css">
+</head>
+<body>
+    <div class="fullscreen">
+        <header class="topbar">
+            <div class="left">
+                <div class="item" id="hamburger">
+                    <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+                </div>
+                <div class="breadcrumb">
+                    Projects
+                </div>
+            </div>  
+            <div class="right">
+                <div class="user-both">
+                    <div class="item" id="user-name"></div>
+                    <div class="item" id="user-icon">
+                    <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+                <div class="item" id="inbox-icon">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+                
+            </div>
+
+        </header>
+        <div class="sidebar-container">
+            <div class="sidebar">
+                <div class="sidebar-item selected" id="home">
+                    <i class="fa-solid fa-home"></i> <p class="norender">Projects</p>
+                </div>
+                <div class="sidebar-item" id="mylist">
+                    <i class="fa-solid fa-list-check"></i> <p class="norender">My List</p>
+                </div>
+                <div class="sidebar-item" id="wiki">
+                    <i class="fa-solid fa-book"></i> <p class="norender">Wiki</p>
+                </div>
+                <div class="sidebar-item manager-only norender" id="workload">
+                    <i class="fa-solid fa-users"></i> <p class="norender">Workload</p>
+                </div>
+                <div class="sidebar-item" id="logout">
+                    <i class="fa-solid fa-sign-out"></i> <p class="norender">Logout</p>
+                </div>
+
+            </div>
+
+            <div class="main">
+                <div class="projectsbar">
+                    <div class="projects">
+                        <div class="add-project manager-only norender">
+                            <i class="fa-solid fa-plus"></i> New Project
+                        </div>
+                    </div>
+                </div>
+                <div class="taskarea">
+                    <div class="viewport">
+                        <div class="views">
+                            <div class="view selected">
+                                <i class="fa-solid fa-chart-bar fa-rotate-90"></i> Board
+                            </div>
+                            <div class="view">
+                                <i class="fa-solid fa-table-list"></i> List
+                            </div>
+                            <div class="viewport-button" id="explainer-show-hide">
+                                <i class="fa-solid fa-arrows-up-to-line fa-rotate-90"></i>
+                            </div>
+                        </div>
+                        <div class="taskgrid">
+                            <div class="taskcolumn" id="notstarted">
+                                <div class="title-container">
+                                    <div class="columntitle">
+                                        <i class="fa-solid fa-thumbtack"></i> Not Started
+                                    </div>
+                                    <div class="task-count" id="notstarted-count">
+                                        3
+                                    </div>
+                                </div>
+                                <div class="add-task manager-only team-leader-only norender" id="notstarted-add">
+                                    <i class="fa-solid fa-plus"></i> Assign New
+                                </div>
+                                                    
+                            </div>
+                            <div class="taskcolumn" id="inprogress">
+                                <div class="title-container">
+                                    <div class="columntitle">
+                                        <i class="fa-solid fa-chart-line"></i> In Progress
+                                    </div>
+                                    <div class="task-count" id="inprogress-count">
+                                        3
+                                    </div>
+                                    
+                                </div>
+                                <div class="add-task manager-only team-leader-only norender" id="inprogress-add">
+                                    <i class="fa-solid fa-plus"></i> Assign New
+                                </div>
+                                
+                            </div>
+                            <div class="taskcolumn" id="finished">
+                                <div class="title-container">
+                                    <div class="columntitle">
+                                        <i class="fa-regular fa-circle-check"></i> Finished
+                                    </div>
+                                    <div class="task-count" id="finished-count">
+                                        3
+                                    </div>
+                                    
+                                </div>
+                                <div class="add-task manager-only team-leader-only norender" id="finished-add">
+                                    <i class="fa-solid fa-plus"></i> Assign New
+                                </div>
+                                
+                            </div>                            
+                        </div>                        
+                        <div class="tasklist norender fade">
+                            <table class="taskTable">
+                                <thead>
+                                    <tr>
+                                        <th id="title-column">
+                                            <div class="header-cell">
+                                                Title  
+                                                <i class="fa-solid fa-sort"></i>
+                                            </div>
+                                            </th>
+                                        <th id="date-column">
+                                            <div class="header-cell">
+                                                Due Date
+                                                <i class="fa-solid fa-sort"></i></th>
+                                            </div>  
+                                        
+                                        <th id="status-column" >
+                                            <div class="header-cell">
+                                                Status  
+                                                <i class="fa-solid fa-sort"></i></th>
+                                            </div>
+                                        
+                                    </tr>
+                                </thead>                                 
+                                <tbody class="tasktable-body"> 
+                                    <tr id="list-add-row" class="manager-only norender">
+                                        <td id="list-add">
+                                            <i class="fa-solid fa-plus"></i> Assign New
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                <div class="explainer">
+                    <div class="title" id="explainer-title">
+                        Project Title...
+                    </div>
+                    <div class="team-leader-container">
+                        <div class="team-leader-title">
+                            TEAM LEADER
+                        </div>
+                        <div class="team-leader-name">
+                            <img class="avatar team-leader-icon" id="team-leader-avatar">
+                            <div class="team-leader-name-text" id="team-leader-name">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="project-description">
+                        <i class="fa-solid fa-book"></i> Project description...
+                    </div> 
+                    <div class="divider"></div>
+                    <div class="task-overview">
+                        <div class="title norender">
+
+                        </div>
+                        <div class="description-container">
+                            <div class="description-icon">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </div>
+                            <div class="description">
+                            </div>
+                        </div>
+                        <div class="date-container">
+                            <div class="date">
+                            </div>
+                        </div>
+                        <div class="status-container">                            
+                            <div class="status">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="edit-and-delete">
+                        <div class="edit-button manager-only team-leader-only norender">
+                            <i class="fa-solid fa-pencil"></i>
+                        </div>
+                        <div class="delete-button manager-only team-leader-only norender">
+                            <i class="fa-regular fa-trash-can"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="overlay"></div>
+            </div>
+        </div>
+    </div>  
+    </div>
+
+    <div class="popup">
+        <!-- popup added in js on delete -->
+    </div>
+</body>
+</html>

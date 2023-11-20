@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Post</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/6db9ef03e0.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../../global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <script src="../../global-ui.js" type="module"></script>
+    <script src="../../api.js"></script>
+    <script defer src="script.js" type="module"></script>
+</head>
+<body>
+    <div class="fullscreen">
+        <header class="topbar">
+            <div class="left">
+                <div class="item" id="hamburger">
+                    <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+                </div>
+                <div class="breadcrumb">
+                    Wiki > View Post
+                </div>
+            </div>
+            <div class="right">
+                <div class="user-both">
+                    <div class="item" id="user-name"></div>
+                    <div class="item" id="user-icon">
+                    <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+                <div class="item" id="inbox-icon">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+            </div>
+        </header>
+        <div class="sidebar-container">
+            <div class="sidebar">
+                <div class="sidebar-item" id="home">
+                    <i class="fa-solid fa-home"></i> <p class="norender">Projects</p>
+                </div>
+                <div class="sidebar-item" id="mylist">
+                    <i class="fa-solid fa-list-check"></i> <p class="norender">My List</p>
+                </div>
+                <div class="sidebar-item selected" id="wiki">
+                    <i class="fa-solid fa-book"></i> <p class="norender">Wiki</p>
+                </div>
+                <div class="sidebar-item manager-only norender" id="workload">
+                    <i class="fa-solid fa-users"></i> <p class="norender">Workload</p>
+                </div>
+                <div class="sidebar-item" id="settings">
+                    <i class="fa-solid fa-cog"></i> <p class="norender">Settings</p>
+                </div>
+                <div class="sidebar-item" id="logout">
+                    <i class="fa-solid fa-sign-out"></i> <p class="norender">Logout</p>
+                </div>
+            </div>
+
+            <div class="main">
+                
+                <div class="post">
+                        <div class="title">
+                            Post Title
+                        </div>
+                    
+                        <div class="details">
+                            <div class="author">
+                                <img class="avatar" src="https://ui-avatars.com/api/Jamie+Dick/128" alt="Avatar">
+                            </img>
+                                <div class="name">
+                                    <p></p>
+                                </div>
+                            </div>
+
+                            <div class="date">
+                                <p></p>
+                            </div>
+                            
+                        </div>
+                        <div class="tags">
+                            <div class="tag"><i class="fa-solid fa-tag"></i>
+                                <div id="tag1"></div>
+                            </div>
+                            <div class="tag"><i class="fa-solid fa-tag"></i>
+                                <div id="tag2"></div>
+                            </div>
+                        </div>
+                        <div class="content">
+                            <p></p>
+                        </div>
+
+                </div>
+
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
+
+

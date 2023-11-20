@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Post</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/6db9ef03e0.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <script defer src="client.js"></script>
+    <link rel="stylesheet" href="../../global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="../../global-ui.js" type="module"></script>
+    <script src="../../api.js"></script>
+</head>
+<body>
+    <div class="fullscreen">
+        <header class="topbar">
+            <div class="left">
+                <div class="item" id="hamburger">
+                    <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+                </div>
+                <div class="breadcrumb">
+                    Wiki > Create Post
+                </div>
+            </div>
+            <div class="right">
+              <div class="user-both">
+                <div class="item" id="user-name"></div>
+                <div class="item" id="user-icon">
+                <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+                <div class="item" id="inbox-icon">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>              
+            </div>
+        </header>
+        <div class="sidebar-container">
+            <div class="sidebar">
+                <div class="sidebar-item" id="home">
+                    <i class="fa-solid fa-home"></i> <p class="norender">Projects</p>
+                </div>
+                <div class="sidebar-item" id="mylist">
+                    <i class="fa-solid fa-list-check"></i> <p class="norender">My List</p>
+                </div>
+                <div class="sidebar-item selected" id="wiki">
+                    <i class="fa-solid fa-book"></i> <p class="norender">Wiki</p>
+                </div>
+                <div class="sidebar-item manager-only norender" id="workload">
+                  <i class="fa-solid fa-users"></i> <p class="norender">Workload</p>
+                </div>
+                <div class="sidebar-item" id="logout">
+                    <i class="fa-solid fa-sign-out"></i> <p class="norender">Logout</p>
+                </div>
+            </div>
+
+            <div class="main">
+                <div class="post-title">
+                    <input type="text" placeholder="Post title ...">   
+                </div>
+
+                <div id="editor">
+                  
+                </div>
+                  <div class="post-title">
+                    <i class="fa-solid fa-tag"></i>
+                    <div class="tags" id="tags"></div>
+                  </div>
+                  <div class="options">
+                    <div class="tag-input">
+                      <ul>
+                        <li>
+                          <input type="text" id="input-tag" placeholder="Tags ..." />
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="items">
+                      <div class="type-of-post">
+                        <div class="category">
+                          <input type="radio" name="category" id="technical" value="technical" class="norender">
+                          <label for="technical">Technical</label>
+                        </div>
+                        <div class="category">
+                          <input type="radio" name="category" id="non-technical" value="non-technical" class="norender" checked>
+                          <label for="non-technical">Non-Technical</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <button class="buttons" onclick="submitPost()">
+                    Post it &nbsp <i class="fa-solid fa-check"></i><p class="norender">Submit post</p>
+                </button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>
+
+

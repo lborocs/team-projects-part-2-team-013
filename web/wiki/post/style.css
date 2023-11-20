@@ -1,0 +1,116 @@
+.main {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar {
+    box-shadow: 0 0 6px rgba(0,0,0,0.2);
+}
+
+.post {
+    max-width: 800px;
+    margin: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 1em;
+    padding-left: 2em;
+    padding-right: 2em;
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    overflow-y: auto;
+
+    .title{
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #2d2e30;
+        
+    }
+    .content{
+        padding: 1em;
+    }
+}
+
+.details {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.6em;
+    
+    .author{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5em;
+        font-size: 1.25em;
+        font-weight: 500;
+        color: #2d2e30;
+
+    }
+
+    .date {
+         display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center; 
+
+        gap: 0.5em;
+        font-size: 0.9em;
+        font-weight: 500;
+        color: #2d2e30;
+    }
+    
+}
+
+.avatar {
+    border-radius: 50%;
+    width: 2em;
+    height: 2em;
+}
+.tags {
+    display: flex;
+    justify-content: flex-start;
+    padding: 0.2em;
+
+    
+}
+
+
+.tags {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    .tag {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0.25em;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+        border-radius: 1em;
+        background-color: #ebedef;
+        color: #2d2e30;
+        font-size: 0.9em;
+        font-weight: 500;
+        gap: 0.5em;
+    };
+    .tag i {
+        color: #4e5057
+    }
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0.75em;
+    padding-left: 1em;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.1);
+  }

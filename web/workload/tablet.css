@@ -1,0 +1,43 @@
+@media screen and (min-width: 776px) and (max-width: 999px) {
+    .progress-chart-legend {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin: 0;
+        margin-bottom: 5px;
+    }
+
+    .legend-item {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        font-weight: 500;
+        gap: 2px;
+        margin-left: 5px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        margin-top: 10px;
+    }
+
+    .legend-text {
+        font-size: 14px;
+        font-weight: 600;
+        padding-left: 0;
+        padding-right: 0.125em;
+    }
+    
+    .legend-color {
+        width: 15px;
+        height: 15px;
+    }
+
+    .cards {
+        font-size: 14px;
+    }
+    .actve-tasks {
+        min-width: 200px;
+    }
+}

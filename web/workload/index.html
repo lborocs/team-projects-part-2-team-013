@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workload</title>
+    <link rel="stylesheet" href="../global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/6db9ef03e0.js" crossorigin="anonymous"></script>
+    <script src="client.js" type="module"></script>
+    <script src="../global-ui.js" type="module"></script>
+    <script src="../api.js"></script>
+    <link rel="stylesheet" href="mobile.css">
+    <link rel="stylesheet" href="medium.css">
+    <link rel="stylesheet" href="tablet.css">
+</head>
+<body>
+    <div class="fullscreen">
+        <header class="topbar">
+
+            <div class="left">
+                <div class="item" id="hamburger">
+                    <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+                </div>
+                <div class="breadcrumb">
+                    Workload
+                </div>
+            </div>
+            
+            <div class="right">
+                <div class="user-both">
+                    <div class="item" id="user-name"></div>
+                    <div class="item" id="user-icon">
+                    <i class="fa-solid fa-user"></i>
+                    </div>
+                </div>
+                <div class="item" id="inbox-icon">
+                    <i class="fa-solid fa-inbox"></i>
+                </div>
+            </div>
+        </header>
+        <div class="sidebar-container">
+            <div class="sidebar">
+                <div class="sidebar-item selected" id="home">
+                    <i class="fa-solid fa-home"></i> <p class="norender">Projects</p>
+                </div>
+                <div class="sidebar-item" id="mylist">
+                    <i class="fa-solid fa-list-check"></i> <p class="norender">My List</p>
+                </div>
+                <div class="sidebar-item" id="wiki">
+                    <i class="fa-solid fa-book"></i> <p class="norender">Wiki</p>
+                </div>
+                <div class="sidebar-item manager-only" id="workload">
+                    <i class="fa-solid fa-users"></i> <p class="norender">Workload</p>
+                </div>
+                <div class="sidebar-item" id="logout">
+                    <i class="fa-solid fa-sign-out"></i> <p class="norender">Logout</p>
+                </div>
+
+            </div>
+            <div class="main">
+                <div class="selection-row">
+                    <select class="project-selector selection-row-item dropdown">
+                        <i class="fa-solid fa-caret-down"></i>
+                        <option class="dropdown-content">
+                            <p>Project 1</p>
+                        </option>
+                        <option class="dropdown-content">
+                            <p>Project 2</p>
+                        </option>
+                        <option class="dropdown-content">
+                            <p>Project 3</p>
+                        </option>
+                    </select>
+                    <div class="team-leader selection-row-item">
+                        <div class="team-leader-title">
+                            TEAM LEADER
+                        </div>
+                        <div class="team-leader-name">
+                            <img class="avatar team-leader-icon" src="https://ui-avatars.com/api/?name=Jamie-Skittz&background=b1e589&size=256&color=000">
+                            <div class="team-leader-name-text">
+                                Jamie Skitt
+                            </div>
+                        </div>
+                    </div>
+                    <div class="team-leader selection-row-item right topics">
+                        <div class="team-leader-title">
+                            TOP VIEWED TOPICS THIS MONTH
+                        </div>
+                        <div class="team-leader-name">
+                            <div class="tag" is-technical="1" class="unselected" name="PHP"><i class="fa-solid fa-tag"></i>
+                                PHP
+                            </div>
+                            <div class="tag" is-technical="1" class="unselected" name="PHP"><i class="fa-solid fa-tag"></i>
+                                MYSQL
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard">
+                    <div class="active-tasks cards">
+                        <div class="card-title">
+                            Active Tasks
+                        </div>
+                        <div class="active-tasks-list">
+                            <div class="active-task">
+                                <div class="active-task-name">
+                                    <img class="avatar tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    Firat Batmaz
+                                </div>
+                                <div class="active-tasks-visual">
+                                    <progress class="active-tasks-progress" max="100" value="99"></progress>
+                                    <div class="active-task-progress-number">
+                                        99
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="active-task">
+                                <div class="active-task-name">
+                                    <img class="avatar tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    Firat Batmaz
+                                </div>
+                                <div class="active-tasks-visual">
+                                    <progress class="active-tasks-progress" max="100" value="53"></progress>
+                                    <div class="active-task-progress-number">
+                                        53
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="active-task">
+                                <div class="active-task-name">
+                                    <img class="avatar tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    Firat Batmaz
+                                </div>
+                                <div class="active-tasks-visual">
+                                    <progress class="active-tasks-progress" max="100" value="26"></progress>
+                                    <div class="active-task-progress-number">
+                                        26
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="active-task">
+                                <div class="active-task-name">
+                                    <img class="avatar tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    Firat Batmaz
+                                </div>
+                                <div class="active-tasks-visual">
+                                    <progress class="active-tasks-progress" max="100" value="22"></progress>
+                                    <div class="active-task-progress-number">
+                                        22
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="active-task">
+                                <div class="active-task-name">
+                                    <img class="avatar tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    Firat Batmaz
+                                </div>
+                                <div class="active-tasks-visual">
+                                    <progress class="active-tasks-progress" max="100" value="20"></progress>
+                                    <div class="active-task-progress-number">
+                                        20
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="active-task">
+                                <div class="active-task-name">
+                                    <img class="avatar tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    Firat Batmaz
+                                </div>
+                                <div class="active-tasks-visual">
+                                    <progress class="active-tasks-progress" max="100" value="13"></progress>
+                                    <div class="active-task-progress-number">
+                                        13
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="active-task">
+                                <div class="active-task-name">
+                                    <img class="avatar tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    Firat Batmaz
+                                </div>
+                                <div class="active-tasks-visual">
+                                    <progress class="active-tasks-progress" max="100" value="3"></progress>
+                                    <div class="active-task-progress-number">
+                                        3
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                   
+                    </div>
+                    <div class="project-progress cards">
+                        <div class="card-title">
+                            Project Progress
+                        </div>
+                        <!-- pie chart showing finished, not started, in progress tasks -->
+                        <div class="progress-chart-container">
+                            <canvas id="progress-chart">
+                            </canvas>
+                        </div>
+                        <div class="progress-chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #ff9f57;">
+                                </div>
+                                <div class="legend-text">
+                                    Not Started
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #59c4ff;">
+                                </div>
+                                <div class="legend-text">
+                                    In Progress
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #8aed8a;">
+                                </div>
+                                <div class="legend-text">
+                                    Finished
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="outstanding-tasks cards">
+                        <div class="card-title">
+                            Outstanding Tasks
+                            <div class="warning-icon">
+                                <i class="fa-solid fa-exclamation-circle"></i>
+                            </div>
+                        </div>
+                        <div class="outstanding-tasks-warning">
+                            <div class="warning-number">
+                                11
+                            </div>
+                            <div class="warning-text">
+                                past due date
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="outstanding-tasks-list-title">
+                            Late By
+                        </div>
+                        <div class="outstanding-tasks-list">
+                            <div class="row">
+                                <div class="outstanding-task-name">
+                                    Task 1
+                                </div>
+                                <div class="outstanding-task-date">
+                                    2 days
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="outstanding-task-name">
+                                    Task 2
+                                </div>
+                                <div class="outstanding-task-date">
+                                    2 days
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="outstanding-task-name">
+                                    Task 3
+                                </div>
+                                <div class="outstanding-task-date">
+                                    2 days
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="outstanding-task-name">
+                                    Task 4
+                                </div>
+                                <div class="outstanding-task-date">
+                                    2 days
+                                </div>
+                            </div>
+                        </div>    
+                    </div>
+                    <div class="task-completions cards">
+                        <div class="card-title">
+                            Task Completions
+                        </div>
+                        <div class="this-week">
+                            <div class="this-week-number">
+                                7
+                            </div>
+                            <div class="this-week-text">
+                                completed this week
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="this-month">
+                            <div class="this-month-number">
+                                22
+                            </div>
+                            <div class="this-month-text">
+                                completed this month
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recently-finished cards">
+                        <div class="card-title">
+                            Recently Finished
+                        </div>
+                        <div class="recently-finished-list">
+                            <div class="recently-finished-item">
+                                <div class="recently-finished-task-name">
+                                    Task 1
+                                </div>
+                                <div class="recently-finished-assignees">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                </div>
+                            </div>
+                            <div class="recently-finished-item">
+                                <div class="recently-finished-task-name">
+                                    Task 2
+                                </div>
+                                <div class="recently-finished-assignees">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                </div>
+                            </div>
+                            <div class="recently-finished-item">
+                                <div class="recently-finished-task-name">
+                                    Task 3
+                                </div>
+                                <div class="recently-finished-assignees">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                </div>
+                            </div>
+                            <div class="recently-finished-item">
+                                <div class="recently-finished-task-name">
+                                    Task 4
+                                </div>
+                                <div class="recently-finished-assignees">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                </div>
+                            </div>
+                            <div class="recently-finished-item">
+                                <div class="recently-finished-task-name">
+                                    Task 4
+                                </div>
+                                <div class="recently-finished-assignees">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                </div>
+                            </div>
+                            <div class="recently-finished-item">
+                                <div class="recently-finished-task-name">
+                                    Task 4
+                                </div>
+                                <div class="recently-finished-assignees">
+                                    <img class="avatar overlapping tooltip" src="https://ui-avatars.com/api/?name=Firat-Batmaz&background=b1e589&size=256&color=000">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

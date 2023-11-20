@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/6db9ef03e0.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../global-styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div class="fullscreen">
+        <div class="box">
+            <h1>Register</h1>
+            <div class="name-container">
+                <input type="text" placeholder="First Name" id="fname" class="textfield">
+                <input type="text" placeholder="Last Name" id="lname" class="textfield">
+            </div>
+            <input type="text" placeholder="Email" id="email" class="textfield">
+            <input type="text" placeholder="Password" id="password" class="textfield">
+            <i class="fa-solid fa-eye-slash" id="togglePassword"></i>
+            <div class="password-criteria">
+                Your password should contain:
+                <ul class="fa-ul">
+                    <li id="eightChars"><span class="fa-li"><i id="eightCharsIcon" class="fa-solid fa-check-circle"></i></span>At least 8 chracters</li>
+                    <li id="uppercaseLetter"><span class="fa-li"><i id="uppercaseLetterIcon" class="fa-solid fa-check-circle"></i></span>At least 1 uppercase letter</li>
+                    <li id="number"><span class="fa-li"><i id="numberIcon" class="fa-solid fa-check-circle"></i></span>At least 1 number</li>
+                    <li id="specialChar"><span class="fa-li"><i id="specialCharIcon" class="fa-solid fa-check-circle"></i></span>At least 1 special character (?, !, _)</li>
+                  </ul>
+            </div>
+            <button id="register">Register</button>
+            <p class="signin-prompt">Already have an account? <a href="/">Sign in</a></p>
+        </div>
+    </div>
+</body>
+</html>
