@@ -13,7 +13,9 @@
 6. In the extension settings give the directory of your php folder and php.ini to PHP Server
 7. Run `invalidation_service.exe`
 8. Open any .html file with PHP Server
-   
-*Make sure there is NOT a trailing slash in URLs because php server doesn't handle this well.*
 
-URLs should look like this: `localhost:3000/web/index.html`
+    *Make sure there is NOT a trailing slash in URLs because php server doesn't handle this well.*
+
+    *URLs should look like this:* `localhost:3000/web/index.html`
+
+The site should now function like normal on your local machine.
