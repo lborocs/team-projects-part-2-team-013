@@ -16,7 +16,16 @@ export const sidebarItems = document.querySelectorAll(".sidebar-item")
 export const topbarItems = document.querySelectorAll(".item")
 console.log("loaded global-ui.js")
 
-
+/**
+ * Formats a date into a human readable string.
+ * 
+ * @param {Date} date - The date to be formatted.
+ * @returns {string} The formatted date string.
+ * 
+ * @example
+ * // returns "1st Jan. 2023"
+ * formatDate(new Date(2022, 0, 1));
+ */
 export function formatDate(date) {
     let day = date.getDate()
     let month = date.getMonth()
@@ -71,6 +80,17 @@ function hsvToHex(h,s, v) {
     
 }
 
+
+/**
+ * Generates the URL for an initials avatar given a name.
+ * 
+ * @param {string} name - The name to be used for the avatar.
+ * @returns {string} The URL of the generated avatar.
+ * 
+ * @example
+ * // returns a URL like "https://ui-avatars.com/api/?name=Firat-Batmaz&background=90c3d4&size=256&color=000&rounded=true"
+ * nameToAvatar("Firat Batmaz");
+ */
 export function nameToAvatar(name) {
     let degree = hash(name) % 360;
     let colour = hsvToHex(degree, 40, 90);
@@ -86,6 +106,17 @@ export function bothNamesToString(fname, sname) {
 }
 
 //utility functions
+
+/**
+ * Applies an animation to a given HTML element and removes it when completed.
+ * 
+ * @param {HTMLElement} element - The HTML element to be animated.
+ * @param {string} animation - The CSS class of the animation to be applied.
+ * 
+ * @example
+ * // Animates the element with a CSS animation class 'fade-in'
+ * animate(document.getElementById('popup'), 'fade-in');
+ */
 export function animate(element, animation) {
     element.classList.add(animation);
     const duration = parseFloat(getComputedStyle(element).getPropertyValue('animation-duration')) * 1000;
@@ -207,6 +238,16 @@ function fillCurrentUserInfo() {
 
 fillCurrentUserInfo();
 
+/**
+ * Fetches the employee data for a set of employee IDs.
+ * 
+ * @param {Array} employees - An array of employee IDs to fetch data for.
+ * @returns {Promise<Map>} A promise that resolves to a Map of the employee IDs to their data.
+ * 
+ * @example
+ * //Fetch the data for employees with IDs 1, 2, and 3 and logs the result.
+ * getEmployeesById([1, 2, 3]).then(data => console.log(data));
+ */
 export async function getEmployeesById(employees) {
     let found = new Map();
     let to_req = new Set(employees);
