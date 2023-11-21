@@ -10,7 +10,7 @@ function updateStyles(){
 
     }
     else {
-        document.getElementById("eightChars").style.color = "red"
+        document.getElementById("eightChars").style.color = "#ff0033"
         document.getElementById("eightCharsIcon").classList.remove("fa-check")
         document.getElementById("eightCharsIcon").classList.add("fa-times")
 
@@ -22,7 +22,7 @@ function updateStyles(){
 
     }
     else {
-        document.getElementById("uppercaseLetter").style.color = "red"
+        document.getElementById("uppercaseLetter").style.color = "#ff0033"
         document.getElementById("uppercaseLetterIcon").classList.remove("fa-check")
         document.getElementById("uppercaseLetterIcon").classList.add("fa-times")
     }
@@ -39,7 +39,7 @@ function updateStyles(){
 
     }
     else {
-        document.getElementById("number").style.color = "red"
+        document.getElementById("number").style.color = "#ff0033"
         document.getElementById("numberIcon").classList.remove("fa-check")
         document.getElementById("numberIcon").classList.add("fa-times")
     }
@@ -50,7 +50,7 @@ function updateStyles(){
 
     }
     else {
-        document.getElementById("specialChar").style.color = "red"
+        document.getElementById("specialChar").style.color = "#ff0033"
         document.getElementById("specialCharIcon").classList.remove("fa-check")
         document.getElementById("specialCharIcon").classList.add("fa-times")
         
