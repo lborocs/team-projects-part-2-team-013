@@ -6,6 +6,10 @@
     flex-direction: column;
 }
 
+.status-incorrect {
+    color: #ff0033;
+}
+
 body {
     font-weight: 600;
     font-size: 1em;

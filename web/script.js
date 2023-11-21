@@ -6,6 +6,8 @@ function setLoginStatus(status) {
 }
 
 async function login() {
+    const statusElement = document.getElementById("status");
+    statusElement.classList.remove("status-incorrect");
     setLoginStatus("Logging in...")
     var username = document.getElementById("username").value
     var password = passwordInput.value
@@ -22,6 +24,7 @@ async function login() {
             window.location.href = "/dashboard/"
         });
     } else {
+        statusElement.classList.add("status-incorrect");
         setLoginStatus(`Error: ${res.data.message} (${res.data.code})`);
     }
 }
