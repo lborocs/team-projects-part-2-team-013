@@ -53,7 +53,7 @@ class RequestContext extends stdClass {
         // authentication
 
         // Sci project wont pass authorization so use X-Authorization
-        $auth_header = apache_request_headers()["X-Authorization"] ?? $_SERVER["HTTP_AUTHORIZATION"] ?? apache_request_headers()["Authorization"] ?? null;
+        $auth_header = $_SERVER["HTTP_AUTHORIZATION"] ?? apache_request_headers()["Authorization"] ?? null;
 
         if (!is_null($auth_header)) {
 

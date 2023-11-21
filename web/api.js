@@ -4,7 +4,7 @@ async function api_request(route, method, body, retries) {
     if (sessionStorage.getItem("token") !== null) {
         headers = {
             "Content-Type": "application/json",
-            "X-Authorization": sessionStorage.getItem("token")
+            "Authorization": sessionStorage.getItem("token")
         }
     } else {
         headers = {
