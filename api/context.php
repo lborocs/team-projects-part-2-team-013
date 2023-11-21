@@ -47,7 +47,7 @@ function contextual_run() {
     // CORS PREFLIGHT CHECK DO OUR CORS CONTROL HERE
     if ($ctx->request_method == "OPTIONS") {
 
-        $origin = $ctx->request_headers["Origin"] ?? "";
+        $origin = $_SERVER["HTTP_ORIGIN"] ?? null;
 
         // if the origin is some form of localhost allow it
         // otherwise we only allow the root domain
