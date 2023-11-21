@@ -44,13 +44,15 @@ function contextual_run() {
 
     $args = $routing_params[1] ?? null;
 
+    // options should return allow headers and no more.
+    if ($ctx->request_method == "OPTIONS") {
+        header("Access-Control-Allow-Methods: ". implode(", ", $route->allowed_methods));
+        header("Access-Control-Allow-Headers: content-type");
+        respond_no_content();
+    }
 
     header("Allow: ". implode(", ", $route->allowed_methods));
 
-    // options should return allow headers and no more.
-    if ($ctx->request_method == "OPTIONS") {
-        respond_no_content();
-    }
 
     // http method checks
     if (!in_array($ctx->request_method, $route->allowed_methods)) {
