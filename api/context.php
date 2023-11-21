@@ -47,6 +47,11 @@ function contextual_run() {
 
     header("Allow: ". implode(", ", $route->allowed_methods));
 
+    // options should return allow headers and no more.
+    if ($ctx->request_method == "OPTIONS") {
+        respond_no_content();
+    }
+
     // http method checks
     if (!in_array($ctx->request_method, $route->allowed_methods)) {
         respond_request_method_disallowed($route->allowed_methods);
