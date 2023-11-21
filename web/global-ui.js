@@ -14,7 +14,7 @@ export const userIcon = document.querySelector(".user-both")
 //groups of things
 export const sidebarItems = document.querySelectorAll(".sidebar-item")
 export const topbarItems = document.querySelectorAll(".item")
-console.log("loaded global-ui.js")
+console.log("[import] loaded global-ui.js")
 
 caches.open("employees");
 
@@ -194,7 +194,7 @@ sidebarItems.forEach((sidebarItem, i) => {
                     item.classList.remove("selected")
                 }
             })
-            console.log("selected")
+            console.log("[sideBarItem] selected")
         } 
     })
 })
@@ -274,6 +274,8 @@ export async function getEmployeesById(employees) {
         }
     }
     ));
+
+    console.log(`[getEmployeesById] Found ${found.size} cached requesting ${to_req.size}`);
     
 
     // fetch the remaining employees from the api
