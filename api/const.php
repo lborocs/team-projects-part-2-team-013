@@ -33,6 +33,7 @@ const ERROR_QUERY_PARAMS_TOO_LARGE = 2015;
 // 404 not found
 const ERROR_ROUTE_NOT_FOUND = 4001;
 const ERROR_RESOURCE_NOT_FOUND = 4002;
+const ERROR_WEBSERVER_FAILED_TO_FIND_SCRIPT = 4003;
 
 
 // 500 internal errors
@@ -61,7 +62,7 @@ const SESSION_VALIDATION_BASE = "http://localhost:4231/";
 const MYSQL_DATABASE = "team013";
 const MYSQL_USERNAME = "team013";
 const MYSQL_PASSWORD = "ctLp3u4fXHXpasfktv7K";
-const MYSQL_SERVER = "sci-project.lboro.ac.uk";
+const MYSQL_SERVER = "localhost";
 
 // encryption
 const SESSION_HMAC_ALGO = "sha3-256";

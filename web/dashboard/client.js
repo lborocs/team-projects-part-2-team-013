@@ -50,7 +50,7 @@ var taskCards = document.querySelectorAll(".task")
 var taskRows = document.querySelectorAll(".taskrow") 
 const dropdowns = document.querySelectorAll(".dropdown")
 const dragIndicators = document.querySelectorAll(".draggable")
-console.log("loaded client.js")
+console.log("[import] loaded client.js")
 
 
 function projectSwitchToOnClick(projectTab) {
@@ -76,13 +76,13 @@ function projectSwitchToOnClick(projectTab) {
             task.remove()
         }) 
         fetchTasks(id).then((tasks) => {
-            console.log("fetched & rendered tasks for " + title)
+            console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + title)
             globalTasksList = tasks;
             console.log(globalTasksList)
         })
         
         // unselect not this project
-        console.log("selected " + title)
+        console.log("[projectSwitchToOnClick] selected " + title)
         //update the breadcrumb with the project name
         let breadcrumb = document.querySelector(".breadcrumb")
         breadcrumb.innerHTML = `Projects > ${title}`
@@ -118,7 +118,7 @@ views.forEach((view, i) => {
                     tab.classList.remove("selected")
                 }
             })
-            console.log("selected")
+            console.log("[viewOnClick] selected")
 
             taskGrid.classList.toggle("fade")
             taskList.classList.toggle("fade")
@@ -139,7 +139,7 @@ explainerShowHide.addEventListener("click", () => {
     } else {
         explainerShowHide.innerHTML = `<i class="fa-solid fa-arrows-up-to-line fa-rotate-90"></i>`
     }
-    console.log("clicked")
+    console.log("[ExplainerShowHide] clicked")
 })
 
 function explainerTaskSetToDefault() {
@@ -240,7 +240,7 @@ function setUpTaskEventListeners() {
 
         taskCard.addEventListener("touchstart", () => {
             //show explainer
-            console.log("clicked")
+            console.log("[taskCardOnTouch] clicked")
             animate(taskRow, "click-small")
             showTaskInExplainer(taskRow);
         });
@@ -261,7 +261,7 @@ function setUpTaskEventListeners() {
     taskRows.forEach((taskRow) => {
         taskRow.addEventListener("mousedown", () => {
             //show explainer
-            console.log("clicked")
+            console.log("[taskRowOnMouseDown] clicked")
             animate(taskRow, "click-small")
         });
         taskRow.addEventListener("mouseup", () => {
@@ -269,7 +269,7 @@ function setUpTaskEventListeners() {
         });
         taskRow.addEventListener("touchstart", () => {
             //show explainer
-            console.log("clicked")
+            console.log("[taskRowOnTouchStart] clicked")
             animate(taskRow, "click-small")
             showTaskInExplainer(taskRow);
         });
@@ -315,7 +315,8 @@ function findNext(container, y) {
 }
 
 async function fetchTasks(projID) {
-    const data = await get_api(`/api/project/task.php/tasks/${projID}`);
+    const data = await get_api(`/project/task.php/tasks/${projID}`);
+    console.log("[fetchTasks] fetched tasks for " + projID);
     console.log(data);
     // process the data here
     if (data.success == true) {
@@ -326,7 +327,7 @@ async function fetchTasks(projID) {
         }));
         if (data.data.contains_assignments) {
             renderAssignments(data.data.assignments).then(() => {
-                console.log("assignments rendered");
+                console.log("[fetchTasks] assignments rendered");
             });
         }
         return data.data.tasks
@@ -334,15 +335,14 @@ async function fetchTasks(projID) {
 }
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
-    console.log("rendering task object "+task.title)
+    console.log("[taskObjectRenderAll] rendering task object "+task.title)
     let date = task.dueDate ? global.formatDate(new Date(task.dueDate * 1000)) : "Due date not set";
     let desc = task.description
     let title = task.title || "No Title";
     let createdBy = task.createdBy || "Unknown";
     let state = task.state
     let taskID = task.taskID || "Unknown";
-    
-    console.log("rendering task")
+
     console.log(task)
 
     if (update & RENDER_COLUMN) {
@@ -376,7 +376,7 @@ async function renderAssignments(assignments) {
         let task = document.getElementById(assignment.taskID);
 
         if (!task) {
-            console.log(`Task ${assignment.taskID} not found (we leaked an assignment)`)
+            console.log(`[renderAssignment] Task ${assignment.taskID} not found (we leaked an assignment)`)
             return
         }
 
@@ -408,7 +408,7 @@ export function teamLeaderEnableElementsIfTeamLeader() {
     if ((session.auth_level ?? 0) >= 2) {
         return
     }
-    console.log("team leader enable elements if team leader ", isTeamLeader)
+    console.log("[teamLeaderEnableElementsIfTeamLeader] isteamleader: ", isTeamLeader)
 
 
     let teamLeaderElements = document.querySelectorAll(".team-leader-only");
@@ -425,11 +425,12 @@ export function teamLeaderEnableElementsIfTeamLeader() {
 }
 
 async function fetchProjects() {
-    const data = await get_api('/api/project/project.php/projects');
+    const data = await get_api('/project/project.php/projects');
+    console.log("[fetchProjects] fetched projects");
     console.log(data);
     // process the data here
     if (data.success == true) {
-        console.log("projects have been fetched")
+        console.log("[fetchProjects] projects have been fetched successfully")
         await Promise.all(data.data.projects.map(async (project) => {
 
             await projectObjectRenderAndListeners(project);
@@ -440,7 +441,7 @@ async function fetchProjects() {
 
 fetchProjects().then((projects) => {
     let first_index = projectTabs.length - 1;
-    console.log("projects:")
+    console.log("[initialFetchProjects] projects:")
     console.log(projects)
     //fetch tasks for the first project
     projectSwitchToOnClick(projectTabs[first_index]);
@@ -459,7 +460,7 @@ function calculateTaskCount() {
 
 
 function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "") {
-    console.log("renering task in list")
+    console.log("[renderTaskInList] renering task in list")
 
     let taskRow = document.createElement("tr");
     taskRow.classList.add("taskRow");
@@ -610,7 +611,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     desc = desc === null ? "" : desc;
     createdBy = createdBy === null ? "" : createdBy;
     date = date === null ? "" : date;
-    console.log("Task createdBy to " + createdBy)
+    console.log("[renderTask] Task createdBy to " + createdBy)
 
     let dateToday = (new Date()).getTime() / 1000;
 
@@ -715,12 +716,11 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) 
 }
 
 async function addTask(state) {
-    console.log("Running confirmDelete")
-    console.log("Creating popup")
+    console.log("[addTask] Creating popup")
     let popupDiv = document.querySelector('.popup');
     console.log(popupDiv)
     let fullscreenDiv = document.querySelector('.fullscreen');
-    console.log("before popup")
+    console.log("[addTask] before popup")
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
             <p class="add-task-title">Create and assign new task:</p>
@@ -753,7 +753,7 @@ async function addTask(state) {
     let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
 
     let empList = popupDiv.querySelector('#employee-select');
-    let res = await get_api(`/api/employee/employee.php/all`);
+    let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
         let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
@@ -771,7 +771,7 @@ async function addTask(state) {
 
 
     console.log(popupDiv.innerHTML)
-    console.log("after popup")
+    console.log("[addTask] after popup")
     fullscreenDiv.style.filter = 'brightness(0.6)';
     let dialog = popupDiv.querySelector('.popupDialog');
     let createButton = dialog.querySelector('.createButton');
@@ -782,7 +782,7 @@ async function addTask(state) {
         event.preventDefault(); 
         dialog.style.display = 'none';
         fullscreenDiv.style.filter = 'none';
-        console.log("rejecting")
+        console.log("[addTaskCloseButton] rejecting")
         reject();
     });
     createButton.addEventListener('click', async (event) => {
@@ -794,13 +794,13 @@ async function addTask(state) {
         let titleInput = dialog.querySelector('.add-task-title-input');
         let descInput = dialog.querySelector('.add-task-description-input');
         let dateInput = dialog.querySelector('.add-task-date-input');
-        console.log(dateInput.value)
+        console.log("[addTaskCreateButton] dateinput: " + dateInput.value)
         let date = new Date(dateInput.value);
         let timestamp = Math.floor(date.getTime() / 1000);
 
 
         let createTaskRes = await post_api(
-            `/api/project/task.php/task/${projID}`,
+            `/project/task.php/task/${projID}`,
             {
                 title: titleInput.value,
                 state: state,
@@ -819,7 +819,7 @@ async function addTask(state) {
             let assignedArray = [...assignedEmployees];
 
             let assignmentsRes = await put_api(
-                `/api/project/task.php/assignments/${projID}/${createTaskRes.data.taskID}`,
+                `/project/task.php/assignments/${projID}/${createTaskRes.data.taskID}`,
                 {assignments:assignedArray}
             );
 
@@ -837,7 +837,7 @@ async function addTask(state) {
                 });
 
                 renderAssignments(assignmentMap).then(() => {
-                    console.log("assignments rendered for new task");
+                    console.log("[addTaskRenderAssignmentsCallback] assignments rendered for new task");
                 });
             } else {
                 // render task
@@ -846,13 +846,13 @@ async function addTask(state) {
 
         } else {
             let error = `${res.data.message} (${res.data.code})`
-            console.error("Error creating new task : " + error);
+            console.error("[addTask] Error creating new task : " + error);
         }
         
 
         dialog.style.display = 'none';
         fullscreenDiv.style.filter = 'none';
-        console.log("resolving")
+        console.log("[addTask] resolving")
     });
 
     addButton.addEventListener('click', (event) => {
@@ -912,18 +912,18 @@ let mediaQueryDesktop = window.matchMedia("(min-width: 1521px)")
 
 //check for mobile on load
 if (mediaQueryMobile.matches) {
-    console.log("mobile")
+    console.log("[mediaQueryMobile] mobile")
     explainer.classList.add("hidden")
     overlay.classList.add("norender")
     explainerShowHide.classList.add("norender")
 } else {
-    console.log("desktop")
+    console.log("[mediaQuery] desktop")
 }
 
 //check for mobile on resize
 mediaQueryMobile.addEventListener("change", (e) => {
     if (e.matches) {
-        console.log("mobile")
+        console.log("[mediaQuerymobileChange] mobile")
         explainer.classList.add("hidden")
         overlay.classList.add("norender")
         explainerShowHide.classList.add("norender")
@@ -932,14 +932,14 @@ mediaQueryMobile.addEventListener("change", (e) => {
 
 //check for medium on load
 if (mediaQueryMedium.matches) {
-    console.log("medium")
+    console.log("[mediaQueryMedium] medium")
     explainer.classList.add("hidden")
 }
 
 //check for medium on resize
 mediaQueryMedium.addEventListener("change", (e) => {
     if (e.matches) {
-        console.log("medium")
+        console.log("[mediaQueryMediumChange] medium")
         explainer.classList.add("hidden")
         explainerShowHide.classList.remove("norender")
     }
@@ -947,13 +947,13 @@ mediaQueryMedium.addEventListener("change", (e) => {
 
 //check for desktop on load
 if (mediaQueryDesktop.matches) {
-    console.log("desktop")
+    console.log("[mediaQueryDesktop] desktop")
 }
 
 //check for desktop on resize
 mediaQueryDesktop.addEventListener("change", (e) => {
     if (e.matches) {
-        console.log("desktop")
+        console.log("[mediaQueryDesktopChange] desktop")
         explainer.classList.remove("hidden")
         explainerShowHide.classList.remove("norender")
     }
@@ -965,13 +965,13 @@ overlay.addEventListener('click', () => {
 });
 
 function confirmDelete() {
-    console.log("Running confirmDelete")
+    console.log("[confirmDelete] Running confirmDelete")
     return new Promise((resolve, reject) => {
-        console.log("Creating popup")
+        console.log("[confirmDelete] Creating popup")
         let popupDiv = document.querySelector('.popup');
         console.log(popupDiv)
         let fullscreenDiv = document.querySelector('.fullscreen');
-        console.log("before popup")
+        console.log("[confirmDelete] before popup")
         popupDiv.innerHTML = `
             <dialog open class='popupDialog' id="delete-popup">
                 <p>Are you sure you want to delete this task?</p>
@@ -983,7 +983,7 @@ function confirmDelete() {
             </dialog>
         `;
         console.log(popupDiv.innerHTML)
-        console.log("after popup")
+        console.log("[confirmDelete] after popup")
         fullscreenDiv.style.filter = 'brightness(0.6)';
 
         let dialog = popupDiv.querySelector('.popupDialog');
@@ -994,7 +994,7 @@ function confirmDelete() {
             event.preventDefault(); 
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            console.log("rejecting")
+            console.log("[confirmDeleteCloseButton] rejecting")
             reject();
         });
 
@@ -1003,7 +1003,7 @@ function confirmDelete() {
             event.stopPropagation();
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            console.log("resolving")
+            console.log("[confirmDeleteDeleteButton] resolving")
             resolve();
         });
     });
@@ -1015,15 +1015,15 @@ window.onload = function() {
     deleteTaskButtons.forEach((button) => {
         button.addEventListener("click", (event) => {
             event.stopPropagation();
-            console.log("delete button clicked")
+            console.log("[DeletTaskButtonsClick] delete button clicked")
             confirmDelete().then(() => {
                 deleteTaskFromExplainer();
             }).catch((e) => {
-                console.log('Deletion cancelled');
+                console.log('[DeletTaskButtonsClick] Deletion cancelled');
                 console.log(e)
             });
             
-            console.log("deletion function finished");
+            console.log("[DeletTaskButtonsClick] deletion function finished");
             // deleteTaskFromExplainer();
         });
     });
@@ -1036,12 +1036,12 @@ function deleteTaskFromExplainer() {
 
 
 function deleteTask(taskID) {
-    console.log("deleting task " + taskID);
+    console.log("[deleteTask] deleting task " + taskID);
     let selectedProject = document.querySelector(".project.selected");
     let projID = selectedProject.getAttribute("data-ID");
 
 
-    delete_api(`/api/project/task.php/task/${projID}/${taskID}`);
+    delete_api(`/project/task.php/task/${projID}/${taskID}`);
     
     let task = document.getElementById(taskID);
 
@@ -1053,7 +1053,7 @@ function deleteTask(taskID) {
 
 async function createProject(projName, description, teamLeader) {
     res = await post_api(
-        "/api/project/project.php/project",
+        "/project/project.php/project",
         {
             projName: projName,
             description: description,
@@ -1066,9 +1066,10 @@ async function createProject(projName, description, teamLeader) {
 
 async function addProjectPopup(){
     let popupDiv = document.querySelector('.popup');
+    console.log("[addProjectPopup] popupDiv");
     console.log(popupDiv)
     let fullscreenDiv = document.querySelector('.fullscreen');
-    console.log("before popup")
+    console.log("[addProjectPopup] before popup")
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
             <p class="add-task-title">New project creation:</p>
@@ -1108,7 +1109,7 @@ async function addProjectPopup(){
 
     let empList = popupDiv.querySelector('#employee-select');
 
-    let res = await get_api(`/api/employee/employee.php/all`);
+    let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     let employeeMap = new Map();
     employeeList.forEach((emp) => {
@@ -1140,7 +1141,7 @@ async function addProjectPopup(){
 
 
         let res = await post_api(
-            `/api/project/project.php/project`,
+            `/project/project.php/project`,
             {
                 projName: titleInput.value,
                 description: descInput.value,
@@ -1160,7 +1161,7 @@ async function addProjectPopup(){
 
         dialog.style.display = 'none';
         fullscreenDiv.style.filter = 'none';
-        console.log("resolving")
+        console.log("[addProjectPopupCreateButtonClick] resolving")
     });
 
     // setButton.addEventListener('click', (event) => {
@@ -1175,7 +1176,6 @@ async function addProjectPopup(){
 
 async function projectObjectRenderAndListeners(project) {
     let session = JSON.parse(sessionStorage.getItem("session"));
-    console.log(session)
     let isTeamLeader = (project.teamLeader === session.employee.empID);
     let emps = await global.getEmployeesById([project.teamLeader, project.createdBy]);
     let teamLeader = emps.get(project.teamLeader);
@@ -1190,18 +1190,18 @@ async function projectObjectRenderAndListeners(project) {
 
 let addProjectButton = document.querySelector(".add-project");
 addProjectButton.addEventListener("click", async () => {
-        console.log("add project button clicked")
+        console.log("[addProjectButtonClick] add project button clicked")
         await addProjectPopup();
 
     }
 );
 
 async function editTaskPopup(title, desc, timestamp, assignments){
-    console.log("Running editTaskPopup")
+    console.log("[editTaskPopup] Running editTaskPopup")
     let popupDiv = document.querySelector('.popup');
     console.log(popupDiv)
     let fullscreenDiv = document.querySelector('.fullscreen');
-    console.log("before popup")
+    console.log("[editTaskPopup] before popup")
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="edit-task-popup">
             <p class="edit-task-title">Edit task:</p>
@@ -1238,7 +1238,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
     let addButton = dialog.querySelector('.addButton');
     let dateSelector = dialog.querySelector('.add-task-date-input');
     let date = new Date(timestamp * 1000).toISOString().split('T')[0];
-    console.log("current date is")
+    console.log("[editTaskPopup] current date is")
     console.log(date)
 
     dateSelector.value = date
@@ -1249,7 +1249,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
     let teamLeader;
 
     let empList = popupDiv.querySelector('#employee-select');
-    let res = await get_api(`/api/employee/employee.php/all`);
+    let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     let employeeMap = new Map();
     employeeList.forEach((emp) => {
@@ -1282,7 +1282,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
 
 
         let res = await post_api(
-            `/api/project/project.php/project`,
+            `/project/project.php/project`,
             {
                 projName: titleInput.value,
                 description: descInput.value,
@@ -1301,7 +1301,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
 
         dialog.style.display = 'none';
         fullscreenDiv.style.filter = 'none';
-        console.log("resolving")
+        console.log("[editTaskPopupEditButtonClick] resolving")
     });
 
     addButton.addEventListener('click', (event) => {
@@ -1326,7 +1326,7 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
     let currentTitle = taskElem.querySelector(".title").innerText;
     //let currentAssignee = area.querySelector(".users-assigned");
     //console.log(currentAssignee);
-    console.log("edit button clicked");
+    console.log("[editButtonClick] edit button clicked");
     await editTaskPopup(
         currentTitle,
         currentDescription,

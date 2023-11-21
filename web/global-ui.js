@@ -14,7 +14,9 @@ export const userIcon = document.querySelector(".user-both")
 //groups of things
 export const sidebarItems = document.querySelectorAll(".sidebar-item")
 export const topbarItems = document.querySelectorAll(".item")
-console.log("loaded global-ui.js")
+console.log("[import] loaded global-ui.js")
+
+caches.open("employees");
 
 /**
  * Formats a date into a human readable string.
@@ -177,7 +179,7 @@ workloadButton.addEventListener("click", () => {
 
 logoutButton.addEventListener("click", () => {
     animate(logoutButton, "click")
-    delete_api("/api/employee/session.php/session").then(() => {
+    delete_api("/employee/session.php/session").then(() => {
         sessionStorage.clear();
         window.location.href = "/";
     });
@@ -192,7 +194,7 @@ sidebarItems.forEach((sidebarItem, i) => {
                     item.classList.remove("selected")
                 }
             })
-            console.log("selected")
+            console.log("[sideBarItem] selected")
         } 
     })
 })
@@ -252,9 +254,41 @@ export async function getEmployeesById(employees) {
     let found = new Map();
     let to_req = new Set(employees);
 
+    let cache = await caches.open("employees");
+
+    // if the employee is cached then add it to found
+    await Promise.all(Array.from(employees).map(async (employee) => {
+        let cache_emp = await cache.match("/employees/" + employee);
+        
+        // if the employee is in the cache
+        if (cache_emp) {
+            // if we are older than 1h
+            if (cache_emp.headers.get("date") < Date.now() - 60 * 60 * 60) {
+                to_req.add(employee)
+                cache.delete("/employees/" + employee);
+            } else {
+                found.set(employee, await cache_emp.json());
+            }
+        } else {
+            to_req.add(employee)
+        }
+    }
+    ));
+
+    console.log(`[getEmployeesById] Found ${found.size} cached requesting ${to_req.size}`);
+    
+
+    // fetch the remaining employees from the api
     if (to_req.size != 0) {
-        let res = await get_api("/api/employee/employee.php/bulk?ids=" + Array.from(to_req).join(","));
-        console.log(res);
+        let res = await get_api("/employee/employee.php/bulk?ids=" + Array.from(to_req).join(","));
+
+        // cache all fetched employees
+        Object.entries(res.data.employees).forEach(async (employee) => {
+            await cache.put("/employees/" + employee[0], new Response(
+                JSON.stringify(employee[1]),
+                {headers: {"date": Date.now()}}
+            ));
+        });
         return new Map([...found, ...Object.entries(res.data.employees)]);
     } else {
         return new Map([...found]);

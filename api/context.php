@@ -44,8 +44,29 @@ function contextual_run() {
 
     $args = $routing_params[1] ?? null;
 
+    // CORS PREFLIGHT CHECK DO OUR CORS CONTROL HERE
+    $origin = $_SERVER["HTTP_ORIGIN"] ?? null;
+
+    // if the origin is some form of localhost allow it
+    // otherwise we only allow the root domain
+
+    if (preg_match("/^https?:\/\/localhost(:[0-9]{0,5})?$/", $origin)) {
+        header("Access-Control-Allow-Origin: ". $origin);
+    } else {
+        header("Access-Control-Allow-Origin: https://013.team");
+    }
+
+    header("Access-Control-Allow-Methods: ". implode(", ", $route->allowed_methods));
+    header("Access-Control-Allow-Headers: content-type, authorization");
+    header("Access-Control-Allow-Credentials: true");
+    header("Access-Control-Max-Age: 86400"); // 1 day of access control
+
+    if ($ctx->request_method == "OPTIONS") {
+        respond_no_content();
+    }
 
     header("Allow: ". implode(", ", $route->allowed_methods));
+
 
     // http method checks
     if (!in_array($ctx->request_method, $route->allowed_methods)) {

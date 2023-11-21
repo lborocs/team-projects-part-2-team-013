@@ -40,7 +40,7 @@ function getTagList() {
   
   function createPost(data) {
       try{
-          const response = fetch("/api/wiki/post.php/post", {
+          const response = fetch("/wiki/post.php/post", {
           method: "POST",
   
           headers: {
