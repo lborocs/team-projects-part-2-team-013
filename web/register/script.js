@@ -59,8 +59,10 @@ function updateStyles(){
 
 addEventListener("keydown", (e) => {
     sleep(10).then(() => {
+        if (document.activeElement.id === "password" || document.getElementById("password").value.length !== 0) {
     updateStyles()
     }
+}
     )
 })
 
