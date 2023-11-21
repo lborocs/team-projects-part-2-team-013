@@ -14,7 +14,7 @@ async function login() {
         password: password
     }
 
-    const res = await post_api("/api/employee/session.php/login", loginData);
+    const res = await post_api("/employee/session.php/login", loginData);
 
     if (res.success) {
         sessionStorage.setItem("token", res.data.session_token);
@@ -35,7 +35,7 @@ passwordInput.addEventListener('keypress', function (e) {
 });
 
 async function fetchSession() {
-    const data = await get_api("/api/employee/session.php/session");
+    const data = await get_api("/employee/session.php/session");
     if (data.success) {
         console.log(`SESSION INFO : ${data.data}`);
         sessionStorage.setItem("session", JSON.stringify(data.data));

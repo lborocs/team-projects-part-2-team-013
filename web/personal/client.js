@@ -256,7 +256,7 @@ function findNext(container, y) {
 }
 
 async function fetchTasks() {
-    const data = await get_api(`/api/employee/employee.php/personals`);
+    const data = await get_api(`/employee/employee.php/personals`);
     console.log("created task")
     console.log(data);
     if (data.success == true) {
@@ -535,7 +535,7 @@ function userCreateNewTask(column) {
             }
 
             let session = JSON.parse(sessionStorage.getItem("session"));
-            post_api(`/api/employee/employee.php/personal/${session.employee.empID}`, {title: this.value, state: state}).then(res => {
+            post_api(`/employee/employee.php/personal/${session.employee.empID}`, {title: this.value, state: state}).then(res => {
                 console.log("new task data");
                 console.log(res)
                 if (res.success) {
@@ -739,7 +739,7 @@ function deleteTask() {
         console.error("deleter pressed with no task selected");
     } else {
         confirmDelete().then(() => {
-            delete_api(`/api/employee/employee.php/personal/${session.employee.empID}/${taskID}`).then(res => {
+            delete_api(`/employee/employee.php/personal/${session.employee.empID}/${taskID}`).then(res => {
                 if (!res) {
                     document.getElementById(taskID).remove();
                     calculateTaskCount()

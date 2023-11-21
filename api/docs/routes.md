@@ -3,7 +3,7 @@ Written/designed by aidan F223129
 
 ## employee.php
 
-- [x] **/api/employee/employee.php/bulk?ids=id1,id2** (no query params defaults to the logged in user)
+- [x] **/employee/employee.php/bulk?ids=id1,id2** (no query params defaults to the logged in user)
   - GET (get all employees)
     
     ```jsonc
@@ -21,7 +21,7 @@ Written/designed by aidan F223129
     }
     ```
 
-- [x] **/api/employee/employee.php/personals**
+- [x] **/employee/employee.php/personals**
   - GET (get personal todo list)
     will return everything on the CURRENT users todo list
     ```jsonc
@@ -33,7 +33,7 @@ Written/designed by aidan F223129
     }
     ```
 
-- [x] **/api/employee/employee.php/all**
+- [x] **/employee/employee.php/all**
   - GET (get all employees ever)
   ```jsonc
   {
@@ -46,7 +46,7 @@ Written/designed by aidan F223129
   }
   ```
 
-- [ ] **/api/employee/employee.php/personal/:employee_id:/:personal_id:**
+- [ ] **/employee/employee.php/personal/:employee_id:/:personal_id:**
   - [ ] GET (Get individual todo list item info)
   - [ ] POST (Create new todo list item)
   - [ ] PATCH (Edit users todolist item)
@@ -69,7 +69,7 @@ Written/designed by aidan F223129
     ``` 
 
 ## session.php
-- [x] **/api/employee/session.php/login**
+- [x] **/employee/session.php/login**
   - [x] POST (log in) {"username":string,"password":string}
     ```jsonc
     {
@@ -79,7 +79,7 @@ Written/designed by aidan F223129
       }
     }
     ```
-- [x] **/api/employee/session.php/session**
+- [x] **/employee/session.php/session**
   - [ ] DELETE (logout)
   - [x] GET (get session info)
     ```jsonc
@@ -95,18 +95,18 @@ Written/designed by aidan F223129
     }
     ```
   - [ ] PUT (renew session and discard old)
-- [ ] **/api/employee/session.php/otp**
+- [ ] **/employee/session.php/otp**
   - POST {"password"}
-- [ ] **/api/employee/session.php/account**
+- [ ] **/employee/session.php/account**
     - [ ] GET (account info)
     - [ ] PATCH {"password"} (requires otp)
-- [ ] **/api/employee/session.php/register**
+- [ ] **/employee/session.php/register**
     - POST (register account)
 
 # project
 
 ## task.php
-- [x] **/api/project/task.php/tasks/:PROJECT_ID**
+- [x] **/project/task.php/tasks/:PROJECT_ID**
     - [x] GET (get all tasks)
       
       will return a body containing an array of tasks, and if the user is a manager, an array of assignments. otherwise it will just return the users tasks.
@@ -120,7 +120,7 @@ Written/designed by aidan F223129
         }
       }
       ```
-- [ ] **/api/project/task.php/task/:PROJECT_ID:/:TASK_ID**
+- [ ] **/project/task.php/task/:PROJECT_ID:/:TASK_ID**
   - [x] GET (get task by id)
     ```jsonc
     {
@@ -138,7 +138,7 @@ Written/designed by aidan F223129
   - [ ] DELETE (delete task)
 
 ## project.php
-- [x] **/api/project/project.php/projects**
+- [x] **/project/project.php/projects**
     - GET (Get all projects)
       
       will return a body containing an array of projects the user has accesss to (or all for managers)
@@ -150,7 +150,7 @@ Written/designed by aidan F223129
         }
       }
       ```
-- [ ] **/api/project/project.php/project/:PROJECT_ID**
+- [ ] **/project/project.php/project/:PROJECT_ID**
     - [x] GET (get individual project)
       ```jsonc
       {
@@ -167,7 +167,7 @@ Written/designed by aidan F223129
 
 # wiki
 ## post.php
-- [x] **/api/forum/post.php/posts**
+- [x] **/forum/post.php/posts**
   - GET (get all posts)
     will return a body containing a list of posts
     ```jsonc
@@ -178,7 +178,7 @@ Written/designed by aidan F223129
       }
     }
     ```
-- [ ] **/api/forum/post.php/post/:POST_ID:**
+- [ ] **/forum/post.php/post/:POST_ID:**
   - [x] GET (get individual post)
     ```jsonc
     {

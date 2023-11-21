@@ -14,7 +14,7 @@ async function fetchPosts() {
     
     try {
 
-        const data = await get_api("/api/wiki/post.php/posts");
+        const data = await get_api("/wiki/post.php/posts");
         console.log(data);
         if (data.success == true) {
             console.log("Posts have been fetched")

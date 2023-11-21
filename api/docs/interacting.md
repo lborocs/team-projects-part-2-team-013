@@ -44,7 +44,7 @@ in the case of a success the data body will be dependent on the requested route
 ## object creation/modification
 for a route creating/editing an object, generally PATCH/POST something like a task or project  
 on success the data will contain the updated object  
-eg PATCH /api/project/tasks.php/patch/task1234abc
+eg PATCH /project/tasks.php/patch/task1234abc
 ```json
 {
     "success":true,

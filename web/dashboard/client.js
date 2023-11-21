@@ -315,7 +315,7 @@ function findNext(container, y) {
 }
 
 async function fetchTasks(projID) {
-    const data = await get_api(`/api/project/task.php/tasks/${projID}`);
+    const data = await get_api(`/project/task.php/tasks/${projID}`);
     console.log(data);
     // process the data here
     if (data.success == true) {
@@ -425,7 +425,7 @@ export function teamLeaderEnableElementsIfTeamLeader() {
 }
 
 async function fetchProjects() {
-    const data = await get_api('/api/project/project.php/projects');
+    const data = await get_api('/project/project.php/projects');
     console.log(data);
     // process the data here
     if (data.success == true) {
@@ -753,7 +753,7 @@ async function addTask(state) {
     let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
 
     let empList = popupDiv.querySelector('#employee-select');
-    let res = await get_api(`/api/employee/employee.php/all`);
+    let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
         let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
@@ -800,7 +800,7 @@ async function addTask(state) {
 
 
         let createTaskRes = await post_api(
-            `/api/project/task.php/task/${projID}`,
+            `/project/task.php/task/${projID}`,
             {
                 title: titleInput.value,
                 state: state,
@@ -819,7 +819,7 @@ async function addTask(state) {
             let assignedArray = [...assignedEmployees];
 
             let assignmentsRes = await put_api(
-                `/api/project/task.php/assignments/${projID}/${createTaskRes.data.taskID}`,
+                `/project/task.php/assignments/${projID}/${createTaskRes.data.taskID}`,
                 {assignments:assignedArray}
             );
 
@@ -1041,7 +1041,7 @@ function deleteTask(taskID) {
     let projID = selectedProject.getAttribute("data-ID");
 
 
-    delete_api(`/api/project/task.php/task/${projID}/${taskID}`);
+    delete_api(`/project/task.php/task/${projID}/${taskID}`);
     
     let task = document.getElementById(taskID);
 
@@ -1053,7 +1053,7 @@ function deleteTask(taskID) {
 
 async function createProject(projName, description, teamLeader) {
     res = await post_api(
-        "/api/project/project.php/project",
+        "/project/project.php/project",
         {
             projName: projName,
             description: description,
@@ -1108,7 +1108,7 @@ async function addProjectPopup(){
 
     let empList = popupDiv.querySelector('#employee-select');
 
-    let res = await get_api(`/api/employee/employee.php/all`);
+    let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     let employeeMap = new Map();
     employeeList.forEach((emp) => {
@@ -1140,7 +1140,7 @@ async function addProjectPopup(){
 
 
         let res = await post_api(
-            `/api/project/project.php/project`,
+            `/project/project.php/project`,
             {
                 projName: titleInput.value,
                 description: descInput.value,
@@ -1249,7 +1249,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
     let teamLeader;
 
     let empList = popupDiv.querySelector('#employee-select');
-    let res = await get_api(`/api/employee/employee.php/all`);
+    let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     let employeeMap = new Map();
     employeeList.forEach((emp) => {
@@ -1282,7 +1282,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
 
 
         let res = await post_api(
-            `/api/project/project.php/project`,
+            `/project/project.php/project`,
             {
                 projName: titleInput.value,
                 description: descInput.value,

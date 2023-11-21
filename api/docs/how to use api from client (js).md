@@ -23,7 +23,7 @@ The easiest way to do this is to make a function with the *async* keyword before
 
 This lets us use the *await* keyword before calling fetch() inside, telling the client to wait for a response.
 
-e.g. `await fetch(/api/employee/session.php/login")`
+e.g. `await fetch(/employee/session.php/login")`
 
 **Structure:**
 
@@ -52,7 +52,7 @@ async function login(username, password) {
     //OPEN A TRY/CATCH
     try {
         //FETCH THE ROUTE
-        const response = await fetch("/api/employee/session.php/login", {
+        const response = await fetch("/employee/session.php/login", {
             //STATE THE METHOD USED
             method: "POST",
             //HEADER WILL ALWAYS BE THIS NO MATTER WHAT

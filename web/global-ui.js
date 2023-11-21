@@ -177,7 +177,7 @@ workloadButton.addEventListener("click", () => {
 
 logoutButton.addEventListener("click", () => {
     animate(logoutButton, "click")
-    delete_api("/api/employee/session.php/session").then(() => {
+    delete_api("/employee/session.php/session").then(() => {
         sessionStorage.clear();
         window.location.href = "/";
     });
@@ -253,7 +253,7 @@ export async function getEmployeesById(employees) {
     let to_req = new Set(employees);
 
     if (to_req.size != 0) {
-        let res = await get_api("/api/employee/employee.php/bulk?ids=" + Array.from(to_req).join(","));
+        let res = await get_api("/employee/employee.php/bulk?ids=" + Array.from(to_req).join(","));
         console.log(res);
         return new Map([...found, ...Object.entries(res.data.employees)]);
     } else {
