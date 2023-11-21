@@ -62,7 +62,7 @@ const SESSION_VALIDATION_BASE = "http://localhost:4231/";
 const MYSQL_DATABASE = "team013";
 const MYSQL_USERNAME = "team013";
 const MYSQL_PASSWORD = "ctLp3u4fXHXpasfktv7K";
-const MYSQL_SERVER = "sci-project.lboro.ac.uk";
+const MYSQL_SERVER = "localhost";
 
 // encryption
 const SESSION_HMAC_ALGO = "sha3-256";
