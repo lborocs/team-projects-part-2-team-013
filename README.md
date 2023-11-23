@@ -7,7 +7,7 @@
 3. Rename `php.ini-development` to `php.ini`
 4. Un-comment these lines by removing the semicolon:
     - `;extension=curl`
-    - `;extension=mysql`
+    - `;extension=mysqli`
     - `;extension=openssl`
 5. Install the [PHP Server](https://marketplace.visualstudio.com/items?itemName=brapifra.phpserver) extension for VS Code
 6. In the extension settings give the directory of your php folder and php.ini to PHP Server
