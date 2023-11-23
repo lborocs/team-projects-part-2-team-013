@@ -10,12 +10,12 @@
     - `;extension=mysqli`
     - `;extension=openssl`
 5. Install the [PHP Server](https://marketplace.visualstudio.com/items?itemName=brapifra.phpserver) extension for VS Code
-6. In the extension settings give the directory of your php folder and php.ini to PHP Server
-7. Run `invalidation_service.exe`
-8. Open any .html file with PHP Server
+6. Change the php server location to serve from `web/` OR open the `web/` folder directly in vscode 
+7. In the extension settings give the directory of your php folder and php.ini to PHP Server
+8. Start the php server in the `web` folder
 
-    *Make sure there is NOT a trailing slash in URLs because php server doesn't handle this well.*
+    *Make sure there is a trailing slash in URLs because php server wont load styles or scripts if there isnt.*
 
-    *URLs should look like this:* `localhost:3000/web/index.html`
+    *URLs should look like this:* `localhost:3000/dashboard/` `localhost:3000/`
 
 The site should now function like normal on your local machine.
