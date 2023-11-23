@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="task-card.css">
     <link rel="stylesheet" href="text-button.css">
     <link rel="stylesheet" href="icon-button.css">
+    <script src="task-card.js" defer></script>
   </head>
   <body>
 <body>
@@ -82,73 +83,92 @@
                 More
             </div>
         </div>
+        <div class="taskcolumn">
+            <div class="task" draggable="true">
+                <div class="draggable">
+                    <i class="fa-solid fa-grip-vertical"></i>
+                </div>
+                <div class="title">
+                    Make a proper consistent task card element
+                </div>
+                <div class="description">
+                    There's weird spacing in the existing one which makes it a nightmare to work with
+                </div>
+                <div class="date-and-users">
+                    <div class="tooltip status-container">
+                        <p class="tooltiptext">Task overdue</p>
+                        <i class="fa-solid fa-exclamation-circle overdue"></i>
+                        <div class="date">
+                            28th Nov 2023
+                        </div>
+                    </div>
+                    <div class="users-assigned">
+                        <div class="assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
+                            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip"><p class="tooltiptext">Danial</p>
+                            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
+                            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="task" draggable="true">
-            <div class="draggable">
-                <i class="fa-solid fa-grip-vertical"></i>
-            </div>
-            <div class="title">
-                Make a proper consistent task card element
-            </div>
-            <div class="description">
-                There's weird spacing in the existing one which makes it a nightmare to work with
-            </div>
-            <div class="date-and-users">
-                <div class="tooltip" id="task-overdue">
-                    <p class="tooltiptext">Task overdue</p>
-                    <i class="fa-solid fa-exclamation-circle" id="task-overdue"></i>
+            <div class="task" draggable="true">
+                <div class="title">
+                    Less clutter version overdue
+                </div>   
+                <div class="date-and-users">
+                    <div class="tooltip status-container">
+                        <p class="tooltiptext">Task overdue</p>
+                        <i class="fa-solid fa-exclamation-circle overdue"></i>
+                        <div class="date">
+                            28th Nov 2023
+                        </div>
+                    </div>
+                    <div class="users-assigned">
+                        <div class="assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
+                            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip"><p class="tooltiptext">Danial</p>
+                            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
+                            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                    </div>
                 </div>
-                <div class="date" id="task-date">
-                    19th Nov 2023
+            </div>
+
+            <div class="task" draggable="true">
+                <div class="title">
+                    Less clutter version
+                </div>   
+                <div class="date-and-users">
+                    <div class="tooltip status-container">
+                        <p class="tooltiptext">Due 19th November</p>
+                        <i class="fa-regular fa-calendar-clock"></i>
+                        <div class="date">
+                            28th Nov 2023
+                        </div>
+                    </div>
+                    
+                    <div class="users-assigned">
+                        <div class="assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
+                            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip"><p class="tooltiptext">Danial</p>
+                            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                        <div class="assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
+                            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        </div>
+                    </div>
                 </div>
-                <div class="users-assigned">
-                <div class="task-assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
-            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Danial</p>
-            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
-            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div></div>
             </div>
         </div>
-
-        <div class="task" draggable="true">
-            <div class="title">
-                Less clutter version overdue
-            </div>   
-            <div class="date-and-users">
-                <div class="tooltip" id="task-overdue">
-                    <p class="tooltiptext">Task overdue</p>
-                    <i class="fa-solid fa-exclamation-circle" id="task-overdue"></i>
-                </div>
-                <div class="date" id="task-date">
-                    19th Nov 2023
-                </div>
-                <div class="users-assigned">
-                <div class="task-assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
-            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Danial</p>
-            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
-            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div></div>
-            </div>
-        </div>
-
-        <div class="task" draggable="true">
-            <div class="title">
-                Less clutter version
-            </div>   
-            <div class="date-and-users">
-                <div class="tooltip" id="task-overdue">
-                    <p class="tooltiptext">Due 19th November</p>
-                    <i class="fa-regular fa-calendar-clock"></i>
-                </div>
-                <div class="date" id="task-date">
-                    28th Nov 2023
-                </div>
-                <div class="users-assigned">
-                <div class="task-assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
-            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Danial</p>
-            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
-            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div></div>
-            </div>
-        </div>
-
     </div>
 </body>
   </body>
