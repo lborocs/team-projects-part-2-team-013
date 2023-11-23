@@ -152,28 +152,28 @@ hamburger.addEventListener("click", () => {
 homeButton.addEventListener("click", () => {
     animate(homeButton, "click")
     setTimeout(() => {
-        window.location.href = "/web/dashboard/";
+        window.location.href = "/dashboard/";
     }, 150)
 });
 
 myListButton.addEventListener("click", () => {
     animate(myListButton, "click")
     setTimeout(() => {
-        window.location.href = "/web/personal/";
+        window.location.href = "/personal/";
     }, 150)
 });
 
 wikiButton.addEventListener("click", () => {
     animate(wikiButton, "click")
     setTimeout(() => {
-        window.location.href = "/web/wiki/";
+        window.location.href = "/wiki/";
     }, 150)
 });
 
 workloadButton.addEventListener("click", () => {
     animate(homeButton, "click")
     setTimeout(() => {
-        window.location.href = "/web/workload/";
+        window.location.href = "/workload/";
     }, 150)
 });
 
@@ -181,7 +181,7 @@ logoutButton.addEventListener("click", () => {
     animate(logoutButton, "click")
     delete_api("/employee/session.php/session").then(() => {
         sessionStorage.clear();
-        window.location.href = "/web/";
+        window.location.href = "/";
     });
 });
 

@@ -21,7 +21,7 @@ async function login() {
     if (res.success) {
         sessionStorage.setItem("token", res.data.session_token);
         fetchSession().then((_) => {
-            window.location.href = "/web/dashboard/"
+            window.location.href = "/dashboard/"
         });
     } else {
         statusElement.classList.add("status-incorrect");
