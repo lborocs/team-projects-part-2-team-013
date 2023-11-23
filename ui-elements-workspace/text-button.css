@@ -36,12 +36,14 @@
     align-items: center;
     justify-content: center;
 
-    width: 24px;
+    padding: 4px;
+    padding-right: 5px;
 
     & i {
-        font-size: 16px;
+        font-size: 18px;
     }
 }
-.text-button-icon i::before {
-    vertical-align: middle;
+
+.text-button-icon:empty {
+    display: none;
 }

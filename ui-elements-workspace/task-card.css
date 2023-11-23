@@ -1,0 +1,176 @@
+.task {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    width: calc(100% - 1.5em);
+    border-radius: 4px;
+    outline: solid 1px rgba(105,112,125, 0.1);
+    background-color: #fcfcfc;
+    color: black;
+    box-shadow: 0 3px 3px rgba(0,0,0,0.1);
+    padding: 0.55em;
+    padding-top: 0.35em;
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out !important;
+    .title {
+        font-size: 1em;
+        font-weight: 600;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.5em;
+    };
+    .date {
+        font-size: 0.85em;
+        font-weight: 500;
+        color: #0f0f0faa;
+        width: 100%;
+    };
+    .description {
+        height: 1.5em;
+        text-overflow: ellipsis;
+        text-wrap: nowrap;
+        overflow: hidden;
+        font-size: 0.9em;
+        font-weight: 600;
+        color: #0f0f0fbb;
+    };
+    
+    
+    
+}
+
+.task-assignment {
+    align-self: normal;
+}
+
+#task-overdue {
+    align-self: center;
+    color: #c04646;
+    font-weight: 700;
+    font-size: 0.9em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#task-status-icon {
+    padding-right: 0.3em;
+}
+
+#task-date {
+    padding-left: 0.4em;
+}
+
+.date-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.5em;
+}
+.date-container i {
+    color: #2f2f2f;
+}
+
+.description-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.5em;
+}
+.description-container i {
+    color: #2f2f2f;
+}
+
+.status-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0.5em;
+}
+
+.status-container i {
+    color: #2f2f2f;
+}
+
+.date-and-users {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 1.5em;
+}
+
+.urgent {
+    font-size: 0.85em;
+    color: #c04646aa;
+    display: flex;
+    align-items: center;
+};
+
+.task:hover {
+    outline-color: #2f2f2f;
+    transition-duration: 0.06s;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.draggable {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    color: #777777;
+    font-size: 1em;
+    cursor: grab;
+    transition: 0.2s ease-out;
+}
+.task:hover>.draggable {
+    color: #0f0f0f;
+    transition-duration: 0.08s;
+}
+.task:hover {
+    color: #0f0f0f;
+    background-color: #f6f6f6aa;
+    transition-duration: 0.08s;
+    box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.12);
+}
+
+.expanded {
+    transition-duration: 0.5s;
+    .description {
+        display: block;
+        overflow: visible;
+        height: auto;
+        text-wrap: wrap;
+    }
+}
+
+.beingdragged {
+    opacity: 0.5;
+    cursor: grabbing;
+    box-shadow: 0 0 3px 2px rgba(94, 137, 255, 1), 0 0 2px 1px rgba(94, 137, 255, 0.8) inset;
+    outline: solid 2px rgba(94, 137, 255, 1);
+}
+
+.dragindicator {
+    color: #000;
+    background-color: #fff;
+}
+
+.avatar {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    border: solid 1px white;
+    transition: 0.1s ease-out;
+    z-index: 0;
+}
+
+.users-assigned {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 1.5em;
+    aspect-ratio: 1;
+    width: 100%;
+
+}

@@ -9,10 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.2/css/all.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tooltip.css">
     <link rel="stylesheet" href="search-bar.css">
     <link rel="stylesheet" href="dropdown.css">
-    <link rel="stylesheet" href="card.css">
+    <link rel="stylesheet" href="task-card.css">
     <link rel="stylesheet" href="text-button.css">
+    <link rel="stylesheet" href="icon-button.css">
   </head>
   <body>
 <body>
@@ -66,15 +68,86 @@
         </div>
         <div class="text-button">
             <div class="text-button-icon">
-                <i class="far fa-envelope center"></i>
+                <i class="far fa-envelope"></i>
             </div>
             <div class="text-button-text">
                 Invite
             </div>
         </div>
+        <div class="text-button">
+            <div class="text-button-icon">
+                <i class="far fa-ellipsis"></i>
+            </div>
+            <div class="text-button-text">
+                More
+            </div>
+        </div>
 
+        <div class="task" draggable="true">
+            <div class="draggable">
+                <i class="fa-solid fa-grip-vertical"></i>
+            </div>
+            <div class="title">
+                Make a proper consistent task card element
+            </div>
+            <div class="description">
+                There's weird spacing in the existing one which makes it a nightmare to work with
+            </div>
+            <div class="date-and-users">
+                <div class="tooltip" id="task-overdue">
+                    <p class="tooltiptext">Task overdue</p>
+                    <i class="fa-solid fa-exclamation-circle" id="task-overdue"></i>
+                </div>
+                <div class="date" id="task-date">
+                    19th Nov 2023
+                </div>
+                <div class="users-assigned">
+                <div class="task-assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
+            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Danial</p>
+            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
+            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div></div>
+            </div>
+        </div>
 
-        
+        <div class="task" draggable="true">
+            <div class="title">
+                Less clutter version overdue
+            </div>   
+            <div class="date-and-users">
+                <div class="tooltip" id="task-overdue">
+                    <p class="tooltiptext">Task overdue</p>
+                    <i class="fa-solid fa-exclamation-circle" id="task-overdue"></i>
+                </div>
+                <div class="date" id="task-date">
+                    19th Nov 2023
+                </div>
+                <div class="users-assigned">
+                <div class="task-assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
+            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Danial</p>
+            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
+            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div></div>
+            </div>
+        </div>
+
+        <div class="task" draggable="true">
+            <div class="title">
+                Less clutter version
+            </div>   
+            <div class="date-and-users">
+                <div class="tooltip" id="task-overdue">
+                    <p class="tooltiptext">Due 19th November</p>
+                    <i class="fa-regular fa-calendar-clock"></i>
+                </div>
+                <div class="date" id="task-date">
+                    28th Nov 2023
+                </div>
+                <div class="users-assigned">
+                <div class="task-assignment tooltip"><p class="tooltiptext">Octavian Iacovici</p>
+            <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Danial</p>
+            <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div><div class="task-assignment tooltip"><p class="tooltiptext">Jamie Skitt</p>
+            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar"></div></div>
+            </div>
+        </div>
 
     </div>
 </body>
