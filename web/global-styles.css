@@ -112,7 +112,9 @@ body {
     opacity: 1;
 }
 
+
 .tooltip .tooltiptext::after {
+    /* This is what displays the triangle pointer on top of the tooltip */
     content: " ";
     position: absolute;
     bottom: 100%;
