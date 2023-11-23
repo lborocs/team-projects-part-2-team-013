@@ -240,7 +240,7 @@ class Session {
         }
         // 200 means account was yanked at some point
         else if ($status_code == 200) {
-            error_log("Account has been yanked at " . $res . " and session was issued at " . $this->issued);
+
             // if the session was issued before the yank then it is invalid
             if ($this->issued <= ($res+0)) { // crude type conversion
                 respond_not_authenticated("Session has been revoked", ERROR_SESSION_REVOKED);
