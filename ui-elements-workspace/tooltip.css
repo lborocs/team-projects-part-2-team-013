@@ -7,7 +7,7 @@
 .tooltip .tooltiptext {
     visibility: hidden;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s 0.6s;
     top: 80%;
     left: 50%;
     width: fit-content;
