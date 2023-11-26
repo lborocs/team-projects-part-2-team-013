@@ -1,0 +1,13 @@
+[Unit]
+Description=Invalidation server 
+After=apache2.service
+StartLimitIntervalSec=0
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=web
+ExecStart=/home/web/invalidation_service
+
+[Install]
+WantedBy=multi-user.target
