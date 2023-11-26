@@ -18,7 +18,7 @@ async function getPostData(postID){
     document.querySelector(".title").innerText = data.data.title
     document.querySelector(".content").innerHTML = data.data.content
     console.log(data.data.firstName)
-    document.querySelector(".author").innerText = data.data.firstName + " " + data.data.lastName
+    document.querySelector(".author").innerText = global.bothNamesToString(data.data.firstName, data.data.lastName)
     document.querySelector(".date").innerText = global.formatDate(new Date(data.data.createdAt * 1000))
     console.log(data.data.content)
     return data.data
