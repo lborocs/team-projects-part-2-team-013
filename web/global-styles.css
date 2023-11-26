@@ -22,7 +22,6 @@ body {
     transition: 0.1s ease-out;
 }
 
-
 .dropdown-content {
     display: none;
     position: absolute;
@@ -84,12 +83,9 @@ body {
   
 .tooltip .tooltiptext {
     visibility: hidden;
+    width: fit-content;
     opacity: 0;
     transition: opacity 0.3s;
-    top: 80%;
-    left: 50%;
-    width: fit-content;
-    transform: translate(-50%);
     background-color: #2f2f2fee;
     box-shadow: 0 0 6px rgba(0,0,0,0.15);
     color: #ffffff;
@@ -117,12 +113,35 @@ body {
     /* This is what displays the triangle pointer on top of the tooltip */
     content: " ";
     position: absolute;
+    border-width: 5px;
+}
+
+.tooltip.under .tooltiptext {
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.tooltip.under .tooltiptext::after{
     bottom: 100%;
     left: 50%;
     margin-left: -5px;
-    border-width: 5px;
     border-style: solid;
     border-color: transparent transparent #2f2f2fcc transparent;
+}
+
+.tooltip.right .tooltiptext {
+    top: 50%;
+    left: 100%;
+    transform: translate(0, -50%);
+}
+
+.tooltip.right .tooltiptext::after{
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-style: solid;
+    border-color: transparent #2f2f2fcc transparent transparent;
 }
 
 .sidebar-container {
@@ -135,7 +154,6 @@ body {
     padding: 0;
     justify-content: space-between;
     overflow-y: hidden;
-
 }
 
 .sidebar {
@@ -200,7 +218,6 @@ body {
     color:#000000;
 }
 
-
 .sidebar-item:hover {
     background-color: rgb(244,244,244);
     color: #000000;
@@ -231,7 +248,6 @@ body {
 
 }
 
-
 .fade {
     opacity: 0 !important;
     transition: 0.1s ease-out !important;
@@ -260,13 +276,9 @@ body {
     }
 }
 
-
-
 .norender {
     display: none !important;
 }
-
-
 
 .main {
     display: flex;
@@ -355,7 +367,6 @@ body {
     }
 }
 
-
 #hamburger {
     cursor: pointer;
 
@@ -380,7 +391,6 @@ button {
     text-align: center;
     border: solid 2px rgba(105,112,125, 0.75);
     width: 100%;
-
 }
 
 button:hover {
@@ -424,6 +434,7 @@ button:hover {
     padding: 0 !important;
     margin-right: 0 !important;
 }
+
 #user-icon:hover {
     background-color: rgba(0,0,0,0) !important;
 }
@@ -473,7 +484,6 @@ button:hover {
 
 .click-small {
     animation: click-small 0.1s ease-out;
-
 }
 
 @keyframes click-small {
@@ -487,7 +497,6 @@ button:hover {
         transform: scale(1);
     }
 }
-
 
 .confirmation {
     z-index: 100;
@@ -511,7 +520,6 @@ button:hover {
     background: #777777;
 }
 
-
 [contenteditable]:empty:after {
     content: attr(placeholder);
     color: #aaaaaa;
@@ -529,7 +537,3 @@ button:hover {
     outline: 1px solid #77b2eb;
     box-shadow: 0 0 0px 2px #a0bfff;
 }
-
-
-
-
