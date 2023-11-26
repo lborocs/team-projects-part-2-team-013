@@ -252,7 +252,7 @@ fillCurrentUserInfo();
  */
 export async function getEmployeesById(employees) {
     let found = new Map();
-    let to_req = new Set(employees);
+    let to_req = new Set();
 
     let cache = await caches.open("employees");
 
@@ -264,6 +264,7 @@ export async function getEmployeesById(employees) {
         if (cache_emp) {
             // if we are older than 1h
             if (cache_emp.headers.get("date") < Date.now() - 60 * 60 * 60) {
+                console.log(`[getEmployeesById] Purging ${employee} from cache`);
                 to_req.add(employee)
                 cache.delete("/employees/" + employee);
             } else {
@@ -278,21 +279,39 @@ export async function getEmployeesById(employees) {
     console.log(`[getEmployeesById] Found ${found.size} cached requesting ${to_req.size}`);
     
 
-    // fetch the remaining employees from the api
-    if (to_req.size != 0) {
-        let res = await get_api("/employee/employee.php/bulk?ids=" + Array.from(to_req).join(","));
-
-        // cache all fetched employees
-        Object.entries(res.data.employees).forEach(async (employee) => {
-            await cache.put("/employees/" + employee[0], new Response(
-                JSON.stringify(employee[1]),
-                {headers: {"date": Date.now()}}
-            ));
-        });
-        return new Map([...found, ...Object.entries(res.data.employees)]);
-    } else {
+    // if we have none to fetch
+    if (to_req.size == 0) {
         return new Map([...found]);
     }
+
+
+    // fetch the remaining employees
+    let res = await get_api("/employee/employee.php/bulk?ids=" + Array.from(to_req).join(","));
+
+    // cache all fetched employees
+    Object.entries(res.data.employees).forEach(async (employee) => {
+
+        // here we make a "fake response" to cache
+        // we could in future cache this as a real /employee/empID endpoint
+        // if we decide to add it as an endpoint
+        let body = JSON.stringify(employee[1])
+
+        await cache.put(
+            "/employees/" + employee[0], new Response(
+                body,
+                {
+                    headers: {
+                        "date": Date.now(),
+                        "content-type": "application/json",
+                        "content-length": body.length,
+                    }
+                }
+            )
+        );
+    });
+
+    // return requested employees with the cached ones
+    return new Map([...found, ...Object.entries(res.data.employees)]);
 
 }
 managerElementsEnableIfManager();
