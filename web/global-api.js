@@ -53,6 +53,11 @@ async function api_request(route, method, body, retries) {
         case 1004:
         case 1005:
 
+            if (window.location.pathname == "/") {
+                console.log("[API] Already on login page, not redirecting");
+                break;
+            };
+
             let after_login = window.location.pathname + window.location.hash;
 
             sessionStorage.clear();

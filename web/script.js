@@ -1,5 +1,9 @@
+import * as global from "../global-ui.js"
+
 const loginButton = document.getElementById("login")
 const passwordInput = document.getElementById("password")
+
+sessionStorage.clear();
 
 function setLoginStatus(status) {
     document.getElementById("status").innerText = status;
@@ -20,8 +24,12 @@ async function login() {
 
     if (res.success) {
         sessionStorage.setItem("token", res.data.session_token);
-        fetchSession().then((_) => {
-            console.log("[login] logged in successfully - redirecting (hash = " + window.location.hash + ")");
+        global.getCurrentSession().then((session) => {
+
+            let emp = session.employee;
+
+            console.log(`[login] logged in successfully as ${emp.id} (${global.bothNamesToString(emp.firstName, emp.lastName)}) ${session.id} - redirecting`);
+    
             if (window.location.hash !== "") {
                 window.location.href = window.location.hash.substring(1);
             } else {
@@ -43,16 +51,6 @@ passwordInput.addEventListener('keypress', function (e) {
     }
 });
 
-async function fetchSession() {
-    const data = await get_api("/employee/session.php/session");
-    if (data.success) {
-        console.log(`SESSION INFO : ${data.data}`);
-        sessionStorage.setItem("session", JSON.stringify(data.data));
-    } else {
-        console.error("FAILED TO GET SESSION");
-    }
-
-}
 
 document.getElementById('togglePassword').addEventListener('click', function () {
     const passwordInput = document.getElementById('password');

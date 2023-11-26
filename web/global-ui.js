@@ -9,7 +9,9 @@ export const workloadButton = document.querySelector("#workload")
 export const settingsButton = document.querySelector("#settings")
 export const logoutButton = document.querySelector("#logout")
 
-export const userIcon = document.querySelector(".user-both")
+export const userBoth = document.querySelector(".user-both")
+export const userAvatar = document.getElementById("user-icon")
+export const userName = document.getElementById("user-name")
 
 //groups of things
 export const sidebarItems = document.querySelectorAll(".sidebar-item")
@@ -17,6 +19,8 @@ export const topbarItems = document.querySelectorAll(".item")
 console.log("[import] loaded global-ui.js")
 
 caches.open("employees");
+
+//utility functions
 
 /**
  * Formats a date into a human readable string.
@@ -99,6 +103,14 @@ export function nameToAvatar(name) {
     return `https://ui-avatars.com/api/?name=${name.replace(" ", "-")}&background=${colour}&size=256&color=000&rounded=true`
 }
 
+/**
+ * Combines the first name and the last name into a single string.
+ * If the first name is undefined, only the last name is returned.
+ *
+ * @param {string} fname - The first name.
+ * @param {string} sname - The last name.
+ * @returns {string} The combined string of the first name and the last name.
+ */
 export function bothNamesToString(fname, sname) {
     if (fname == undefined) {
         return sname
@@ -106,8 +118,6 @@ export function bothNamesToString(fname, sname) {
         return fname + " " + sname;
     }
 }
-
-//utility functions
 
 /**
  * Applies an animation to a given HTML element and removes it when completed.
@@ -139,106 +149,6 @@ export function showConfirmCheck(parent) {
     
     return check;
 }
-
-//event listeners
-hamburger.addEventListener("click", () => {
-    sidebar.classList.toggle("visible")
-    container.classList.toggle("sidebar-open")
-    document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-        paragraph.classList.toggle("norender")
-    })
-})
-
-homeButton.addEventListener("click", () => {
-    animate(homeButton, "click")
-    setTimeout(() => {
-        window.location.href = "/dashboard/";
-    }, 150)
-});
-
-myListButton.addEventListener("click", () => {
-    animate(myListButton, "click")
-    setTimeout(() => {
-        window.location.href = "/personal/";
-    }, 150)
-});
-
-wikiButton.addEventListener("click", () => {
-    animate(wikiButton, "click")
-    setTimeout(() => {
-        window.location.href = "/wiki/";
-    }, 150)
-});
-
-workloadButton.addEventListener("click", () => {
-    animate(homeButton, "click")
-    setTimeout(() => {
-        window.location.href = "/workload/";
-    }, 150)
-});
-
-logoutButton.addEventListener("click", () => {
-    animate(logoutButton, "click")
-    delete_api("/employee/session.php/session").then(() => {
-        sessionStorage.clear();
-        window.location.href = "/";
-    });
-});
-
-sidebarItems.forEach((sidebarItem, i) => {
-    sidebarItem.addEventListener("click", () => {
-        if (!sidebarItem.classList.contains("selected")) {
-            sidebarItem.classList.add("selected")
-            sidebarItems.forEach((item, j) => {
-                if (j !== i) {
-                    item.classList.remove("selected")
-                }
-            })
-            console.log("[sideBarItem] selected")
-        } 
-    })
-})
-
-export function managerElementsEnableIfManager() {
-    let session = JSON.parse(sessionStorage.getItem("session"));
-    if (!session) {
-        return
-    }
-    let managerElements = document.querySelectorAll(".manager-only");
-    let isManager = (session.auth_level ?? 0) >= 2;
-    managerElements.forEach((elem) => {
-        if (!isManager) {
-           elem.classList.add("norender");
-        } else {
-            elem.classList.remove("norender");
-        }
-        
-})
-}
-
-
-function fillCurrentUserInfo() {
-    let session = JSON.parse(sessionStorage.getItem("session"));
-    if (!session) {
-        return
-    }
-    let employee = session.employee;
-
-    let emp_name = bothNamesToString(employee.firstName, employee.lastName);
-    let emp_icon = nameToAvatar(emp_name);
-
-
-    let icon = document.createElement("img");
-    icon.src=emp_icon;
-    icon.classList.add("avatar");
-
-    document.getElementById("user-icon").replaceChildren(
-        icon
-    );
-    document.getElementById("user-name").innerText = emp_name;
-}
-
-fillCurrentUserInfo();
 
 /**
  * Fetches the employee data for a set of employee IDs.
@@ -314,4 +224,178 @@ export async function getEmployeesById(employees) {
     return new Map([...found, ...Object.entries(res.data.employees)]);
 
 }
+
+async function fetchSession() {
+    const data = await get_api("/employee/session.php/session");
+    if (data.success) {
+        console.log(`SESSION INFO : ${data.data}`);
+        sessionStorage.setItem("session", JSON.stringify(data.data));
+    } else {
+        console.error("FAILED TO GET SESSION");
+    }
+
+    return data.data;
+
+}
+
+
+export async function getCurrentSession(lazy = false) {
+    let session = JSON.parse(sessionStorage.getItem("session"));
+    if (!session && !lazy) {
+        session = await fetchSession();
+    }
+
+    return session;
+}
+
+
+
+
+
+
+
+
+//event listeners and ui functions
+
+if (hamburger !== null) {
+    hamburger.addEventListener("click", () => {
+        sidebar.classList.toggle("visible")
+        container.classList.toggle("sidebar-open")
+        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+            paragraph.classList.toggle("norender")
+        })
+    })
+}
+
+if (homeButton !== null) {
+    homeButton.addEventListener("click", () => {
+        animate(homeButton, "click")
+        setTimeout(() => {
+            window.location.href = "/dashboard/";
+        }, 150)
+    });
+}
+
+if (myListButton !== null) {
+    myListButton.addEventListener("click", () => {
+        animate(myListButton, "click")
+        setTimeout(() => {
+            window.location.href = "/personal/";
+        }, 150)
+    });
+}
+
+if (wikiButton !== null) {
+    wikiButton.addEventListener("click", () => {
+        animate(wikiButton, "click")
+        setTimeout(() => {
+            window.location.href = "/wiki/";
+        }, 150)
+    });
+}
+
+if (workloadButton !== null) {
+    workloadButton.addEventListener("click", () => {
+        animate(homeButton, "click")
+        setTimeout(() => {
+            window.location.href = "/workload/";
+        }, 150)
+    });
+}
+
+if (logoutButton !== null) {
+    logoutButton.addEventListener("click", () => {
+        animate(logoutButton, "click")
+        delete_api("/employee/session.php/session").then(() => {
+            sessionStorage.clear();
+            window.location.href = "/";
+        });
+    });
+}
+
+if (sidebarItems !== null) {
+    sidebarItems.forEach((sidebarItem, i) => {
+        sidebarItem.addEventListener("click", () => {
+            if (!sidebarItem.classList.contains("selected")) {
+                sidebarItem.classList.add("selected")
+                sidebarItems.forEach((item, j) => {
+                    if (j !== i) {
+                        item.classList.remove("selected")
+                    }
+                })
+                console.log("[sideBarItem] selected")
+            } 
+        })
+    })
+}
+
+export function managerElementsEnableIfManager() {
+    getCurrentSession(true).then((session) => {
+        if (!session) {
+            return;
+        }
+        let managerElements = document.querySelectorAll(".manager-only");
+        let isManager = (session.auth_level ?? 0) >= 2;
+        managerElements.forEach((elem) => {
+            if (!isManager) {
+            elem.classList.add("norender");
+            } else {
+                elem.classList.remove("norender");
+            }
+            
+        })
+    });
+}
+
+
+function fillCurrentUserInfo() {
+
+    if (userAvatar === null || userName === null) {
+        return;
+    }
+
+    getCurrentSession(true).then((session) => {
+
+        if (!session) {
+            return
+        }
+
+
+        let employee = session.employee;
+
+        let emp_name = bothNamesToString(employee.firstName, employee.lastName);
+        let emp_icon = nameToAvatar(emp_name);
+
+
+        let icon = document.createElement("img");
+        icon.src=emp_icon;
+        icon.classList.add("avatar");
+
+        userAvatar.replaceChildren(
+            icon
+        );
+        userName.innerText = emp_name;
+    });
+}
+
+export function setBreadcrumb(breadcrumbText, naviagtorPath) {
+    let breadcrumb = document.querySelector(".breadcrumb")
+    if (breadcrumb === null) {
+        return;
+    }
+
+    breadcrumb.innerText = breadcrumbText;
+
+    document.location.hash = naviagtorPath.join("-")
+}
+
+export function getBreadcrumbPathLocator() {
+    if (document.location.hash) {
+        return document.location.hash.substring(1).split("-");
+    } else {
+        return [];
+    }
+}
+
+fillCurrentUserInfo();
 managerElementsEnableIfManager();

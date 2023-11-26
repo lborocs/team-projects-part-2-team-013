@@ -53,7 +53,7 @@ const dragIndicators = document.querySelectorAll(".draggable")
 console.log("[import] loaded client.js")
 
 
-function projectSwitchToOnClick(projectTab) {
+async function projectSwitchToOnClick(projectTab) {
     projectTabs = document.querySelectorAll(".project")
 
     explainerTaskSetToDefault();
@@ -75,17 +75,16 @@ function projectSwitchToOnClick(projectTab) {
         taskRows.forEach((task) => {
             task.remove()
         }) 
-        fetchTasks(id).then((tasks) => {
-            console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + title)
-            globalTasksList = tasks;
-            console.log(globalTasksList)
-        })
+        let tasks = await fetchTasks(id);
+        console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + title)
+        globalTasksList = tasks;
+        console.log(globalTasksList)
+
         
         // unselect not this project
         console.log("[projectSwitchToOnClick] selected " + title)
         //update the breadcrumb with the project name
-        let breadcrumb = document.querySelector(".breadcrumb")
-        breadcrumb.innerHTML = `Projects > ${title}`
+        global.setBreadcrumb(`Projects > ${title}`, [id]);
         explainerTitle.innerText = title
         explainerDescription.innerText = description
         explainerTeamLeaderName.innerText = teamLeader
@@ -143,11 +142,22 @@ explainerShowHide.addEventListener("click", () => {
 })
 
 function explainerTaskSetToDefault() {
+    console.log("[explainerTaskSetToDefault] setting to default");
     explainerTaskTitle.innerHTML = ""
     explainerTaskDescription.innerHTML = "Select a task to view more information..."
     explainerTaskDate.innerHTML = ""
     let statusElement = document.querySelector(".status");
     statusElement.innerHTML = "";
+
+    let currentProject = document.querySelector(".project.selected");
+    if (currentProject) {
+        let projName = currentProject.getAttribute("data-title");
+        let projID = currentProject.getAttribute("data-ID");
+        global.setBreadcrumb(`Projects > ${projName}`, [projID]);
+    } else {
+        global.setBreadcrumb(`Projects`, []);
+    }
+    
 }
 
 function getTaskState(task) {
@@ -168,7 +178,7 @@ function getTaskState(task) {
         console.error("invalid state");
     }
 }
-//shows the taskRow in the explainer#
+//shows the taskRow in the explainer
 //the taskRow contains title, due date and state in columns"
 //the rest of the informaton is in the data attributes: desc, assignee, date
 function showTaskInExplainer(task) {
@@ -214,12 +224,12 @@ function showTaskInExplainer(task) {
     statusElement.innerHTML = `${icon} ${statusText}`;;
     animate(document.querySelector(".task-overview"), "flash")
 
-    //show task name in breadcrumb
-    let breadcrumb = document.querySelector(".breadcrumb");
     //get currently selected project
     let selectedProject = document.querySelector(".project.selected");
     let projName = selectedProject.getAttribute("data-title");
-    breadcrumb.innerHTML = `Projects > ${projName} > ${titleElement.innerHTML}`;
+    let projID = selectedProject.getAttribute("data-ID");
+
+    global.setBreadcrumb(`Projects > ${projName} > ${titleElement.innerHTML}`, [projID, taskID])
 }
 
 
@@ -439,13 +449,39 @@ async function fetchProjects() {
     }
 }
 
-fetchProjects().then((projects) => {
+fetchProjects().then(async (projects) => {
     let first_index = projectTabs.length - 1;
     console.log("[initialFetchProjects] projects:")
     console.log(projects)
     //fetch tasks for the first project
-    projectSwitchToOnClick(projectTabs[first_index]);
-    setUpProjectTabEventListeners();
+
+    let [projID, taskID] = global.getBreadcrumbPathLocator();
+
+    if (projID) {
+        console.log(`[initialFetchProjects] found intial project: ${projID} task: ${taskID}`)
+    }
+
+
+    let project = Array.from(projectTabs).find((tab) => {return tab.getAttribute("data-ID") == projID});
+
+    // if we have a project from the breadcrumb, switch to it
+    if (project) {
+        console.log("[initialFetchProjects] breadcrumb project was found")
+
+        // we must await this here so that the tasks are fetched by the time we go to show the task
+        await projectSwitchToOnClick(project);
+
+        // task must be fetched after the project is switched to (so the tasks are rendered)
+        let initialTask = document.getElementById(taskID);
+        if (initialTask) {
+            showTaskInExplainer(initialTask);
+        }
+    }
+    // else we just use the first one
+    else {
+        projectSwitchToOnClick(projectTabs[first_index]);
+        setUpProjectTabEventListeners();
+    };
 })
 
 
