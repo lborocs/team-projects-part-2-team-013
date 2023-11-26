@@ -47,13 +47,16 @@ async function api_request(route, method, body, retries) {
 
     console.error(`[API] ${method} ${route} ERRORED: ${status} - ${error_code} - ${error_message}`);
 
-    
+
     switch (error_code) {
         case 1000:
         case 1004:
         case 1005:
+
+            let after_login = window.location.pathname + window.location.hash;
+
             sessionStorage.clear();
-            window.location.href = "/" // redirect to login
+            window.location.href = `/#${after_login}` // redirect to login
             break;
         
         case 3000: // unhandled internal exception

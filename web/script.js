@@ -21,7 +21,13 @@ async function login() {
     if (res.success) {
         sessionStorage.setItem("token", res.data.session_token);
         fetchSession().then((_) => {
-            window.location.href = "/dashboard/"
+            console.log("[login] logged in successfully - redirecting (hash = " + window.location.hash + ")");
+            if (window.location.hash !== "") {
+                window.location.href = window.location.hash.substring(1);
+            } else {
+                window.location.href = "/dashboard/";
+            }
+
         });
     } else {
         statusElement.classList.add("status-incorrect");
