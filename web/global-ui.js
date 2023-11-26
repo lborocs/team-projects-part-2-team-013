@@ -378,15 +378,15 @@ function fillCurrentUserInfo() {
     });
 }
 
-export function setBreadcrumb(breadcrumbText, naviagtorPath) {
+export function setBreadcrumb(breadcrumbPaths, naviagtorPaths) {
     let breadcrumb = document.querySelector(".breadcrumb")
     if (breadcrumb === null) {
         return;
     }
 
-    breadcrumb.innerText = breadcrumbText;
+    breadcrumb.innerText = breadcrumbPaths.join(" > ");
 
-    document.location.hash = naviagtorPath.join("-")
+    document.location.hash = naviagtorPaths.join("-")
 }
 
 export function getBreadcrumbPathLocator() {
