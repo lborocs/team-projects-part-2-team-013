@@ -450,6 +450,14 @@ async function fetchProjects() {
 }
 
 fetchProjects().then(async (projects) => {
+
+    // no projects found
+    if (!projects) {
+        return
+    }
+    
+    let alertMessage;
+
     let first_index = projectTabs.length - 1;
     console.log("[initialFetchProjects] projects:")
     console.log(projects)
@@ -475,13 +483,25 @@ fetchProjects().then(async (projects) => {
         let initialTask = document.getElementById(taskID);
         if (initialTask) {
             showTaskInExplainer(initialTask);
+        } else if (taskID) {
+            alertMessage = "Looks like you followed a link to a task that either you dont have access to or doesnt exist."
         }
     }
     // else we just use the first one
     else {
-        projectSwitchToOnClick(projectTabs[first_index]);
+        await projectSwitchToOnClick(projectTabs[first_index]);
         setUpProjectTabEventListeners();
-    };
+
+        if (projID) {
+            alertMessage = "Looks like you followed a link to a project that either you dont have access to or doesnt exist."
+        }
+    }
+
+    // we show the alert message after everything else so we dont block the event loop
+    // and the user doesnt have to wait for the page to load after navigating through the error
+    if (alertMessage) {
+        alert(alertMessage);
+    }
 })
 
 
