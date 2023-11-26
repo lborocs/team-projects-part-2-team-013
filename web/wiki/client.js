@@ -90,7 +90,7 @@ function setUpPostsEventListeners() {
         post.addEventListener("click", () => {
             let postID = post.getAttribute("data-postID")
             console.log("Post clicked")
-            window.location.href = `/wiki/post/index.html#${postID}`;
+            window.location.href = `/wiki/post/#${postID}`;
         })
     })
 }
