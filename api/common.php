@@ -229,7 +229,7 @@ class Session {
         $res = curl_exec($req);
 
         if ($res === false) {
-            respond_bad_gateway("Session validation server is down : " . curl_error($req), ERROR_SESSION_VALIDATION_SERVER_DOWN);
+            respond_infrastructure_error("Session validation server is down : " . curl_error($req), ERROR_SESSION_VALIDATION_SERVER_DOWN);
         }
 
         $status_code = curl_getinfo($req, CURLINFO_HTTP_CODE);
@@ -247,7 +247,7 @@ class Session {
             }
         }
         else if ($status_code != 404) {
-            respond_bad_gateway("Session validation server unhandled error", ERROR_SESSION_VALIDATION_SERVER_DOWN);
+            respond_infrastructure_error("Session validation server unhandled error", ERROR_SESSION_VALIDATION_SERVER_DOWN);
         }
         $duration = microtime(true) - $before;
 
@@ -433,8 +433,8 @@ function respond_database_failure(bool $inserting=false) {
     }
 }
 
-function respond_bad_gateway(string $message, int $code) {
-    respond_error($message, $code, 502);
+function respond_infrastructure_error(string $message, int $code) {
+    respond_error($message, $code, 503);
 }
 
 function respond_debug(string $message) {
