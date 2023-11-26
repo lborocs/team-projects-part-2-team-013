@@ -17,7 +17,7 @@ async function api_request(route, method, body, retries) {
         encoded_body = JSON.stringify(body)
     }
 
-    const response = await fetch("https://api.013.team" + route, {
+    const response = await fetch("https://013.team/api" + route, {
         method: method,
         headers: headers,
         body:  encoded_body
