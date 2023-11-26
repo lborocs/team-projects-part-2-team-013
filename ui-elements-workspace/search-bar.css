@@ -20,7 +20,7 @@
 }
 
 .search:focus-within {
-    border-color: rgb(56, 139, 255);
+    border-color: #388bffaa;
 }
 
 .search-input {
