@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="task-card.css">
     <link rel="stylesheet" href="text-button.css">
     <link rel="stylesheet" href="icon-button.css">
+    <link rel="stylesheet" href="popover.css">
     <script src="task-card.js" defer></script>
   </head>
   <body>
@@ -58,7 +59,6 @@
                 <div class="dropdown-option">Option 3</div>
             </div>
         </div>
-        <!-- button ui component with an icon and text -->
         <div class="text-button">
             <div class="button-icon">
                 <i class="far fa-plus"></i>
@@ -86,7 +86,28 @@
         <div class="text-button">
             <div class="button-icon"></div>
             <div class="button-text">
-                No icon
+                Button with No Icon
+            </div>
+        </div>
+        <div class="icon-button tooltip">
+            <p class="tooltiptext">Add a new task</p>
+            <div class="button-icon">
+                <i class="far fa-plus"></i>
+            </div>
+        </div>
+        <div class="icon-button">
+            <div class="button-icon">
+                <i class="far fa-envelope"></i>
+            </div>
+        </div>
+        <div class="icon-button">
+            <div class="button-icon">
+                <i class="far fa-ellipsis"></i>
+            </div>
+        </div>
+        <div class="icon-button">
+            <div class="button-icon">
+                <i class="far fa-edit"></i>
             </div>
         </div>
         <div class="taskcolumn">
@@ -175,6 +196,50 @@
                 </div>
             </div>
         </div>
+        <div class="search-dropdown">
+            <div class="search">
+                <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+    
+                </input>
+                <div class="search-icon">
+                    <i class="fa-regular fa-user-magnifying-glass"></i>
+                </div>
+                <div class="search-icon clear-icon">
+                    <i class="far fa-times"></i>
+                </div>
+            </div>
+            <div class="popover">
+                <div class="employee-list">
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Jamie Skitt</span>
+                        <i class="far fa-user-plus"></i>
+                    </div>
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Octavian-Iacovici&amp;background=89aee5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Octavian Iacovici</span>
+                        <i class="far fa-user-plus"></i>
+                    </div>
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Danial&amp;background=89c0e5&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Danial</span>
+                        <i class="far fa-user-plus"></i>
+                    </div>
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Jamie Skitt</span>
+                        <i class="far fa-user-plus"></i>
+                    </div>
+                    <div class="name-card">
+                        <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+                        <span>Jamie Skitt</span>
+                        <i class="far fa-user-plus"></i>
+                    </div>
+                </div>
+                <div class="show-more text-button">Show more members</div>
+            </div>
+        </div>
+        
     </div>
 </body>
   </body>
