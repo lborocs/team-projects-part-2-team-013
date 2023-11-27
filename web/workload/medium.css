@@ -1,5 +1,5 @@
 @media screen and (max-width: 1450px) and (min-width: 856px) {
-    .dashboard {
+    .projects {
         display: grid;
         grid-template-areas:
             "active-tasks project-progress task-completions"

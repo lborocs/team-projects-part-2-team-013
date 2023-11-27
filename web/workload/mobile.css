@@ -50,7 +50,7 @@
         height: 100%;
     }
 
-    .dashboard {
+    .projects {
         display: grid;
         grid-template-areas:
             "active-tasks"
@@ -107,7 +107,7 @@
         overflow-y: none;
     }
 
-    .dashboard {
+    .projects {
         padding-bottom: 20px;
     }
 }
