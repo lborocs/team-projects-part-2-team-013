@@ -229,7 +229,7 @@ function showTaskInExplainer(task) {
     let projName = selectedProject.getAttribute("data-title");
     let projID = selectedProject.getAttribute("data-ID");
 
-    global.setBreadcrumb(["Projects", projName, "titleElement.innerHTML"], [projID, taskID])
+    global.setBreadcrumb(["Projects", projName, titleElement.innerHTML.trim()], [projID, taskID])
 }
 
 
@@ -450,59 +450,75 @@ async function fetchProjects() {
 }
 
 fetchProjects().then(async (projects) => {
+    await initialRenderProjects(projects);
+})
 
+window.addEventListener("breadcrumbnavigate", async (event) => {
+    console.log("[breadcrumbnavigate] event received");
+    await renderFromBreadcrumb();
+
+});
+
+async function renderFromBreadcrumb() {
+    let [projID, taskID] = global.getBreadcrumbPathLocator();
+
+    console.log(`[renderFromBreadcrumb] project: ${projID} task: ${taskID}`)
+
+    if (!projID) {
+        return;
+    }
+
+
+    let data = await get_api(`/project/project.php/project/${projID}`);
+
+    if (!data.success) {
+
+        if (data.data.code == 4002) { // resource not found code
+            alert("You appear to have followed a link to a project that either does not exist or you do not have access to.")
+        }
+
+        console.error(`[renderFromBreadcrumb] Error fetching project ${projID}: ${data.data.message} (${data.data.code})`);
+        return;
+    }
+
+    let project = data.data;
+
+    Array.from(projectTabs).forEach((projectTab) => {
+        if (projectTab.getAttribute("data-ID") == projID) {
+            projectTab.remove();
+        }
+    });
+
+
+    let element = await projectObjectRenderAndListeners(project);
+
+    projectSwitchToOnClick(element);
+
+
+
+}
+
+async function initialRenderProjects(projects) {
     // no projects found
     if (!projects) {
         return
     }
     
-    let alertMessage;
 
     let first_index = projectTabs.length - 1;
     console.log("[initialFetchProjects] projects:")
     console.log(projects)
     //fetch tasks for the first project
 
-    let [projID, taskID] = global.getBreadcrumbPathLocator();
 
-    if (projID) {
-        console.log(`[initialFetchProjects] found intial project: ${projID} task: ${taskID}`)
-    }
+    await projectSwitchToOnClick(projectTabs[first_index]);
+    setUpProjectTabEventListeners();
 
-
-    let project = Array.from(projectTabs).find((tab) => {return tab.getAttribute("data-ID") == projID});
-
-    // if we have a project from the breadcrumb, switch to it
-    if (project) {
-        console.log("[initialFetchProjects] breadcrumb project was found")
-
-        // we must await this here so that the tasks are fetched by the time we go to show the task
-        await projectSwitchToOnClick(project);
-
-        // task must be fetched after the project is switched to (so the tasks are rendered)
-        let initialTask = document.getElementById(taskID);
-        if (initialTask) {
-            showTaskInExplainer(initialTask);
-        } else if (taskID) {
-            alertMessage = "Looks like you followed a link to a task that either you dont have access to or doesnt exist."
-        }
-    }
-    // else we just use the first one
-    else {
-        await projectSwitchToOnClick(projectTabs[first_index]);
-        setUpProjectTabEventListeners();
-
-        if (projID) {
-            alertMessage = "Looks like you followed a link to a project that either you dont have access to or doesnt exist."
-        }
-    }
 
     // we show the alert message after everything else so we dont block the event loop
     // and the user doesnt have to wait for the page to load after navigating through the error
-    if (alertMessage) {
-        alert(alertMessage);
-    }
-})
+
+}
 
 
 function calculateTaskCount() {
@@ -769,6 +785,8 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) 
     document.querySelector(".projects").appendChild(project)
     projectTabs = document.querySelectorAll(".project")
     teamLeaderEnableElementsIfTeamLeader()
+
+    return project
 }
 
 async function addTask(state) {
@@ -1238,10 +1256,11 @@ async function projectObjectRenderAndListeners(project) {
 
 
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
-    renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader);
+    let element = renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader);
 
     setUpProjectTabEventListeners();
     calculateTaskCount();
+    return element;
 }
 
 let addProjectButton = document.querySelector(".add-project");
