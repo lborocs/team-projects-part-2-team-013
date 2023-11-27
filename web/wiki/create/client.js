@@ -39,12 +39,8 @@ function getTagList() {
   }
   
   async function createPost(data) {
-    try {
-      const response = await post_api("/forum/posts.php/post", data);
+      const response = await post_api("/wiki/post.php/post", data);
       console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
   }
   
   function submitPost(){
@@ -60,5 +56,5 @@ function getTagList() {
       }
       console.log(data);
       createPost(data);
-      //window.location.href = "../";
+      window.location.href = "../";
   }
