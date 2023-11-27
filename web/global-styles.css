@@ -9,6 +9,18 @@ body {
     box-sizing: border-box;
 }
 
+.breadcrumb {
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.breadcrumb-child {
+    text-decoration: none;
+    margin-left: 0.2em;
+    margin-right: 0.2em;
+}
+
 .dropdown {
     font-family: sans-serif;
     font-family: 'Open Sans', sans-serif;
