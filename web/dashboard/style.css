@@ -348,7 +348,7 @@
 
 .taskgrid {
     display: flex;
-    align-self: center;
+    align-self: flex-start;
     gap: 1em;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
