@@ -33,7 +33,7 @@ async function login() {
             if (window.location.hash !== "") {
                 window.location.href = window.location.hash.substring(1);
             } else {
-                window.location.href = "/dashboard/";
+                window.location.href = "/projects/";
             }
 
         });

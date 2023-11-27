@@ -274,3 +274,7 @@ function confirmDelete() {
         });
     });
 }
+
+document.getElementById("newPost").addEventListener("click", () => {
+    window.location.href = "/wiki/create/";
+})

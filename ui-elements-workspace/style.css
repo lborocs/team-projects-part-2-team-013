@@ -30,6 +30,18 @@ body {
     transition: 0.08s ease-out;
 }
 
+button {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    padding: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
 
 
 
