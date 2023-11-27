@@ -32,7 +32,7 @@ function contextual_run() {
     global $routes;
 
 
-    $origin = $_SERVER["HTTP_ORIGIN"] ?? null;
+    $origin = $_SERVER["HTTP_ORIGIN"] ?? "";
 
     // if the origin is some form of localhost allow it
     // otherwise we only allow the root domain
