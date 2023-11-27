@@ -75,7 +75,7 @@ async function projectSwitchToOnClick(projectTab) {
         taskRows.forEach((task) => {
             task.remove()
         }) 
-        let tasks = await fetchTasks(id);
+        let tasks = await fetchAndRenderTasks(id);
         console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + title)
         globalTasksList = tasks;
         console.log(globalTasksList)
@@ -247,6 +247,9 @@ function showTaskInExplainer(task) {
 
 
 function setUpTaskEventListeners() {
+
+    console.log("[setUpTaskEventListeners] setting up event listeners")
+
     taskCards = document.querySelectorAll(".task");
     taskCards.forEach((taskCard) => {
 
@@ -337,9 +340,9 @@ function findNext(container, y) {
     return closest;
 }
 
-async function fetchTasks(projID) {
+async function fetchAndRenderTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
-    console.log("[fetchTasks] fetched tasks for " + projID);
+    console.log("[fetchAndRenderTasks] fetched tasks for " + projID);
     console.log(data);
     // process the data here
     if (data.success == true) {
@@ -348,9 +351,10 @@ async function fetchTasks(projID) {
         await Promise.all(data.data.tasks.map((task) => {
             taskObjectRenderAll(task)
         }));
+        setUpTaskEventListeners();
         if (data.data.contains_assignments) {
             renderAssignments(data.data.assignments).then(() => {
-                console.log("[fetchTasks] assignments rendered");
+                console.log("[fetchAndRenderTasks] assignments rendered");
             });
         }
         return data.data.tasks
@@ -447,13 +451,13 @@ async function teamLeaderEnableElementsIfTeamLeader() {
 })
 }
 
-async function fetchProjects() {
+async function fetchAndRenderAllProjects() {
     const data = await get_api('/project/project.php/projects');
-    console.log("[fetchProjects] fetched projects");
+    console.log("[fetchAndRenderAllProjects] fetched projects");
     console.log(data);
     // process the data here
     if (data.success == true) {
-        console.log("[fetchProjects] projects have been fetched successfully")
+        console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
         await Promise.all(data.data.projects.map(async (project) => {
 
             await projectObjectRenderAndListeners(project);
@@ -462,7 +466,7 @@ async function fetchProjects() {
     }
 }
 
-fetchProjects().then(async (projects) => {
+fetchAndRenderAllProjects().then(async (projects) => {
     await initialRenderProjects(projects);
 })
 
@@ -617,7 +621,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     //move the add task button to the bottom
     taskTableBody.appendChild(listAddButtonRow);
     calculateTaskCount();
-    setUpTaskEventListeners();
 }
 
 
@@ -788,7 +791,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     finishedColumn.appendChild(finishedAddButton);
 
     calculateTaskCount();
-    setUpTaskEventListeners();
 }
 
 
