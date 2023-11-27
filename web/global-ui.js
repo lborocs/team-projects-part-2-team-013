@@ -388,43 +388,52 @@ function fillCurrentUserInfo() {
     });
 }
 
-export function setBreadcrumb(breadcrumbPaths, naviagtorPaths) {
+export function setBreadcrumb(breadcrumbPaths, hrefs) {
     let breadcrumb = document.querySelector(".breadcrumb")
     if (breadcrumb === null) {
         return;
     }
     breadcrumb.replaceChildren();
 
-    let zipped = [];
-    for (let i = 0; i < breadcrumbPaths.length; i++) {
-        zipped[i] = [breadcrumbPaths[i], naviagtorPaths.slice(0, i)];
-    }
 
     console.log("[setBreadcrumb] updating breadcrumb to " + breadcrumbPaths.join(" > "));
 
-    for (let [path, navigator] of zipped) {
-        let child = document.createElement("a");
-        child.classList.add("breadcrumb-child");
-        child.innerText = path;
-        child.href = window.location.pathname + "#" + navigator.join("-");
+    if (breadcrumbPaths.length != hrefs.length) {
+        console.error("[setBreadcrumb] breadcrumbPaths and hrefs must be the same length");
+        console.warn("[setBreadcrumb] breadcrumbPaths: " + breadcrumbPaths);
+        console.warn("[setBreadcrumb] hrefs: " + hrefs);
+        return;
+    }
+
+    for (let i = 0; i < breadcrumbPaths.length; i++) {
         
-        // set breadcrumb to what we just navigated to
+        let path = breadcrumbPaths[i];
+        let navigator = hrefs[i];
+
+        let child = document.createElement("a");
+        child.classList.add("breadcrumb-child", "breadcrumb-navigator");
+        child.innerText = path;
+        child.href = navigator;
+        
+        // set breadcrumb to what we just navigated to 
         child.addEventListener("click", () => {
             let event = new Event("breadcrumbnavigate");
-            setBreadcrumb(breadcrumbPaths.slice(0, navigator.length + 1), navigator);
+            setBreadcrumb(breadcrumbPaths.slice(0, i+1), hrefs.slice(0, i+1));
             window.dispatchEvent(event);
         });
 
         breadcrumb.appendChild(child);
         let divider = document.createElement("i");
-        divider.classList.add("fa-solid");
-        divider.classList.add("fa-chevron-right");
-        divider.classList.add("breadcrumb-child");
+        divider.classList.add("fa-solid", "fa-chevron-right");
+        divider.classList.add("breadcrumb-child", "breadcrumb-divider");
         breadcrumb.appendChild(divider);
     }
     breadcrumb.lastChild.remove();
 
-    document.location.hash = naviagtorPaths.join("-")
+    let last = hrefs[hrefs.length - 1];
+    
+    console.log("[setBreadcrumb] updating hash to " + last);
+    document.location.hash = new URL(last, document.location).hash;
 }
 
 export function getBreadcrumbPathLocator() {

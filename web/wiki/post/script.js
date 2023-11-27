@@ -21,6 +21,8 @@ async function getPostData(postID){
     document.querySelector(".author").innerText = global.bothNamesToString(data.data.firstName, data.data.lastName)
     document.querySelector(".date").innerText = global.formatDate(new Date(data.data.createdAt * 1000))
     console.log(data.data.content)
+
+    global.setBreadcrumb(["Wiki", data.data.title], ["../", '#' + data.data.postID])
     return data.data
 }
 
