@@ -70,9 +70,11 @@ class RequestContext extends stdClass {
         // parse request body
         if ($this->method_allows_body()) {
             $json = json_decode(file_get_contents('php://input'), true);
-            if (is_null($json)) {
+
+            // only error if the body is invalid json, not for null bodies
+            if (is_null($json) && json_last_error() !== JSON_ERROR_NONE) {
                 respond_bad_request(
-                    "Request body is either missing or invalid JSON",
+                    "Request body is invalid JSON : " . json_last_error_msg(),
                     ERROR_BODY_INVALID,
                 );
             }
