@@ -401,8 +401,8 @@ export function setBreadcrumb(breadcrumbPaths, naviagtorPaths) {
         // set breadcrumb to what we just navigated to
         child.addEventListener("click", () => {
             let event = new Event("breadcrumbnavigate");
-            window.dispatchEvent(event);
             setBreadcrumb(breadcrumbPaths.slice(0, navigator.length + 1), navigator);
+            window.dispatchEvent(event);
         });
 
         breadcrumb.appendChild(child);
