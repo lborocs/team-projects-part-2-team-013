@@ -49,9 +49,10 @@ async function api_request(route, method, body, retries) {
 
 
     switch (error_code) {
-        case 1000:
-        case 1004:
-        case 1005:
+        case 1004: // session expired
+        case 1005: // session revoked
+        alert("Your session has expired, please log in again");
+        case 1000: // not authenticated
 
             if (window.location.pathname == "/") {
                 console.log("[API] Already on login page, not redirecting");
@@ -66,6 +67,7 @@ async function api_request(route, method, body, retries) {
         
         case 3000: // unhandled internal exception
         case 3005: // db general failure
+        case 3006: // session validation server failure
 
             if (retries === undefined || retries > 0) {
                 if (retries === undefined) {
