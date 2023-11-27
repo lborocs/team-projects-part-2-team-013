@@ -1,4 +1,14 @@
-async function api_request(route, method, body, retries) {
+
+const DEFAULT_OPTIONS = {
+    redirect_on_error: true,
+    retries: 3,
+}
+
+// always remember null is a valid body
+async function api_request(route, method, body, options={}) {
+
+    options = Object.assign({}, DEFAULT_OPTIONS, options);
+    console.log("[API] request options: ", options);
 
     let headers;
 
@@ -15,16 +25,16 @@ async function api_request(route, method, body, retries) {
         }
     }
     
-    let encoded_body = null;
-    if (body !== undefined) {
-        encoded_body = JSON.stringify(body)
-    }
-
-    const response = await fetch("https://013.team/api" + route, {
+    let reqInit = {
         method: method,
         headers: headers,
-        body:  encoded_body
-    });
+    };
+
+    if (body !== undefined) {
+        reqInit.body = JSON.stringify(body);
+    }
+
+    const response = await fetch("https://013.team/api" + route, reqInit);
     const status = response.status;
 
     // 204 no content has no content
@@ -50,24 +60,25 @@ async function api_request(route, method, body, retries) {
 
     console.error(`[API] ${method} ${route} ERRORED: ${status} - ${error_code} - ${error_message}`);
 
-
     switch (error_code) {
         case 1004: // session expired
         case 1005: // session revoked
-        alert("Your session has expired, please log in again");
+            alert("Your session has expired, please log in again");
         case 1000: // not authenticated
-
-            if (window.location.pathname == "/") {
-                console.log("[API] Already on login page, not redirecting");
-                break;
-            };
-
-            let after_login = window.location.pathname + window.location.hash;
 
             localStorage.clear();
             await caches.delete("employees");
-            window.location.href = `/#${after_login}` // redirect to login
-            break;
+
+            if (!options.redirect_on_error) {
+                console.log("[API] Explicitly told not to redirect");
+                break;
+            } else {
+                let after_login = window.location.pathname + window.location.hash;
+                window.location.href = `/#${after_login}` // redirect to login
+                break;
+            };
+
+
         
         case 3000: // unhandled internal exception
         case 3005: // db general failure
@@ -94,22 +105,22 @@ async function api_request(route, method, body, retries) {
     return data;
 }
 
-async function get_api(route) {
-    return api_request(route, "GET");
+async function get_api(route, options=DEFAULT_OPTIONS) {
+    return api_request(route, "GET", undefined, options);
 }
 
-async function post_api(route, body) {
-    return api_request(route, "POST", body);
+async function post_api(route, body, options=DEFAULT_OPTIONS) {
+    return api_request(route, "POST", body, options);
 }
 
-async function patch_api(route, body) {
-    return api_request(route, "PATCH", body);
+async function patch_api(route, body, options=DEFAULT_OPTIONS) {
+    return api_request(route, "PATCH", body, options);
 }
 
-async function delete_api(route) {
-    return api_request(route, "DELETE");
+async function delete_api(route, options=DEFAULT_OPTIONS) {
+    return api_request(route, "DELETE", undefined, options);
 }
 
-async function put_api(route, body) {
-    return api_request(route, "PUT", body);
+async function put_api(route, body, options=DEFAULT_OPTIONS) {
+    return api_request(route, "PUT", body, options);
 }

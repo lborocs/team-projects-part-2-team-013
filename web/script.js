@@ -65,8 +65,8 @@ document.getElementById('togglePassword').addEventListener('click', function () 
 });
 
 // redirect to projects if we are logged in
-global.getCurrentSession(true).then((session) => {
-    if (session !== null) {
+global.renewCurrentSession().then((session) => {
+    if (session) {
         window.location.href = "/projects/";
     }
 });

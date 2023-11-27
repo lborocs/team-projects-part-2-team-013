@@ -258,6 +258,20 @@ export async function getCurrentSession(lazy = false) {
     return session;
 }
 
+export async function renewCurrentSession() {
+    let data = await put_api("/employee/session.php/session", undefined, {redirect_on_error:false});
+
+    if (data.success) {
+        localStorage.setItem("token", data.data.session_token)
+        localStorage.removeItem("session");
+        console.log("[renewCurrentSession] session renewed")
+        return await getCurrentSession();
+    } else {
+        return null;
+    }
+}
+
+
 export async function clearStorages() {
     localStorage.clear();
     await caches.delete("employees");
