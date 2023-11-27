@@ -86,6 +86,14 @@ function hsvToHex(h,s, v) {
     
 }
 
+export function generateAvatarSvg(text, color) {
+    return `
+    <svg xmlns="http://www.w3.org/2000/svg" width="256px" height="256px" viewBox="0 0 256 256" version="1.1">
+        <circle fill="#e589ba" cx="128" width="256" height="256" cy="128" r="128"/>
+        <text xmlns="http://www.w3.org/2000/svg" style="color: ${color}; line-height: 1; font-family: 'Open Sans', sans-serif" alignment-baseline="middle" text-anchor="middle" font-size="112" font-weight="400" dy=".1em" dominant-baseline="middle" fill="#000" x="50%" y="50%">${text}</text>
+    </svg>`
+}
+
 
 /**
  * Generates the URL for an initials avatar given a name.
@@ -98,9 +106,10 @@ function hsvToHex(h,s, v) {
  * nameToAvatar("Firat Batmaz");
  */
 export function nameToAvatar(name) {
+    let initials = name.split(" ").map((word) => word[0]).join("");
     let degree = hash(name) % 360;
     let colour = hsvToHex(degree, 40, 90);
-    return `https://ui-avatars.com/api/?name=${name.replace(" ", "-")}&background=${colour}&size=256&color=000&rounded=true`
+    return `data:image/svg+xml;base64,${btoa(generateAvatarSvg(initials, colour))}`;
 }
 
 /**
