@@ -990,6 +990,8 @@ mediaQueryMobile.addEventListener("change", (e) => {
 if (mediaQueryMedium.matches) {
     console.log("[mediaQueryMedium] medium")
     explainer.classList.add("hidden")
+    explainerShowHide.innerHTML = `<i class="fa-solid fa-arrows-up-to-line fa-rotate-270"></i>`
+
 }
 
 //check for medium on resize
@@ -998,12 +1000,15 @@ mediaQueryMedium.addEventListener("change", (e) => {
         console.log("[mediaQueryMediumChange] medium")
         explainer.classList.add("hidden")
         explainerShowHide.classList.remove("norender")
+        explainerShowHide.innerHTML = `<i class="fa-solid fa-arrows-up-to-line fa-rotate-270"></i>`
+
     }
 })
 
 //check for desktop on load
 if (mediaQueryDesktop.matches) {
     console.log("[mediaQueryDesktop] desktop")
+    explainerShowHide.innerHTML = `<i class="fa-solid fa-arrows-up-to-line fa-rotate-90"></i>`
 }
 
 //check for desktop on resize
@@ -1012,6 +1017,7 @@ mediaQueryDesktop.addEventListener("change", (e) => {
         console.log("[mediaQueryDesktopChange] desktop")
         explainer.classList.remove("hidden")
         explainerShowHide.classList.remove("norender")
+        explainerShowHide.innerHTML = `<i class="fa-solid fa-arrows-up-to-line fa-rotate-90"></i>`
     }
 })
 
