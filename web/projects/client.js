@@ -84,7 +84,7 @@ async function projectSwitchToOnClick(projectTab) {
         // unselect not this project
         console.log("[projectSwitchToOnClick] selected " + title)
         //update the breadcrumb with the project name
-        global.setBreadcrumb(["Projects", title], [id]);
+        global.setBreadcrumb(["Projects", title], [window.location.pathname, "#" + id]);
         explainerTitle.innerText = title
         explainerDescription.innerText = description
         explainerTeamLeaderName.innerText = teamLeader
@@ -169,9 +169,9 @@ function explainerTaskSetToDefault() {
     if (currentProject) {
         let projName = currentProject.getAttribute("data-title");
         let projID = currentProject.getAttribute("data-ID");
-        global.setBreadcrumb(["Projects", projName], [projID]);
+        global.setBreadcrumb(["Projects", projName], [window.location.pathname, "#" + projID]);
     } else {
-        global.setBreadcrumb(["Projects"], []);
+        global.setBreadcrumb(["Projects"], [window.location.pathname]);
     }
     
 }
@@ -245,7 +245,7 @@ function showTaskInExplainer(task) {
     let projName = selectedProject.getAttribute("data-title");
     let projID = selectedProject.getAttribute("data-ID");
 
-    global.setBreadcrumb(["Projects", projName, titleElement.innerHTML.trim()], [projID, taskID])
+    global.setBreadcrumb(["Projects", projName, titleElement.innerHTML.trim()], [window.location.pathname, "#" + projID, "#" + projID + "-" + taskID])
 }
 
 
