@@ -1,0 +1,111 @@
+.popover-menu {
+    position: relative;
+}
+
+.popover-content {
+    position: relative;
+    top: 40px;
+    right: 420px;
+    width: 400px;
+    background-color: #fff;
+    border: solid 1px rgba(105, 112, 125, 0.1);
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
+    display: none;
+
+    & a {
+        text-decoration: none;
+        color: black;
+    }
+
+
+    .title {
+        font-size: 18px;
+        font-weight: 700;
+    }
+}
+
+#toggle:checked + .popover-content {
+    display: block;
+}
+
+.notification-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    gap: 10px;
+
+    font-size: 14px;
+
+    border-radius: 3px;
+    border-bottom: 1px solid #dddddd;
+
+    transition: background-color 0.1s ease-out;
+
+    .arrow {
+        margin-left: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: auto;
+        aspect-ratio: 1;
+
+        & i {
+            display: none;
+            font-size: 18px;
+            color: #666;
+        }
+    }
+
+    .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: auto;
+        aspect-ratio: 1;
+
+        & i {
+            font-size: 20px;
+        }
+
+    }
+
+    .name-card {
+        padding-left: 0;
+    }
+
+}
+
+.notification-card:hover {
+    cursor: pointer;
+    background-color: #f1f2f4;
+
+    .arrow i {
+        display: flex;
+    }
+}
+
+.notification-card:last-child {
+    border-bottom: none;
+}
+
+
+.notification-card .details {
+    flex: 1;
+    & span {
+        font-weight: 600;
+        color: rgb(29, 29, 29);
+    }
+}
+
+.notification-card .name {
+    font-weight: 700;
+}
+
+.notification-card .text {
+    color: #666;
+    font-size: 14px;
+}
