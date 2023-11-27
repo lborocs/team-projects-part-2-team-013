@@ -534,7 +534,7 @@ function userCreateNewTask(column) {
                 console.error("invalid state");
             }
 
-            let session = JSON.parse(sessionStorage.getItem("session"));
+            let session = await global.getCurrentSession();
             post_api(`/employee/employee.php/personal/${session.employee.empID}`, {title: this.value, state: state}).then(res => {
                 console.log("new task data");
                 console.log(res)
@@ -729,9 +729,9 @@ function confirmDelete() {
 }
 
 
-function deleteTask() {
+async function deleteTask() {
     console.log("bin clicked")
-    let session = JSON.parse(sessionStorage.getItem("session"));
+    let session = await global.getCurrentSession();
 
     let taskID = explainerTaskOverview.getAttribute("data-itemID");
 

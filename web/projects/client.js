@@ -128,8 +128,7 @@ views.forEach((view, i) => {
         } 
     })
 
-    try {
-        let session = JSON.parse(sessionStorage.getItem("session"));
+    global.getCurrentSession().then((session) => {
 
         if (session.auth_level >= 2) {
 
@@ -140,9 +139,7 @@ views.forEach((view, i) => {
             taskList.classList.remove("norender");
             
         }
-    } catch (e) {
-        console.error('error fetching session:', e);
-    }
+    });
 
 })
 
@@ -421,14 +418,14 @@ async function renderAssignments(assignments) {
 }
 
 
-export function teamLeaderEnableElementsIfTeamLeader() {
+async function teamLeaderEnableElementsIfTeamLeader() {
     let projectTab = document.querySelector(".project.selected");
     if (projectTab == null) {
         return
     }
     let teamLeaderID = projectTab.getAttribute("data-team-leader-id");
 
-    let session = JSON.parse(sessionStorage.getItem("session"));
+    let session = await global.getCurrentSession();
     let isTeamLeader = session.employee.empID == teamLeaderID;
 
     if ((session.auth_level ?? 0) >= 2) {
@@ -1289,7 +1286,7 @@ async function addProjectPopup(){
 }
 
 async function projectObjectRenderAndListeners(project) {
-    let session = JSON.parse(sessionStorage.getItem("session"));
+    let session = await global.getCurrentSession();
     let isTeamLeader = (project.teamLeader === session.employee.empID);
     let emps = await global.getEmployeesById([project.teamLeader, project.createdBy]);
     let teamLeader = emps.get(project.teamLeader);

@@ -1,10 +1,13 @@
 async function api_request(route, method, body, retries) {
 
     let headers;
-    if (sessionStorage.getItem("token") !== null) {
+
+    let token = localStorage.getItem("token")
+
+    if (token !== null) {
         headers = {
             "Content-Type": "application/json",
-            "Authorization": sessionStorage.getItem("token")
+            "Authorization": token
         }
     } else {
         headers = {
@@ -61,7 +64,8 @@ async function api_request(route, method, body, retries) {
 
             let after_login = window.location.pathname + window.location.hash;
 
-            sessionStorage.clear();
+            localStorage.clear();
+            await caches.delete("employees");
             window.location.href = `/#${after_login}` // redirect to login
             break;
         

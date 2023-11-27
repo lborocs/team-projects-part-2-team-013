@@ -239,7 +239,7 @@ async function fetchSession() {
     const data = await get_api("/employee/session.php/session");
     if (data.success) {
         console.log(`SESSION INFO : ${data.data}`);
-        sessionStorage.setItem("session", JSON.stringify(data.data));
+        localStorage.setItem("session", JSON.stringify(data.data));
     } else {
         console.error("FAILED TO GET SESSION");
     }
@@ -250,7 +250,7 @@ async function fetchSession() {
 
 
 export async function getCurrentSession(lazy = false) {
-    let session = JSON.parse(sessionStorage.getItem("session"));
+    let session = JSON.parse(localStorage.getItem("session"));
     if (!session && !lazy) {
         session = await fetchSession();
     }
@@ -258,7 +258,10 @@ export async function getCurrentSession(lazy = false) {
     return session;
 }
 
-
+export async function clearStorages() {
+    localStorage.clear();
+    await caches.delete("employees");
+}
 
 
 
@@ -316,8 +319,8 @@ if (workloadButton !== null) {
 if (logoutButton !== null) {
     logoutButton.addEventListener("click", () => {
         animate(logoutButton, "click")
-        delete_api("/employee/session.php/session").then(() => {
-            sessionStorage.clear();
+        delete_api("/employee/session.php/session").then(async () => {
+            await clearStorages();
             window.location.href = "/";
         });
     });

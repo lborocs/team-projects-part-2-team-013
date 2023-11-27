@@ -3,8 +3,6 @@ import * as global from "../global-ui.js"
 const loginButton = document.getElementById("login")
 const passwordInput = document.getElementById("password")
 
-sessionStorage.clear();
-
 function setLoginStatus(status) {
     document.getElementById("status").innerText = status;
 }
@@ -23,7 +21,7 @@ async function login() {
     const res = await post_api("/employee/session.php/login", loginData);
 
     if (res.success) {
-        sessionStorage.setItem("token", res.data.session_token);
+        localStorage.setItem("token", res.data.session_token);
         global.getCurrentSession().then((session) => {
 
             let emp = session.employee;
@@ -63,5 +61,12 @@ document.getElementById('togglePassword').addEventListener('click', function () 
         document.getElementById("togglePassword").classList.remove("fa-eye")
         document.getElementById("togglePassword").classList.add("fa-eye-slash")
         
+    }
+});
+
+// redirect to projects if we are logged in
+global.getCurrentSession(true).then((session) => {
+    if (session !== null) {
+        window.location.href = "/projects/";
     }
 });
