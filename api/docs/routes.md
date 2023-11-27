@@ -160,14 +160,14 @@ Written/designed by aidan F223129
           "description": "project desc here",
           // rest of project object
         }
-      }
+      }```
     - [ ] PATCH (edit project)
     - [ ] POST (new project - no id)
     - [ ] DELETE (delete project)
 
 # wiki
 ## post.php
-- [x] **/forum/post.php/posts**
+- [x] **/wiki/post.php/posts**
   - GET (get all posts)
     will return a body containing a list of posts
     ```jsonc
@@ -178,7 +178,7 @@ Written/designed by aidan F223129
       }
     }
     ```
-- [ ] **/forum/post.php/post/:POST_ID:**
+- [ ] **/wiki/post.php/post/:POST_ID:**
   - [x] GET (get individual post)
     ```jsonc
     {
