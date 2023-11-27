@@ -13,7 +13,7 @@
     padding: 10px;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
     display: none;
-
+    z-index: 999;
     & a {
         text-decoration: none;
         color: black;
