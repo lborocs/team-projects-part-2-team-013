@@ -465,7 +465,7 @@ async function renderFromBreadcrumb() {
     console.log(`[renderFromBreadcrumb] project: ${projID} task: ${taskID}`)
 
     if (!projID) {
-        return;
+        return false;
     }
 
 
@@ -478,22 +478,35 @@ async function renderFromBreadcrumb() {
         }
 
         console.error(`[renderFromBreadcrumb] Error fetching project ${projID}: ${data.data.message} (${data.data.code})`);
-        return;
+        return false;
     }
 
     let project = data.data;
 
-    Array.from(projectTabs).forEach((projectTab) => {
-        if (projectTab.getAttribute("data-ID") == projID) {
-            projectTab.remove();
+    for (let i = 0; i < projectTabs.length; i++) {
+        if (projectTabs[i].getAttribute("data-ID") == projID) {
+            projectTabs[i].remove();
+            break;
         }
-    });
+    }
 
 
     let element = await projectObjectRenderAndListeners(project);
 
-    projectSwitchToOnClick(element);
+    await projectSwitchToOnClick(element);
 
+    console.log(`[renderFromBreadcrumb] attempting to render task ${taskID}`)
+
+    if (taskID) {
+        let task = document.getElementById(taskID);
+        if (task) {
+            showTaskInExplainer(task);
+        } else {
+            alert("You appear to have followed a link to a task that either does not exist or you do not have access to.");
+        }
+    }
+
+    return true;
 
 
 }
@@ -502,6 +515,11 @@ async function initialRenderProjects(projects) {
     // no projects found
     if (!projects) {
         return
+    }
+
+
+    if (await renderFromBreadcrumb()) {
+        return;
     }
     
 

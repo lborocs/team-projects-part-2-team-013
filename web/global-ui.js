@@ -390,8 +390,7 @@ export function setBreadcrumb(breadcrumbPaths, naviagtorPaths) {
         zipped[i] = [breadcrumbPaths[i], naviagtorPaths.slice(0, i)];
     }
 
-    console.error("[setBreadcrumb] zipped paths:");
-    console.log(zipped);
+    console.log("[setBreadcrumb] updating breadcrumb to " + breadcrumbPaths.join(" > "));
 
     for (let [path, navigator] of zipped) {
         let child = document.createElement("a");
