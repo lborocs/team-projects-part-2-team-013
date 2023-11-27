@@ -395,7 +395,7 @@ async function renderAssignments(assignments) {
         // create child
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("task-assignment");
-        assignmentElem.classList.add("tooltip");
+        assignmentElem.classList.add("tooltip under");
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
         <img src="${emp_icon}" class="avatar">`
 
@@ -736,7 +736,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         task.innerHTML += `
 
         <div class="date-and-users">
-            <div class="tooltip" id="task-overdue">
+            <div class="tooltip under" id="task-overdue">
                 <p class="tooltiptext">Task overdue</p>
                 ${urgent}
             </div>
@@ -784,7 +784,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) 
     project.classList.add("project")
     if(isTeamLeader) {
         project.innerHTML = `
-        <div class="tooltip">
+        <div class="tooltip under">
             <p class="tooltiptext">You are the team leader for this project</p>
             <i class="fa-solid fa-user-gear"></i> ${title}
         </div>
@@ -965,7 +965,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
         let emp_icon = global.nameToAvatar(emp_name);
         let listItem = document.createElement("div");
         listItem.classList.add("employee-list-item");
-        listItem.classList.add("tooltip");
+        listItem.classList.add("tooltip under");
         listItem.innerHTML = `
         <img src="${emp_icon}" class="avatar" id="task-create-avatar">
         <p class="tooltiptext">${emp_name}</p>`;
