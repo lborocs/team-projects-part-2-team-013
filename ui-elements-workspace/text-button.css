@@ -13,6 +13,7 @@
 
     font-size: 14px;
     font-weight: 600;
+    line-height: 1;
 
     border-radius: 3px;
 
@@ -21,6 +22,7 @@
 
     .button-text {
         margin: 0 2px;
+        line-height: 1;
     }
 
     .button-icon {
@@ -34,6 +36,7 @@
     
         & i {
             font-size: 18px;
+            line-height: 1;
         }
     }
 
