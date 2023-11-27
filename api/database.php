@@ -414,6 +414,31 @@ function db_account_fetch(string $email) {
     return $res->fetch_assoc(); // row 0
 }
 
+function db_account_fetch_by_id(string $hex_id) {
+    global $db;
+
+    $bin_id = hex2bin($hex_id);
+
+    $query = $db->prepare(
+        "SELECT ACCOUNTS.*, EMPLOYEES.isManager 
+        FROM ACCOUNTS, EMPLOYEES 
+        WHERE ACCOUNTS.empID = ? AND ACCOUNTS.empID = EMPLOYEES.empID"
+    );
+    $query->bind_param("s", $bin_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    // query and check we have 1 row
+    $res = $query->get_result();
+    if ($res->num_rows != 1) {
+        return false;
+    }
+    return $res->fetch_assoc(); // row 0
+}
+
 function db_account_insert(
     string $employee_id,
     string $email,

@@ -66,8 +66,11 @@ function r_session_session(RequestContext $ctx, string $args) {
         ));   
     } else if ($ctx->request_method == "PUT") {
         $ctx->session->yank();
+
+        $account = db_account_fetch_by_id($ctx->session->hex_associated_user_id);
+
         respond_ok(array(
-            "session_token"=>auth_session_issue_new($ctx->session->hex_associated_user_id),
+            "session_token"=>auth_session_issue_new($account),
         ));
     }
     else if ($ctx->request_method == "DELETE") {
