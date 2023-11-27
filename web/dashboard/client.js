@@ -128,6 +128,22 @@ views.forEach((view, i) => {
         } 
     })
 
+    try {
+        let session = JSON.parse(sessionStorage.getItem("session"));
+
+        if (session.auth_level >= 2) {
+
+            view.classList.toggle("selected");
+            taskGrid.classList.add("fade");
+            taskGrid.classList.add("norender");
+            taskList.classList.remove("fade");
+            taskList.classList.remove("norender");
+            
+        }
+    } catch (e) {
+        console.error('error fetching session:', e);
+    }
+
 })
 
 explainerShowHide.addEventListener("click", () => {
