@@ -13,19 +13,20 @@ body {
     display:flex;
     flex-direction: row;
     align-items: center;
+    gap: 0.25em;
 }
 
 .breadcrumb-child {
     text-decoration: none;
-    margin-left: 0.1em;
-    margin-right: 0.1em;
     padding: 0.1em 0.3em;
+    line-height: 1;
     color: rgb(110,110,110);
-    border-radius: 4px;
+    border-radius: 3px;
     transition: 0.1s ease-out;
 }
 
-.breadcrumb-child:hover {
+
+.breadcrumb-navigator:hover {
     background-color: rgb(244,244,244);
     color: rgb(65,65,65);
 }
