@@ -271,7 +271,7 @@ if (homeButton !== null) {
     homeButton.addEventListener("click", () => {
         animate(homeButton, "click")
         setTimeout(() => {
-            window.location.href = "/dashboard/";
+            window.location.href = "/projects/";
         }, 150)
     });
 }

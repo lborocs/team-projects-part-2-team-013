@@ -116,7 +116,7 @@
 }
 
 
-.dashboard {
+.projects {
     display: grid;
     grid-template-areas:
         "active-tasks project-progress outstanding-tasks task-completions"
