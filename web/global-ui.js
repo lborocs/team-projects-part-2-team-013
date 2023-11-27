@@ -383,8 +383,36 @@ export function setBreadcrumb(breadcrumbPaths, naviagtorPaths) {
     if (breadcrumb === null) {
         return;
     }
+    breadcrumb.replaceChildren();
 
-    breadcrumb.innerText = breadcrumbPaths.join(" > ");
+    let zipped = [];
+    for (let i = 0; i < breadcrumbPaths.length; i++) {
+        zipped[i] = [breadcrumbPaths[i], naviagtorPaths.slice(0, i)];
+    }
+
+    console.log("[setBreadcrumb] updating breadcrumb to " + breadcrumbPaths.join(" > "));
+
+    for (let [path, navigator] of zipped) {
+        let child = document.createElement("a");
+        child.classList.add("breadcrumb-child");
+        child.innerText = path;
+        child.href = window.location.pathname + "#" + navigator.join("-");
+        
+        // set breadcrumb to what we just navigated to
+        child.addEventListener("click", () => {
+            let event = new Event("breadcrumbnavigate");
+            window.dispatchEvent(event);
+            setBreadcrumb(breadcrumbPaths.slice(0, navigator.length + 1), navigator);
+        });
+
+        breadcrumb.appendChild(child);
+        let divider = document.createElement("i");
+        divider.classList.add("fa-solid");
+        divider.classList.add("fa-chevron-right");
+        divider.classList.add("breadcrumb-child");
+        breadcrumb.appendChild(divider);
+    }
+    breadcrumb.lastChild.remove();
 
     document.location.hash = naviagtorPaths.join("-")
 }
