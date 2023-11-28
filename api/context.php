@@ -38,7 +38,8 @@ function contextual_run() {
     // otherwise we only allow the root domain
     // we do this before parsing ctx incase ctx returns before instantiating
 
-    if (preg_match("/^https?:\/\/localhost(:[0-9]{0,5})?$/", $origin)) {
+    if (preg_match("/^https?:\/\/localhost(:[0-9]{0,5})?$/", $origin) || 
+    $origin === 'https://cdn.013.team') {
         header("Access-Control-Allow-Origin: ". $origin);
     } else {
         header("Access-Control-Allow-Origin: https://013.team");
