@@ -548,8 +548,8 @@ async function initialRenderProjects(projects) {
     console.log(projects)
     //fetch tasks for the first project
 
-
-    await projectSwitchToOnClick(projectRows[first_index]);
+    // THIS IS A TEMPORARY FIX
+    //await projectSwitchToOnClick(projectRows[first_index]);
     setUpProjectRowEventListeners();
 
 
