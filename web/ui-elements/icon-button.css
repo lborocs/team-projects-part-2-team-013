@@ -28,5 +28,12 @@
     background-color: #dcdfe4;
 }
 
+.icon-button.no-box {
+    background-color: transparent;
+}
+
+.icon-button.no-box:hover {
+    background-color: #f1f2f4;
+}
 
 

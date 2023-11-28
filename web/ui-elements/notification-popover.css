@@ -26,7 +26,7 @@
     }
 }
 
-#toggle:checked + .popover-content {
+.notification-popover:hover .popover-content {
     display: block;
 }
 

@@ -43,7 +43,7 @@ const listAddButtonRow = document.querySelector("#list-add-row")
 const listAddButton = document.querySelector("#list-add")
 
 //groups of things
-var projectTabs = document.querySelectorAll(".project")
+var projectRows = document.querySelectorAll(".project-row")
 const views = document.querySelectorAll(".view")
 const taskColumns = document.querySelectorAll(".taskcolumn")
 var taskCards = document.querySelectorAll(".task")
@@ -53,54 +53,57 @@ const dragIndicators = document.querySelectorAll(".draggable")
 console.log("[import] loaded client.js")
 
 
-async function projectSwitchToOnClick(projectTab) {
-    projectTabs = document.querySelectorAll(".project")
-
+async function projectSwitchToOnClick(projectRow) {
+    projectRows = document.querySelectorAll(".project-row")
+    projectRows.forEach((row) => {
+        row.classList.remove("selected")
+    })
+    projectRow.classList.add("selected")
     explainerTaskSetToDefault();
 
-    let id = projectTab.getAttribute("data-ID");
-    let title = projectTab.getAttribute("data-title");
-    let description = projectTab.getAttribute("data-description") ?? "";
-    let teamLeader = projectTab.getAttribute("data-team-leader")
+    let id = projectRow.getAttribute("data-ID");
+    let title = projectRow.getAttribute("data-title");
+    let description = projectRow.getAttribute("data-description") ?? "";
+    let teamLeader = projectRow.getAttribute("data-team-leader")
 
-    if (!projectTab.classList.contains("selected")) {
-        projectTabs.forEach((tab, j) => {
-            tab.classList.remove("selected")
-        })
-        projectTab.classList.add("selected")
-        //remove tasks currently on the screen
-        taskCards.forEach((task) => {
-            task.remove()
-        })
-        taskRows.forEach((task) => {
-            task.remove()
-        }) 
-        let tasks = await fetchAndRenderTasks(id);
-        console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + title)
-        globalTasksList = tasks;
-        console.log(globalTasksList)
 
-        
-        // unselect not this project
-        console.log("[projectSwitchToOnClick] selected " + title)
-        //update the breadcrumb with the project name
-        global.setBreadcrumb(["Projects", title], [window.location.pathname, "#" + id]);
-        explainerTitle.innerText = title
-        explainerDescription.innerText = description
-        explainerTeamLeaderName.innerText = teamLeader
-        explainerTeamLeaderAvatar.src = global.nameToAvatar(teamLeader)
-    }
+   
+    //remove tasks currently on the screen
+    taskCards.forEach((task) => {
+        task.remove()
+    })
+    taskRows.forEach((task) => {
+        task.remove()
+    }) 
+    let tasks = await fetchAndRenderTasks(id);
+    console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + title)
+    globalTasksList = tasks;
+    console.log(globalTasksList)
+
+    
+    // unselect not this project
+    console.log("[projectSwitchToOnClick] selected " + title)
+    //update the breadcrumb with the project name
+    global.setBreadcrumb(["Projects", title], [window.location.pathname, "#" + id]);
+    explainerTitle.innerText = title
+    explainerDescription.innerText = description
+    explainerTeamLeaderName.innerText = teamLeader
+    explainerTeamLeaderAvatar.src = global.nameToAvatar(teamLeader)
+
     teamLeaderEnableElementsIfTeamLeader()
 
+    //remove norender on .main, add norender to .main.selection-screen
+    document.querySelector(".main").classList.remove("norender")
+    document.querySelector(".main.selection-screen").classList.add("norender")
 }
 
 
-// //event listeners
-function setUpProjectTabEventListeners() {
-    projectTabs = document.querySelectorAll(".project")
-    projectTabs.forEach((projectTab, i) => {
-        projectTab.addEventListener("click", () => {
-            projectSwitchToOnClick(projectTab);
+//event listeners
+function setUpProjectRowEventListeners() {
+    projectRows = document.querySelectorAll(".project-row")
+    projectRows.forEach((projectRow, i) => {
+        projectRow.addEventListener("click", () => {
+            projectSwitchToOnClick(projectRow);
 
         })
     })
@@ -423,11 +426,11 @@ async function renderAssignments(assignments) {
 
 
 async function teamLeaderEnableElementsIfTeamLeader() {
-    let projectTab = document.querySelector(".project.selected");
-    if (projectTab == null) {
+    let projectRow = document.querySelector(".project-row.selected");
+    if (projectRow == null) {
         return
     }
-    let teamLeaderID = projectTab.getAttribute("data-team-leader-id");
+    let teamLeaderID = projectRow.getAttribute("data-team-leader-id");
 
     let session = await global.getCurrentSession();
     let isTeamLeader = session.employee.empID == teamLeaderID;
@@ -500,9 +503,9 @@ async function renderFromBreadcrumb() {
 
     let project = data.data;
 
-    for (let i = 0; i < projectTabs.length; i++) {
-        if (projectTabs[i].getAttribute("data-ID") == projID) {
-            projectTabs[i].remove();
+    for (let i = 0; i < projectRows.length; i++) {
+        if (projectRows[i].getAttribute("data-ID") == projID) {
+            projectRows[i].remove();
             break;
         }
     }
@@ -540,14 +543,14 @@ async function initialRenderProjects(projects) {
     }
     
 
-    let first_index = projectTabs.length - 1;
+    let first_index = projectRows.length - 1;
     console.log("[initialFetchProjects] projects:")
     console.log(projects)
     //fetch tasks for the first project
 
 
-    await projectSwitchToOnClick(projectTabs[first_index]);
-    setUpProjectTabEventListeners();
+    await projectSwitchToOnClick(projectRows[first_index]);
+    setUpProjectRowEventListeners();
 
 
     // we show the alert message after everything else so we dont block the event loop
@@ -794,34 +797,86 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 }
 
 
+// function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) {
+//     let project = document.createElement("div")
+//     project.classList.add("project")
+//     if(isTeamLeader) {
+//         project.innerHTML = `
+//         <div class="tooltip under">
+//             <p class="tooltiptext">You are the team leader for this project</p>
+//             <i class="fa-solid fa-user-gear"></i> ${title}
+//         </div>
+//     `
+//     } else {
+//     project.innerHTML = `
+//         <i class="fa-solid fa-users"></i> ${title}
+//     `
+//     }
+//     //set id to the project id
+//     project.setAttribute("data-ID", ID)
+//     project.setAttribute("data-title", title)
+//     project.setAttribute("data-description", desc)
+//     project.setAttribute("data-team-leader", teamLeader)
+//     project.setAttribute("data-team-leader-id", teamLeaderID)
+//     document.querySelector("#projects-table").appendChild(project)
+//     projectTabs = document.querySelectorAll(".project")
+//     teamLeaderEnableElementsIfTeamLeader()
+
+//     return project
+// }
+
 function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) {
-    let project = document.createElement("div")
-    project.classList.add("project")
-    if(isTeamLeader) {
-        project.innerHTML = `
-        <div class="tooltip under">
-            <p class="tooltiptext">You are the team leader for this project</p>
-            <i class="fa-solid fa-user-gear"></i> ${title}
-        </div>
-    `
-    } else {
+    let projectsTable = document.querySelector("#projects-table");
+    let projectTitle = document.querySelector(".project-bar .title");
+    let project = document.createElement("tr")
+    project.classList.add("project-row")
+    let icon = isTeamLeader ? `fas fa-user-gear` : `fas fa-users`;
+    console.log(icon)
     project.innerHTML = `
-        <i class="fa-solid fa-users"></i> ${title}
+        <td>
+            <div class="project-card">
+                <div class="icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="name">
+                    ${title}
+                </div>
+            </div>
+        </td>
+        <td>Not implemented</td>
+        <td>
+            <div class="name-card">
+                <div class="icon">
+                    <img src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogIzAwMDsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiAnT3BlbiBTYW5zJywgc2Fucy1zZXJpZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTEyIiBmb250LXdlaWdodD0iNDAwIiBkeT0iLjFlbSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzAwMCIgeD0iNTAlIiB5PSI1MCUiPkpTPC90ZXh0PgogICAgPC9zdmc+" class="avatar">
+                </div>
+                <div class="name">
+                    ${teamLeader}
+                </div>
+            </div>
+        </td>
+        <td>
+            Not implemented
+        </td>
+        <td>
+            <div class="icon-button no-box">
+                <i class="fa-solid fa-ellipsis"></i>
+            </div>
+        </td>
     `
-    }
+
+    projectTitle.innerHTML = title;
+
     //set id to the project id
     project.setAttribute("data-ID", ID)
     project.setAttribute("data-title", title)
     project.setAttribute("data-description", desc)
     project.setAttribute("data-team-leader", teamLeader)
     project.setAttribute("data-team-leader-id", teamLeaderID)
-    document.querySelector(".projects").appendChild(project)
-    projectTabs = document.querySelectorAll(".project")
+    projectsTable.querySelector("tbody").appendChild(project)
     teamLeaderEnableElementsIfTeamLeader()
 
     return project
 }
-
 async function addTask(state) {
     console.log("[addTask] Creating popup")
     let popupDiv = document.querySelector('.popup');
@@ -1297,13 +1352,13 @@ async function projectObjectRenderAndListeners(project) {
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
     let element = renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader);
 
-    setUpProjectTabEventListeners();
+    setUpProjectRowEventListeners();
     calculateTaskCount();
     return element;
 }
 
-let addProjectButton = document.querySelector(".add-project");
-addProjectButton.addEventListener("click", async () => {
+let createProjectButton = document.querySelector("#new-project");
+createProjectButton.addEventListener("click", async () => {
         console.log("[addProjectButtonClick] add project button clicked")
         await addProjectPopup();
 
