@@ -48,6 +48,7 @@ var barColors = [
 ];
 
 Chart.useSecureCSS = true;
+Chart.platform.disableCSSInjection = true;
 
 new Chart("progress-chart", {
   type: "doughnut",
