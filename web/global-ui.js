@@ -18,6 +18,10 @@ export const sidebarItems = document.querySelectorAll(".sidebar-item")
 export const topbarItems = document.querySelectorAll(".item")
 console.log("[import] loaded global-ui.js")
 
+export const BACK_BUTTON = 3;
+export const FORWARD_BUTTON = 4;
+
+
 caches.open("employees");
 
 //utility functions
@@ -433,10 +437,10 @@ export function setBreadcrumb(breadcrumbPaths, hrefs) {
         child.href = navigator;
         
         // set breadcrumb to what we just navigated to 
-        child.addEventListener("click", () => {
-            let event = new Event("breadcrumbnavigate");
+        child.addEventListener("click", (e) => {
+            
             setBreadcrumb(breadcrumbPaths.slice(0, i+1), hrefs.slice(0, i+1));
-            window.dispatchEvent(event);
+            dispatchBreadcrumbnavigateEvent(e);
         });
 
         breadcrumb.appendChild(child);
@@ -453,13 +457,34 @@ export function setBreadcrumb(breadcrumbPaths, hrefs) {
     document.location.hash = new URL(last, document.location).hash;
 }
 
-export function getBreadcrumbPathLocator() {
+export function getLocationHashArray() {
     if (document.location.hash) {
         return document.location.hash.substring(1).split("-");
     } else {
         return [];
     }
 }
+
+// allow back and forward functionality when only the hash/breadcrumb changes
+window.addEventListener("mouseup", async (e) => {
+    if (e.button == BACK_BUTTON || e.button == FORWARD_BUTTON) {
+        // wait for the browser to update the hash
+        await new Promise(r => setTimeout(r, 50));
+
+        let locations = getLocationHashArray();
+        dispatchBreadcrumbnavigateEvent(e.type);
+    }
+});
+
+export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHashArray()) {
+
+    console.log(`[dispatchBreadcrumbnavigate] dispatching from ${src}`);
+
+    let event = new Event("breadcrumbnavigate");
+    event.locations = locations;
+    window.dispatchEvent(event);
+}
+
 
 fillCurrentUserInfo();
 managerElementsEnableIfManager();

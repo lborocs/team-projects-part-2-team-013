@@ -92,9 +92,16 @@ async function projectSwitchToOnClick(projectRow) {
 
     teamLeaderEnableElementsIfTeamLeader()
 
-    //remove norender on .main, add norender to .main.selection-screen
-    document.querySelector(".main").classList.remove("norender")
-    document.querySelector(".main.selection-screen").classList.add("norender")
+    setActivePane("individual-project-pane");
+}
+
+function setActivePane(newPane) {
+    console.log("[setActivePane] setting active pane to " + newPane)
+    document.querySelectorAll(".main").forEach((pane) => {
+        pane.classList.add("norender")
+    })
+
+    document.getElementById(newPane).classList.remove("norender")
 }
 
 
@@ -455,6 +462,7 @@ async function teamLeaderEnableElementsIfTeamLeader() {
 }
 
 async function fetchAndRenderAllProjects() {
+    setActivePane("select-projects-pane");
     const data = await get_api('/project/project.php/projects');
     console.log("[fetchAndRenderAllProjects] fetched projects");
     console.log(data);
@@ -469,23 +477,23 @@ async function fetchAndRenderAllProjects() {
     }
 }
 
-fetchAndRenderAllProjects().then(async (projects) => {
-    await initialRenderProjects(projects);
-})
 
 window.addEventListener("breadcrumbnavigate", async (event) => {
-    console.log("[breadcrumbnavigate] event received");
-    await renderFromBreadcrumb();
+    console.log("[breadcrumbnavigate] event received" + event.locations);
+    await renderFromBreadcrumb(event.locations);
 
 });
 
-async function renderFromBreadcrumb() {
-    let [projID, taskID] = global.getBreadcrumbPathLocator();
+console.log("[dashboard/client.js] rendering from breadcrumb INITIAL.")
+global.dispatchBreadcrumbnavigateEvent("initial");
+
+async function renderFromBreadcrumb(locations) {
+    let [projID, taskID] = locations;
 
     console.log(`[renderFromBreadcrumb] project: ${projID} task: ${taskID}`)
 
     if (!projID) {
-        return false;
+        return await fetchAndRenderAllProjects();
     }
 
 
@@ -515,9 +523,9 @@ async function renderFromBreadcrumb() {
 
     await projectSwitchToOnClick(element);
 
-    console.log(`[renderFromBreadcrumb] attempting to render task ${taskID}`)
 
     if (taskID) {
+        console.log(`[renderFromBreadcrumb] attempting to render task ${taskID}`)
         let task = document.getElementById(taskID);
         if (task) {
             showTaskInExplainer(task);
@@ -831,7 +839,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) 
     let project = document.createElement("tr")
     project.classList.add("project-row")
     let icon = isTeamLeader ? `fas fa-user-gear` : `fas fa-users`;
-    console.log(icon)
+    console.log(`[renderProject] using icon: ${icon}`)
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -847,7 +855,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) 
         <td>
             <div class="name-card">
                 <div class="icon">
-                    <img src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogIzAwMDsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiAnT3BlbiBTYW5zJywgc2Fucy1zZXJpZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTEyIiBmb250LXdlaWdodD0iNDAwIiBkeT0iLjFlbSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzAwMCIgeD0iNTAlIiB5PSI1MCUiPkpTPC90ZXh0PgogICAgPC9zdmc+" class="avatar">
+                    <img src="${global.nameToAvatar(teamLeader)}" class="avatar">
                 </div>
                 <div class="name">
                     ${teamLeader}
