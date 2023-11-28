@@ -463,11 +463,14 @@ async function teamLeaderEnableElementsIfTeamLeader() {
 
 async function fetchAndRenderAllProjects() {
     setActivePane("select-projects-pane");
+    global.setBreadcrumb(["Projects"], [window.location.pathname]);
     const data = await get_api('/project/project.php/projects');
     console.log("[fetchAndRenderAllProjects] fetched projects");
     console.log(data);
     // process the data here
     if (data.success == true) {
+        let projectsTable = document.querySelector("#projects-table");
+        projectsTable.querySelector("tbody").replaceChildren();
         console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
         await Promise.all(data.data.projects.map(async (project) => {
 
