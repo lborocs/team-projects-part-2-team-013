@@ -27,4 +27,4 @@ The site should now function like normal on your local machine.
 - hostable user data (like wiki post images) should never be accessed via the root domain (013.team), only the cdn (cdn.013.team)
 - dont use inline anything (no css in html, no scripts in html, no onClick attributes for elements)
 
-[30th feb moment](https://cdn.013.team/Screenshot2023-11-28-024447.png)
+![30th feb moment](https://cdn.013.team/Screenshot2023-11-28-024447.png)
