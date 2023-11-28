@@ -47,6 +47,8 @@ var barColors = [
   "#8aed8a",
 ];
 
+Chart.useSecureCSS = true;
+
 new Chart("progress-chart", {
   type: "doughnut",
   data: {
