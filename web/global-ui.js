@@ -470,10 +470,13 @@ window.addEventListener("mouseup", async (e) => {
     if (e.button == BACK_BUTTON || e.button == FORWARD_BUTTON) {
         // wait for the browser to update the hash
         await new Promise(r => setTimeout(r, 50));
-
-        let locations = getLocationHashArray();
         dispatchBreadcrumbnavigateEvent(e.type);
     }
+});
+
+window.addEventListener("popstate", async (e) => {
+    await new Promise(r => setTimeout(r, 50));
+    dispatchBreadcrumbnavigateEvent(e.type);
 });
 
 export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHashArray()) {
