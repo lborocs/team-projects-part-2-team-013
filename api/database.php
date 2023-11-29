@@ -14,6 +14,7 @@ function encode_binary_fields(array $row) {
             continue;
         }
 
+        // TODO: UUIDS COULD BE VALID UTF8
         if (strlen($value) == UUID_LENGTH) {
             if (!preg_match('//u', $value)) { // checks for not utf8
                 $row[$key] = bin2hex($row[$key]);
