@@ -232,9 +232,15 @@ document.querySelectorAll('.tag').forEach((tag) => {
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
     radio.addEventListener('change', () => {
-        document.querySelectorAll('.tag').forEach((tag) => {
-            tag.classList.remove('selected');
-        });
+        if (radio.classList.contains('non-technical')) {
+            document.querySelectorAll('.tag.is-technical').forEach((tag) => {
+                tag.classList.remove('selected');
+            });
+        } else if (radio.classList.contains('technical')) {
+            document.querySelectorAll('.tag:not(.is-technical)').forEach((tag) => {
+                tag.classList.remove('selected');
+            });
+        }
         updatePosts();
         updateTags();
     })
