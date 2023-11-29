@@ -232,6 +232,9 @@ document.querySelectorAll('.tag').forEach((tag) => {
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
     radio.addEventListener('change', () => {
+        document.querySelectorAll('.tag').forEach((tag) => {
+            tag.classList.remove('selected');
+        });
         updatePosts();
         updateTags();
     })
