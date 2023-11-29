@@ -1,3 +1,26 @@
+:root {
+    --border-clr: #e0e0e0;
+    --icon-clr: #777777;
+    --very-light-grey: rgb(244,244,244);
+    --task-collumn-border: rgba(0,0,0,0.15);
+
+    --not-started-status-cell: rgba(245, 205, 188, 0.7);
+    --not-started-bg: rgba(252, 245, 242, 0.7);
+    --not-started-title-bg: rgb(250, 222, 201);
+    --not-started-title-clr: rgb(73, 41, 14);
+
+    --in-progress-status-cell: rgba(188, 219, 245, 0.7);
+    --in-progress-bg: rgba(241, 248, 251, 0.7);
+    --in-progress-title-bg: rgb(211, 229, 239);
+    --in-progress-title-clr: rgb(24, 51, 71);
+
+    --finished-status-cell: rgba(188, 245, 188, 0.7);
+    --finished-bg: rgba(244, 248, 243, 0.7);
+    --finished-title-bg: rgb(219, 237, 219);
+    --finished-title-clr: rgb(28, 56, 41);
+
+}
+
 .selection-screen {
     gap: 0.5em;
     padding: 1em 2em;
@@ -85,7 +108,7 @@
         & th {
             font-size: 14px;
             font-weight: 600;
-            border-bottom: solid 2px #e0e0e0;
+            border-bottom: solid 2px var(--border-clr, #e0e0e0);
             padding: 4px 8px;
             line-height: 1.5;
             vertical-align: middle;
@@ -110,7 +133,7 @@
 
                 & i {
                     font-size: 16px;
-                    color: #777777;
+                    color: var(--icon-clr, #777777);
                 }
                 
             }
@@ -171,7 +194,7 @@
     padding: 10px;
 
     font-weight: 600;
-    background: rgb(244,244,244);
+    background: var(--very-light-grey);
 
     .icon {
         height: 100%;
@@ -203,7 +226,7 @@
     align-items: center;
     text-wrap: nowrap;
     .selected {
-        background-color: rgb(244,244,244);
+        background-color: var(--very-light-grey);
         color: #000000;
         border-bottom: solid 2px;
         
@@ -234,7 +257,7 @@
 
 .add-project:hover {
     color: #0f0f0f;
-    background-color: #f4f4f4;
+    background-color: var(--very-light-grey);
     transition-duration: 0.1s;
 }
 
@@ -276,8 +299,8 @@
     top: 0;
     color: #555555;
     z-index: 1;
-    border-bottom: solid 2px #e0e0e0;
-    background-color: rgb(244, 244, 244);
+    border-bottom: solid 2px var(--border-clr, #e0e0e0);
+    background-color: var(--very-light-grey);
     flex: 0 0 3em;
     .selected {
         background-color: rgb(246,246,245);
@@ -332,7 +355,7 @@
 .taskarea {
     height: 100%;
     width: 100%;
-    background-color: rgb(244, 244, 244);
+    background-color: var(--very-light-grey);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -705,7 +728,7 @@
     position: absolute;
     top: 0.5em;
     right: 0.5em;
-    color: #777777;
+    color: var(--icon-clr, #777777);
     font-size: 1em;
     cursor: grab;
     transition: 0.2s ease-out;
@@ -744,19 +767,19 @@
 }
 
 #notstarted {
-    background-color: rgba(252, 245, 242, 0.7);
-    border: solid 1px rgba(0,0,0,0.15);
+    background-color: var(--not-started-bg, rgba(252, 245, 242, 0.7));
+    border: solid 1px var(--task-collumn-border, rgba(0,0,0,0.15));
     .columntitle {
-        background: rgb(250, 222, 201);
-        color: rgb(73, 41, 14);
+        background: var(--not-started-title-bg, rgb(250, 222, 201));
+        color: var(--not-started-title-clr, rgb(73, 41, 14));
         font-weight:700;
     }
     .task-count {
-        color: rgb(73, 41, 14);
-        background-color: rgb(250, 222, 201);
+        color: var(--not-started-title-clr, rgb(73, 41, 14));
+        background-color: var(--not-started-title-bg, rgb(250, 222, 201));
     }
     .add-task {
-        color: rgb(73, 41, 14);
+        color: var(--not-started-title-clr, rgb(73, 41, 14));
     };
     .add-task:hover {
         background-color: #fadec977;
@@ -764,19 +787,19 @@
 }
 
 #inprogress {
-    background-color: rgba(241, 248, 251, 0.7);
-    border: solid 1px rgba(0,0,0,0.15);
+    background-color: var(--in-progress-bg, rgba(241, 248, 251, 0.7));
+    border: solid 1px var(--task-collumn-border, rgba(0,0,0,0.15));
     .columntitle {
-        background: rgb(211, 229, 239);
-        color: rgb(24, 51, 71);
+        background: var(--in-progress-title-bg, rgb(211, 229, 239));
+        color: var(--in-progress-title-clr, rgb(24, 51, 71));
         font-weight:700;
     }
     .task-count {
-        color: rgb(24, 51, 71);
-        background-color: rgb(211, 229, 239);
+        color: var(--in-progress-title-clr, rgb(24, 51, 71));
+        background-color: var(--in-progress-title-bg, rgb(211, 229, 239));
     }
     .add-task {
-        color: rgb(24, 51, 71);
+        color: var(--in-progress-title-clr, rgb(24, 51, 71));
     };
     .add-task:hover {
         background-color: #d3e5ef77;
@@ -784,19 +807,19 @@
 }
 
 #finished {
-    background-color: rgba(244, 248, 243, 0.7);
-    border: solid 1px rgba(0,0,0,0.15);
+    background-color: var(--finished-bg, rgba(244, 248, 243, 0.7));
+    border: solid 1px var(--task-collumn-border, rgba(0,0,0,0.15));
     .columntitle {
-        background: rgb(219, 237, 219);
-        color: rgb(28, 56, 41);
+        background: var(--finished-title-bg, rgb(219, 237, 219));
+        color: var(--finished-title-clr, rgb(28, 56, 41));
         font-weight:700;
     }
     .task-count {
-        color: rgb(28, 56, 41);
-        background-color: rgb(219, 237, 219);
+        color: var(--finished-title-clr, rgb(28, 56, 41));
+        background-color: var(--finished-title-bg, rgb(219, 237, 219));
     }
     .add-task {
-        color: rgb(28, 56, 41);
+        color: var(--finished-title-clr, rgb(28, 56, 41));
     };
     .add-task:hover {
         background-color: #dbeddb77;
@@ -879,7 +902,7 @@
     
     & th i {
         font-size: 1em;
-        color: #777777;
+        color: var(--icon-clr, #777777);
         transition: 0.2s ease-out;
         padding: 0.5em;
         padding-top: 0.3em;
@@ -893,7 +916,7 @@
     
         .selected {
             color: #0f0f0f;
-            background-color: rgb(244,244,244);   
+            background-color: var(--very-light-grey);   
         }
     }
     
@@ -901,7 +924,7 @@
     & th i:hover {
         color: #0f0f0f;
         transition-duration: 0.08s;
-        background-color: #f4f4f4;
+        background-color: var(--very-light-grey);
     }
 }
 
@@ -915,7 +938,7 @@
 #list-add {
     background-color: rgba(255,255,255,0);
     border: none;
-    color: #777777;
+    color: var(--icon-clr, #777777);
     font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
@@ -938,7 +961,7 @@
     padding-top: 0.25em;
     padding-bottom: 0.25em;
     .status-cell{
-        background-color: rgba(245, 205, 188, 0.7);
+        background-color: var(--not-started-status-cell, rgba(245, 205, 188, 0.7));
     }    
 }
 
@@ -948,7 +971,7 @@
     padding-top: 0.25em;
     padding-bottom: 0.25em;
     .status-cell{
-        background-color: rgba(188, 219, 245, 0.7);
+        background-color: var(--in-progress-status-cell, rgba(188, 219, 245, 0.7));
     }
     
 }
@@ -959,7 +982,7 @@
     padding-top: 0.25em;
     padding-bottom: 0.25em;
     .status-cell{
-        background-color: rgba(188, 245, 188, 0.7);
+        background-color: var(--finished-status-cell, rgba(188, 245, 188, 0.7));
     }
 }
 
@@ -1113,7 +1136,7 @@
     max-height: 800px;
     background-color: #fff;
     border-radius: 10px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-clr, #e0e0e0);
     box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.1);
     padding: 3em;
     padding-top: 0;
@@ -1358,7 +1381,7 @@
     max-height: 800px;
     background-color: #fff;
     border-radius: 10px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-clr, #e0e0e0);
     box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.1);
     top: 50%;
     transform: translate(0, -50%);
