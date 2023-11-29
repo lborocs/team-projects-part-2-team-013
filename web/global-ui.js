@@ -476,7 +476,7 @@ window.addEventListener("mouseup", async (e) => {
 
 window.addEventListener("popstate", async (e) => {
     await new Promise(r => setTimeout(r, 50));
-    dispatchBreadcrumbnavigateEvent(e.type);
+    //dispatchBreadcrumbnavigateEvent(e.type);
 });
 
 export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHashArray()) {
