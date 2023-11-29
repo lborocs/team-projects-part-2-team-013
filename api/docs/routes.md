@@ -33,6 +33,12 @@ Written/designed by aidan F223129
     }
     ```
 
+- [ ] **/employee/employee.php/personal**
+  - [x] GET
+  - [ ] PATCH 
+  - [x] POST
+  - [x] DELETE
+
 - [x] **/employee/employee.php/all**
   - GET (get all employees ever)
   ```jsonc
@@ -135,7 +141,7 @@ Written/designed by aidan F223129
   - [ ] PATCH (edit task by id)
   - [x] POST (new task - no task id)
       {"title":string, "description":string?, "state":integer, "dueDate":integer}
-  - [ ] DELETE (delete task)
+  - [x] DELETE (delete task)
 
 ## project.php
 - [x] **/project/project.php/projects?q=search_term**
@@ -163,7 +169,7 @@ Written/designed by aidan F223129
         }
       }```
     - [ ] PATCH (edit project)
-    - [ ] POST (new project - no id)
+    - [x] POST (new project - no id)
     - [ ] DELETE (delete project)
 
 # wiki
