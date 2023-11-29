@@ -1497,7 +1497,7 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
 addEventListener("keydown", filterFromSearch)
 
 function filterFromSearch() {
-    console.log("searching");
+    console.log("[filterFromSearch] searching for:");
     console.log(document.getElementById("project-search").value); 
     let search = document.getElementById("project-search");
     if (search.length !== 0) {
