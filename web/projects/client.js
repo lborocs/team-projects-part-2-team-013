@@ -1498,8 +1498,8 @@ addEventListener("keydown", filterFromSearch)
 
 function filterFromSearch() {
     console.log("searching");
-    console.log(document.getElementById("search-input").value); 
-    let search = document.getElementById("search-input");
+    console.log(document.getElementById("project-search").value); 
+    let search = document.getElementById("project-search");
     if (search.length !== 0) {
         let searchValue = search.value.toUpperCase();
         let projTitles = document.querySelectorAll(".project-title");
