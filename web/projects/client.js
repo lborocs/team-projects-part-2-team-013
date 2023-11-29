@@ -106,13 +106,20 @@ function setActivePane(newPane) {
 
 
 //event listeners
-function setUpProjectRowEventListeners() {
+function setUpAllProjectRowEventListeners() {
     projectRows = document.querySelectorAll(".project-row")
     projectRows.forEach((projectRow, i) => {
         projectRow.addEventListener("click", () => {
             projectSwitchToOnClick(projectRow);
 
         })
+    })
+}
+
+function setUpProjectRowEventListeners(projectRow) {
+    projectRow.addEventListener("click", () => {
+        projectSwitchToOnClick(projectRow);
+
     })
 }
 
@@ -539,33 +546,6 @@ async function renderFromBreadcrumb(locations) {
 
     return true;
 
-
-}
-
-async function initialRenderProjects(projects) {
-    // no projects found
-    if (!projects) {
-        return
-    }
-
-
-    if (await renderFromBreadcrumb()) {
-        return;
-    }
-    
-
-    let first_index = projectRows.length - 1;
-    console.log("[initialFetchProjects] projects:")
-    console.log(projects)
-    //fetch tasks for the first project
-
-    // THIS IS A TEMPORARY FIX
-    //await projectSwitchToOnClick(projectRows[first_index]);
-    setUpProjectRowEventListeners();
-
-
-    // we show the alert message after everything else so we dont block the event loop
-    // and the user doesnt have to wait for the page to load after navigating through the error
 
 }
 
@@ -1363,7 +1343,7 @@ async function projectObjectRenderAndListeners(project) {
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
     let element = renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader);
 
-    setUpProjectRowEventListeners();
+    setUpProjectRowEventListeners(element);
     calculateTaskCount();
     return element;
 }
