@@ -2,7 +2,7 @@
     --border-clr: #e0e0e0;
     --icon-clr: #777777;
     --very-light-grey: rgb(244,244,244);
-    --task-collumn-border: rgba(0,0,0,0.15);
+    --task-column-border: rgba(0,0,0,0.15);
 
     --not-started-status-cell: rgba(245, 205, 188, 0.7);
     --not-started-bg: rgba(252, 245, 242, 0.7);
@@ -768,7 +768,7 @@
 
 #notstarted {
     background-color: var(--not-started-bg, rgba(252, 245, 242, 0.7));
-    border: solid 1px var(--task-collumn-border, rgba(0,0,0,0.15));
+    border: solid 1px var(--task-column-border, rgba(0,0,0,0.15));
     .columntitle {
         background: var(--not-started-title-bg, rgb(250, 222, 201));
         color: var(--not-started-title-clr, rgb(73, 41, 14));
@@ -788,7 +788,7 @@
 
 #inprogress {
     background-color: var(--in-progress-bg, rgba(241, 248, 251, 0.7));
-    border: solid 1px var(--task-collumn-border, rgba(0,0,0,0.15));
+    border: solid 1px var(--task-column-border, rgba(0,0,0,0.15));
     .columntitle {
         background: var(--in-progress-title-bg, rgb(211, 229, 239));
         color: var(--in-progress-title-clr, rgb(24, 51, 71));
@@ -808,7 +808,7 @@
 
 #finished {
     background-color: var(--finished-bg, rgba(244, 248, 243, 0.7));
-    border: solid 1px var(--task-collumn-border, rgba(0,0,0,0.15));
+    border: solid 1px var(--task-column-border, rgba(0,0,0,0.15));
     .columntitle {
         background: var(--finished-title-bg, rgb(219, 237, 219));
         color: var(--finished-title-clr, rgb(28, 56, 41));
