@@ -1494,3 +1494,21 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
     );
 });
     
+addEventListener("keydown", filterFromSearch)
+
+function filterFromSearch() {
+    console.log("searching");
+    console.log(document.querySelector(".search-input").value);
+    let search = document.querySelector(".search-input").innerHTML;
+    if (search.length !== 0) {
+        let searchValue = search.value.toUpperCase();
+        let projTitles = document.querySelectorAll(".project-title");
+        projTitles.forEach((title) => {
+            console.log(title);
+            let titleValue = title.innerText.toUpperCase();
+            if (!titleValue.includes(searchValue)) {
+                title.parentElement.classList.add("norender");
+            }
+        });
+    }
+}
