@@ -56,13 +56,15 @@ const PASSWORD_HASHING_COST = 11;
 const SESSION_INACTIVITY_EPOCH = 60 * 30; // 60s * 30m
 const UUID_LENGTH = 16;
 const POST_ACCESS_DELTA = 60 * 60 * 24 * 30; // 60s * 60m * 24h * 30d
-const SESSION_VALIDATION_BASE = "http://localhost:4231/";
+const SEARCH_FETCH_LIMIT = 25;
 
-// database
+
+// infrastrucure
 const MYSQL_DATABASE = "team013";
 const MYSQL_USERNAME = "team013";
 const MYSQL_PASSWORD = "ctLp3u4fXHXpasfktv7K";
 const MYSQL_SERVER = "localhost";
+const SESSION_VALIDATION_BASE = "http://localhost:4231/";
 
 // encryption
 const SESSION_HMAC_ALGO = "sha3-256";

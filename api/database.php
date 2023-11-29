@@ -361,19 +361,27 @@ function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id
     return $data;
 }
 
-function db_employee_fetch_projects_in(string $user_id) {
+function db_employee_fetch_projects_in(string $user_id, $search_term) {
     global $db;
+
+    $search_term = "%" . strtolower($search_term) . "%";
 
     $bin_u_id = hex2bin($user_id);
 
     $query = $db->prepare(
         "SELECT DISTINCT PROJECTS.* FROM PROJECTS, EMPLOYEE_TASKS, TASKS
-        WHERE (EMPLOYEE_TASKS.empID = ?
-        AND TASKS.archived = 0
-        AND EMPLOYEE_TASKS.taskID = TASKS.taskID AND TASKS.projID = PROJECTS.projID)
-        OR PROJECTS.teamLeader = ?"
+        WHERE 
+        `PROJECTS`.projName LIKE ?
+        AND (
+            (
+                EMPLOYEE_TASKS.empID = ?
+                AND TASKS.archived = 0
+                AND EMPLOYEE_TASKS.taskID = TASKS.taskID AND TASKS.projID = PROJECTS.projID
+            )
+            OR PROJECTS.teamLeader = ?
+        )"
     );
-    $query->bind_param("ss", $bin_u_id, $bin_u_id);
+    $query->bind_param("sss", $search_term, $bin_u_id, $bin_u_id);
     $query->execute();
     $res = $query->get_result();
 
@@ -471,10 +479,6 @@ function db_account_insert(
 
 }
 
-function db_account_password_changed_since(string $employee_id, int $timestmap) {
-    return false;
-}
-
 // projects
 
 function db_project_fetch(string $project_id) {
@@ -503,13 +507,17 @@ function db_project_fetch(string $project_id) {
     return encode_binary_fields($data);
 }
 
-function db_project_fetchall() {
+function db_project_fetchall($search_term) {
     global $db;
+
+    // like functionality and case insensitive
+    $search_term = "%" . strtolower($search_term) . "%";
 
 
     $query = $db->prepare(
-        "SELECT * FROM `PROJECTS`"
+        "SELECT * FROM `PROJECTS` WHERE LOWER(`PROJECTS`.projName) LIKE ? LIMIT ". SEARCH_FETCH_LIMIT
     );
+    $query->bind_param("s", $search_term);
     $result = $query->execute();
 
     // select error

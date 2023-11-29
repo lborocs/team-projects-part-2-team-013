@@ -138,10 +138,11 @@ Written/designed by aidan F223129
   - [ ] DELETE (delete task)
 
 ## project.php
-- [x] **/project/project.php/projects**
+- [x] **/project/project.php/projects?q=search_term**
     - GET (Get all projects)
       
       will return a body containing an array of projects the user has accesss to (or all for managers)
+      it is filtered down with the search term where the project contains that term.
       ```jsonc
       {
         "success":true,
