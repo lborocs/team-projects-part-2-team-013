@@ -26,13 +26,12 @@ function encode_binary_fields(array $row) {
 
 
 
-function db_generic_new(int $table_specifier, array $values, string $bind_format) {
+function db_generic_new(Table $table, array $values, string $bind_format) {
     global $db;
 
-    $table = TABLE_NAMES[$table_specifier];
 
     $query = $db->prepare(
-        "INSERT INTO `". $table ."` VALUES ("
+        "INSERT INTO ". $table->name ." VALUES ("
         . substr_replace(str_repeat("?, ", count($values)), "", -2)
         .");"
     );
@@ -42,6 +41,61 @@ function db_generic_new(int $table_specifier, array $values, string $bind_format
     );
 
     return $query->execute();
+}
+
+function db_generic_edit(Table $table, array $values, array $keys) {
+    
+    global $db;
+
+    $stmt = "UPDATE ". $table->name ." SET ";
+
+    $bindings = [];
+
+    foreach ($values as $u_field=>$u_value) {
+
+        $col = $table->get_column($u_field);
+
+        if ($col->type == "binary") {
+            $u_value = hex2bin($u_value);
+        }
+        
+        $stmt .= $u_field ." = ?, ";
+        array_push($bindings, $u_value);
+    }
+
+    $stmt = substr_replace($stmt, "", -2); // remove trailing ', '
+
+    foreach($table->get_primary_keys() as $p_key) {
+        $key_value = $keys[$p_key->name];
+
+        if ($p_key->type == "binary") {
+            $key_value = hex2bin($key_value);
+        }
+
+        array_push($bindings, $key_value);
+
+        $stmt .= " WHERE ". $p_key->name ." = ? AND";
+    }
+
+    $stmt = substr_replace($stmt, "", -4); // remove trailing 'AND'
+
+    // error_log("db_generic_edit: " . $stmt . "; ->" . implode(", ", $bindings));
+
+    $query = $db->prepare($stmt);
+    $query->bind_param(
+        str_repeat("s", count($bindings)),
+        ...$bindings
+    );
+
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure(true);
+    }
+
+    return $result;
+
+
 }
 
 // posts

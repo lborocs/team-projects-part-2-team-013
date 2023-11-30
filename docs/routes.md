@@ -132,7 +132,7 @@ Written/designed by aidan F223129
       }
     }
     ```
-  - [ ] PATCH (edit task by id)
+  - [x] PATCH (edit task by id)
   - [x] POST (new task - no task id)
       {"title":string, "description":string?, "state":integer, "dueDate":integer}
   - [x] DELETE (delete task)
@@ -162,7 +162,7 @@ Written/designed by aidan F223129
           // rest of project object
         }
       }```
-    - [ ] PATCH (edit project)
+    - [x] PATCH (edit project)
     - [x] POST (new project - no id)
     - [ ] DELETE (delete project)
 
@@ -191,6 +191,6 @@ Written/designed by aidan F223129
       }
     }
     ```
-  - [ ] PATCH (modify post)
+  - [x] PATCH (modify post)
   - [ ] DELETE (delete post)
   - [x] POST (new post) {"title":string, "isTechnical":int(0/1), "content":string}
