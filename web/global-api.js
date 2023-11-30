@@ -4,6 +4,9 @@ const DEFAULT_OPTIONS = {
     retries: 3,
 }
 
+//const API_BASE = "http://localhost:4444";
+const API_BASE = "https://013.team/api";
+
 // always remember null is a valid body
 async function api_request(route, method, body, options={}) {
 
@@ -34,7 +37,7 @@ async function api_request(route, method, body, options={}) {
         reqInit.body = JSON.stringify(body);
     }
 
-    const response = await fetch("http://localhost:4444" + route, reqInit);
+    const response = await fetch(API_BASE + route, reqInit);
     const status = response.status;
 
     // 204 no content has no content
