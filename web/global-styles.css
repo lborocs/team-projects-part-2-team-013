@@ -209,11 +209,10 @@ body {
     color:rgb(69, 69, 69)
 }
 .sidebar-item.selected {
-    background-color: #d2d4d8 !important;
-    border-radius: 6px;
+    background-color: #f1f2f4;
+    border-radius: 4px;
     color: #000000;
     transition-duration: 0.05s;
-    box-shadow: inset 2px 2px 0 rgba(0,0,0,0.15);
     
 }
 
@@ -231,13 +230,11 @@ body {
     margin-bottom: 0 !important;
 }
 
-.sidebar-item i {
-    font-size: 1.1em;
-    color:rgb(60, 60, 60)
+.sidebar-item span {
+    color: #5f6368;
 }
-.sidebar-item.selected  i {
-    font-size: 1.1em;
-    color:#000000;
+.sidebar-item.selected span {
+    color: #000000;
 }
 
 .sidebar-item:hover {
