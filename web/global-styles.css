@@ -31,72 +31,6 @@ body {
     color: rgb(65,65,65);
 }
 
-.dropdown {
-    font-family: sans-serif;
-    font-family: 'Open Sans', sans-serif;
-    position: relative;
-    display: inline-block;
-    font-size: 0.9em;
-    font-weight: 600;
-    color: #000000;
-    border-radius: 8px;
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
-    transition: 0.1s ease-out;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #ffffff;
-    min-width: 160px;
-    z-index: 1;
-    border-radius: 8px;
-    padding: 0.5em;
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
-    left: 50%;
-    transform: translateX(-50%);
-    transition: 0.1s ease-out;
-}
-
-.dropdown:focus .dropdown-content {
-    display: block;
-    transition: 0.1s ease-out;
-}
-
-.dropdown-content p {
-    margin: 0;
-    padding: 0.5em;
-    font-size: 0.85em;
-    font-weight: 600;
-    color: #000000;
-    border-radius: 8px;
-    transition: 0.1s ease-out;
-    cursor: pointer;
-    transition: 0.1s ease-out;
-}
-
-.dropdown-content p:active {
-    background-color: rgb(244,244,244);
-    color: #000000;
-    transition: 0.1s ease-out;
-    transition: 0.1s ease-out;
-}
-
-.dropdown-content p:first-child {
-    margin-top: 0 !important;
-    transition: 0.1s ease-out;
-}
-
-.dropdown-content p:last-child {
-    margin-bottom: 0 !important;
-    transition: 0.1s ease-out;
-}
-
-.dropdown-content:hover {
-    display: block;
-    transition: 0.1s ease-out;
-}
-
 .tooltip {
     position: relative;
     display: inline-block;
@@ -209,11 +143,17 @@ body {
     color:rgb(69, 69, 69)
 }
 .sidebar-item.selected {
-    background-color: #f1f2f4;
-    border-radius: 4px;
+    background-color: rgb(100,100,100, 0.1);
+    border-radius: 3px !important;
     color: #000000;
+    font-weight: 600 !important;
+    border-left: 2px solid #ffc400;
     transition-duration: 0.05s;
+
+    & span {
+        color: #000000;
     
+    }
 }
 
 .sidebar-item p {
@@ -232,9 +172,6 @@ body {
 
 .sidebar-item span {
     color: #5f6368;
-}
-.sidebar-item.selected span {
-    color: #000000;
 }
 
 .sidebar-item:hover {
