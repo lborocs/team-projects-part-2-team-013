@@ -19,10 +19,12 @@ const TASK_VALID_STATES = [TASK_STATE_TODO, TASK_STATE_INPROGRESS, TASK_STATE_CO
 
 class Table {
     public string $name;
+    private Array $url_specifiers;
     public Array $columns;
 
-    public function __construct(string $name, Array $columns) {
+    public function __construct(string $name, Array $url_specifiers, Array $columns) {
         $this->name = $name;
+        $this->url_specifiers = $url_specifiers;
         $this->columns = $columns;
     }
 
@@ -33,6 +35,27 @@ class Table {
             }
         }
         return null;
+    }
+
+    public function get_primary_keys() {
+        $keys = [];
+        foreach ($this->columns as $column) {
+            if ($column->is_primary_key) {
+                $keys[] = $column;
+            }
+        }
+        return $keys;
+    }
+
+    public function name_url_specifiers($provided_specifiers) {
+        $named = [];
+        for ($i = 0; $i < count($provided_specifiers); $i++) {
+            $col = $this->get_column($this->url_specifiers[$i]);
+
+            $named[$col->name] = $provided_specifiers[$i];
+        }
+
+        return $named;
     }
 }
 
@@ -85,7 +108,9 @@ class ForeignKeyConstraint extends Constraint {
     }
 
     public function validate(string $user_column, $user_field) {
-        
+
+        error_log("running foreign key constraint on" . $user_column . ":" . $user_field);
+
         $func = $this->validity_function;
 
         if (!$func($user_field)) {
@@ -106,6 +131,7 @@ class RestrictedDomainConstraint extends Constraint {
     }
 
     public function validate(string $user_column, $user_field) {
+        error_log("running domain constraint on" . $user_column . ":" . $user_field);
         if (!in_array($user_field, $this->domain)) {
             respond_bad_request(
                 "Invalid value for column '$user_column'. Valid values are: " . implode(", ", $this->domain),
@@ -125,6 +151,9 @@ class ContentLengthConstraint extends Constraint {
     }
 
     public function validate(string $user_column, $user_field) {
+
+        error_log("running content length constraint on" . $user_column . ":" . $user_field);
+
 
         if (gettype($user_field) != "string") {
             respond_illegal_implementation("ContentLengthConstraint can only be used on string columns");
@@ -146,6 +175,7 @@ const _EMPID = new TableColumn("empID", is_primary_key:true, type:"binary", is_n
 
 CONST TABLE_EMPLOYEES = new Table(
     "`EMPLOYEES`",
+    ["empID"],
     [
         _EMPID,
         new TableColumn("firstName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
@@ -156,6 +186,7 @@ CONST TABLE_EMPLOYEES = new Table(
 
 const TABLE_POSTS = new Table(
     "`POSTS`",
+    ["postID"],
     [
         new TableColumn("postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
         new TableColumn(
@@ -179,6 +210,7 @@ const _PROJID = new TableColumn("projID", is_primary_key:true, type:"binary", is
 
 const TABLE_PROJECTS = new Table(
     "`PROJECTS`",
+    ["projID"],
     [
         _PROJID,
         new TableColumn("projName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
@@ -198,6 +230,7 @@ const TABLE_PROJECTS = new Table(
 
 const TABLE_TASKS = new Table(
     "`TASKS`",
+    ["projID", "taskID"],
     [
         new TableColumn("taskID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
         new TableColumn(
@@ -222,6 +255,7 @@ const TABLE_TASKS = new Table(
 
 const TABLE_PERSONALS = new Table(
     "`EMPLOYEE_PERSONALS`",
+    ["itemID"],
     [
         new TableColumn("itemID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
         new TableColumn(

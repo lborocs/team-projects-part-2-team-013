@@ -86,7 +86,7 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
 
             $field = $column->name;
 
-            if (is_null($ctx->request_body[$field]) && !$column->is_nullable) {
+            if (is_null(@$ctx->request_body[$field]) && !$column->is_nullable) {
                 respond_bad_request(
                     "Expected field $field to be set",
                     ERROR_BODY_MISSING_REQUIRED_FIELD
@@ -106,7 +106,6 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
         // and no other fields are present
         // but we also must check that fields are editable
 
-        respond_not_implemented();
 
         if ($ctx->request_body == []) {
             respond_bad_request(
@@ -195,7 +194,7 @@ function _ensure_body_validity(Table $model, array $body) {
         }
 
         foreach ($column->constraints as $constraint) {
-            $constraint->validate($user_value);
+            $constraint->validate($user_field, $user_value);
         }
         
     }
@@ -226,10 +225,11 @@ function _generic_new(RequestContext $ctx, Table $table, array $data, array $url
 }
 
 function _generic_edit(RequestContext $ctx, Table $table, array $data, array $url_specifiers) {
-    $table_specifier = $table->name;
-    respond_not_implemented();
-    $id = array_pop($url_specifiers);
-    //respond_ok(db_generic_edit($table_specifier, $id, $data));
+
+    $primary_keys = $table->name_url_specifiers($url_specifiers);
+    db_generic_edit($table, $data, $primary_keys);
+    respond_no_content();
+    
     
 }
 

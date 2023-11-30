@@ -134,7 +134,7 @@ function r_task_assignments(RequestContext $ctx, string $args) {
 
 
 function r_project_task(RequestContext $ctx, string $args) {
-    object_manipulation_generic(TASK_METHOD_CHECKS, MODEL_TASK, TABLE_TASKS, $ctx, $args);
+    object_manipulation_generic(TASK_METHOD_CHECKS, TABLE_TASKS, $ctx, $args);
 }
 
 function r_project_fetchall_tasks(RequestContext $ctx, string $args) {

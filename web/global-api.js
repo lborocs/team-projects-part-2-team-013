@@ -84,14 +84,10 @@ async function api_request(route, method, body, options={}) {
         case 3005: // db general failure
         case 3006: // session validation server failure
 
-            if (retries === undefined || retries > 0) {
-                if (retries === undefined) {
-                    retries = 3;
-                } else {
-                    retries--;
-                }
-                console.warn(`Retrying request ${retries} more times`);
-                return await api_request(route, method, body, retries);
+            if (options.retries > 0) {
+                options.retries = options.retries - 1;
+                console.warn(`Retrying request ${options.retries} more times`);
+                return await api_request(route, method, body, options);
             } else {
                 console.error(`Retries exhausted: returning error message`);
                 return data;

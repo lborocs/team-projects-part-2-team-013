@@ -33,7 +33,9 @@ function object_check_post_exists(RequestContext $ctx, array $resource_ids) {
 }
 
 function object_check_user_is_post_admin(RequestContext $ctx, array $resource_ids) {
-    respond_not_implemented();
+    if ($ctx->session->auth_level < 2 && $ctx->session->hex_associated_user_id != $ctx->post["author"]) {
+        respond_insufficient_authorization();
+    }
 }
 
 function object_check_user_is_manager(RequestContext $ctx, array $resource_ids) {
@@ -115,17 +117,10 @@ function object_check_task_edit_validation(RequestContext $ctx, array $resource_
     // check if we are only editing state
 
     if (count($data) == 1 && array_key_exists("status", $data)) {
-        // check if state is valid
-        if (array_key_exists($data["status"], TASK_VALID_STATES)) {
-            // if we are only editing state then they only need to be a user
-            if ($ctx->task->assignedTo == $bin_id) {
-                return;
-            }
-        } else {
-            respond_bad_request(
-                "Task state field is not a valid state",
-                ERROR_BODY_FIELD_INVALID_DATA
-            );
+
+        // if we are only editing state then they only need to be a user
+        if ($ctx->task->assignedTo == $bin_id) {
+            return;
         }
     }
     // we are not editing only state so check admin of project
