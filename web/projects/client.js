@@ -218,9 +218,9 @@ function showTaskInExplainer(task) {
 
     let taskID = task.getAttribute("id");
     explainerTask.setAttribute("task-id", taskID);
-
-    let titleElement = task.querySelector(".title");
-    explainerTaskTitle.innerHTML = titleElement ? titleElement.innerHTML : "No Title";
+    // get the task title from data-title
+    let taskTitle = task.getAttribute("data-title");
+    explainerTaskTitle.innerHTML = taskTitle;
     explainerTaskTitle.classList.remove("norender");
 
     let descElement = task.getAttribute("data-desc");
@@ -255,11 +255,11 @@ function showTaskInExplainer(task) {
     animate(document.querySelector(".task-overview"), "flash")
 
     //get currently selected project
-    let selectedProject = document.querySelector(".project.selected");
+    let selectedProject = document.querySelector(".project-row.selected");
     let projName = selectedProject.getAttribute("data-title");
     let projID = selectedProject.getAttribute("data-ID");
 
-    global.setBreadcrumb(["Projects", projName, titleElement.innerHTML.trim()], [window.location.pathname, "#" + projID, "#" + projID + "-" + taskID])
+    global.setBreadcrumb(["Projects", projName, taskTitle], [window.location.pathname, "#" + projID, "#" + projID + "-" + taskID])
 }
 
 
@@ -735,6 +735,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.setAttribute("data-timestamp", timestamp);
     task.setAttribute("data-desc", desc);
     task.setAttribute("data-date", date);
+    task.setAttribute("data-title", title);
 
     //generate the html for the task
     task.innerHTML = `
@@ -963,6 +964,7 @@ async function addTask(state) {
         event.preventDefault();
         
         let selectedProject = document.querySelector(".project-row.selected");
+        console.log("[addTaskCreateButton] selectedProject: " + selectedProject)
         let projID = selectedProject.getAttribute("data-ID");
 
         let titleInput = dialog.querySelector('.add-task-title-input');
@@ -1217,7 +1219,7 @@ function deleteTaskFromExplainer() {
 
 function deleteTask(taskID) {
     console.log("[deleteTask] deleting task " + taskID);
-    let selectedProject = document.querySelector(".project.selected");
+    let selectedProject = document.querySelector(".project-row.selected");
     let projID = selectedProject.getAttribute("data-ID");
 
 
