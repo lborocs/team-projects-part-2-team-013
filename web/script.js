@@ -11,7 +11,7 @@ async function login() {
     const statusElement = document.getElementById("status");
     statusElement.classList.remove("status-incorrect");
     setLoginStatus("Logging in...")
-    var username = document.getElementById("username").value
+    var username = document.getElementById("email").value
     var password = passwordInput.value
     var loginData = {
         username: username,
