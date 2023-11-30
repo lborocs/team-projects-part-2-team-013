@@ -1,4 +1,9 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/vhV8o9li)
+# Infrastructure overview
+![Network diagram detailing the server side setup](https://cdn.013.team/development/Screenshot-2023-11-30-010257.png)
+
+There are also 2 other sites used as CDNS:
+- cdn.013.team - used for hosting static web asssets (images, videos, icons etc)
+- usercontent.013.team - used for hosting usercontent such as avatars etc.
 
 # Run on local machine
 
@@ -24,7 +29,8 @@ The site should now function like normal on your local machine.
 - Fontawesome import has now changed to be hosted on cdnjs.cloudflare.com
 - We are no longer going to use the 3rd party avatar api as it shares data (employee names with a 3rd party site)
 - assets like images should be stored on the cdn, not the repo
-- hostable user data (like wiki post images) should never be accessed via the root domain (013.team), only the cdn (cdn.013.team)
+- hostable user data (like wiki post images) should never be accessed via the root domain (013.team), only the usercontent cdn (usercontent.013.team)
 - dont use inline anything (no css in html, no scripts in html, no onClick attributes for elements)
 
+### jamie
 ![30th feb moment](https://cdn.013.team/Screenshot2023-11-28-024447.png)
