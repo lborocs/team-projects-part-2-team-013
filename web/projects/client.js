@@ -276,9 +276,14 @@ function setUpTaskEventListeners() {
             explainer.classList.remove("hidden")
             overlay.classList.remove("norender")
             animate(taskCard, "click-small")
+            taskCards.forEach((card) => {
+                card.classList.remove("task-focussed")
+            })
+            taskCard.classList.add("task-focussed")
         });
         taskCard.addEventListener("mouseup", () => {
             showTaskInExplainer(taskCard);
+            
         });
 
         taskCard.addEventListener("touchstart", () => {
@@ -428,7 +433,7 @@ async function renderAssignments(assignments) {
         
         // create child
         let assignmentElem = document.createElement("div");
-        assignmentElem.classList.add("task-assignment");
+        assignmentElem.classList.add("assignment");
         assignmentElem.classList.add("tooltip", "under");
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
         <img src="${emp_icon}" class="avatar">`
@@ -718,41 +723,54 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let task = document.createElement("div");
     task.classList.add("task");
     task.setAttribute("draggable", "true");
+
+    //set id to the task id
+    task.setAttribute("id", ID);
+    
+    //add the parameters as html data attributes
+    task.setAttribute("data-timestamp", timestamp);
+    task.setAttribute("data-desc", desc);
+    task.setAttribute("data-date", date);
+
+    //generate the html for the task
     task.innerHTML = `
-        <div class="draggable">
-            <i class="fa-solid fa-grip-vertical"></i>
-        </div>
         <div class="title">
             ${title}
         </div>
     `
-    if (desc !== "") {
-        task.innerHTML += `
-        <div class="description">
-            ${desc}
-        </div>
-    `;
-    }
+    // Testing if its better not to render descriptions until you click in
+    // There would be an icon conveying that there is a description though
+    // if (desc !== "") {
+    //     task.innerHTML += `
+    //     <div class="description">
+    //         ${desc}
+    //     </div>
+    // `;
+    // }
 
-    let urgent;
+    let statusIcon;
+    let dateTooltip;
     if (timestamp < dateToday && state !== 2) {
         // due in the past
-        urgent = `<i class='fa-solid fa-exclamation-circle' id='task-overdue'></i>`;
+        statusIcon = `<span class="material-symbols-rounded overdue">error</span>`;
+        dateTooltip = "Task overdue";
     } else {
-        urgent = "";
+        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
+        dateTooltip = "Due " + date;
     }
 
     if (date !== "") {
         task.innerHTML += `
 
         <div class="date-and-users">
-            <div class="tooltip under" id="task-overdue">
-                <p class="tooltiptext">Task overdue</p>
-                ${urgent}
+            <div class="tooltip under status-container">
+                <p class="tooltiptext">${dateTooltip}</p>
+                ${statusIcon}
+                <div class="date" id="task-date">
+                    ${date}
+                </div>
             </div>
-            <div class="date" id="task-date">
-                ${date}
-            </div>
+            
             <div class="users-assigned">
             </div>
         </div>
@@ -761,12 +779,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
 
     
-    //set id to the task id
-    task.setAttribute("id", ID);
-    task.setAttribute("data-timestamp", timestamp);
-    //add the parameters as html data attributes
-    task.setAttribute("data-desc", desc);
-    task.setAttribute("data-date", date);
+    
     //check if state is 0,1,2 and do separate things for each. otherwise, error
     if (state == 0) {
         notStartedColumn.appendChild(task);
