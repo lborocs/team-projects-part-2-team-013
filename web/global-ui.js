@@ -37,20 +37,26 @@ caches.open("employees");
  * formatDate(new Date(2022, 0, 1));
  */
 export function formatDate(date) {
-    let day = date.getDate()
-    let month = date.getMonth()
-    let year = date.getFullYear()
-    let ordinal = "th"
+    let currentDate = new Date();
+    let day = date.getDate();
+    let month = date.getMonth();
+    let year = date.getFullYear();
+    let ordinal = "th";
     if (day == 1 || day == 21 || day == 31) {
-        ordinal = "st"
+        ordinal = "st";
     } else if (day == 2 || day == 22) {
-        ordinal = "nd"
+        ordinal = "nd";
     } else if (day == 3 || day == 23) {
-        ordinal = "rd"
+        ordinal = "rd";
     }
-    let shortMonths = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
-    let formattedDate = `${day}${ordinal} ${shortMonths[month]} ${year}`
-    return formattedDate
+    let shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let formattedDate;
+    if (year !== currentDate.getFullYear()) {
+        formattedDate = `${day}${ordinal} ${shortMonths[month]} ${year}`;
+    } else {
+        formattedDate = `${day}${ordinal} ${shortMonths[month]}`;
+    }
+    return formattedDate;
 }
 
 function hash(str) {

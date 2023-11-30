@@ -954,7 +954,7 @@ async function addTask(state) {
     createButton.addEventListener('click', async (event) => {
         event.preventDefault();
         
-        let selectedProject = document.querySelector(".project.selected");
+        let selectedProject = document.querySelector(".project-row.selected");
         let projID = selectedProject.getAttribute("data-ID");
 
         let titleInput = dialog.querySelector('.add-task-title-input');
