@@ -32,6 +32,7 @@
     background-color: transparent;
 
     margin: 2px 8px;
+    user-select: none;
 }
 
 .dropdown-chevron {
@@ -44,6 +45,7 @@
     height: auto;
 
     font-size: 11px;
+    user-select: none;
 }
 
 .dropdown-list {

@@ -270,7 +270,11 @@ function setUpTaskEventListeners() {
     taskCards = document.querySelectorAll(".task");
     taskCards.forEach((taskCard) => {
 
-        taskCard.addEventListener("mousedown", () => {
+        taskCard.addEventListener("mousedown", (e) => {
+            //does nothing if the context menu button is clicked
+            if (e.target.classList.contains("task-context-menu-button")) {
+                return
+            }
             //show explainer
             // console.log(explainer)
             explainer.classList.remove("hidden")
@@ -736,6 +740,9 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.innerHTML = `
         <div class="title">
             ${title}
+            <div class="small-icon task-context-menu-button">
+                <span class="material-symbols-rounded">more_horiz</span>
+            </div>
         </div>
     `
     // Testing if its better not to render descriptions until you click in

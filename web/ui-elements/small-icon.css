@@ -1,0 +1,27 @@
+.small-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    aspect-ratio: 1;
+    width: auto;
+    height: auto;
+    line-height: 1;
+
+    border-radius: 3px;
+    cursor: pointer;
+
+    transition: background-color 0.1s ease-out;
+
+    & span {
+        line-height: 1;
+    }
+}
+
+.small-icon:hover {
+    cursor: pointer;
+    background-color: #f1f2f4;
+    color: black;
+    & span {
+        color: black !important;
+    }
+}

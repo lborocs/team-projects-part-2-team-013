@@ -14,12 +14,14 @@
     padding-top: 0.35em;
     cursor: pointer;
     transition: transform 0.1s ease-in-out !important;
+    transition: color 0.1s ease-out;
     .title {
         font-size: 1em;
         font-weight: 600;
         display: flex;
         flex-direction: row;
-        align-items: center;
+        align-items: flex-start;
+        justify-content: space-between;
         gap: 0.5em;
         padding-bottom: 4px;
     }
@@ -54,6 +56,18 @@
     
 }
 
+.task-context-menu-button {
+    color: transparent;
+}
+
+/* make the task-context-menu-button be the normal colour when the task is hovered */
+.task:hover .small-icon {
+    transition: color 0.1s ease-out;
+    color: #777777;
+    & span {
+        color: #777777;
+    }
+}
 
 
 
@@ -136,6 +150,7 @@
     color: #0f0f0f;
     background-color: #ffffffcc;
     transition-duration: 0.08s;
+    transition: color 0.1s ease-out;
     box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.12);
 }
 
