@@ -33,12 +33,6 @@ Written/designed by aidan F223129
     }
     ```
 
-- [ ] **/employee/employee.php/personal**
-  - [x] GET
-  - [ ] PATCH 
-  - [x] POST
-  - [x] DELETE
-
 - [x] **/employee/employee.php/all**
   - GET (get all employees ever)
   ```jsonc
@@ -53,10 +47,10 @@ Written/designed by aidan F223129
   ```
 
 - [ ] **/employee/employee.php/personal/:employee_id:/:personal_id:**
-  - [ ] GET (Get individual todo list item info)
+  - [x] GET (Get individual todo list item info)
   - [ ] POST (Create new todo list item)
-  - [ ] PATCH (Edit users todolist item)
-  - [ ] DELETE (Delete from todolist)
+  - [x] PATCH (Edit users todolist item)
+  - [x] DELETE (Delete from todolist)
 
 ## manager.php
 - [x] **/frequentedposts**
