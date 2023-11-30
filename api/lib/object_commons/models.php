@@ -178,7 +178,7 @@ CONST TABLE_EMPLOYEES = new Table(
     ["empID"],
     [
         _EMPID,
-        new TableColumn("firstName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
+        new TableColumn("firstName", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
         new TableColumn("lastName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
         new TableColumn("isManager", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
     ]
@@ -266,7 +266,7 @@ const TABLE_PERSONALS = new Table(
             "state", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new RestrictedDomainConstraint(TASK_VALID_STATES)]
         ),
-        new TableColumn("dueDate", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+        new TableColumn("dueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
         new TableColumn(
             "title", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 254)]
