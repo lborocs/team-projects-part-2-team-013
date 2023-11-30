@@ -18,9 +18,15 @@
     cursor: pointer;
     transition: background-color 0.1s ease-out;
 
+    .button-icon {
+        display: flex;
+        justify-items: center;
+        align-items: center;
+        
+    }
 
-    & i {
-        font-size: 18px;
+    & span {
+        font-size: 22px;
     }
 }
 

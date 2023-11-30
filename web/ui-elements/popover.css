@@ -35,7 +35,7 @@
 
     transition: background-color 0.1s ease-out;
 
-    & i {
+    .icon {
         visibility: hidden;
         margin-left: auto;
 
@@ -50,7 +50,7 @@
     
 }
 
-.name-card:hover i {
+.name-card:hover span {
     visibility: visible;
 }
 

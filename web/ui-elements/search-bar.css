@@ -50,8 +50,8 @@
     width: 16px;
     height: 16px;
 
-    & i {
-        font-size: 12px;
+    & span {
+        font-size: 16px;
         line-height: 1;
     }
 }
@@ -59,7 +59,7 @@
 .clear-icon {
     border-radius: 3px;
     transition: background-color 0.2s ease-in-out;
-    & i {
+    & span {
         font-size: 14px;
     }
 }

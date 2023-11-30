@@ -52,7 +52,7 @@
         height: auto;
         aspect-ratio: 1;
 
-        & i {
+        & span {
             display: none;
             font-size: 18px;
             color: #666;
@@ -67,7 +67,7 @@
         height: auto;
         aspect-ratio: 1;
 
-        & i {
+        & span {
             font-size: 20px;
         }
 
@@ -83,7 +83,7 @@
     cursor: pointer;
     background-color: #f1f2f4;
 
-    .arrow i {
+    .arrow span {
         display: flex;
     }
 }
