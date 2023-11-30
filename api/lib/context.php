@@ -2,24 +2,40 @@
 // for request time
 $t_start = microtime(true);
 set_exception_handler("global_exception_handler");
+
+set_include_path(
+    PATH_SEPARATOR . "/home/web/secrets/" .
+    PATH_SEPARATOR . $_SERVER["DOCUMENT_ROOT"]
+);
+
+// secrets are dynamic so we load them in context
+require_once("secrets.php");
+// common is static and can load everything else
 require_once("common.php");
 
 
 $routes = Array();
 
+// bit of a hack cause we arent guarunteed to have common.php loaded
 function global_exception_handler(Throwable $exception) {
     $printed = $exception->__toString();
     error_log($printed);
-    respond(false, Array(
-        "message"=>"Unhandled internal exception thrown",
-        "code"=>ERROR_UNHANDLED_EXCEPTION_THROWN,
-        "exception_data" => Array(
-            "message"=>$exception->getMessage(),
-            "file"=>$exception->getFile(),
-            "line"=>$exception->getLine(),
-            "info"=>base64_encode($printed),
-        ),
-    ), 520);
+    http_response_code(520);
+    die(json_encode(
+        Array(
+            "success"=>false, 
+            "data"=>Array(
+            "message"=>"Unhandled internal exception thrown",
+            "code"=>3000, // ERROR_UNHANDLED_EXCEPTION_THROWN
+            "exception_data" => Array(
+                "message"=>$exception->getMessage(),
+                "file"=>$exception->getFile(),
+                "line"=>$exception->getLine(),
+                "info"=>base64_encode($printed),
+            ),
+        )
+        )
+    ));
 };
 
 

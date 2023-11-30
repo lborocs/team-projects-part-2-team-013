@@ -1,5 +1,5 @@
 <?php
-require("../xlib/context.php");
+require("../../lib/context.php");
 
 function hash_pass(string $password) {
     return password_hash(

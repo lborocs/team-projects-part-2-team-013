@@ -1,6 +1,4 @@
 <?php
-// TODO: dont store secrets on github, make a secrets file instead or a keystore
-
 // error codes
 
 // 401 Unauthorized and 403 Forbidden
@@ -57,5 +55,4 @@ const SESSION_INACTIVITY_EPOCH = 60 * 30; // 60s * 30m
 const UUID_LENGTH = 16;
 const POST_ACCESS_DELTA = 60 * 60 * 24 * 30; // 60s * 60m * 24h * 30d
 const SEARCH_FETCH_LIMIT = 25;
-
 ?>

@@ -1,6 +1,6 @@
 <?php
-require_once("../secrets.php");
-require_once("../const.php");
+
+require_once("const.php");
 require_once("database.php");
 
 class Route {

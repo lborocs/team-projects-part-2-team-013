@@ -1,6 +1,6 @@
 <?php
-require_once("../xlib/object_commons/object_route.php");
-require("../xlib/context.php");
+require_once("../../lib/object_commons/object_route.php");
+require("../../lib/context.php");
 
 const TASK_METHOD_CHECKS = [
     "DELETE"=>[

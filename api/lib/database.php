@@ -1,6 +1,5 @@
 <?php
-require_once("../const.php");
-require_once("../secrets.php");
+require_once("const.php");
 
 // p: forces persistency
 // this decrease response times by over a second
