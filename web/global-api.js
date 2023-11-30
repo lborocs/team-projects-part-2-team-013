@@ -34,7 +34,7 @@ async function api_request(route, method, body, options={}) {
         reqInit.body = JSON.stringify(body);
     }
 
-    const response = await fetch("https://013.team/api" + route, reqInit);
+    const response = await fetch("http://localhost:4444" + route, reqInit);
     const status = response.status;
 
     // 204 no content has no content

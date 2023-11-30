@@ -50,7 +50,7 @@ function r_employee_personals(RequestContext $ctx, string $args) {
 }
 
 function r_employee_personal(RequestContext $ctx, string $args) {
-    object_manipulation_generic(PERSONALS_METHOD_CHECKS, MODEL_PERSONALS, TABLE_PERSONALS, $ctx, $args);
+    object_manipulation_generic(PERSONALS_METHOD_CHECKS, TABLE_PERSONALS, $ctx, $args);
 }
 
 function r_employee_all(RequestContext $ctx, string $args) {

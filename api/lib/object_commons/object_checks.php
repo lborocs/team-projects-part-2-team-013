@@ -124,7 +124,7 @@ function object_check_task_edit_validation(RequestContext $ctx, array $resource_
         } else {
             respond_bad_request(
                 "Task state field is not a valid state",
-                ERROR_BODY_UPDATE_INVALID_DATA
+                ERROR_BODY_FIELD_INVALID_DATA
             );
         }
     }

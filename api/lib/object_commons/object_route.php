@@ -5,42 +5,35 @@ require_once("object_checks.php");
 // this code is to abstract general object manpulation routes, e.g routes like task and project
 const OBJECT_GENERAL_ALLOWED_METHODS = ["POST", "GET", "PATCH", "DELETE"];
 
-const TABLE_NAMES = [
-    TABLE_EMPLOYEES=>"EMPLOYEES",
-    TABLE_POSTS=>"POSTS",
-    TABLE_PROJECTS=>"PROJECTS",
-    TABLE_TASKS=>"TASKS",
-    TABLE_PERSONALS=>"EMPLOYEE_PERSONALS",
-];
 
 const OBJECT_GENERIC_NEW_FUNCS = [
-    TABLE_TASKS=>"_new_task",
-    TABLE_POSTS=>"_new_post",
-    TABLE_PROJECTS=>"_new_project",
-    TABLE_PERSONALS=>"_new_personal"
+    "`TASKS`"=>"_new_task",
+    "`POSTS`"=>"_new_post",
+    "`PROJECTS`"=>"_new_project",
+    "`EMPLOYEE_PERSONALS`"=>"_new_personal"
 ];
 
 const OBJECT_GENERIC_FETCH_FUNCS = [
-    TABLE_TASKS=>"_fetch_task",
-    TABLE_POSTS=>"_fetch_post",
-    TABLE_PROJECTS=>"_fetch_project",
+    "`TASKS`"=>"_fetch_task",
+    "`POSTS`"=>"_fetch_post",
+    "`PROJECTS`"=>"_fetch_project",
 ];
 
 const OBJECT_GENERIC_EDIT_FUNCS = [
-    TABLE_TASKS=>"_edit_task",
-    TABLE_POSTS=>"_edit_post",
-    TABLE_PROJECTS=>"_edit_project",
+    "`TASKS`"=>"_edit_task",
+    "`POSTS`"=>"_edit_post",
+    "`PROJECTS`"=>"_edit_project",
 ];
 
 const OBJECT_GENERIC_DELETE_FUNCS = [
-    TABLE_TASKS=>"_delete_task",
-    TABLE_PROJECTS=>"_delete_project",
-    TABLE_POSTS=>"_delete_post",
-    TABLE_PERSONALS=>"_delete_personal"
+    "`TASKS`"=>"_delete_task",
+    "`PROJECTS`"=>"_delete_project",
+    "`POSTS`"=>"_delete_post",
+    "`EMPLOYEE_PERSONALS`"=>"_delete_personal"
 ];
 
 
-function object_manipulation_generic(array $method_checks, array $model, int $table_specifier, RequestContext $ctx, string $args) {
+function object_manipulation_generic(array $method_checks, Table $model, RequestContext $ctx, string $args) {
     // generically verify and manipulate an object, then call its non generic function
 
     // only support a single resource
@@ -53,13 +46,13 @@ function object_manipulation_generic(array $method_checks, array $model, int $ta
             );
         }
     }
+    $session = $ctx->session;
 
     // if we have no session then this is not a valid route
-    if (is_null($ctx->session)) {
+    if (is_null($session)) {
         respond_illegal_implementation("Generic route called without session");
     }
 
-    $session = $ctx->session;
 
     // ensure the every body field corresponds to a valid model field
     if ($ctx->method_allows_body()) {
@@ -71,137 +64,173 @@ function object_manipulation_generic(array $method_checks, array $model, int $ta
     }
 
     if ($ctx->request_method == "GET") {
-        _generic_fetch($ctx, $table_specifier, $id_selectors);
+        _generic_fetch($ctx, $model, $id_selectors);
     }
 
     if ($ctx->request_method == "DELETE") {
-        _generic_delete($ctx, $table_specifier, $id_selectors);
+        _generic_delete($ctx, $model, $id_selectors);
     }
 
     if ($ctx->request_method == "POST") {
-        // new object
 
-        // here we only need to validate length because the body
-        // check would have errored on any fields that are not expected
 
-        // foreach mandatory field
-        foreach ($model as $key=>$value) {
-            if (substr($value, -1) != "?") {
-                if (!key_exists($key, $ctx->request_body)) {
-                    respond_bad_request(
-                        "Missing mandatory field '". $key . "' (of type ". $value . ")",
-                        ERROR_BODY_MISSING_REQUIRED_FIELD
-                    );
-                }
+        // here we just check that we have each mandatory field
+        // we expect that the fields are valid for the model
+        // and no other fields are present
+
+        foreach ($model->columns as $column) {
+
+            if ($column->is_server_generated) {
+                continue;
+            }
+
+            $field = $column->name;
+
+            if (is_null($ctx->request_body[$field]) && !$column->is_nullable) {
+                respond_bad_request(
+                    "Expected field $field to be set",
+                    ERROR_BODY_MISSING_REQUIRED_FIELD
+                );
             }
         }
 
+
+
         // we have all fields so we can insert into the database
 
-        _generic_new($ctx, $table_specifier, $ctx->request_body, $id_selectors);
+        _generic_new($ctx, $model, $ctx->request_body, $id_selectors);
     }
 
     if ($ctx->request_method == "PATCH") {
-        // we have already ensured that fields are valid for the model
+        // we expect that the fields are valid for the model
+        // and no other fields are present
+        // but we also must check that fields are editable
 
-        _generic_edit($ctx, $table_specifier, $ctx->request_body, $id_selectors);
+        respond_not_implemented();
+
+        if ($ctx->request_body == []) {
+            respond_bad_request(
+                "Expected at least one field to be updated",
+                ERROR_BODY_MISSING_REQUIRED_FIELD
+            );
+        }
+
+        foreach ($ctx->request_body as $user_field => $user_value) {
+            $column = $model->get_column($user_field);
+
+            if (!$column->is_editable) {
+                respond_bad_request(
+                    "Field $field is not editable",
+                    ERROR_BODY_UNEXPECTED_FIELD
+                );
+            }
+        }
+
+        _generic_edit($ctx, $model, $ctx->request_body, $id_selectors);
     }
 
 }
 
-function _ensure_body_validity(array $model, array $body) {
+function _ensure_body_validity(Table $model, array $body) {
     // this function ensures that every field in the body
     // is a valid field in the model
     // it also checks the types and parses ids
+    // and runs through constraints
 
 
-    foreach ($body as $key => $value) {
-        $expected_type = $model[$key] ?? respond_bad_request(
-            "Unexpected field '" . $key . "'",
-            ERROR_BODY_UNEXPECTED_FIELD
-        );
+    foreach ($body as $user_field => $user_value) {
+        $column = $model->get_column($user_field);
 
-        // if the expected type is an id we must uphold
-        // referential integrity
-
-        if (substr($expected_type, -1) == "?") {
-            if (is_null($value)) {
-                continue;
-            } else {
-                $expected_type = substr_replace($expected_type, "", -1);
-            }
+        // if user sent unexpected column
+        if (is_null($column) || $column->is_server_generated) {
+            respond_bad_request(
+                "Field $user_field is not a valid field for this object",
+                ERROR_BODY_UNEXPECTED_FIELD
+            );
         }
 
+        // if users sent null value for non nullable field
+        if (is_null($user_value) && !$column->is_nullable) {
+            respond_bad_request(
+                "Field $user_field is not nullable",
+                ERROR_BODY_MISSING_REQUIRED_FIELD
+            );
+        }
 
-        if (substr($expected_type, 0, 3) == "ID_") {
-            
-            // convert hex id to binary
-            // supress warning on failure
-            $binary_id = @hex2bin($value);
-           
-            if ($binary_id == false) {
+        // if user sent invalid type (check for snowflake or bool or whatever)
+        $user_type = gettype($user_value);
+        $column_type = $column->type;
+
+        if ($column_type == "binary") {
+            if ($user_type != "string") {
                 respond_bad_request(
-                    $key . " is not valid hex string",
-                    ERROR_BODY_SNOWFLAKE_INVALID
-                );
-            }
-
-            // use the mapping to find the database validty function
-            $schema = substr($expected_type, 3);
-            if (!OBJECT_SNOWFLAKE_VALIDITY_FUNCTIONS[$schema]($value)) {
-                respond_bad_request(
-                    $key . " " . $value . " does not reference a valid object",
-                    ERROR_BODY_SNOWFLAKE_DOESNT_REFERENCE
-                );
-            }
-        } else {
-            // here we have a non id field and we can simply check the type,
-            // we could have an additional constraints
-            $value_type = gettype($value);
-
-            if ($expected_type == "boolean" && $value_type == "integer") {
-                if ($value == 0 || $value == 1) {
-                    continue;
-                } else {
-                    respond_bad_request(
-                        "Expected " . $key . " to be a integer bool 0/1",
-                        ERROR_BODY_FIELD_INVALID_TYPE
-                    );
-                }
-            }
-
-            if ($value_type != $expected_type) {
-                respond_bad_request(
-                    "Expected " . $key . " to be of type " . $expected_type . " (got ". $value_type . ")",
+                    "Field $user_field is not a string, binary fields should be a hex string",
                     ERROR_BODY_FIELD_INVALID_TYPE
                 );
             }
+
+            if (!@hex2bin($user_value)) {
+                respond_bad_request(
+                    "Field $user_field is not a valid hex string",
+                    ERROR_BODY_FIELD_INVALID_TYPE
+                );
+            }
+        } elseif ($column_type == "boolean") {
+            if ($user_type != "integer") {
+                respond_bad_request(
+                    "Field $user_field is not an integer, boolean fields should be 0 or 1",
+                    ERROR_BODY_FIELD_INVALID_TYPE
+                );
+            } elseif ($user_value != 0 && $user_value != 1) {
+                respond_bad_request(
+                    "Field $user_field is not a valid boolean, boolean fields should be 0 or 1",
+                    ERROR_BODY_FIELD_INVALID_TYPE
+                );
+            }
+        } elseif ($column_type != $user_type) {
+            respond_bad_request(
+                "Field $user_field is not a valid $column_type",
+                ERROR_BODY_FIELD_INVALID_TYPE
+            );
         }
+
+        foreach ($column->constraints as $constraint) {
+            $constraint->validate($user_value);
+        }
+        
     }
+
+    
 }
 
 // fetch and delete dont take body data
 
-function _generic_fetch(RequestContext $ctx, int $table_specifier, array $url_specifiers) {
+function _generic_fetch(RequestContext $ctx, Table $table, array $url_specifiers) {
+    $table_specifier = $table->name;
     $func =  OBJECT_GENERIC_FETCH_FUNCS[$table_specifier] ?? respond_illegal_implementation("Object generic fetch func missing");
     return $func($ctx, $url_specifiers);
 }
 
-function _generic_delete(RequestContext $ctx, int $table_specifier, array $url_specifiers) {
+function _generic_delete(RequestContext $ctx, Table $table, array $url_specifiers) {
+    $table_specifier = $table->name;
     $func =  OBJECT_GENERIC_DELETE_FUNCS[$table_specifier] ?? respond_illegal_implementation("Object generic delete func missing");
     return $func($ctx, $url_specifiers);
 }
 
 // new and delete take body data
 
-function _generic_new(RequestContext $ctx, int $table_specifier, array $data, array $url_specifiers) {
+function _generic_new(RequestContext $ctx, Table $table, array $data, array $url_specifiers) {
+    $table_specifier = $table->name;
     $func =  OBJECT_GENERIC_NEW_FUNCS[$table_specifier] ?? respond_illegal_implementation("Object generic new func missing");
     return $func($ctx, $data, $url_specifiers);
 }
 
-function _generic_edit(RequestContext $ctx, int $table_specifier, array $data, array $url_specifiers) {
-    $func =  OBJECT_GENERIC_EDIT_FUNCS[$table_specifier] ?? respond_illegal_implementation("Object generic edit func missing");
-    return $func($ctx, $data, $url_specifiers);
+function _generic_edit(RequestContext $ctx, Table $table, array $data, array $url_specifiers) {
+    $table_specifier = $table->name;
+    respond_not_implemented();
+    $id = array_pop($url_specifiers);
+    //respond_ok(db_generic_edit($table_specifier, $id, $data));
+    
 }
 
 // task funcs
