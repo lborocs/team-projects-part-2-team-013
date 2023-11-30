@@ -2,4 +2,4 @@
 */target
 */Cargo.lock
 .vscode/
-/api/secrets.php
+api/lib/secrets.php
