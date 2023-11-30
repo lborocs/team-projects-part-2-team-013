@@ -3,11 +3,6 @@
 $t_start = microtime(true);
 set_exception_handler("global_exception_handler");
 
-set_include_path(
-    PATH_SEPARATOR . "/home/web/secrets/" .
-    PATH_SEPARATOR . $_SERVER["DOCUMENT_ROOT"]
-);
-
 // secrets are dynamic so we load them in context
 require_once("secrets.php");
 // common is static and can load everything else
