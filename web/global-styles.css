@@ -145,9 +145,11 @@ body {
 .sidebar-item.selected {
     background-color: rgb(100,100,100, 0.1);
     border-radius: 3px !important;
+    border-bottom-left-radius: 0 !important;
+    border-top-left-radius: 0 !important;
     color: #000000;
     font-weight: 600 !important;
-    border-left: 2px solid #ffc400;
+    border-left: 3px solid #ffc400;
     transition-duration: 0.05s;
 
     & span {
