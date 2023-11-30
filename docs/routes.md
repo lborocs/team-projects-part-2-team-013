@@ -21,18 +21,6 @@ Written/designed by aidan F223129
     }
     ```
 
-- [x] **/employee/employee.php/personals**
-  - GET (get personal todo list)
-    will return everything on the CURRENT users todo list
-    ```jsonc
-    {
-      "success":true,
-      "data":{
-        "personals":[...]
-      }
-    }
-    ```
-
 - [x] **/employee/employee.php/all**
   - GET (get all employees ever)
   ```jsonc
@@ -45,6 +33,18 @@ Written/designed by aidan F223129
     }
   }
   ```
+
+- [x] **/employee/employee.php/personals**
+  - GET (get personal todo list)
+    will return everything on the CURRENT users todo list
+    ```jsonc
+    {
+      "success":true,
+      "data":{
+        "personals":[...]
+      }
+    }
+    ```
 
 - [ ] **/employee/employee.php/personal/:employee_id:/:personal_id:**
   - [x] GET (Get individual todo list item info)
