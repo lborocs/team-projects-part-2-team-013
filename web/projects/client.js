@@ -395,14 +395,15 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     let createdBy = task.createdBy || "Unknown";
     let state = task.state
     let taskID = task.taskID || "Unknown";
+    let expectedManHours = task.expectedManHours; //no safety here because not null i think
 
     console.log(task)
 
     if (update & RENDER_COLUMN) {
-        renderTask(title, state, taskID, desc, createdBy, date, task.dueDate);
+        renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours);
     }
     if (update & RENDER_LIST) {
-        renderTaskInList(title, state, taskID, desc, createdBy, date);
+        renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours);
     }
     
     calculateTaskCount()
@@ -569,7 +570,7 @@ function calculateTaskCount() {
 }
 
 
-function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "") {
+function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours) {
     console.log("[renderTaskInList] renering task in list")
 
     let taskRow = document.createElement("tr");
@@ -591,6 +592,8 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     taskRow.setAttribute("data-desc", desc);
     taskRow.setAttribute("data-date", dueDate);
     taskRow.setAttribute("data-assignee", assignee);
+    taskRow.setAttribute("data-title", title);
+    taskRow.setAttribute("data-expectedManHours", expectedManHours);
 
     //check if state is 0,1,2 and do separate things for each. otherwise, error
     if (state == 0) {
@@ -713,14 +716,16 @@ function sortByState(tasks, ascending) {
 }
 
 
-async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp ) {
+async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours) {
     //check for null values and set default values (null doesnt count as undefined)
     state = state === null ? 0 : state;
     ID = ID === null ? "" : ID;
     desc = desc === null ? "" : desc;
     createdBy = createdBy === null ? "" : createdBy;
     date = date === null ? "" : date;
+    expectedManHours = expectedManHours === null ? "" : expectedManHours;
     console.log("[renderTask] Task createdBy to " + createdBy)
+
 
     let dateToday = (new Date()).getTime() / 1000;
 
@@ -736,6 +741,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.setAttribute("data-desc", desc);
     task.setAttribute("data-date", date);
     task.setAttribute("data-title", title);
+    task.setAttribute("data-expectedManHours", expectedManHours);
 
     //generate the html for the task
     task.innerHTML = `
