@@ -5,6 +5,26 @@ There are also 2 other sites used as CDNS:
 - cdn.013.team - used for hosting static web asssets (images, videos, icons etc)
 - usercontent.013.team - used for hosting usercontent such as avatars etc.
 
+# Infrastructure configuration
+The api requires for each node to be able to include a php file containing secrets and config info using the following format:
+```php
+<?php
+// infrastrucure
+const MYSQL_DATABASE = "team013";
+const MYSQL_USERNAME = "team013";
+const MYSQL_PASSWORD = "database password";
+const MYSQL_SERVER = "localhost";
+const SESSION_VALIDATION_BASE = "http://localhost:4231/";
+
+// encryption
+const SESSION_HMAC_ALGO = "sha3-256";
+const SESSION_ENCRYPTION_ALGO = "aes-256-cbc";
+const SESSION_ENCRYPTION_KEY_HEX = "session encryption key";
+const SESSION_HMAC_KEY_HEX = "session signing key";
+?>
+```
+
+
 # Run on local machine
 
 1. Install [PHP VS16 x64 Non Thread Safe (direct download)](https://windows.php.net/downloads/releases/php-8.2.12-nts-Win32-vs16-x64.zip)
