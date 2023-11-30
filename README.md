@@ -19,6 +19,8 @@ const SESSION_VALIDATION_BASE = "http://localhost:4231/";
 // encryption
 const SESSION_HMAC_ALGO = "sha3-256";
 const SESSION_ENCRYPTION_ALGO = "aes-256-cbc";
+
+// both 256 bit keys
 const SESSION_ENCRYPTION_KEY_HEX = "session encryption key";
 const SESSION_HMAC_KEY_HEX = "session signing key";
 ?>
@@ -26,6 +28,8 @@ const SESSION_HMAC_KEY_HEX = "session signing key";
 
 
 # Run on local machine
+
+## with production api
 
 1. Install [PHP VS16 x64 Non Thread Safe (direct download)](https://windows.php.net/downloads/releases/php-8.2.12-nts-Win32-vs16-x64.zip)
 2. Extract to `C:\php`
@@ -39,6 +43,18 @@ const SESSION_HMAC_KEY_HEX = "session signing key";
     *URLs should look like this:* `localhost:3000/dashboard/` `localhost:3000/`
 
 The site should now function like normal on your local machine.
+
+## setting up local api
+1. change the php include path to include the api folder include_path = ".;C:\..\githubrepo\api\"
+2. enable the openssl, curl, mysqli extensions
+3. install mariadb and setup an account to access
+4. create the secrets.php
+   1. generate 2 encryption keys in a hex representation
+   2. insert the database credentials you just created
+5. import the database format (dump.sql on the discord or get the latest backup from gcp) using mariadb < dump.sql with the credentials
+6. in addition to the web folder php server, run another php server in the api/routes folder
+7. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
+
 
 # Important notes for pt2
 - Fontawesome import has now changed to be hosted on cdnjs.cloudflare.com

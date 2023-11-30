@@ -250,6 +250,7 @@ const TABLE_TASKS = new Table(
         new TableColumn("archived", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
         new TableColumn("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new TableColumn("dueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
+        new TableColumn("expectedManHours", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
     ]
 );
 
