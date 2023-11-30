@@ -52,12 +52,35 @@
     top: 100%;
     left: 0;
     width: 100%;
-
+    gap: 0.25em;
     color: inherit;
-    background-color: transparent;
-
+    background-color: white;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
     margin: 2px 8px;
+}
 
+.dropdown-option {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 32px;
+
+    
+    color: #172b4d;
+    font-weight: 600;
+    font-size: 14px;
+
+    border-radius: 3px;
+    cursor: pointer;
+
+    transition: background-color 0.1s ease-out;
+}
+
+.dropdown-option:hover  {
+    background-color: #f1f2f4;
 }
 
 .dropdown-menu {
