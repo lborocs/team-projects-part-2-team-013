@@ -1,6 +1,6 @@
 <?php
-require("../context.php");
-require("../object_route.php");
+require_once("../xlib/object_commons/object_route.php");
+require("../xlib/context.php");
 
 const PROJECT_MODEL_CHECKS = [
     "DELETE"=>[

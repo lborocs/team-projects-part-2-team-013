@@ -1,6 +1,6 @@
 <?php
-require_once("../object_route.php");
-require("../context.php");
+require_once("../xlib/object_commons/object_route.php");
+require("../xlib/context.php");
 
 const PERSONALS_METHOD_CHECKS = [
     "DELETE"=>[

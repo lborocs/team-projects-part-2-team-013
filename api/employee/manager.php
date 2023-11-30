@@ -1,5 +1,5 @@
 <?php
-require("../context.php");
+require("../xlib/context.php");
 
 function r_manager_post_accesses(RequestContext $ctx, string $args) {
     $accesses = db_post_accesses_fetchall();

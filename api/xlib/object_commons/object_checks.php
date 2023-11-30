@@ -1,5 +1,5 @@
 <?php
-require_once("database.php");
+require_once("../database.php");
 
 function _check_arg_count(array $resource_ids, int $count) {
     if (count($resource_ids) != $count) {

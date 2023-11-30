@@ -1,6 +1,7 @@
 <?php
+require_once("../secrets.php");
+require_once("../const.php");
 require_once("database.php");
-require_once("const.php");
 
 class Route {
     public Array $allowed_methods;

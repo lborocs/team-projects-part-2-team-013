@@ -58,18 +58,4 @@ const UUID_LENGTH = 16;
 const POST_ACCESS_DELTA = 60 * 60 * 24 * 30; // 60s * 60m * 24h * 30d
 const SEARCH_FETCH_LIMIT = 25;
 
-
-// infrastrucure
-const MYSQL_DATABASE = "team013";
-const MYSQL_USERNAME = "team013";
-const MYSQL_PASSWORD = "ctLp3u4fXHXpasfktv7K";
-const MYSQL_SERVER = "localhost";
-const SESSION_VALIDATION_BASE = "http://localhost:4231/";
-
-// encryption
-const SESSION_HMAC_ALGO = "sha3-256";
-const SESSION_ENCRYPTION_ALGO = "aes-256-cbc";
-const SESSION_ENCRYPTION_KEY_HEX = "e0525a9c273f2a5e4b9fa28ad4aa8cd1c76ae47a66b9953f5317d1b02f97af9c";
-const SESSION_HMAC_KEY_HEX = "b4a87d4731acbb4279aa78229e622512c8d00802c204f7da199d1a7742904f38";
-
 ?>
