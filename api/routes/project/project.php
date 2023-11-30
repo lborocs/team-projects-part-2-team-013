@@ -55,7 +55,7 @@ function r_project_fetchall_projects(RequestContext $ctx, string $args) {
 }
 
 function r_project_project(RequestContext $ctx, string $args) {
-    object_manipulation_generic(PROJECT_MODEL_CHECKS, MODEL_PROJECT, TABLE_PROJECTS, $ctx, $args);
+    object_manipulation_generic(PROJECT_MODEL_CHECKS, TABLE_PROJECTS, $ctx, $args);
 }
 
 register_route(new Route(

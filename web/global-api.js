@@ -4,6 +4,9 @@ const DEFAULT_OPTIONS = {
     retries: 3,
 }
 
+//const API_BASE = "http://localhost:4444";
+const API_BASE = "https://013.team/api";
+
 // always remember null is a valid body
 async function api_request(route, method, body, options={}) {
 
@@ -34,7 +37,7 @@ async function api_request(route, method, body, options={}) {
         reqInit.body = JSON.stringify(body);
     }
 
-    const response = await fetch("https://013.team/api" + route, reqInit);
+    const response = await fetch(API_BASE + route, reqInit);
     const status = response.status;
 
     // 204 no content has no content
@@ -84,14 +87,10 @@ async function api_request(route, method, body, options={}) {
         case 3005: // db general failure
         case 3006: // session validation server failure
 
-            if (retries === undefined || retries > 0) {
-                if (retries === undefined) {
-                    retries = 3;
-                } else {
-                    retries--;
-                }
-                console.warn(`Retrying request ${retries} more times`);
-                return await api_request(route, method, body, retries);
+            if (options.retries > 0) {
+                options.retries = options.retries - 1;
+                console.warn(`Retrying request ${options.retries} more times`);
+                return await api_request(route, method, body, options);
             } else {
                 console.error(`Retries exhausted: returning error message`);
                 return data;

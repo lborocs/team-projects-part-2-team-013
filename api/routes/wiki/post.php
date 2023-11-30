@@ -33,7 +33,7 @@ function r_post_fetchall_posts(RequestContext $ctx, string $args) {
 }
 
 function r_post_post(RequestContext $ctx, string $args) {
-    object_manipulation_generic(POST_METHOD_CHECKS, MODEL_POST, TABLE_POSTS, $ctx, $args);
+    object_manipulation_generic(POST_METHOD_CHECKS, TABLE_POSTS, $ctx, $args);
 }
 
 register_route(new Route(
