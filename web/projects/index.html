@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../global-styles.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="../ui-elements/search-bar.css">
+    <link rel="stylesheet" href="../ui-elements/dropdown.css">
     <link rel="stylesheet" href="../ui-elements/text-button.css">
     <link rel="stylesheet" href="../ui-elements/icon-button.css">
     <link rel="stylesheet" href="../ui-elements/task-card.css">
@@ -261,15 +262,21 @@
                             <span class="material-symbols-rounded">close</span>
                         </div>
                     </div>
-
-                    <div class="filter">
-                        <div class="filter-icon">
-                            <span class="material-symbols-rounded">
-                                filter_list
-                            </span>
-                        </div>
-                        <div class="filter-text">
-                            Filters
+                    <div class="filters">
+                        <div class="dropdown" tabindex="0" id="project-filter">
+                            <div class="dropdown-text">
+                                Add Filters
+                            </div>
+                            <div class="dropdown-chevron">
+                                <span class="material-symbols-rounded">
+                                    filter_list
+                                </span>
+                            </div>
+                            <div class="dropdown-list">
+                                <div class="dropdown-option">Option 1</div>
+                                <div class="dropdown-option">Option 2</div>
+                                <div class="dropdown-option">Option 3</div>
+                            </div>
                         </div>
                     </div>
                 </div>

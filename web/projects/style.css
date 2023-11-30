@@ -37,6 +37,14 @@
         justify-content: flex-start;
         align-items: center;
         gap: 1em;
+
+        .filters {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 0.5em;
+        }
     }
 
     .search {
@@ -44,23 +52,7 @@
     }
 
     .filter {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 0.5em;
-        font-size: 14px;
-        font-weight: 600;
-
-        .filter-icon {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            width: auto;
-            aspect-ratio: 1;
-            color: var(--icon-clr, #777777);
-        }
+        width: 10em;
     }
 
     .name-card {

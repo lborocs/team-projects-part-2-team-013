@@ -829,13 +829,14 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 //     return project
 // }
 
-function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) {
+function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID, createdAt) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let project = document.createElement("tr")
     project.classList.add("project-row")
     let icon = isTeamLeader ? `fas fa-user-gear` : `fas fa-users`;
     console.log(`[renderProject] using icon: ${icon}`)
+    let date = createdAt ? global.formatDateFull(new Date(createdAt * 1000)) : "No creation date found";
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -847,7 +848,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) 
                 </div>
             </div>
         </td>
-        <td>Not implemented</td>
+        <td>${date}</td>
         <td>
             <div class="name-card">
                 <div class="icon">
@@ -1347,6 +1348,8 @@ async function addProjectPopup(){
 }
 
 async function projectObjectRenderAndListeners(project) {
+    console.log("[projectObjectRenderAndListeners] rendering project:")
+    console.log(project)
     let session = await global.getCurrentSession();
     let isTeamLeader = (project.teamLeader === session.employee.empID);
     let emps = await global.getEmployeesById([project.teamLeader, project.createdBy]);
@@ -1354,7 +1357,7 @@ async function projectObjectRenderAndListeners(project) {
 
 
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
-    let element = renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader);
+    let element = renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader, project.createdAt);
 
     setUpProjectRowEventListeners(element);
     calculateTaskCount();
