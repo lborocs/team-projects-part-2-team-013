@@ -19,6 +19,8 @@ body {
 .breadcrumb-child {
     text-decoration: none;
     padding: 0.3em;
+    padding-top: 0.35em;
+    padding-bottom: 0.35em;
     line-height: 1;
     color: rgb(110,110,110);
     border-radius: 3px;
@@ -29,6 +31,10 @@ body {
 .breadcrumb-navigator:hover {
     background-color: rgb(244,244,244);
     color: rgb(65,65,65);
+}
+
+.breadcrumb-divider {
+    color: #ffaa00
 }
 
 .tooltip {
