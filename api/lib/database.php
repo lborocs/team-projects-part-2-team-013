@@ -43,20 +43,12 @@ function db_generic_new(Table $table, array $values, string $bind_format) {
     return $query->execute();
 }
 
-function db_generic_edit(Table $table, string $hex_key, array $values) {
-
-    global $db;
-
-    $b_id = hex2bin($hex_key);
-
-    $stmt = "UPDATE `". $table->name ."` SET ";
-
-    foreach ($values as $key=>$value) {
-        $stmt .= $key . " = ?, ";
-    }
-    $stmt = substr_replace($stmt, "", -2); // remove trailing ', '
-
+function db_generic_edit(Table $table, array $values) {
     
+    respond_not_implemented();
+
+
+
 
 }
 
