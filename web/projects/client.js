@@ -1546,6 +1546,7 @@ const sleep = (ms) => {
 };
 
 function filterFromSearch() {
+    return;
     if (document.getElementById("project-search").value === ""){
         let projectRows = document.querySelectorAll(".project-row")
         projectRows.forEach((project) => {
