@@ -3,3 +3,5 @@
 */Cargo.lock
 .vscode/
 api/lib/secrets.php
+composer.lock
+vendor/
