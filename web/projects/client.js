@@ -1524,22 +1524,46 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
         currentTimestamp,
     );
 });
-    
-addEventListener("keydown", filterFromSearch)
+
+addEventListener("keydown", (e) => {
+    sleep(10).then(() => {
+        if (document.activeElement.id === "project-search") {
+            filterFromSearch()
+        }
+    }
+)}
+    )
+
+document.getElementById("deleteSearch").addEventListener("click", () => {
+    document.getElementById("project-search").value = "";
+    filterFromSearch();
+});
+
+const sleep = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+};
 
 function filterFromSearch() {
+    if (document.getElementById("project-search").value === ""){
+        let projectRows = document.querySelectorAll(".project-row")
+        projectRows.forEach((project) => {
+            project.classList.remove("norender");
+        });
+    }
+    else{
     console.log("[filterFromSearch] searching for:");
     console.log(document.getElementById("project-search").value); 
-    let search = document.getElementById("project-search");
-    if (search.length !== 0) {
-        let searchValue = search.value.toUpperCase();
-        let projTitles = document.querySelectorAll(".project-title");
-        projTitles.forEach((title) => {
-            console.log(title);
-            let titleValue = title.innerText.toUpperCase();
-            if (!titleValue.includes(searchValue)) {
-                title.parentElement.classList.add("norender");
-            }
-        });
+    let searchValue = document.getElementById("project-search").value.toUpperCase();
+    let projectRows = document.querySelectorAll(".project-row")
+    projectRows.forEach((project) => {
+        let title = project.getAttribute("data-title").toUpperCase();
+        console.log(title);
+        console.log(searchValue);
+        if (!title.includes(searchValue)) {
+            project.classList.add("norender");
+        }
+    });
     }
 }
