@@ -46,15 +46,17 @@ The site should now function like normal on your local machine.
 
 ## setting up local api
 1. change the php include path to include the api folder include_path = ".;C:\..\githubrepo\api\"
-2. enable the openssl, curl, mysqli extensions
-3. install mariadb and setup an account to access
-4. create the secrets.php
+2. enable the openssl, curl, mysqli, mbstring extensions
+3. install composer
+4. install the composer packages: google/cloud-storage
+5. install mariadb and setup an account to access
+6. create the secrets.php
    1. generate 2 encryption keys in a hex representation
    2. insert the database credentials you just created
-5. import the database format (dump.sql on the discord or get the latest backup from gcp) using mariadb < dump.sql with the credentials
-6. in addition to the web folder php server, run another php server in the api/routes folder
-7. the api will need a copy of the invalidation service running so build and run that (or use an already built executable)
-8. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
+7. import the database format (dump.sql on the discord or get the latest backup from gcp) using mariadb < dump.sql with the credentials
+8. in addition to the web folder php server, run another php server in the api/routes folder
+9.  the api will need a copy of the invalidation service running so build and run that (or use an already built executable)
+10. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
 
 
 # Important notes for pt2
