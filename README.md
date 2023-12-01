@@ -53,7 +53,8 @@ The site should now function like normal on your local machine.
    2. insert the database credentials you just created
 5. import the database format (dump.sql on the discord or get the latest backup from gcp) using mariadb < dump.sql with the credentials
 6. in addition to the web folder php server, run another php server in the api/routes folder
-7. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
+7. the api will need a copy of the invalidation service running so build and run that (or use an already built executable)
+8. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
 
 
 # Important notes for pt2
