@@ -252,7 +252,7 @@ class Session {
             }
         }
         else if ($status_code != 404) {
-            respond_infrastructure_error("Session validation server unhandled error", ERROR_SESSION_VALIDATION_SERVER_DOWN);
+            respond_infrastructure_error("Session validation server unhandled error (". $status_code . ")", ERROR_SESSION_VALIDATION_SERVER_DOWN);
         }
         $duration = microtime(true) - $before;
 
