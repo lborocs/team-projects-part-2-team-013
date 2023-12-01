@@ -18,8 +18,7 @@ body {
 }
 
 .logo {
-    padding-top: 30px;
-    width: 150px;
+    width: 50%;
     text-align: center;
     border-radius: 10%;
 }

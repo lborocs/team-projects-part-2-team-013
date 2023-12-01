@@ -16,6 +16,7 @@ body {
     gap: 0.25em;
 }
 
+
 .breadcrumb-child {
     text-decoration: none;
     padding: 0.3em;
@@ -316,18 +317,32 @@ body {
         display: flex;
         flex-direction: row;
         align-items: center;
+        white-space: nowrap;
     }
     .breadcrumb {
         position: relative;
         font-size: 0.9rem;
         font-weight: 500;
-        color: rgb(110,110,110)
+        color: rgb(110,110,110);
+    }
+
+    .center {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        position: absolute;
+        margin-left: 45vw;
+    }
+
+    .fullLogo {
+        width: 20%;
     }
 
     .right {
         display: flex;
         flex-direction: row;
         align-items: center;
+        white-space: nowrap;
     }
 }
 
