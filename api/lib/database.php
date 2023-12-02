@@ -40,7 +40,13 @@ function db_generic_new(Table $table, array $values, string $bind_format) {
         ...$values
     );
 
-    return $query->execute();
+    $res = $query->execute();
+
+    if (!$res) {
+        respond_database_failure(true);
+    }
+
+    return true;
 }
 
 function db_generic_edit(Table $table, array $values, array $keys) {
@@ -96,6 +102,50 @@ function db_generic_edit(Table $table, array $values, array $keys) {
     return $result;
 
 
+}
+
+//assets
+
+function db_asset_delete(string $asset_id) {
+    global $db;
+
+    $bin_id = hex2bin($asset_id);
+
+    $query = $db->prepare(
+        "DELETE FROM `ASSETS` WHERE assetID = ?"
+    );
+    $query->bind_param("s", $bin_id);
+    $result = $query->execute();
+
+    return $result;
+}
+
+function db_asset_new(
+    string $asset_id,
+    string $owner_id,
+    int $type,
+    string $content_type
+) {
+    global $db;
+
+    $bin_a_id = hex2bin($asset_id);
+    $bin_o_id = hex2bin($owner_id);
+
+    $query = $db->prepare(
+        "INSERT INTO `ASSETS` VALUES (?, ?, ?, ?)"
+    );
+
+    $query->bind_param(
+        "ssis",
+        $bin_a_id,
+        $bin_o_id,
+        $type,
+        $content_type,
+    );
+
+    $res = $query->execute();
+
+    return $res;
 }
 
 // posts
