@@ -3,5 +3,6 @@
 */Cargo.lock
 .vscode/
 api/lib/secrets.php
-composer.lock
-vendor/
+api/composer.lock
+api/vendor/
+api/GTSRootR1.pem
