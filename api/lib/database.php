@@ -39,74 +39,73 @@ function _copy_database_cells($columns, $row) {
 
         $collected[$name] = _encode_field($type, $row[$name]);
 
+        error_log("collected " . $name . " from ". $column->parent->name);
 
         // if the column has a foreign key constraint, dont remove it so it can be referenced
-        if (count(array_filter($column->constraints, function($constraint) {
-            return is_a($constraint, "ForeignKeyConstraint");
-        })) == 0) {
+        if (count($column->get_constraints("ForeignKeyConstraint")) == 0) {
             unset($row[$name]);
+        } else {
+            [$row, $collected] = _parse_foreign_keys($column, $row, $collected);
         }
     }
     return [$row, $collected];
+}
+
+function _parse_foreign_keys(Column $column, $row, $output) {
+
+    $name = $column->name;
+    $type = $column->type;
+
+
+    foreach ($column->constraints as $constraint) {
+        if (!is_a($constraint, "ForeignKeyConstraint")) {
+            continue;
+        }
+
+
+        $foreign_table = $constraint->foreign_table;
+        $foreign_column = $constraint->foreign_column;
+
+        error_log("parsing foreign key ". $name . " -> ". $foreign_table->name);
+
+
+        // consume the foreign key first so it doesnt get lost
+        $foreign_key = _encode_field($type, $row[$name]);
+
+        // if we share the same name as the foreign column
+        // (e.g) empID = empID
+        // we should use the friendly name:
+        // employee = {empID: "123", firstName: "aidan"}
+        // instead of
+        // empID = {empID: "123", firstName: "aidan"}
+        $original_name = $name;
+        if ($name == $foreign_column->name) {
+            //error_log("using friendly name for reference ". $column->name . " -> ". $foreign_column->name);
+            unset($output[$name]);
+            $name = $foreign_table->friendly_name;
+        }
+
+        // no point parsing a null foreign key
+        // but we do want to use the friendly name
+        if ($row[$original_name] === null) {
+            $output[$name] = null;
+            continue;
+        }
+
+        [$row, $output[$name]] = _copy_database_cells($foreign_table->columns, $row);
+        $output[$name][$foreign_column->name] = $foreign_key;
+
+
+        
+    }
+
+    return [$row, $output];
 }
 
 
 function parse_database_row($row, $table) {
 
     [$row, $output] = _copy_database_cells($table->columns, $row);
-
-
-    foreach ($table->columns as $column) {
-        $name = $column->name;
-        $type = $column->type;
-
-        // skip over columns not returned
-        if (!array_key_exists($name, $row)) {
-            continue; 
-        }
-        
-        // collate foreign keys into sub objects
-        foreach ($column->constraints as $constraint) {
-            if (!is_a($constraint, "ForeignKeyConstraint")) {
-                continue;
-            }
-
-
-            $foreign_table = $constraint->foreign_table;
-            $foreign_column = $constraint->foreign_column;
-
-            //error_log("parsing foreign key ". $name . " -> ". $foreign_table->name);
-
-
-            // consume the foreign key first so it doesnt get lost
-            $foreign_key = _encode_field($type, $row[$name]);
-
-            // if we share the same name as the foreign column
-            // (e.g) empID = empID
-            // we should use the friendly name:
-            // employee = {empID: "123", firstName: "aidan"}
-            // instead of
-            // empID = {empID: "123", firstName: "aidan"}
-            $original_name = $name;
-            if ($name == $foreign_column->name) {
-                //error_log("using friendly name for reference ". $column->name . " -> ". $foreign_column->name);
-                unset($output[$name]);
-                $name = $foreign_table->friendly_name;
-            }
-
-            // no point parsing a null foreign key
-            // but we do want to use the friendly name
-            if ($row[$original_name] === null) {
-                $output[$name] = null;
-                continue;
-            }
-
-            [$row, $output[$name]] = _copy_database_cells($foreign_table->columns, $row);
-            $output[$name][$foreign_column->name] = $foreign_key;
-            
-        }
-
-    }
 
     return $output;
 }
@@ -261,9 +260,13 @@ function db_post_fetchall() {
     global $db;
 
     $query = $db->prepare(
-        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, EMPLOYEES.firstName, EMPLOYEES.lastName, POSTS.createdAt, POSTS.isTechnical
-        FROM `POSTS`, `EMPLOYEES`
-        WHERE POSTS.createdBy = EMPLOYEES.empID
+        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, `EMPLOYEES`.*, `ASSETS`.contentType
+        FROM `POSTS`
+        JOIN `EMPLOYEES`
+            ON `POSTS`.createdBy = `EMPLOYEES`.empID
+        LEFT JOIN `ASSETS`
+            ON `EMPLOYEES`.avatar = `ASSETS`.assetID
+            AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
         "
     );
     $result = $query->execute();
@@ -345,9 +348,14 @@ function db_post_fetch(string $hex_post_id) {
     $bin_id = hex2bin($hex_post_id);
 
     $query = $db->prepare(
-        "SELECT POSTS.*, EMPLOYEES.firstName, EMPLOYEES.lastName FROM POSTS, EMPLOYEES
+        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, `EMPLOYEES`.*, `ASSETS`.contentType
+        FROM `POSTS`
+        JOIN `EMPLOYEES`
+            ON `POSTS`.createdBy = `EMPLOYEES`.empID
+        LEFT JOIN `ASSETS`
+            ON `EMPLOYEES`.avatar = `ASSETS`.assetID
+            AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
         WHERE POSTS.postID = ?
-        AND POSTS.createdBy = EMPLOYEES.empID
         "
     );
     $query->bind_param("s", $bin_id);

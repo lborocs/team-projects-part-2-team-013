@@ -87,6 +87,12 @@ class Column {
         $this->is_server_generated = $is_server_generated;
         $this->constraints = $constraints;
     }
+
+    public function get_constraints($constraint_type) {
+        return array_filter($this->constraints, function($constraint) use($constraint_type) {
+            return is_a($constraint, $constraint_type);
+        });
+    }
 }
 
 abstract class Constraint {
