@@ -71,6 +71,7 @@ function parse_database_row($row, $table) {
                 continue;
             }
 
+
             $foreign_table = $constraint->foreign_table;
             $foreign_column = $constraint->foreign_column;
 
@@ -86,6 +87,7 @@ function parse_database_row($row, $table) {
             // employee = {empID: "123", firstName: "aidan"}
             // instead of
             // empID = {empID: "123", firstName: "aidan"}
+            $original_name = $name;
             if ($name == $foreign_column->name) {
                 //error_log("using friendly name for reference ". $column->name . " -> ". $foreign_column->name);
                 unset($output[$name]);
@@ -94,11 +96,10 @@ function parse_database_row($row, $table) {
 
             // no point parsing a null foreign key
             // but we do want to use the friendly name
-            if ($row[$name] == null) {
+            if ($row[$original_name] == null) {
                 $output[$name] = null;
                 continue;
             }
-
 
             [$row, $output[$name]] = _copy_database_cells($foreign_table->columns, $row);
             $output[$name][$foreign_column->name] = $foreign_key;
@@ -402,9 +403,12 @@ function db_employee_fetchall() {
 
 
     $query = $db->prepare(
-        "SELECT * FROM `EMPLOYEES` LEFT JOIN `ASSETS`
-        ON EMPLOYEES.avatar = ASSETS.assetID
-        AND ASSETS.type = " . ASSET_TYPE::USER_AVATAR . "
+        "SELECT `EMPLOYEES`.*, `ACCOUNTS`.email, `ASSETS`.contentType
+        FROM `EMPLOYEES` LEFT JOIN `ASSETS`
+        ON `EMPLOYEES`.avatar = `ASSETS`.assetID
+        AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
+        JOIN `ACCOUNTS`
+        ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
         "
     );
     $result = $query->execute();
@@ -434,8 +438,12 @@ function db_employee_fetch_by_ids(array $binary_ids) {
     global $db;
     $num = count($binary_ids);
 
-    $stmt = "SELECT EMPLOYEES.*, ACCOUNTS.email FROM EMPLOYEES, ACCOUNTS WHERE
-    EMPLOYEES.empID = ACCOUNTS.empID AND EMPLOYEES.empID IN ("
+    $stmt = "SELECT EMPLOYEES.*, `ACCOUNTS`.email, `ASSETS`.contentType FROM `EMPLOYEES`
+    LEFT JOIN `ASSETS`
+    ON `EMPLOYEES`.avatar = `ASSETS`.assetID AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
+    JOIN `ACCOUNTS`
+    ON EMPLOYEES.empID = ACCOUNTS.empID
+    AND EMPLOYEES.empID IN ("
     . substr_replace(str_repeat("?, ", $num) ,"", -2) . // remove the trailing ', ' from the end
     ")";
 
@@ -453,8 +461,7 @@ function db_employee_fetch_by_ids(array $binary_ids) {
     while ($row = $res->fetch_assoc()) {
         $num_found++;
         $hex_id = bin2hex($row["empID"]);
-        unset($row["empID"]);
-        $employees[$hex_id] = $row;
+        $employees[$hex_id] = parse_database_row($row, TABLE_EMPLOYEES);
     }
 
     return array(

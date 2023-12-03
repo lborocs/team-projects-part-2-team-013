@@ -350,6 +350,7 @@ function respond(bool $success, Array $data, int $status_code) {
     if ($json == false) {
         // catch json encoding error
         http_response_code(500);
+        error_log("json encoding error while encoding ". var_export($data, true));
 
         die(json_encode(array(
             "success"=>false,
