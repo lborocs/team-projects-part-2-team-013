@@ -1,6 +1,6 @@
 <?php
 require("vendor/autoload.php");
-require_once("lib/secrets.php");
+require_once("secrets.php");
 require_once("lib/const.php");
 
 use Google\Cloud\Storage\StorageClient;
