@@ -5,9 +5,9 @@ require_once("lib/database.php");
 require_once("lib/assets/validation.php");
 
 enum ASSET_TYPE {
-    const USER_AVATAR = 0;
-    const POST_MEDIA = 1;
-    const PROJECT_ICON = 2;
+    const USER_AVATAR = 1;
+    const POST_MEDIA = 2;
+    const PROJECT_ICON = 3;
 }
 
 class Asset {
@@ -25,7 +25,7 @@ class Asset {
 
         $asset_id = bin2hex(random_bytes(16));
 
-        $asset = new Asset($type, $owner_id, $asset_id, $content_type);
+        $asset = new Asset($type, $owner_id, $asset_id, $content_type, $type);
 
         if (upload_file($asset, $file, $content_type)) {
 
@@ -55,15 +55,17 @@ class Asset {
             $row["type"],
             $row["owner_id"],
             $row["asset_id"],
-            $row["content_type"]
+            $row["content_type"],
+            $row["type"]
         );
     }
 
-    function __construct(int $type, string $owner_id, string $asset_id, string $content_type) {
+    function __construct(int $type, string $owner_id, string $asset_id, string $content_type, int $asset_type) {
         $this->type = $type;
         $this->owner_id = $owner_id;
         $this->asset_id = $asset_id;
         $this->content_type = $content_type;
+        $this->type = $asset_type;
     }
 
     public function delete() {

@@ -1,6 +1,7 @@
 <?php
 require_once("const.php");
 require_once("secrets.php");
+require_once("lib/assets/asset.php");
 require_once("lib/object_commons/models.php");
 
 // p: forces persistency
@@ -10,6 +11,11 @@ $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATA
 // generic
 
 function _encode_field(string $type, $value) {
+
+    if ($value == null) {
+        return null;
+    }
+
     if ($type == "binary") {
         return bin2hex($value);
     } else {
@@ -18,14 +24,14 @@ function _encode_field(string $type, $value) {
 }
 
 
-function _consume_database_cells($columns, $row) {
+function _copy_database_cells($columns, $row) {
     $collected = [];
 
     foreach ($columns as $column) {
         $name = $column->name;
         $type = $column->type;
 
-        if (!isset($row[$name])) {
+        if (!array_key_exists($name, $row)) {
             continue;
         }
 
@@ -33,14 +39,21 @@ function _consume_database_cells($columns, $row) {
 
         $collected[$name] = _encode_field($type, $row[$name]);
 
+
+        // if the column has a foreign key constraint, dont remove it so it can be referenced
+        if (count(array_filter($column->constraints, function($constraint) {
+            return is_a($constraint, "ForeignKeyConstraint");
+        })) == 0) {
+            unset($row[$name]);
+        }
     }
-    return $collected;
+    return [$row, $collected];
 }
 
 
 function parse_database_row($row, $table) {
 
-    $output = _consume_database_cells($table->columns, $row);
+    [$row, $output] = _copy_database_cells($table->columns, $row);
 
 
     foreach ($table->columns as $column) {
@@ -48,17 +61,21 @@ function parse_database_row($row, $table) {
         $type = $column->type;
 
         // skip over columns not returned
-        if (!isset($row[$name])) {
+        if (!array_key_exists($name, $row)) {
             continue; 
         }
-
+        
         // collate foreign keys into sub objects
         foreach ($column->constraints as $constraint) {
             if (!is_a($constraint, "ForeignKeyConstraint")) {
                 continue;
             }
+
             $foreign_table = $constraint->foreign_table;
             $foreign_column = $constraint->foreign_column;
+
+            //error_log("parsing foreign key ". $name . " -> ". $foreign_table->name);
+
 
             // consume the foreign key first so it doesnt get lost
             $foreign_key = _encode_field($type, $row[$name]);
@@ -75,7 +92,15 @@ function parse_database_row($row, $table) {
                 $name = $foreign_table->friendly_name;
             }
 
-            $output[$name] = _consume_database_cells($foreign_table->columns, $row);
+            // no point parsing a null foreign key
+            // but we do want to use the friendly name
+            if ($row[$name] == null) {
+                $output[$name] = null;
+                continue;
+            }
+
+
+            [$row, $output[$name]] = _copy_database_cells($foreign_table->columns, $row);
             $output[$name][$foreign_column->name] = $foreign_key;
             
         }
@@ -377,7 +402,10 @@ function db_employee_fetchall() {
 
 
     $query = $db->prepare(
-        "SELECT empID, firstName, lastName, isManager FROM `EMPLOYEES`"
+        "SELECT * FROM `EMPLOYEES` LEFT JOIN `ASSETS`
+        ON EMPLOYEES.avatar = ASSETS.assetID
+        AND ASSETS.type = " . ASSET_TYPE::USER_AVATAR . "
+        "
     );
     $result = $query->execute();
 

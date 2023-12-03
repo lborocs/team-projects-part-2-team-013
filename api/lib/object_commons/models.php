@@ -98,22 +98,25 @@ class ForeignKeyConstraint extends Constraint {
     public Column $foreign_column;
     public $validity_function;
 
-    public function __construct(Table $foreign_table, Column $foreign_column, callable $validity_function) {
+    public function __construct(Table $foreign_table, Column $foreign_column, callable $validity_function=null) {
         $this->foreign_table = $foreign_table;
         $this->foreign_column = $foreign_column;
-
-        if (!is_callable($validity_function)) {
-            respond_illegal_implementation("validity function is not callable");
-        }
-
         $this->validity_function = $validity_function;
     }
 
     public function validate(string $user_column, $user_field) {
 
-        error_log("running foreign key constraint on" . $user_column . ":" . $user_field);
+        //error_log("running foreign key constraint on" . $user_column . ":" . $user_field);
 
         $func = $this->validity_function;
+
+        if ($func == null) {
+            respond_illegal_implementation("validity function for " . $user_column ." is null and should not be called");
+        }
+
+        if (!is_callable($func)) {
+            respond_illegal_implementation("validity function for " . $user_column . " is not callable");
+        }
 
         if (!$func($user_field)) {
             respond_bad_request(
@@ -133,7 +136,7 @@ class RestrictedDomainConstraint extends Constraint {
     }
 
     public function validate(string $user_column, $user_field) {
-        error_log("running domain constraint on" . $user_column . ":" . $user_field);
+        //error_log("running domain constraint on" . $user_column . ":" . $user_field);
         if (!in_array($user_field, $this->domain)) {
             respond_bad_request(
                 "Invalid value for column '$user_column'. Valid values are: " . implode(", ", $this->domain),
@@ -154,7 +157,7 @@ class ContentLengthConstraint extends Constraint {
 
     public function validate(string $user_column, $user_field) {
 
-        error_log("running content length constraint on" . $user_column . ":" . $user_field);
+        //error_log("running content length constraint on" . $user_column . ":" . $user_field);
 
 
         if (gettype($user_field) != "string") {
@@ -172,6 +175,25 @@ class ContentLengthConstraint extends Constraint {
     }
 }
 
+
+const _ASSETID = new Column("assetID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
+
+
+const TABLE_ASSETS = new Table(
+    "`ASSETS`",
+    [], // no url specifiers
+    [
+        _ASSETID,
+        new Column("ownerID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("type", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("contentType", is_primary_key:false, type:"string", is_nullable:false, is_editable:false, is_server_generated:true),
+    ],
+    "asset"
+);
+
+
+
+
 // we cant use TABLE_EMPLOYEES->get_column because function calls are not allowed in const expressions
 const _EMPID = new Column("empID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
 
@@ -183,6 +205,10 @@ CONST TABLE_EMPLOYEES = new Table(
         new Column("firstName", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
         new Column("lastName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
         new Column("isManager", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column(
+            "avatar", is_primary_key:false, type:"binary", is_nullable:true, is_editable:true, is_server_generated:false,
+            constraints:[new ForeignKeyConstraint(TABLE_ASSETS, _ASSETID)]
+        ),
     ],
     "employee"
 );
