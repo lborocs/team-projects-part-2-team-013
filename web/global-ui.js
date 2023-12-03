@@ -130,7 +130,7 @@ export function generateAvatarSvg(text, colour) {
  * @returns {string} The URL of the generated avatar.
  * 
  * @example
- * // returns a URL like "https://ui-avatars.com/api/?name=Firat-Batmaz&background=90c3d4&size=256&color=000&rounded=true"
+ * // returns a data url for an avatar with the initials "FB"
  * nameToAvatar("Firat Batmaz");
  */
 function nameToAvatar(name) {
@@ -428,7 +428,7 @@ function fillCurrentUserInfo() {
         let employee = session.employee;
 
         let emp_name = bothNamesToString(employee.firstName, employee.lastName);
-        let emp_icon = nameToAvatar(emp_name);
+        let emp_icon = employeeAvatarOrFallback(employee);
 
 
         let icon = document.createElement("img");
