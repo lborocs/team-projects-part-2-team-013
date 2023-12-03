@@ -22,6 +22,9 @@ class Table {
         $this->name = $name;
         $this->url_specifiers = $url_specifiers;
         $this->columns = $columns;
+        foreach ($columns as $column) {
+            $column->parent = $this;
+        }
     }
 
     public function get_column(string $name) {
@@ -63,6 +66,7 @@ class Column {
     public bool $is_editable;
     public bool $is_server_generated;
     public array $constraints;
+    public Table $parent;
 
     public function __construct(
         string $name,
