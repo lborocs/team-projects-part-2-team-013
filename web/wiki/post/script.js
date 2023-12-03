@@ -13,17 +13,21 @@ console.log("query param : " + postID);
 
 async function getPostData(postID){
     const data = await get_api(`/wiki/post.php/post/${postID}`);
-    console.log(data.data)
-    console.log(document.getElementById("title"))
-    document.querySelector(".title").innerText = data.data.title
-    document.querySelector(".content").innerHTML = data.data.content
-    console.log(data.data.firstName)
-    document.querySelector(".author").innerText = global.bothNamesToString(data.data.firstName, data.data.lastName)
-    document.querySelector(".date").innerText = global.formatDate(new Date(data.data.createdAt * 1000))
-    console.log(data.data.content)
+    if (!data.success) {
+        console.error("[getPostData] error fetching post: ", data.data);
+        return;
+    }
 
-    global.setBreadcrumb(["Wiki", data.data.title], ["../", '#' + data.data.postID])
-    return data.data
+    const post = data.data;
+
+    console.log(document.getElementById("title"))
+    document.querySelector(".title").innerText = post.title
+    document.querySelector(".content").innerHTML = post.content
+    document.querySelector(".author").innerText = global.bothNamesToString(post.createdBy.firstName, post.createdBy.lastName)
+    document.querySelector(".date").innerText = global.formatDate(new Date(post.createdAt * 1000))
+
+    global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
+    return post
 }
 
 const postData = await getPostData(postID)

@@ -17,11 +17,11 @@ async function fetchPosts() {
     if (data.success == true) {
         console.log("Posts have been fetched")
         data.data.posts.forEach( post => {
-            let name = global.bothNamesToString(post.createdBy.firstName, post.createdBy.lastName);
-            renderPost(post.postID, post.title, name, post.isTechnical)
+            renderPost(post.postID, post.title, post.createdBy, post.isTechnical)
             postsContainer = document.querySelector('.posts');
             console.log(postsContainer);
         });
+        setUpPostsEventListeners();
         posts = document.querySelectorAll('.post');
     } else {
         console.log("Posts failed to be fetched")
@@ -104,8 +104,8 @@ function renderPost(postID, title, author, isTechnical) {
     post.innerHTML = `
         <div class="title">${title}</div>
         <div class="author">
-            <img class="avatar" src="${global.nameToAvatar(author)}" width="30" height="30">
-            ${author}
+            <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
+            ${global.bothNamesToString(author.firstName, author.lastName)}
         </div>
         <div class="tags">
             <div class="tag" name="${tag1}"><i class="fa-solid fa-tag"></i>
@@ -124,8 +124,7 @@ function renderPost(postID, title, author, isTechnical) {
     post.setAttribute("data-isTechnical", isTechnical)
 
     postsContainer.appendChild(post)
-    setUpPostsEventListeners()
-  }
+}
 
 function updatePosts() {
     selectedCategory = document.querySelector('input[name="category"]:checked');

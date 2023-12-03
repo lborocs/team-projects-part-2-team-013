@@ -50,7 +50,7 @@ function getTagList() {
       var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
 
       var data = {
-          "isTechnical": isTechnical,
+          "isTechnical": isTechnical+0,
           "title": title,
           "content": body,
       }
