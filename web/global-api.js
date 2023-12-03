@@ -66,7 +66,11 @@ async function api_request(route, method, body, options={}) {
     switch (error_code) {
         case 1004: // session expired
         case 1005: // session revoked
-            alert("Your session has expired, please log in again");
+
+            if (options.redirect_on_error) {
+                alert("Your session has expired, please log in again");
+
+            }
         case 1000: // not authenticated
 
             localStorage.clear();
