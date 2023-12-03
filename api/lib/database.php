@@ -12,7 +12,7 @@ $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATA
 
 function _encode_field(string $type, $value) {
 
-    if ($value == null) {
+    if ($value === null) {
         return null;
     }
 
@@ -96,7 +96,7 @@ function parse_database_row($row, $table) {
 
             // no point parsing a null foreign key
             // but we do want to use the friendly name
-            if ($row[$original_name] == null) {
+            if ($row[$original_name] === null) {
                 $output[$name] = null;
                 continue;
             }
