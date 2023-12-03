@@ -2,7 +2,7 @@
 */target
 */Cargo.lock
 .vscode/
-api/lib/secrets.php
+api/secrets.php
 api/composer.lock
 api/vendor/
 api/GTSRootR1.pem
