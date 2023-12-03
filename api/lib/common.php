@@ -261,7 +261,7 @@ class Session {
     }
 
     function yank() {
-        $req = curl_init(SESSION_VALIDATION_BASE . "/set/session/" . $this->hex_id);
+        $req = curl_init(SESSION_VALIDATION_BASE . "set/session/" . $this->hex_id);
         curl_setopt($req, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
 
@@ -274,7 +274,7 @@ class Session {
         $status_code = curl_getinfo($req, CURLINFO_HTTP_CODE);
 
         if ($status_code != 200) {
-            error_log("Session validation server unhandled error");
+            error_log("Session validation server unhandled error during yank (". $status_code . ")");
         }
     }
 };
