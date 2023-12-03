@@ -1,5 +1,7 @@
 <?php
 require_once("const.php");
+require_once("secrets.php");
+require_once("lib/object_commons/models.php");
 
 // p: forces persistency
 // this decrease response times by over a second
@@ -7,22 +9,100 @@ $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATA
 
 // generic
 
-function encode_binary_fields(array $row) {
-    foreach ($row as $key=>$value) {
+function _encode_field(string $type, $value) {
+    if ($type == "binary") {
+        return bin2hex($value);
+    } else {
+        return $value;
+    };
+}
 
-        if (gettype($value) != "string") {
+
+function _consume_database_cells($columns, $row) {
+    $collected = [];
+
+    foreach ($columns as $column) {
+        $name = $column->name;
+        $type = $column->type;
+
+        if (!isset($row[$name])) {
             continue;
         }
 
-        // TODO: UUIDS COULD BE VALID UTF8
-        if (strlen($value) == UUID_LENGTH) {
-            if (!preg_match('//u', $value)) { // checks for not utf8
-                $row[$key] = bin2hex($row[$key]);
-            }            
-        } 
+        //error_log("collecting " . $name . " from ". $column->parent->name);
+
+        $collected[$name] = _encode_field($type, $row[$name]);
+
     }
-    return $row;
+    return $collected;
 }
+
+
+function parse_database_row($row, $table) {
+
+    $output = _consume_database_cells($table->columns, $row);
+
+
+    foreach ($table->columns as $column) {
+        $name = $column->name;
+        $type = $column->type;
+
+        // skip over columns not returned
+        if (!isset($row[$name])) {
+            continue; 
+        }
+
+        // collate foreign keys into sub objects
+        foreach ($column->constraints as $constraint) {
+            if (!is_a($constraint, "ForeignKeyConstraint")) {
+                continue;
+            }
+            $foreign_table = $constraint->foreign_table;
+            $foreign_column = $constraint->foreign_column;
+
+            // consume the foreign key first so it doesnt get lost
+            $foreign_key = _encode_field($type, $row[$name]);
+
+            // if we share the same name as the foreign column
+            // (e.g) empID = empID
+            // we should use the friendly name:
+            // employee = {empID: "123", firstName: "aidan"}
+            // instead of
+            // empID = {empID: "123", firstName: "aidan"}
+            if ($name == $foreign_column->name) {
+                //error_log("using friendly name for reference ". $column->name . " -> ". $foreign_column->name);
+                unset($output[$name]);
+                $name = $foreign_table->friendly_name;
+            }
+
+            $output[$name] = _consume_database_cells($foreign_table->columns, $row);
+            $output[$name][$foreign_column->name] = $foreign_key;
+            
+        }
+
+    }
+
+    return $output;
+}
+
+
+// DEPRECATED FUNCTION
+// function encode_binary_fields(array $row) {
+//     foreach ($row as $key=>$value) {
+
+//         if (gettype($value) != "string") {
+//             continue;
+//         }
+
+//         // TODO: UUIDS COULD BE VALID UTF8
+//         if (strlen($value) == UUID_LENGTH) {
+//             if (!preg_match('//u', $value)) { // checks for not utf8
+//                 $row[$key] = bin2hex($row[$key]);
+//             }            
+//         } 
+//     }
+//     return $row;
+// }
 
 
 
@@ -175,7 +255,7 @@ function db_post_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_POSTS);
         array_push($data, $encoded);
     }
     return $data;
@@ -225,7 +305,7 @@ function db_post_accesses_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_FORUM_ACCESSES);
         array_push($data, $encoded);
     }
     return $data;
@@ -258,7 +338,7 @@ function db_post_fetch(string $hex_post_id) {
     }
     $post = $res->fetch_assoc(); // row 0
 
-    return encode_binary_fields($post);
+    return parse_database_row($post, TABLE_POSTS);
 }
 
 
@@ -314,7 +394,7 @@ function db_employee_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_EMPLOYEES);
         array_push($data, $encoded);
     }
     return $data;
@@ -374,7 +454,7 @@ function db_employee_fetch_personals($user_id) {
     
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_PERSONALS);
         array_push($data, $encoded);
     }
     return $data;
@@ -402,7 +482,7 @@ function db_employee_fetch(string $user_id) { //checks if employee_id is in EMPL
     }
 
     $row = $result->fetch_assoc();
-    return encode_binary_fields($row);
+    return parse_database_row($row, TABLE_EMPLOYEES);
 }
 
 function db_employee_in_project(string $user_id, string $project_id) {
@@ -459,7 +539,7 @@ function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_TASKS);
         array_push($data, $encoded);
     }
 
@@ -496,7 +576,7 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
     
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_PROJECTS);
         array_push($data, $encoded);
     }
     return $data;
@@ -609,7 +689,7 @@ function db_project_fetch(string $project_id) {
     }
     $data = $res->fetch_assoc();
 
-    return encode_binary_fields($data);
+    return parse_database_row($data, TABLE_PROJECTS);
 }
 
 function db_project_fetchall($search_term) {
@@ -638,7 +718,7 @@ function db_project_fetchall($search_term) {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_PROJECTS);
         array_push($data, $encoded);
     }
     return $data;
@@ -712,7 +792,7 @@ function db_task_fetchall(string $project_id) {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_TASKS);
         array_push($data, $encoded);
     }
 
@@ -789,7 +869,7 @@ function db_task_fetch_assignments(string $task_id) {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_EMPLOYEE_TASKS);
         array_push($data, $encoded);
     }
 
@@ -827,7 +907,7 @@ function db_project_fetch_assignments(string $project_id) {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = encode_binary_fields($row);
+        $encoded = parse_database_row($row, TABLE_EMPLOYEE_TASKS);
         array_push($data, $encoded);
     }
 

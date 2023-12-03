@@ -17,10 +17,12 @@ class Table {
     public string $name;
     private Array $url_specifiers;
     public Array $columns;
+    public string $friendly_name;
 
-    public function __construct(string $name, Array $url_specifiers, Array $columns) {
+    public function __construct(string $name, Array $url_specifiers, Array $columns, string $friendly_name) {
         $this->name = $name;
         $this->url_specifiers = $url_specifiers;
+        $this->friendly_name = $friendly_name;
         $this->columns = $columns;
         foreach ($columns as $column) {
             $column->parent = $this;
@@ -181,14 +183,17 @@ CONST TABLE_EMPLOYEES = new Table(
         new Column("firstName", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
         new Column("lastName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
         new Column("isManager", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
-    ]
+    ],
+    "employee"
 );
+
+const _POSTID = new Column("postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
 
 const TABLE_POSTS = new Table(
     "`POSTS`",
     ["postID"],
     [
-        new Column("postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        _POSTID,
         new Column(
             "title", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 128)]
@@ -203,8 +208,28 @@ const TABLE_POSTS = new Table(
         ),
         new Column("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("isTechnical", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
-    ]
+    ],
+    "post"
 );
+
+
+const TABLE_FORUM_ACCESSES = new Table(
+    "`FORUM_ACCESSES`",
+    [], // no url specifiers
+    [
+        new Column(
+            "empID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
+        ),
+        new Column(
+            "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_POSTS, _POSTID, "db_post_fetch")]
+        ),
+        new Column("timeAccessed", is_primary_key:true, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+    ],
+    "access"
+);
+
 
 const _PROJID = new Column("projID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
 
@@ -224,15 +249,17 @@ const TABLE_PROJECTS = new Table(
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
         new Column("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
-
-    ]
+    ],
+    "project"
 );
+
+const _TASKID = new Column("taskID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
 
 const TABLE_TASKS = new Table(
     "`TASKS`",
     ["projID", "taskID"],
     [
-        new Column("taskID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        _TASKID,
         new Column(
             "projID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_PROJECTS, _PROJID, "db_project_fetch")]
@@ -251,7 +278,24 @@ const TABLE_TASKS = new Table(
         new Column("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("dueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
         new Column("expectedManHours", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
-    ]
+    ],
+    "task"
+);
+
+const TABLE_EMPLOYEE_TASKS = new Table(
+    "`EMPLOYEE_TASKS`",
+    [], // no url specifiers
+    [
+        new Column(
+            "empID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
+        ),
+        new Column(
+            "taskID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_TASKS, _TASKID, "db_task_fetch")]
+        ),
+    ],
+    "assignment"
 );
 
 const TABLE_PERSONALS = new Table(
@@ -276,8 +320,8 @@ const TABLE_PERSONALS = new Table(
             "content", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 1024)]
         ),
-
-    ]
+    ],
+    "personal"
 );
 
 ?>

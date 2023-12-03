@@ -12,30 +12,24 @@ console.log(selectedTags);
 
 async function fetchPosts() {
     
-    try {
-
-        const data = await get_api("/wiki/post.php/posts");
-        console.log(data);
-        if (data.success == true) {
-            console.log("Posts have been fetched")
-            data.data.posts.forEach( post => {
-                let name = global.bothNamesToString(post.firstName, post.lastName);
-                renderPost(post.postID, post.title, name, post.isTechnical)
-                postsContainer = document.querySelector('.posts');
-                console.log(postsContainer);
-            });
-            posts = document.querySelectorAll('.post');
-        } else {
-            console.log("Posts failed to be fetched")
-        }
+    const data = await get_api("/wiki/post.php/posts");
+    console.log(data);
+    if (data.success == true) {
+        console.log("Posts have been fetched")
+        data.data.posts.forEach( post => {
+            let name = global.bothNamesToString(post.createdBy.firstName, post.createdBy.lastName);
+            renderPost(post.postID, post.title, name, post.isTechnical)
+            postsContainer = document.querySelector('.posts');
+            console.log(postsContainer);
+        });
+        posts = document.querySelectorAll('.post');
+    } else {
+        console.log("Posts failed to be fetched")
+    }
 
 
 
   
-    } catch (error) {
-        console.error(error);
-
-    }
 }
 
 
@@ -66,11 +60,6 @@ fetchPosts().then(() => {
             post.classList.remove("norender"); 
         }
     })
-    
-
-    
-}).catch((error) => {
-    console.error(error);
 });
 
 

@@ -415,22 +415,22 @@ async function renderAssignments(assignments) {
     let unique_users = new Set();
 
     assignments.forEach((assignment) => {
-        unique_users.add(assignment.empID);
+        unique_users.add(assignment.employee.empID);
     });
 
     let employees = await getEmployeesById([...unique_users]);
 
     assignments.forEach((assignment) => {
         // emp first
-        let emp = employees.get(assignment.empID);
+        let emp = employees.get(assignment.employee.empID);
         let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
         let emp_icon = global.nameToAvatar(emp_name);
 
         // find task html element
-        let task = document.getElementById(assignment.taskID);
+        let task = document.getElementById(assignment.task.taskID);
 
         if (!task) {
-            console.log(`[renderAssignment] Task ${assignment.taskID} not found (we leaked an assignment)`)
+            console.log(`[renderAssignment] Task ${assignment.task.taskID} not found (we leaked an assignment)`)
             return
         }
 
@@ -1366,13 +1366,13 @@ async function projectObjectRenderAndListeners(project) {
     console.log("[projectObjectRenderAndListeners] rendering project:")
     console.log(project)
     let session = await global.getCurrentSession();
-    let isTeamLeader = (project.teamLeader === session.employee.empID);
-    let emps = await global.getEmployeesById([project.teamLeader, project.createdBy]);
-    let teamLeader = emps.get(project.teamLeader);
+    let isTeamLeader = (project.teamLeader.empID === session.employee.empID);
+    let emps = await global.getEmployeesById([project.teamLeader.empID, project.createdBy.empID]);
+    let teamLeader = emps.get(project.teamLeader.empID);
 
 
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
-    let element = renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader, project.createdAt);
+    let element = renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader.empID, project.createdAt);
 
     setUpProjectRowEventListeners(element);
     calculateTaskCount();
