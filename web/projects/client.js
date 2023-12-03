@@ -64,8 +64,7 @@ async function projectSwitchToOnClick(projectRow) {
     let id = projectRow.getAttribute("data-ID");
     let title = projectRow.getAttribute("data-title");
     let description = projectRow.getAttribute("data-description") ?? "";
-    let teamLeader = projectRow.getAttribute("data-team-leader")
-
+    let teamLeader = JSON.parse(projectRow.getAttribute("data-team-leader"));
 
    
     //remove tasks currently on the screen
@@ -87,8 +86,8 @@ async function projectSwitchToOnClick(projectRow) {
     global.setBreadcrumb(["Projects", title], [window.location.pathname, "#" + id]);
     explainerTitle.innerText = title
     explainerDescription.innerText = description
-    explainerTeamLeaderName.innerText = teamLeader
-    explainerTeamLeaderAvatar.src = global.nameToAvatar(teamLeader)
+    explainerTeamLeaderName.innerText = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
+    explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
     teamLeaderEnableElementsIfTeamLeader()
 
@@ -424,7 +423,7 @@ async function renderAssignments(assignments) {
         // emp first
         let emp = employees.get(assignment.employee.empID);
         let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
-        let emp_icon = global.nameToAvatar(emp_name);
+        let emp_icon = global.employeeAvatarOrFallback(emp);
 
         // find task html element
         let task = document.getElementById(assignment.task.taskID);
@@ -454,10 +453,10 @@ async function teamLeaderEnableElementsIfTeamLeader() {
     if (projectRow == null) {
         return
     }
-    let teamLeaderID = projectRow.getAttribute("data-team-leader-id");
+    let teamLeader = JSON.parse(projectRow.getAttribute("data-team-leader"));
 
     let session = await global.getCurrentSession();
-    let isTeamLeader = session.employee.empID == teamLeaderID;
+    let isTeamLeader = session.employee.empID == teamLeader.empID;
 
     if ((session.auth_level ?? 0) >= 2) {
         return
@@ -843,12 +842,15 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 //     return project
 // }
 
-function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID, createdAt) {
+function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let project = document.createElement("tr")
     project.classList.add("project-row")
     let icon = isTeamLeader ? `fas fa-user-gear` : `fas fa-users`;
+
+    let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
+
     console.log(`[renderProject] using icon: ${icon}`)
     let date = createdAt ? global.formatDateFull(new Date(createdAt * 1000)) : "No creation date found";
     project.innerHTML = `
@@ -866,10 +868,10 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID, 
         <td>
             <div class="name-card">
                 <div class="icon">
-                    <img src="${global.nameToAvatar(teamLeader)}" class="avatar">
+                    <img src="${global.employeeAvatarOrFallback(teamLeader)}" class="avatar">
                 </div>
                 <div class="name">
-                    ${teamLeader}
+                    ${teamLeaderName}
                 </div>
             </div>
         </td>
@@ -889,8 +891,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID, 
     project.setAttribute("data-ID", ID)
     project.setAttribute("data-title", title)
     project.setAttribute("data-description", desc)
-    project.setAttribute("data-team-leader", teamLeader)
-    project.setAttribute("data-team-leader-id", teamLeaderID)
+    project.setAttribute("data-team-leader", JSON.stringify(teamLeader))
     projectsTable.querySelector("tbody").appendChild(project)
     teamLeaderEnableElementsIfTeamLeader()
 
@@ -1052,7 +1053,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
     assignedSet.forEach((empID) => {
         let emp = employeeMap.get(empID);
         let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
-        let emp_icon = global.nameToAvatar(emp_name);
+        let emp_icon = global.employeeAvatarOrFallback(emp);
         let listItem = document.createElement("div");
         listItem.classList.add("employee-list-item");
         listItem.classList.add("tooltip", "under");
@@ -1372,10 +1373,11 @@ async function projectObjectRenderAndListeners(project) {
 
 
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
-    let element = renderProject(project.projID, project.projName, project.description, teamLeaderName, isTeamLeader, project.teamLeader.empID, project.createdAt);
+    let element = renderProject(project.projID, project.projName, project.description, teamLeader, isTeamLeader, project.createdAt);
 
     setUpProjectRowEventListeners(element);
     calculateTaskCount();
+    element.data = project;
     return element;
 }
 
@@ -1499,7 +1501,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
         teamLeader = empList.value;
         let emp = employeeMap.get(teamLeader);
         let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
-        let emp_icon = global.nameToAvatar(emp_name);
+        let emp_icon = global.employeeAvatarOrFallback(emp);
         //teamLeaderElem.innerHTML = `<img src="${emp_icon}" class="avatar">${emp_name}`
     });
 

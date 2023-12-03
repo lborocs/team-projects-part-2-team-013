@@ -133,12 +133,21 @@ export function generateAvatarSvg(text, colour) {
  * // returns a URL like "https://ui-avatars.com/api/?name=Firat-Batmaz&background=90c3d4&size=256&color=000&rounded=true"
  * nameToAvatar("Firat Batmaz");
  */
-export function nameToAvatar(name) {
+function nameToAvatar(name) {
     let initials = name.split(" ").map((word) => word[0]).join("");
     let degree = hash(name) % 360;
     let colour = hsvToHex(degree, 40, 90);
     console.log(`[nameToAvatar] Generated avatar for ${name}: colour ${colour}`)
     return `data:image/svg+xml;base64,${btoa(generateAvatarSvg(initials, colour))}`;
+}
+
+
+export function employeeAvatarOrFallback(employee) {
+    if (employee.avatar) {
+        return `https://usercontent.013.team/employees/${employee.empID}/${employee.avatar.assetID}.${employee.avatar.contentType.split("/")[1]}`;
+    } else {
+        return nameToAvatar(bothNamesToString(employee.firstName, employee.lastName));
+    }
 }
 
 /**
