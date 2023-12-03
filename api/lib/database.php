@@ -443,7 +443,7 @@ function db_employee_fetch_by_ids(array $binary_ids) {
     ON `EMPLOYEES`.avatar = `ASSETS`.assetID AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
     JOIN `ACCOUNTS`
     ON EMPLOYEES.empID = ACCOUNTS.empID
-    AND EMPLOYEES.empID IN ("
+    WHERE EMPLOYEES.empID IN ("
     . substr_replace(str_repeat("?, ", $num) ,"", -2) . // remove the trailing ', ' from the end
     ")";
 
@@ -502,7 +502,10 @@ function db_employee_fetch(string $user_id) { //checks if employee_id is in EMPL
     $bin_u_id = hex2bin($user_id);
 
     $query = $db->prepare(
-        "SELECT * FROM `EMPLOYEES` WHERE empID = ?"
+        "SELECT `EMPLOYEES`.*, `ASSETS`.contentType FROM `EMPLOYEES` LEFT JOIN `ASSETS`
+        ON `EMPLOYEES`.avatar = `ASSETS`.assetID
+        WHERE `EMPLOYEES`.empID = ?
+        "
     );
     $query->bind_param("s", $bin_u_id);
     $query->execute();
