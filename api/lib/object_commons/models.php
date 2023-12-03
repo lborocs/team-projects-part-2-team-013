@@ -1,10 +1,6 @@
 <?php
 // generic tables
 
-const OBJECT_SNOWFLAKE_VALIDITY_FUNCTIONS = [
-    "EMP"=>"db_employee_fetch",
-];
-
 const TASK_STATE_TODO = 0;
 const TASK_STATE_INPROGRESS = 1;
 const TASK_STATE_COMPLETED = 3;
@@ -59,7 +55,7 @@ class Table {
     }
 }
 
-class TableColumn {
+class Column {
     public bool $is_primary_key;
     public string $name;
     public string $type;
@@ -93,10 +89,10 @@ abstract class Constraint {
 
 class ForeignKeyConstraint extends Constraint {
     public Table $foreign_table;
-    public TableColumn $foreign_column;
+    public Column $foreign_column;
     public $validity_function;
 
-    public function __construct(Table $foreign_table, TableColumn $foreign_column, callable $validity_function) {
+    public function __construct(Table $foreign_table, Column $foreign_column, callable $validity_function) {
         $this->foreign_table = $foreign_table;
         $this->foreign_column = $foreign_column;
 
@@ -171,16 +167,16 @@ class ContentLengthConstraint extends Constraint {
 }
 
 // we cant use TABLE_EMPLOYEES->get_column because function calls are not allowed in const expressions
-const _EMPID = new TableColumn("empID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
+const _EMPID = new Column("empID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
 
 CONST TABLE_EMPLOYEES = new Table(
     "`EMPLOYEES`",
     ["empID"],
     [
         _EMPID,
-        new TableColumn("firstName", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
-        new TableColumn("lastName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
-        new TableColumn("isManager", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("firstName", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column("lastName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("isManager", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
     ]
 );
 
@@ -188,42 +184,42 @@ const TABLE_POSTS = new Table(
     "`POSTS`",
     ["postID"],
     [
-        new TableColumn("postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
-        new TableColumn(
+        new Column("postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column(
             "title", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 128)]
         ),
-        new TableColumn(
+        new Column(
             "content", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 65535)]
         ),
-        new TableColumn(
+        new Column(
             "createdBy", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
-        new TableColumn("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
-        new TableColumn("isTechnical", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("isTechnical", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
     ]
 );
 
-const _PROJID = new TableColumn("projID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
+const _PROJID = new Column("projID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
 
 const TABLE_PROJECTS = new Table(
     "`PROJECTS`",
     ["projID"],
     [
         _PROJID,
-        new TableColumn("projName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
-        new TableColumn("description", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
-        new TableColumn(
+        new Column("projName", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("description", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column(
             "createdBy", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
-        new TableColumn(
+        new Column(
             "teamLeader", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:false,
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
-        new TableColumn("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
 
     ]
 );
@@ -232,25 +228,25 @@ const TABLE_TASKS = new Table(
     "`TASKS`",
     ["projID", "taskID"],
     [
-        new TableColumn("taskID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
-        new TableColumn(
+        new Column("taskID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column(
             "projID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_PROJECTS, _PROJID, "db_project_fetch")]
         ),
-        new TableColumn(
+        new Column(
             "createdBy", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
-        new TableColumn("title", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
-        new TableColumn("description", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
-        new TableColumn(
+        new Column("title", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("description", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column(
             "state", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new RestrictedDomainConstraint(TASK_VALID_STATES)]
         ),
-        new TableColumn("archived", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
-        new TableColumn("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
-        new TableColumn("dueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
-        new TableColumn("expectedManHours", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("archived", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("createdAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("dueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column("expectedManHours", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
     ]
 );
 
@@ -258,21 +254,21 @@ const TABLE_PERSONALS = new Table(
     "`EMPLOYEE_PERSONALS`",
     ["itemID"],
     [
-        new TableColumn("itemID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
-        new TableColumn(
+        new Column("itemID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column(
             "assignedTo", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
-        new TableColumn(
+        new Column(
             "state", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new RestrictedDomainConstraint(TASK_VALID_STATES)]
         ),
-        new TableColumn("dueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
-        new TableColumn(
+        new Column("dueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column(
             "title", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 254)]
         ),
-        new TableColumn(
+        new Column(
             "content", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 1024)]
         ),
