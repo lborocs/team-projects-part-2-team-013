@@ -39,7 +39,7 @@ function _copy_database_cells($columns, $row) {
 
         $collected[$name] = _encode_field($type, $row[$name]);
 
-        error_log("collected " . $name . " from ". $column->parent->name);
+        //error_log("collected " . $name . " from ". $column->parent->name);
 
         // if the column has a foreign key constraint, dont remove it so it can be referenced
         if (count($column->get_constraints("ForeignKeyConstraint")) == 0) {
@@ -66,7 +66,7 @@ function _parse_foreign_keys(Column $column, $row, $output) {
         $foreign_table = $constraint->foreign_table;
         $foreign_column = $constraint->foreign_column;
 
-        error_log("parsing foreign key ". $name . " -> ". $foreign_table->name);
+        //error_log("parsing foreign key ". $name . " -> ". $foreign_table->name);
 
 
         // consume the foreign key first so it doesnt get lost
@@ -190,7 +190,7 @@ function db_generic_edit(Table $table, array $values, array $keys) {
 
     $stmt = substr_replace($stmt, "", -4); // remove trailing 'AND'
 
-    // error_log("db_generic_edit: " . $stmt . "; ->" . implode(", ", $bindings));
+    //error_log("db_generic_edit: " . $stmt . "; ->" . implode(", ", $bindings));
 
     $query = $db->prepare($stmt);
     $query->bind_param(
