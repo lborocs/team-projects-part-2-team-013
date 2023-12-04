@@ -10,7 +10,7 @@ $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATA
 
 // generic
 
-const DEBUG_PRINT = true;
+const DEBUG_PRINT = false;
 
 function _encode_field(string $type, $value) {
 
