@@ -43,7 +43,9 @@ const SESSION_HMAC_KEY_HEX = "session signing key";
         *URLs should look like this:* `localhost:3000/dashboard/` `localhost:3000/`
 
 4. (If not) The repo comes with some run and debug configurations, select `php launch web server`
+
     *navigate to localhost:8000*
+
 The site should now function like normal on your local machine.
 
 ## setting up local api
