@@ -10,11 +10,18 @@ $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATA
 
 // generic
 
+const DEBUG_PRINT = true;
+
 function _encode_field(string $type, $value) {
 
     if ($value === null) {
         return null;
     }
+
+    if (substr($type, 0, 2) == "a-") {
+        return _encode_field(substr($type, 2), explode(DB_ARRAY_DELIMITER, $value));
+    }
+
 
     if ($type == "binary") {
         return bin2hex($value);
@@ -39,7 +46,7 @@ function _copy_database_cells($columns, $row) {
 
         $collected[$name] = _encode_field($type, $row[$name]);
 
-        //error_log("collected " . $name . " from ". $column->parent->name);
+        if (DEBUG_PRINT) {error_log("collected " . $name . " from ". $column->parent->name);}
 
         // if the column has a foreign key constraint, dont remove it so it can be referenced
         if (count($column->get_constraints("ForeignKeyConstraint")) == 0) {
@@ -66,7 +73,7 @@ function _parse_foreign_keys(Column $column, $row, $output) {
         $foreign_table = $constraint->foreign_table;
         $foreign_column = $constraint->foreign_column;
 
-        //error_log("parsing foreign key ". $name . " -> ". $foreign_table->name);
+        if (DEBUG_PRINT) {error_log("parsing foreign key ". $name . " -> ". $foreign_table->name);}
 
 
         // consume the foreign key first so it doesnt get lost
@@ -80,7 +87,7 @@ function _parse_foreign_keys(Column $column, $row, $output) {
         // empID = {empID: "123", firstName: "aidan"}
         $original_name = $name;
         if ($name == $foreign_column->name) {
-            //error_log("using friendly name for reference ". $column->name . " -> ". $foreign_column->name);
+            if (DEBUG_PRINT) {error_log("using friendly name for reference ". $column->name . " -> ". $foreign_column->name);}
             unset($output[$name]);
             $name = $foreign_table->friendly_name;
         }
@@ -103,9 +110,15 @@ function _parse_foreign_keys(Column $column, $row, $output) {
 }
 
 
-function parse_database_row($row, $table) {
+function parse_database_row(Array $row, Table $table, Array $additional_collectables=[]) {
 
     [$row, $output] = _copy_database_cells($table->columns, $row);
+
+    if (DEBUG_PRINT && count($row) > 0) {error_log("left with ". var_export($row, true));}
+
+    foreach ($additional_collectables as $name=>$type) {
+        $output[$name] = _encode_field($type, $row[$name]);
+    }
 
     return $output;
 }
@@ -135,11 +148,16 @@ function db_generic_new(Table $table, array $values, string $bind_format) {
     global $db;
 
 
+    $stmt = "INSERT INTO ". $table->name ." VALUES ("
+    . substr_replace(str_repeat("?, ", count($values)), "", -2)
+    .");";
+
     $query = $db->prepare(
-        "INSERT INTO ". $table->name ." VALUES ("
-        . substr_replace(str_repeat("?, ", count($values)), "", -2)
-        .");"
+        $stmt
     );
+
+    if (DEBUG_PRINT) {error_log("db_generic_new: " . $stmt . "; ->" . implode(", ", $values));}
+
     $query->bind_param(
         $bind_format,
         ...$values
@@ -190,7 +208,7 @@ function db_generic_edit(Table $table, array $values, array $keys) {
 
     $stmt = substr_replace($stmt, "", -4); // remove trailing 'AND'
 
-    //error_log("db_generic_edit: " . $stmt . "; ->" . implode(", ", $bindings));
+    if (DEBUG_PRINT) {error_log("db_generic_edit: " . $stmt . "; ->" . implode(", ", $bindings));}
 
     $query = $db->prepare($stmt);
     $query->bind_param(
@@ -222,7 +240,7 @@ function db_asset_delete(string $asset_id) {
     $query->bind_param("s", $bin_id);
     $result = $query->execute();
 
-    return $result;
+    return $query->affected_rows > 0;
 }
 
 function db_asset_new(
@@ -260,13 +278,18 @@ function db_post_fetchall() {
     global $db;
 
     $query = $db->prepare(
-        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, `EMPLOYEES`.*, `ASSETS`.contentType
+        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, `EMPLOYEES`.*, `ASSETS`.contentType, GROUP_CONCAT(`TAGS`.name SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
         FROM `POSTS`
         JOIN `EMPLOYEES`
             ON `POSTS`.createdBy = `EMPLOYEES`.empID
         LEFT JOIN `ASSETS`
             ON `EMPLOYEES`.avatar = `ASSETS`.assetID
             AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        LEFT JOIN `TAGS` 
+            ON `POST_TAGS`.tagID = `TAGS`.tagID
+        GROUP BY `POSTS`.postID
         "
     );
     $result = $query->execute();
@@ -284,7 +307,7 @@ function db_post_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_POSTS);
+        $encoded = parse_database_row($row, TABLE_POSTS, ["tags"=>"a-string"]);
         array_push($data, $encoded);
     }
     return $data;
@@ -348,14 +371,19 @@ function db_post_fetch(string $hex_post_id) {
     $bin_id = hex2bin($hex_post_id);
 
     $query = $db->prepare(
-        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, `EMPLOYEES`.*, `ASSETS`.contentType
+        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, POSTS.content, `EMPLOYEES`.*, `ASSETS`.contentType, GROUP_CONCAT(`TAGS`.name SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
         FROM `POSTS`
         JOIN `EMPLOYEES`
             ON `POSTS`.createdBy = `EMPLOYEES`.empID
         LEFT JOIN `ASSETS`
             ON `EMPLOYEES`.avatar = `ASSETS`.assetID
             AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        LEFT JOIN `TAGS` 
+            ON `POST_TAGS`.tagID = `TAGS`.tagID
         WHERE POSTS.postID = ?
+        GROUP BY `POSTS`.postID
         "
     );
     $query->bind_param("s", $bin_id);
@@ -372,7 +400,7 @@ function db_post_fetch(string $hex_post_id) {
     }
     $post = $res->fetch_assoc(); // row 0
 
-    return parse_database_row($post, TABLE_POSTS);
+    return parse_database_row($post, TABLE_POSTS, ["tags"=>"a-string"]);
 }
 
 
@@ -970,6 +998,7 @@ function db_personal_delete(string $personal_id) {
     );
     $query->bind_param("s", $bin_p_id);
     $query->execute();
+    return $query->affected_rows > 0;
 
 }
 
@@ -994,5 +1023,22 @@ function db_personal_fetch(string $personal_id) {
     }
     
     return $res->fetch_assoc();
+}
+
+// tags
+
+function db_tag_delete(string $tag_id) {
+    global $db;
+
+    $bin_t_id = hex2bin($tag_id);
+
+    $query = $db->prepare(
+        "DELETE FROM `TAGS` WHERE tagID = ?"
+    );
+    $query->bind_param("s", $bin_t_id);
+    $query->execute();
+
+    return $query->affected_rows > 0;
+
 }
 ?>

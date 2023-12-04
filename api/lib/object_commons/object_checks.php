@@ -22,6 +22,10 @@ function object_check_duo_arg(RequestContext $ctx, array $resource_ids) {
     _check_arg_count($resource_ids, 2);
 }
 
+function object_check_not_implemented(RequestContext $ctx, array $resource_ids) {
+    respond_not_implemented();
+}
+
 function object_check_post_exists(RequestContext $ctx, array $resource_ids) {
     $post = db_post_fetch($resource_ids[0]);
     

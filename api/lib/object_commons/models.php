@@ -7,6 +7,8 @@ const TASK_STATE_COMPLETED = 3;
 
 const TASK_VALID_STATES = [TASK_STATE_TODO, TASK_STATE_INPROGRESS, TASK_STATE_COMPLETED];
 
+const TAG_COLOURS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+
 
 // THIS MIGHT JUST BE JAVA
 // if it was java maybe i would make a not null constraint
@@ -142,12 +144,33 @@ class RestrictedDomainConstraint extends Constraint {
     }
 
     public function validate(string $user_column, $user_field) {
-        //error_log("running domain constraint on" . $user_column . ":" . $user_field);
+        error_log("running domain constraint on" . $user_column . ":" . $user_field);
         if (!in_array($user_field, $this->domain)) {
             respond_bad_request(
                 "Invalid value for column '$user_column'. Valid values are: " . implode(", ", $this->domain),
                 ERROR_BODY_FIELD_INVALID_DATA
             );
+        }
+    }
+}
+
+class RestrictedContentConstraint extends Constraint {
+    public Array $restricted_content;
+
+    public function __construct(array $restricted_content) {
+        $this->restricted_content = $restricted_content;
+    }
+
+    public function validate(string $user_column, $user_field) {
+        //error_log("running restricted content constraint on" . $user_column . ":" . $user_field);
+        
+        foreach ($this->restricted_content as $restricted) {
+            if (strpos($user_field, $restricted) !== false) {
+                respond_bad_request(
+                    "Invalid value for column '$user_column'. Cannot contain '$restricted'",
+                    ERROR_BODY_FIELD_INVALID_DATA
+                );
+            }
         }
     }
 }
@@ -242,6 +265,47 @@ const TABLE_POSTS = new Table(
         new Column("isTechnical", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
     ],
     "post"
+);
+
+
+const _TAGID = new Column("tagID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
+
+const TABLE_TAGS = new Table(
+    "`TAGS`",
+    ["name"],
+    [
+        _TAGID,
+        new Column(
+            "name", is_primary_key:true, type:"string", is_nullable:false, is_editable:false, is_server_generated:false,
+            constraints:[new ContentLengthConstraint(2, 64)]
+        ),
+        new Column(
+            "colour", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
+            constraints:[new RestrictedDomainConstraint(TAG_COLOURS)]
+        )
+    ],
+    "tag"
+);
+
+
+const TABLE_POST_TAGS = new Table(
+    "`POST_TAGS`",
+    ["tagID"],
+    [
+        new Column(
+            "tagID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:false,
+            constraints:[new ForeignKeyConstraint(TABLE_TAGS, _TAGID)]
+        ),
+        new Column(
+            "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_POSTS, _POSTID, "db_post_fetch")]
+        ),
+        new Column(
+            "colour", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
+            constraints:[new RestrictedDomainConstraint(TAG_COLOURS)]
+        ),
+    ],
+    "tags"
 );
 
 

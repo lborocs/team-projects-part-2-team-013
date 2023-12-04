@@ -10,7 +10,8 @@ const OBJECT_GENERIC_NEW_FUNCS = [
     "`TASKS`"=>"_new_task",
     "`POSTS`"=>"_new_post",
     "`PROJECTS`"=>"_new_project",
-    "`EMPLOYEE_PERSONALS`"=>"_new_personal"
+    "`EMPLOYEE_PERSONALS`"=>"_new_personal",
+    "`TAGS`"=>"_new_tag"
 ];
 
 const OBJECT_GENERIC_FETCH_FUNCS = [
@@ -86,7 +87,7 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
 
             $field = $column->name;
 
-            if (is_null(@$ctx->request_body[$field]) && !$column->is_nullable) {
+            if (!array_key_exists($field ,$ctx->request_body)) {
                 respond_bad_request(
                     "Expected field $field to be set",
                     ERROR_BODY_MISSING_REQUIRED_FIELD
@@ -432,6 +433,39 @@ function _delete_personal(RequestContext $ctx, array $url_specifiers) {
 function _fetch_personal(RequestContext $ctx, array $url_specifiers) {
 
     respond_ok($ctx->personal);
+}
+
+// tags
+
+function _new_tag(RequestContext $ctx, array $body, array $url_specifiers) {
+
+    $name = $body["name"];
+    $colour = $body["colour"];
+
+    $tagID = random_bytes(UUID_LENGTH);
+
+    if (db_generic_new(
+        TABLE_TAGS ,
+        [
+            $tagID,
+            $name,
+            $colour
+        ],
+        "sss"
+    )) {
+        $body["tagID"] = bin2hex($tagID);
+        respond_ok($body);
+    } else {
+        respond_internal_error(ERROR_DB_INSERTION_FAILED);
+    }
+}
+
+function _delete_tag(RequestContext $ctx, array $url_specifiers) {
+    if (db_tag_delete($url_specifiers[0])) {
+        respond_no_content();
+    } else {
+        respond_resource_not_found("tag ". $url_specifiers[0]);
+    }
 }
 
 ?>
