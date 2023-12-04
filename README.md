@@ -31,7 +31,7 @@ const SESSION_HMAC_KEY_HEX = "session signing key";
 
 ## with production api
 
-1. Install [PHP VS16 x64 Non Thread Safe (direct download)](https://windows.php.net/downloads/releases/php-8.2.12-nts-Win32-vs16-x64.zip)
+1. Install [PHP VS16 x64 Non Thread Safe](https://windows.php.net/download/)
 2. Extract to `C:\php`
 3. Install the [PHP Server](https://marketplace.visualstudio.com/items?itemName=brapifra.phpserver) extension for VS Code
 4. Change the php server location to serve from `web/` OR open the `web/` folder directly in vscode 
