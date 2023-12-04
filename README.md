@@ -33,15 +33,17 @@ const SESSION_HMAC_KEY_HEX = "session signing key";
 
 1. Install [PHP VS16 x64 Non Thread Safe](https://windows.php.net/download/)
 2. Extract to `C:\php`
-3. Install the [PHP Server](https://marketplace.visualstudio.com/items?itemName=brapifra.phpserver) extension for VS Code
-4. Change the php server location to serve from `web/` OR open the `web/` folder directly in vscode 
-5. In the extension settings give the directory of your php folder and php.ini to PHP Server
-6. Start the php server in the `web` folder
+3. (Optional) Install the [PHP Server](https://marketplace.visualstudio.com/items?itemName=brapifra.phpserver) extension for VS Code
+   1. (If using the extension) Change the php server location to serve from `web/` OR open the `web/` folder directly in vscode
+   2. In the extension settings give the directory of your php folder and php.ini to PHP Server
+   3. Start the php server in the `web` folder
 
-    *Make sure there is a trailing slash in URLs because php server wont load styles or scripts if there isnt.*
+        *Make sure there is a trailing slash in URLs because php server wont load styles or scripts if there isnt.*
 
-    *URLs should look like this:* `localhost:3000/dashboard/` `localhost:3000/`
+        *URLs should look like this:* `localhost:3000/dashboard/` `localhost:3000/`
 
+4. (If not) The repo comes with some run and debug configurations, select `php launch web server`
+    *navigate to localhost:8000*
 The site should now function like normal on your local machine.
 
 ## setting up local api
@@ -56,8 +58,8 @@ The site should now function like normal on your local machine.
    1. generate 2 encryption keys in a hex representation
    2. insert the database credentials you just created
 9. import the database format (dump.sql on the discord or get the latest backup from gcp) using 'mariadb < dump.sql' with the credentials
-10. in addition to the web folder php server, run another php server in the api/routes folder
-11. the api will need a copy of the invalidation service running so build and run that (or use an already built executable)
+10. instead of running the web server like above select `RUN DEVELOPMENT API`
+11. the api will need a copy of the invalidation service running so make sure you can run (and possibly build) it
 12. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
 
 
