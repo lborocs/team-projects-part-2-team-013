@@ -1,7 +1,6 @@
 */.vscode
 */target
 */Cargo.lock
-.vscode/
 api/secrets.php
 api/composer.lock
 api/vendor/

@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "cargo",
+			"command": "build",
+			"args": [
+				"--manifest-path",
+				"${workspaceRoot}/invalidation_server/Cargo.toml",
+			],
+			"problemMatcher": [
+				"$rustc",
+				"$rust-panic"
+			],
+			"group": "build",
+			"label": "rust: cargo build",
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"revealProblems": "onProblem",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": false,
+				"clear": false
+			},
+		},
+    ]
+}

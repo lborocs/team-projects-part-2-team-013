@@ -1,0 +1,66 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "php launch web server",
+            "type": "php",
+            "request": "launch",
+            "runtimeArgs": [
+                "-dxdebug.mode=debug",
+                "-dxdebug.start_with_request=yes",
+                "-S",
+                "localhost:8000"
+            ],
+            "program": "",
+            "cwd": "${workspaceRoot}/web",
+            "port": 8000,
+            "serverReadyAction": {
+                "pattern": "Development Server http://localhost:8000 started",
+                "uriFormat": "http://localhost:8000",
+                "action": "openExternally"
+            }
+        },
+        {
+            "name": "php launch api server",
+            "type": "php",
+            "request": "launch",
+            "runtimeArgs": [
+                "-dxdebug.mode=debug",
+                "-dxdebug.start_with_request=yes",
+                "-S",
+                "localhost:4444"
+            ],
+            "program": "",
+            "cwd": "${workspaceRoot}/api/routes",
+            "port": 4444,
+        },
+        {
+            "cwd": "${workspaceRoot}/invalidation_server",
+            "preLaunchTask": "rust: cargo build",
+            "name": "run debug invalidation server",
+            "type":"cppvsdbg",
+            "program": "${workspaceRoot}/invalidation_server/target/debug/invalidation_service.exe",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "requireExactSource": false,
+            "presentation": {
+                "focus": false,
+            }
+            
+        },
+    ],
+    "compounds": [
+        {
+            "name": "RUN DEVELOPMENT API",
+            "configurations": [
+                "run debug invalidation server",
+                "php launch api server",
+                "php launch web server"
+            ],
+            "stopAll": true,
+        }
+    ]
+}
