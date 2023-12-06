@@ -1536,19 +1536,20 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
     );
 });
 
-addEventListener("keydown", (e) => {
+document.getElementById("project-search").addEventListener("keydown", (e) => {
     sleep(10).then(() => {
-        if (document.activeElement.id === "project-search") {
-            filterFromSearch()
-        }
-    }
-)}
-    )
+        filterFromSearch();
+    })
+})
+
+
 
 document.getElementById("deleteSearch").addEventListener("click", () => {
     document.getElementById("project-search").value = "";
     filterFromSearch();
-});
+})
+
+
 
 const sleep = (ms) => {
     return new Promise((resolve) => {
