@@ -192,11 +192,21 @@
     }
 }
 
+#project-back:hover {
+    background-color: rgb(246,246,245);
+    color: #000000;
+    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    transition: 0.15s ease-out;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
 
 .project-bar {
     display: flex;
     justify-content: flex-start;
     align-items: center;
+    gap: 0.5em;
 
     padding: 10px;
 

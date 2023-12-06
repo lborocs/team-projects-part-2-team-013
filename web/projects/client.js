@@ -41,6 +41,7 @@ const inProgressAddButton = document.querySelector("#inprogress-add")
 const finishedAddButton = document.querySelector("#finished-add")
 const listAddButtonRow = document.querySelector("#list-add-row")
 const listAddButton = document.querySelector("#list-add")
+const projectBackButton = document.querySelector("#project-back")
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -157,6 +158,13 @@ views.forEach((view, i) => {
         }
     });
 
+})
+
+projectBackButton.addEventListener("click", () => {
+    setActivePane("select-projects-pane");
+    global.setBreadcrumb(["Projects"], [window.location.pathname]);
+    explainerTaskSetToDefault();
+    //make cursor be pointer when hovering over this button
 })
 
 explainerShowHide.addEventListener("click", () => {
