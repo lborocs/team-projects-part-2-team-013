@@ -1,7 +1,7 @@
 :root {
     --border-clr: #e0e0e0;
     --icon-clr: #5f6368;
-    --very-light-grey: rgb(244,244,244);
+    --light-grey-bg: rgb(244,244,244);
     --task-column-border: rgba(0,0,0,0.15);
 
     --not-started-status-cell: rgba(245, 205, 188, 0.7);

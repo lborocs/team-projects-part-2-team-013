@@ -188,7 +188,7 @@
     padding: 10px;
 
     font-weight: 600;
-    background: var(--very-light-grey);
+    background: var(--light-grey-bg);
 
     .icon {
         height: 100%;
@@ -220,17 +220,12 @@
     align-items: center;
     text-wrap: nowrap;
     .selected {
-        background-color: var(--very-light-grey);
+        background-color: var(--light-grey-bg);
         color: #000000;
         border-bottom: solid 2px;
         
     };
-
 }
-
-
-
-
 
 .project:hover {
     color: #0f0f0f;
@@ -251,7 +246,7 @@
 
 .add-project:hover {
     color: #0f0f0f;
-    background-color: var(--very-light-grey);
+    background-color: var(--light-grey-bg);
     transition-duration: 0.1s;
 }
 
@@ -294,7 +289,7 @@
     color: #555555;
     z-index: 1;
     border-bottom: solid 2px var(--border-clr, #e0e0e0);
-    background-color: var(--very-light-grey);
+    background-color: var(--light-grey-bg);
     flex: 0 0 3em;
     .selected {
         background-color: rgb(246,246,245);
@@ -349,7 +344,7 @@
 .taskarea {
     height: 100%;
     width: 100%;
-    background-color: var(--very-light-grey);
+    background-color: var(--light-grey-bg);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -451,7 +446,6 @@
     padding-bottom: 0.25em;
 }
 
-
 .avatar {
     width: 1.5rem;
     height: 1.5rem;
@@ -516,7 +510,6 @@
     margin-top: 0px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
-
 
 .taskgrid {
     display: flex;
@@ -608,8 +601,6 @@
     font-weight: 700;
 }
 
-
-
 #notstarted {
     background-color: var(--not-started-bg, rgba(252, 245, 242, 0.7));
     border: solid 1px var(--task-column-border, rgba(0,0,0,0.15));
@@ -684,8 +675,6 @@
     transition-duration: 0.08s;
 }
 
-
-
 .tasklist {
     display: flex;
     flex-direction: column;
@@ -749,24 +738,16 @@
     
         .selected {
             color: #0f0f0f;
-            background-color: var(--very-light-grey);   
+            background-color: var(--light-grey-bg);   
         }
     }
-    
     
     & th i:hover {
         color: #0f0f0f;
         transition-duration: 0.08s;
-        background-color: var(--very-light-grey);
+        background-color: var(--light-grey-bg);
     }
 }
-
-
-
-
-
-
-
 
 #list-add {
     background-color: rgba(255,255,255,0);
@@ -847,8 +828,6 @@
     transition: 0.1s ease-out;  
 }
 
-
-
 .task.new {
     border-color: rgba(188, 219, 245, 0.7);
     padding: 0;
@@ -857,7 +836,6 @@
 .task.new:hover {
     background-color: #fffa;
 }
-
 
 .hidden {
     display: none;
@@ -906,7 +884,6 @@
     margin-left: auto;
     margin-right: 1.25em;
 }
-
 
 .descripton.editing {
     height: 3em;
@@ -1055,9 +1032,6 @@
     padding-right: 0.5em !important;
     cursor: pointer;
     transition: 0.1s ease-out;
-    
-
-
 }
 
 .edit-button:hover {
