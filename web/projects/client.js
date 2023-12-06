@@ -774,7 +774,8 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     if (timestamp < dateToday && state !== 2) {
         // due in the past
         statusIcon = `<span class="material-symbols-rounded overdue">error</span>`;
-        dateTooltip = "Task overdue";
+        const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60));
+        dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
     } else {
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         dateTooltip = "Due " + date;
