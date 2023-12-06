@@ -1563,26 +1563,25 @@ const sleep = (ms) => {
     });
 };
 
-function filterFromSearch() {
-    return;
-    if (document.getElementById("project-search").value === ""){
-        let projectRows = document.querySelectorAll(".project-row")
-        projectRows.forEach((project) => {
-            project.classList.remove("norender");
-        });
-    }
-    else{
-    console.log("[filterFromSearch] searching for:");
-    console.log(document.getElementById("project-search").value); 
-    let searchValue = document.getElementById("project-search").value.toUpperCase();
-    let projectRows = document.querySelectorAll(".project-row")
-    projectRows.forEach((project) => {
-        let title = project.getAttribute("data-title").toUpperCase();
-        console.log(title);
-        console.log(searchValue);
-        if (!title.includes(searchValue)) {
-            project.classList.add("norender");
-        }
-    });
+async function searchAndRenderProjects(search) {
+    const data = await get_api('/project/project.php/projects?q=' + search);
+    console.log("[searchAndRenderProjects" + search + "] fetched projects");
+    console.log(data);
+    // process the data here
+    if (data.success == true) {
+        let projectsTable = document.querySelector("#projects-table");
+        projectsTable.querySelector("tbody").replaceChildren();
+        console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
+        await Promise.all(data.data.projects.map(async (project) => {
+
+            await projectObjectRenderAndListeners(project);
+        }));
+        return data.data.projects
     }
 }
+
+function filterFromSearch() {
+    console.log("[filterFromSearch] searching for:");
+    console.log(document.getElementById("project-search").value); 
+    searchAndRenderProjects(document.getElementById("project-search").value)
+    }
