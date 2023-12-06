@@ -236,7 +236,7 @@ body {
 
 .visible {
     align-items: stretch;
-    width: 180px;
+    width: auto;
     gap: 0.5em;
     .sidebar-item {
         height: 2em;
@@ -245,7 +245,7 @@ body {
         margin-right: 0.5em;
         padding-right: 1.25em;
         font-weight: 500;
-        border-radius: 3px;
+        border-radius: 5px;
     }
 
 }
@@ -373,7 +373,6 @@ body {
 
     .fullLogo {
         height: 45px;
-        padding: 0.2em;
     }
 
     .right {
@@ -456,23 +455,6 @@ button:hover {
 }
 
 #user-icon img {
-    width: 1.5rem !important;
-    height: 1.5rem !important;
-    
-    border-radius: 50% !important;
-    background-color: rgba(0,0,0,0) !important;
-}
-
-#author-icon {
-    margin-left: 0 !important;
-    padding: 0 !important;
-    margin-right: 0 !important;
-}
-#author-icon:hover {
-    background-color: rgba(0,0,0,0) !important;
-}
-
-#author-icon img {
     width: 1.5rem !important;
     height: 1.5rem !important;
     

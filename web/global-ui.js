@@ -10,13 +10,12 @@ export const settingsButton = document.querySelector("#settings")
 export const logoutButton = document.querySelector("#logout")
 
 export const userBoth = document.querySelector(".user-both")
+export const userAvatar = document.getElementById("user-icon")
 export const userName = document.getElementById("user-name")
-export const otherUserAvatar = document.querySelector("#other-user-icon")
 
 //groups of things
 export const sidebarItems = document.querySelectorAll(".sidebar-item")
 export const topbarItems = document.querySelectorAll(".item")
-export const userAvatars = document.querySelectorAll("#user-icon")
 console.log("[import] loaded global-ui.js")
 
 export const BACK_BUTTON = 3;
@@ -334,6 +333,7 @@ if (hamburger !== null) {
 
 if (homeButton !== null) {
     homeButton.addEventListener("click", () => {
+        animate(homeButton, "click")
         setTimeout(() => {
             window.location.href = "/projects/";
         }, 150)
@@ -342,6 +342,7 @@ if (homeButton !== null) {
 
 if (myListButton !== null) {
     myListButton.addEventListener("click", () => {
+        animate(myListButton, "click")
         setTimeout(() => {
             window.location.href = "/personal/";
         }, 150)
@@ -350,6 +351,7 @@ if (myListButton !== null) {
 
 if (wikiButton !== null) {
     wikiButton.addEventListener("click", () => {
+        animate(wikiButton, "click")
         setTimeout(() => {
             window.location.href = "/wiki/";
         }, 150)
@@ -358,6 +360,7 @@ if (wikiButton !== null) {
 
 if (workloadButton !== null) {
     workloadButton.addEventListener("click", () => {
+        animate(homeButton, "click")
         setTimeout(() => {
             window.location.href = "/workload/";
         }, 150)
@@ -408,21 +411,10 @@ export function managerElementsEnableIfManager() {
     });
 }
 
-export function displayOtherUserIcon(employee, element){
-    let emp_name = bothNamesToString(employee.firstName, employee.lastName);
-    let emp_icon = employeeAvatarOrFallback(employee);
-    let icon = document.createElement("img");
-    icon.src=emp_icon;
-    icon.classList.add("avatar");
-    
-    element.replaceChildren(
-        icon
-    );
-}
 
 function fillCurrentUserInfo() {
 
-    if (userAvatars === null || userName === null) {
+    if (userAvatar === null || userName === null) {
         return;
     }
 
@@ -436,16 +428,16 @@ function fillCurrentUserInfo() {
         let employee = session.employee;
 
         let emp_name = bothNamesToString(employee.firstName, employee.lastName);
-        userAvatars.forEach((userAvatar) => {
         let emp_icon = employeeAvatarOrFallback(employee);
+
+
         let icon = document.createElement("img");
         icon.src=emp_icon;
         icon.classList.add("avatar");
-        
+
         userAvatar.replaceChildren(
             icon
         );
-        });
         userName.innerText = emp_name;
     });
 }
