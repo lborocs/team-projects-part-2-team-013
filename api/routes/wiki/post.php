@@ -39,7 +39,10 @@ const TAG_METHOD_CHECKS = [
 
 function r_post_fetchall_posts(RequestContext $ctx, string $args) {
 
-    $posts = db_post_fetchall();
+    $search_term = urldecode($_GET["q"] ?? "");
+
+
+    $posts = db_post_fetchall($search_term);
 
     respond_ok(array(
         "posts"=>$posts

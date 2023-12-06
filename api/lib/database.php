@@ -19,8 +19,18 @@ function _encode_field(string $type, $value) {
     }
 
     if (substr($type, 0, 2) == "a-") {
-        return _encode_field(substr($type, 2), explode(DB_ARRAY_DELIMITER, $value));
+        $new_type = substr($type, 2);
+        return array_map(
+            function ($v) use ($new_type) {
+                return _encode_field($new_type, $v);
+            },
+            explode(DB_ARRAY_DELIMITER, $value)
+        );
     }
+
+    if ($type == "integer" && gettype($value) == "string") {
+        return intval($value);
+    } 
 
 
     if ($type == "binary") {
@@ -273,12 +283,18 @@ function db_asset_new(
 
 // posts
 
-function db_post_fetchall() {
+function db_post_fetchall(string $search_term) {
 
     global $db;
 
+    $search = "%" . strtolower($search_term) . "%";
+
     $query = $db->prepare(
-        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, `EMPLOYEES`.*, `ASSETS`.contentType, GROUP_CONCAT(`TAGS`.name SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
+        "SELECT 
+            POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical,
+            `EMPLOYEES`.*, `ASSETS`.contentType,
+            GROUP_CONCAT(DISTINCT `TAGS`.name SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+	        COUNT(`FORUM_ACCESSES`.empID) as views
         FROM `POSTS`
         JOIN `EMPLOYEES`
             ON `POSTS`.createdBy = `EMPLOYEES`.empID
@@ -289,9 +305,19 @@ function db_post_fetchall() {
             ON `POSTS`.postID = `POST_TAGS`.postID
         LEFT JOIN `TAGS` 
             ON `POST_TAGS`.tagID = `TAGS`.tagID
+        LEFT JOIN `FORUM_ACCESSES` 
+            ON `FORUM_ACCESSES`.postID = `POSTS`.postID
+        WHERE LOWER(`POSTS`.title) LIKE ?
         GROUP BY `POSTS`.postID
-        "
+        ORDER BY views DESC
+        LIMIT " . SEARCH_FETCH_LIMIT
     );
+
+    $query->bind_param(
+        "s",
+        $search
+    );
+
     $result = $query->execute();
 
     // select error
@@ -307,7 +333,14 @@ function db_post_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_POSTS, ["tags"=>"a-string"]);
+        $encoded = parse_database_row(
+            $row,
+            TABLE_POSTS,
+            [
+                "tags"=>"a-string",
+                "views"=>"integer",
+            ]
+        );
         array_push($data, $encoded);
     }
     return $data;
