@@ -463,6 +463,23 @@ button:hover {
     background-color: rgba(0,0,0,0) !important;
 }
 
+#author-icon {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    margin-right: 0 !important;
+}
+#author-icon:hover {
+    background-color: rgba(0,0,0,0) !important;
+}
+
+#author-icon img {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    
+    border-radius: 50% !important;
+    background-color: rgba(0,0,0,0) !important;
+}
+
 .edit-and-save {
     display: flex;
     flex-direction: row;

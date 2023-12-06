@@ -11,6 +11,7 @@ export const logoutButton = document.querySelector("#logout")
 
 export const userBoth = document.querySelector(".user-both")
 export const userName = document.getElementById("user-name")
+export const otherUserAvatar = document.querySelector("#other-user-icon")
 
 //groups of things
 export const sidebarItems = document.querySelectorAll(".sidebar-item")
@@ -407,6 +408,17 @@ export function managerElementsEnableIfManager() {
     });
 }
 
+export function displayOtherUserIcon(employee, element){
+    let emp_name = bothNamesToString(employee.firstName, employee.lastName);
+    let emp_icon = employeeAvatarOrFallback(employee);
+    let icon = document.createElement("img");
+    icon.src=emp_icon;
+    icon.classList.add("avatar");
+    
+    element.replaceChildren(
+        icon
+    );
+}
 
 function fillCurrentUserInfo() {
 

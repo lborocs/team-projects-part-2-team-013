@@ -50,3 +50,4 @@ if (technical == 0) {
     document.querySelector("#tag2").innerText = tag2
 }
  
+global.displayOtherUserIcon(postData.createdBy, document.querySelector("#author-icon"))
