@@ -23,13 +23,13 @@
 <body>
     <div class="fullscreen">
         <header class="topbar">
-
             <div class="left">
                 <div class="item" id="hamburger">
-                    <i class="fa-solid fa-bars" id="hamburger-icon"></i>
+                    <span class="material-symbols-rounded">
+                        menu
+                    </span>
                 </div>
                 <div class="breadcrumb">
-                    Workload
                 </div>
             </div>
             <div class="center">
@@ -43,26 +43,33 @@
                     </div>
                 </div>
                 <div class="item" id="inbox-icon">
-                    <i class="fa-solid fa-inbox"></i>
+                    <span class="material-symbols-rounded">
+                        inbox
+                    </span>
                 </div>
+                
             </div>
+
         </header>
-        <div class="sidebar-container">
-            <div class="sidebar">
+        <div class="sidebar-container sidebar-open">
+            <div class="sidebar visible">
                 <div class="sidebar-item" id="home">
-                    <i class="fa-solid fa-home"></i> <p class="norender">Projects</p>
+                    <span class="material-symbols-rounded">home</span> <p class="">Projects</p>
                 </div>
                 <div class="sidebar-item" id="mylist">
-                    <i class="fa-solid fa-list-check"></i> <p class="norender">My List</p>
+                    <span class="material-symbols-rounded">checklist</span> <p class="">My List</p>
                 </div>
                 <div class="sidebar-item" id="wiki">
-                    <i class="fa-solid fa-book"></i> <p class="norender">Wiki</p>
+                    <span class="material-symbols-rounded">menu_book</span> <p class="">Wiki</p>
                 </div>
-                <div class="sidebar-item manager-only selected" id="workload">
-                    <i class="fa-solid fa-users"></i> <p class="norender">Workload</p>
+                <div class="sidebar-item selected manager-only norender" id="workload">
+                    <span class="material-symbols-rounded">speed</span> <p class="">Workload</p>
+                </div>
+                <div class="sidebar-item manager-only norender" id="training">
+                    <span class="material-symbols-rounded">school</span> <p class="">Training</p>
                 </div>
                 <div class="sidebar-item" id="logout">
-                    <i class="fa-solid fa-sign-out"></i> <p class="norender">Logout</p>
+                    <span class="material-symbols-rounded">logout</span> <p class="">Logout</p>
                 </div>
 
             </div>

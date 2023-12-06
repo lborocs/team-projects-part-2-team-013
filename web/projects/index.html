@@ -69,6 +69,9 @@
                 <div class="sidebar-item manager-only norender" id="workload">
                     <span class="material-symbols-rounded">speed</span> <p class="">Workload</p>
                 </div>
+                <div class="sidebar-item manager-only norender" id="training">
+                    <span class="material-symbols-rounded">school</span> <p class="">Training</p>
+                </div>
                 <div class="sidebar-item" id="logout">
                     <span class="material-symbols-rounded">logout</span> <p class="">Logout</p>
                 </div>
@@ -77,7 +80,7 @@
 
             <div class="main norender" id="individual-project-pane">
                 <div class="project-bar">
-                    <div class="icon">
+                    <div class="icon" id="project-back">
                         <i class="fas fa-chevron-left"></i>
                     </div>
                     <div class="title">
@@ -88,12 +91,12 @@
                     <div class="viewport">
                         <div class="views">
                             <div class="search">
-                                <input class="search-input" type="text" autocomplete="off" placeholder="Search Board"></input>
+                                <input id="task-search" class="search-input" type="text" autocomplete="off" placeholder="Search Board"></input>
                                 <div class="search-icon">
                                     <span class="material-symbols-rounded">search</span>
                                 </div>
                                 <div class="search-icon clear-icon">
-                                    <span class="material-symbols-rounded">close</span>
+                                    <span class="material-symbols-rounded" id="delete-task-search">close</span>
                                 </div>
                             </div>
                             <div class="view selected">
@@ -131,9 +134,7 @@
                                     </div>
             
                                 </div>
-                                <div class="add-task manager-only team-leader-only norender" id="inprogress-add">
-                                    <i class="fa-solid fa-plus"></i> Create Task
-                                </div>
+                            
             
                             </div>
                             <div class="taskcolumn" id="finished">
@@ -146,9 +147,7 @@
                                     </div>
             
                                 </div>
-                                <div class="add-task manager-only team-leader-only norender" id="finished-add">
-                                    <i class="fa-solid fa-plus"></i> Create Task
-                                </div>
+                                
             
                             </div>
                         </div>
@@ -263,7 +262,7 @@
                             <span class="material-symbols-rounded">search</span>
                         </div>
                         <div class="search-icon clear-icon">
-                            <span class="material-symbols-rounded" id="deleteSearch">close</span>
+                            <span class="material-symbols-rounded" id="delete-project-search">close</span>
                         </div>
                     </div>
                     <div class="filters">

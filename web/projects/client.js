@@ -37,10 +37,9 @@ const notStartedColumn = document.querySelector("#notstarted")
 const inProgressColumn = document.querySelector("#inprogress")
 const finishedColumn = document.querySelector("#finished")
 const notStartedAddButton = document.querySelector("#notstarted-add")
-const inProgressAddButton = document.querySelector("#inprogress-add")
-const finishedAddButton = document.querySelector("#finished-add")
 const listAddButtonRow = document.querySelector("#list-add-row")
 const listAddButton = document.querySelector("#list-add")
+const projectBackButton = document.querySelector("#project-back")
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -157,6 +156,13 @@ views.forEach((view, i) => {
         }
     });
 
+})
+
+projectBackButton.addEventListener("click", () => {
+    setActivePane("select-projects-pane");
+    global.setBreadcrumb(["Projects"], [window.location.pathname]);
+    explainerTaskSetToDefault();
+    //make cursor be pointer when hovering over this button
 })
 
 explainerShowHide.addEventListener("click", () => {
@@ -764,12 +770,20 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let statusIcon;
     let dateTooltip;
     if (timestamp < dateToday && state !== 2) {
-        // due in the past
+        // tasks which are overdue
         statusIcon = `<span class="material-symbols-rounded overdue">error</span>`;
-        dateTooltip = "Task overdue";
-    } else {
+        const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60));
+        dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+    } else if (state !== 2){
+        // tasks which are finished and have a due date in the past
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        dateTooltip = "Due " + date;
+        const dueInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60));
+        dateTooltip = `Due in ${dueInDays} day${dueInDays !== 1 ? 's' : ''}`;
+    } else {
+        // tasks which have a due date in the future
+        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
+        const finishedDaysAgo = Math.floor((dateToday - timestamp) / (24 * 60 * 60));
+        dateTooltip = `Finished ${finishedDaysAgo} day${finishedDaysAgo !== 1 ? 's' : ''} ago`;
     }
 
     if (date !== "") {
@@ -807,8 +821,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     // console.log(taskCards);
     //put the new task button on the bottom for each column
     notStartedColumn.appendChild(notStartedAddButton);
-    inProgressColumn.appendChild(inProgressAddButton);
-    finishedColumn.appendChild(finishedAddButton);
 
     calculateTaskCount();
 }
@@ -846,6 +858,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let project = document.createElement("tr")
+    project.setAttribute("tabindex", "0")
     project.classList.add("project-row")
     let icon = isTeamLeader ? `fas fa-user-gear` : `fas fa-users`;
 
@@ -1064,16 +1077,12 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
     });
 }
 
-const addButtonArray = [notStartedAddButton, inProgressAddButton, finishedAddButton];
+const addButtonArray = [notStartedAddButton];
 
 addButtonArray.forEach((button) => {
     button.addEventListener("click", async () => {
         if (button.id == "notstarted-add") {
             await addTask(0);
-        } else if (button.id == "inprogress-add") {
-            await addTask(1);
-        } else if (button.id == "finished-add") {
-            await addTask(2);
         } else {
             console.error("invalid state");
         }
@@ -1527,19 +1536,29 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
     );
 });
 
-addEventListener("keydown", (e) => {
+document.getElementById("project-search").addEventListener("keydown", (e) => {
     sleep(10).then(() => {
-        if (document.activeElement.id === "project-search") {
-            filterFromSearch()
-        }
-    }
-)}
-    )
+        filterProjectFromSearch();
+    })
+})
 
-document.getElementById("deleteSearch").addEventListener("click", () => {
+// document.getElementById("task-search").addEventListener("keydown", (e) => {
+//     sleep(10).then(() => {
+//         filterTaskFromSearch();
+//     })
+// })
+
+
+document.getElementById("delete-project-search").addEventListener("click", () => {
     document.getElementById("project-search").value = "";
-    filterFromSearch();
-});
+    filterProjectFromSearch();
+})
+
+document.getElementById("delete-task-search").addEventListener("click", () => {
+    document.getElementById("task-search").value = "";
+    filterTaskFromSearch();
+})
+
 
 const sleep = (ms) => {
     return new Promise((resolve) => {
@@ -1547,26 +1566,49 @@ const sleep = (ms) => {
     });
 };
 
-function filterFromSearch() {
-    return;
-    if (document.getElementById("project-search").value === ""){
-        let projectRows = document.querySelectorAll(".project-row")
-        projectRows.forEach((project) => {
-            project.classList.remove("norender");
-        });
-    }
-    else{
-    console.log("[filterFromSearch] searching for:");
-    console.log(document.getElementById("project-search").value); 
-    let searchValue = document.getElementById("project-search").value.toUpperCase();
-    let projectRows = document.querySelectorAll(".project-row")
-    projectRows.forEach((project) => {
-        let title = project.getAttribute("data-title").toUpperCase();
-        console.log(title);
-        console.log(searchValue);
-        if (!title.includes(searchValue)) {
-            project.classList.add("norender");
-        }
-    });
+async function searchAndRenderProjects(search) {
+    const data = await get_api('/project/project.php/projects?q=' + search);
+    console.log("[searchAndRenderProjects" + search + "] fetched projects");
+    console.log(data);
+    console.log('.project-row.selected');
+    // process the data here
+    if (data.success == true) {
+        let projectsTable = document.querySelector("#projects-table");
+        projectsTable.querySelector("tbody").replaceChildren();
+        console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
+        await Promise.all(data.data.projects.map(async (project) => {
+
+            await projectObjectRenderAndListeners(project);
+        }));
+        return data.data.projects
     }
 }
+
+
+// async function searchAndRenderTasks(search) {
+//     const data = await get_api('/project/task.php/tasks?q=' + search);
+//     console.log("[searchAndRenderTasks" + search + "] fetched tasks");
+//     console.log(data);
+//     if (data.success == true) {
+//         let tasksTable = document.querySelector("#tasks-table");
+//         tasksTable.querySelector("tbody").replaceChildren();
+//         console.log("[fetchAndRenderAllTasks] tasks have been fetched successfully")
+//         await Promise.all(data.data.tasks.map(async (task) => {
+//             await taskObjectRenderAll(task, RENDER_LIST);
+//         }));
+//         return data.data.tasks
+//     }
+// }
+
+
+function filterProjectFromSearch() {
+    console.log("[filterProjectFromSearch] searching for:");
+    console.log(document.getElementById("project-search").value); 
+    searchAndRenderProjects(document.getElementById("project-search").value)
+}
+
+// function filterTaskFromSearch() {
+//     console.log("[filterTaskFromSearch] searching for:");
+//     console.log(document.getElementById("task-search").value); 
+//     searchAndRenderTasks(document.getElementById("task-search").value)
+// }

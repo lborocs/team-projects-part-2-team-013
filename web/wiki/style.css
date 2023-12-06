@@ -167,9 +167,13 @@ body {
         user-select: none;
     }
     .tag:hover {
-    cursor: pointer;
-}
-    
+        cursor: pointer;
+    }
+
+    .selected{
+        color: #ffffff !important;
+        background-color: #00a2ff !important;
+    }
 }
 
 .post {
@@ -497,7 +501,3 @@ input[type="text"]:focus {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); 
 }
 
-.selected{
-    color: #ffffff !important;
-    background-color: #00a2ff !important;
-}

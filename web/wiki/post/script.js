@@ -20,8 +20,8 @@ async function getPostData(postID){
 
     const post = data.data;
 
-    console.log(document.getElementById("title"))
     document.querySelector(".title").innerText = post.title
+    document.querySelector("#postTitle").innerHTML = post.title
     document.querySelector(".content").innerHTML = post.content
     document.querySelector(".author").innerText = global.bothNamesToString(post.createdBy.firstName, post.createdBy.lastName)
     document.querySelector(".date").innerText = global.formatDate(new Date(post.createdAt * 1000))
@@ -49,4 +49,6 @@ if (technical == 0) {
     }
     document.querySelector("#tag2").innerText = tag2
 }
- 
+ console.log(postData.createdBy.userID);
+let emp_icon = global.employeeAvatarOrFallback(postData.createdBy);
+document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
