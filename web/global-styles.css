@@ -3,6 +3,7 @@
     --icon-clr: #5f6368;
     --light-grey-bg: rgb(244,244,244);
     --task-column-border: rgba(0,0,0,0.15);
+    --selectable: rgb(0, 82, 204);
 
     --not-started-status-cell: rgba(245, 205, 188, 0.7);
     --not-started-bg: rgba(252, 245, 242, 0.7);

@@ -62,7 +62,7 @@
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
-            color: #0052cc;
+            color: var(--selectable, #0052cc);
         }
 
         .icon {
