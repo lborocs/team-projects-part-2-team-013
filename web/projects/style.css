@@ -170,9 +170,9 @@
 }
 
 #project-back:hover {
-    background-color: rgb(246,246,245);
+    background-color: var(--view-selected-bg, rgb(246,246,245));
     color: #000000;
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
     transition: 0.15s ease-out;
     cursor: pointer;
     border-radius: 4px;
@@ -228,10 +228,12 @@
 }
 
 .project:hover {
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     transition-duration: 0.05s;
     cursor: pointer;
 }
+
+/*  NOT IN USE
 
 .add-project {
     color: #555555;
@@ -248,7 +250,7 @@
     color: #0f0f0f;
     background-color: var(--light-grey-bg);
     transition-duration: 0.1s;
-}
+} */
 
 .personal {
     font-weight: 800;
@@ -292,9 +294,9 @@
     background-color: var(--light-grey-bg);
     flex: 0 0 3em;
     .selected {
-        background-color: rgb(246,246,245);
+        background-color: var(--view-selected-bg, rgb(246,246,245));
         color: #000000;
-        box-shadow: 0 0 6px rgba(0,0,0,0.15);
+        box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
         transition: 0.15s ease-out;
     };
 }
@@ -306,7 +308,7 @@
     margin-left: 1em;
     padding-left: 0.5em;
     padding-right: 0.5em;
-    background-color: rgb(246,246,245);
+    background-color: var(--view-selected-bg, rgb(246,246,245));
     font-weight: 700;
     gap: 0.25em;
     border-radius: 4px;
@@ -316,10 +318,10 @@
 }
 
 .view:hover {
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     transition-duration: 0.05s;
     cursor: pointer;
-    background-color: white;
+    background-color: var(--white, white);
 }
 
 .viewport-button {
@@ -336,8 +338,8 @@
 }
 
 .viewport-button:hover {
-    color: #0f0f0f;
-    background-color: white;
+    color: var(--text-off-black, #0f0f0f);
+    background-color: var(--white, white);
     transition-duration: 0.1s;
 }
 
@@ -366,7 +368,7 @@
     padding-right: 1.5em;
     border-radius: 8px;
     background-color: rgba(255,255,255,0.7);
-    box-shadow: 0 4px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 4px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
     width: 100%;
     height: calc(100% - 2em);
     overflow-x: hidden;
@@ -378,17 +380,17 @@
     .title {
         font-size: 1.5em;
         font-weight: 700;
-        color: #0f0f0f;
+        color: var(--text-off-black, #0f0f0f);
     }
     .description {
         font-size: 1em;
         font-weight: 500;
-        color: #0f0f0f;
+        color: var(--text-off-black, #0f0f0f);
     }
     .team-leader {
         font-size: 1em;
         font-weight: 600;
-        color: #0f0f0f;
+        color: var(--text-off-black, #0f0f0f);
         transition: 0.1s ease-out;
         display: flex;
         flex-direction: row;
@@ -401,7 +403,7 @@
         height: 1px;
         margin-top: 0em;
         margin-bottom: 0em;
-        background-color: #0f0f0f;
+        background-color: var(--text-off-black, #0f0f0f);
         opacity: 0.2;
     }
 }
@@ -421,7 +423,7 @@
     align-items: center;
     font-weight: 700;
     font-size: 16px;
-    color: #2f2f2f;
+    color: var(--team-leader-text-clr, #2f2f2f);
     gap: 0.5em;
     margin: 0.25em 0.5em;
     margin: 0;
@@ -430,7 +432,7 @@
 }
 
 .team-leader-name:hover {
-    background-color: rgba(0,0,0,0.1);
+    background-color: var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
     cursor: pointer;
     transition: 0.1s ease-out;
 }
@@ -438,7 +440,7 @@
 .team-leader-title {
     font-weight: 400;
     font-size: 12px;
-    color: #2f2f2f;
+    color: var(--team-leader-text-clr, #2f2f2f);
     margin: 0.25em 0.5em;
     margin-bottom: 0;
     padding: 0.25em 0.5em;
@@ -450,7 +452,7 @@
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 50%;
-    border: solid 1px white;
+    border: solid 1px var(--white, white);
     transition: 0.1s ease-out;
     z-index: 0;
 }
@@ -465,19 +467,19 @@
     .title {
         font-size: 1.25em;
         font-weight: 700;
-        color: #0f0f0f;
+        color: var(--text-off-black, #0f0f0f);
         display: flex;
         gap: 0.25em;
     }
     .description {
         font-size: 1em;
         font-weight: 500;
-        color: #0f0f0f;
+        color: var(--text-off-black, #0f0f0f);
     }
     .date {
         font-size: 1em;
         font-weight: 400;
-        color: #2d2e30;
+        color: var(--text-off-black, #0f0f0f);
     }
 }
 
@@ -498,6 +500,8 @@
     bottom: 10px;
 }
 
+/* DOESNT EXIST
+
 .create-task {
     text-align: center;
     width: auto;
@@ -508,8 +512,8 @@
     font-size: 1em;
     color: #0f0f0fbb;
     margin-top: 0px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-}
+    box-shadow: 0 2px 4px var(--box-shadow-clr, rgba(0,0,0,0.15));
+} */
 
 .taskgrid {
     display: flex;
@@ -557,8 +561,8 @@
 }
 
 .add-task:hover {
-    color: #0f0f0f;
-    background-color: #fadec977;
+    color: var(--text-off-black, #0f0f0f);
+    background-color: var(--add-task-hover, #fadec977);
     transition-duration: 0.1s;
 }
 
@@ -617,7 +621,7 @@
         color: var(--not-started-title-clr, rgb(73, 41, 14));
     };
     .add-task:hover {
-        background-color: #fadec977;
+        background-color: var(--add-task-hover, #fadec977);
     }
 }
 
@@ -637,7 +641,7 @@
         color: var(--in-progress-title-clr, rgb(24, 51, 71));
     };
     .add-task:hover {
-        background-color: #d3e5ef77;
+        background-color: var(--in-progress-add-task-hover, #d3e5ef77);
     }
 }
 
@@ -657,7 +661,7 @@
         color: var(--finished-title-clr, rgb(28, 56, 41));
     };
     .add-task:hover {
-        background-color: #dbeddb77;
+        background-color: var(--finished-add-task-hover, #dbeddb77);
     }
 }
 
@@ -671,7 +675,7 @@
 }
 
 .delete-button:hover {
-    color: #c04646;
+    color: var(--overdue-red, #c04646);
     transition-duration: 0.08s;
 }
 
@@ -690,7 +694,7 @@
         align-self: center;
         border-radius: 5px;
         overflow: hidden;
-        box-shadow: 0 0px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 0px 4px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
     
     }
 
@@ -708,7 +712,7 @@
     
     & thead {
         background-color: #fff;
-        color: #0f0f0f;
+        color: var(--text-off-black, #0f0f0f);
         font-weight: 700;
         
     }
@@ -718,7 +722,7 @@
         padding-left: 1em;
         padding-right: 1em;
         text-align: left;
-        border-bottom: solid 2px #2f2f2f;
+        border-bottom: solid 2px var(--team-leader-text-clr, #2f2f2f);
     
     }
     
@@ -737,13 +741,13 @@
         user-select: none;
     
         .selected {
-            color: #0f0f0f;
+            color: var(--text-off-black, #0f0f0f);
             background-color: var(--light-grey-bg);   
         }
     }
     
     & th i:hover {
-        color: #0f0f0f;
+        color: var(--text-off-black, #0f0f0f);
         transition-duration: 0.08s;
         background-color: var(--light-grey-bg);
     }
@@ -764,7 +768,7 @@
 }
 
 #list-add:hover {
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     transition-duration: 0.08s;
     background-color: #f0f0f0;
 }
@@ -813,7 +817,7 @@
     cursor: pointer;
     text-decoration: none;
     border-radius: 4px;
-    background-color: white;
+    background-color: var(--white, white);
     font-size: 0.9rem;
     font-weight: 500;
     border-collapse: separate;
@@ -860,7 +864,7 @@
 
 .input:focus {
     outline: none;
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
 }
 
 .input::placeholder {
@@ -870,7 +874,7 @@
 .title-input {
     font-size: 1em !important;
     font-weight: 700 !important;
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row;
     height: 24px;
@@ -905,20 +909,20 @@
 #date-column.selected .header-cell,
 #status-column.selected .header-cell {
     background-color: rgba(104, 104, 104, 0.7);
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
     color: #ffffff;
     transition: 0.1s ease-out;
 }
 
 .selected.asc i {
-    background: linear-gradient(to bottom, white 50%, transparent 50%);
+    background: linear-gradient(to bottom, var(--white, white) 50%, transparent 50%);
     background-clip: padding-box;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
 .selected.desc i {
-    background: linear-gradient(to top, white 50%, transparent 50%);
+    background: linear-gradient(to top, var(--white, white) 50%, transparent 50%);
     background-clip: padding-box;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -947,7 +951,7 @@
     background-color: #fff;
     border-radius: 10px;
     border: 1px solid var(--border-clr, #e0e0e0);
-    box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 4px 1px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
     padding: 3em;
     padding-top: 0;
     padding-bottom: 0;
@@ -981,8 +985,8 @@
 }
 
 .editButton {
-    background-color: rgb(66, 116, 255);
-    color: white;
+    background-color: var(--confirm-button-colour, rgb(66, 116, 255));
+    color: var(--white, white);
     border: none;
 }
 
@@ -1008,19 +1012,19 @@
 
 .deleteButton {
     background-color: rgb(218,55, 60);
-    color: white;
+    color: var(--white, white);
 }
 
 .deleteButton:hover {
     background-color: rgb(161, 40, 40);
-    color: white;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    color: var(--white, white);
+    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3));
         border: none;
 }
 
 .createButton {
-    background-color: rgb(66, 116, 255);
-    color: white;
+    background-color: var(--confirm-button-colour, rgb(66, 116, 255));
+    color: var(--white, white);
 }
 
 .edit-button {
@@ -1035,24 +1039,24 @@
 }
 
 .edit-button:hover {
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     background-color: #f0f0f0;
     transition-duration: 0.1s;
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
 }
 
 .createButton:hover {
     background-color: rgb(40, 72, 161);
-    color: white;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    color: var(--white, white);
+    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3));
     border: none;
 
 }
 .closeButton:hover, .addButton:hover, .setButton:hover {
     border: none;
     background-color: rgb(34, 32, 32);
-    color: white;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); 
+    color: var(--white, white);
+    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3)); 
 }
 
 .add-task-title{
@@ -1071,19 +1075,19 @@
     align-self: center;
     font-size: 1em !important;
     font-weight: 700 !important;
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row;
     height: 24px;
     max-width: 100% !important;
     text-align: left; 
-    border: 1px solid #d3d3d3;
+    border: 1px solid var(--add-task-border, #d3d3d3);
     border-radius: 5px;
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
 }
 
 .add-task-title-input:focus{
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3));
     outline: none;
 }
 
@@ -1102,20 +1106,20 @@
     resize: none;
     width: 100%;
     height: 20em;
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row;
     max-width: 100% !important;
-    border: 1px solid #d3d3d3;
+    border: 1px solid var(--add-task-border, #d3d3d3);
     border-radius: 5px;
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
     font-family: 'Open Sans', sans-serif;
     padding: 1em;
 }
 
 .add-task-description-input:focus{
     outline: none;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)
+    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3))
 }
 
 .add-task-description-input::placeholder {
@@ -1134,15 +1138,15 @@
 
 .add-task-date-input {
     align-self: center;
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row-reverse;
     height: 24px;
     max-width: 100% !important;
     text-align: center;
-    border: 1px solid #d3d3d3;
+    border: 1px solid var(--add-task-border, #d3d3d3);
     border-radius: 5px;
-    box-shadow: 0 0 6px rgba(0,0,0,0.15);
+    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
 }
 
 .due-date-prompt {
@@ -1176,7 +1180,7 @@
     width: 2.4em;
     height: 2.4em;
     border-radius: 50%;
-    border: solid 1px white;
+    border: solid 1px var(--white, white);
 }
 
 #delete-popup {
@@ -1189,7 +1193,7 @@
     background-color: #fff;
     border-radius: 10px;
     border: 1px solid var(--border-clr, #e0e0e0);
-    box-shadow: 0px 0px 4px 1px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 4px 1px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
     top: 50%;
     transform: translate(0, -50%);
     padding: 2em;
@@ -1198,7 +1202,7 @@
 
 #task-overdue {
     align-self: center;
-    color: #c04646;
+    color: var(--overdue-red, #c04646);
     font-weight: 700;
     font-size: 0.9em;
     margin-left: auto;
@@ -1214,7 +1218,7 @@
 }
 
 .sidebar {
-    box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    box-shadow: 0 0 4px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
 }
 
 #edit-task-popup {
@@ -1232,18 +1236,18 @@
     align-self: center;
     font-size: 1em !important;
     font-weight: 700 !important;
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row;
     height: 24px;
     max-width: 100% !important;
     text-align: left; 
-    border: 1px solid #2f2f2f !important;
+    border: 1px solid var(--team-leader-text-clr, #2f2f2f) !important;
     border-radius: 5px;
 }
 
 .edit-task-title-input:focus{
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3));
     outline: none;
 }
 
@@ -1252,7 +1256,7 @@
     resize: none;
     width: 100%;
     height: 20em;
-    color: #0f0f0f;
+    color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row;
     max-width: 100% !important;
@@ -1264,7 +1268,7 @@
 
 .edit-task-description-input:focus{
     outline: none;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)
+    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3))
 }
 
 .edit-task-description-input::placeholder {
