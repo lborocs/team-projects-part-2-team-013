@@ -37,8 +37,6 @@ const notStartedColumn = document.querySelector("#notstarted")
 const inProgressColumn = document.querySelector("#inprogress")
 const finishedColumn = document.querySelector("#finished")
 const notStartedAddButton = document.querySelector("#notstarted-add")
-const inProgressAddButton = document.querySelector("#inprogress-add")
-const finishedAddButton = document.querySelector("#finished-add")
 const listAddButtonRow = document.querySelector("#list-add-row")
 const listAddButton = document.querySelector("#list-add")
 const projectBackButton = document.querySelector("#project-back")
@@ -823,8 +821,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     // console.log(taskCards);
     //put the new task button on the bottom for each column
     notStartedColumn.appendChild(notStartedAddButton);
-    inProgressColumn.appendChild(inProgressAddButton);
-    finishedColumn.appendChild(finishedAddButton);
 
     calculateTaskCount();
 }
@@ -1080,16 +1076,12 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
     });
 }
 
-const addButtonArray = [notStartedAddButton, inProgressAddButton, finishedAddButton];
+const addButtonArray = [notStartedAddButton];
 
 addButtonArray.forEach((button) => {
     button.addEventListener("click", async () => {
         if (button.id == "notstarted-add") {
             await addTask(0);
-        } else if (button.id == "inprogress-add") {
-            await addTask(1);
-        } else if (button.id == "finished-add") {
-            await addTask(2);
         } else {
             console.error("invalid state");
         }
