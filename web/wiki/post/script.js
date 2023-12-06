@@ -49,4 +49,6 @@ if (technical == 0) {
     }
     document.querySelector("#tag2").innerText = tag2
 }
- 
+ console.log(postData.createdBy.userID);
+let emp_icon = global.employeeAvatarOrFallback(postData.createdBy);
+document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
