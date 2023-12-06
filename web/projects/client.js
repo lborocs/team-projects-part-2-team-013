@@ -821,8 +821,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     // console.log(taskCards);
     //put the new task button on the bottom for each column
     notStartedColumn.appendChild(notStartedAddButton);
-    inProgressColumn.appendChild(inProgressAddButton);
-    finishedColumn.appendChild(finishedAddButton);
 
     calculateTaskCount();
 }
