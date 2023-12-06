@@ -858,6 +858,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let project = document.createElement("tr")
+    project.setAttribute("tabindex", "0")
     project.classList.add("project-row")
     let icon = isTeamLeader ? `fas fa-user-gear` : `fas fa-users`;
 
