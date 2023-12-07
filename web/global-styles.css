@@ -236,7 +236,7 @@ body {
 
 .visible {
     align-items: stretch;
-    width: 180px;
+    width: auto;
     gap: 0.5em;
     .sidebar-item {
         height: 2em;
@@ -245,7 +245,7 @@ body {
         margin-right: 0.5em;
         padding-right: 1.25em;
         font-weight: 500;
-        border-radius: 3px;
+        border-radius: 5px;
     }
 
 }
@@ -373,7 +373,6 @@ body {
 
     .fullLogo {
         height: 45px;
-        padding: 0.2em;
     }
 
     .right {

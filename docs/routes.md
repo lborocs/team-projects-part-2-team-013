@@ -80,7 +80,7 @@ Written/designed by aidan F223129
     }
     ```
 - [x] **/employee/session.php/session**
-  - [ ] DELETE (logout)
+  - [x] DELETE (logout)
   - [x] GET (get session info)
     ```jsonc
     {
@@ -94,12 +94,15 @@ Written/designed by aidan F223129
       }
     }
     ```
-  - [ ] PUT (renew session and discard old)
+  - [x] PUT (renew session and discard old)
+
 - [ ] **/employee/session.php/otp**
   - POST {"password"}
+
 - [ ] **/employee/session.php/account**
     - [ ] GET (account info)
     - [ ] PATCH {"password"} (requires otp)
+
 - [ ] **/employee/session.php/register**
     - POST (register account)
 
@@ -120,6 +123,7 @@ Written/designed by aidan F223129
         }
       }
       ```
+
 - [ ] **/project/task.php/task/:PROJECT_ID:/:TASK_ID**
   - [x] GET (get task by id)
     ```jsonc
@@ -151,6 +155,7 @@ Written/designed by aidan F223129
         }
       }
       ```
+
 - [ ] **/project/project.php/project/:PROJECT_ID**
     - [x] GET (get individual project)
       ```jsonc
@@ -168,7 +173,7 @@ Written/designed by aidan F223129
 
 # wiki
 ## post.php
-- [x] **/wiki/post.php/posts**
+- [x] **/wiki/post.php/posts?q=search_term&tags=tagid1,tagid2**
   - GET (get all posts)
     will return a body containing a list of posts
     ```jsonc
@@ -179,14 +184,21 @@ Written/designed by aidan F223129
       }
     }
     ```
+
 - [ ] **/wiki/post.php/post/:POST_ID:**
+  - [ ] PUT /post/:POST_ID:/tags
+    manages tags for a post {tags:[tagid1,tagid2]}
+
   - [x] GET (get individual post)
     ```jsonc
     {
       "success":true,
       "data":{
         "title":"post title here",
-        "createdBy": "createdby user_id here",
+        "createdBy": {
+          "empID":"empid here",
+          // rest of employee object
+        },
         // rest of post object
       }
     }
@@ -194,3 +206,11 @@ Written/designed by aidan F223129
   - [x] PATCH (modify post)
   - [ ] DELETE (delete post)
   - [x] POST (new post) {"title":string, "isTechnical":int(0/1), "content":string}
+
+  - [x] **/wiki/post.php/tag/:TAG_ID:**
+    - [x] POST (create a new tag)
+    - [x] DELETE (delete a tag)
+
+  - [x] **/wiki/post.php/tags:**
+    - GET (get all tags)
+ 

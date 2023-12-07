@@ -1538,17 +1538,26 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
 
 document.getElementById("project-search").addEventListener("keydown", (e) => {
     sleep(10).then(() => {
-        filterFromSearch();
+        filterProjectFromSearch();
     })
 })
 
+// document.getElementById("task-search").addEventListener("keydown", (e) => {
+//     sleep(10).then(() => {
+//         filterTaskFromSearch();
+//     })
+// })
 
 
-document.getElementById("deleteSearch").addEventListener("click", () => {
+document.getElementById("delete-project-search").addEventListener("click", () => {
     document.getElementById("project-search").value = "";
-    filterFromSearch();
+    filterProjectFromSearch();
 })
 
+document.getElementById("delete-task-search").addEventListener("click", () => {
+    document.getElementById("task-search").value = "";
+    filterTaskFromSearch();
+})
 
 
 const sleep = (ms) => {
@@ -1561,6 +1570,7 @@ async function searchAndRenderProjects(search) {
     const data = await get_api('/project/project.php/projects?q=' + search);
     console.log("[searchAndRenderProjects" + search + "] fetched projects");
     console.log(data);
+    console.log('.project-row.selected');
     // process the data here
     if (data.success == true) {
         let projectsTable = document.querySelector("#projects-table");
@@ -1574,8 +1584,31 @@ async function searchAndRenderProjects(search) {
     }
 }
 
-function filterFromSearch() {
-    console.log("[filterFromSearch] searching for:");
+
+// async function searchAndRenderTasks(search) {
+//     const data = await get_api('/project/task.php/tasks?q=' + search);
+//     console.log("[searchAndRenderTasks" + search + "] fetched tasks");
+//     console.log(data);
+//     if (data.success == true) {
+//         let tasksTable = document.querySelector("#tasks-table");
+//         tasksTable.querySelector("tbody").replaceChildren();
+//         console.log("[fetchAndRenderAllTasks] tasks have been fetched successfully")
+//         await Promise.all(data.data.tasks.map(async (task) => {
+//             await taskObjectRenderAll(task, RENDER_LIST);
+//         }));
+//         return data.data.tasks
+//     }
+// }
+
+
+function filterProjectFromSearch() {
+    console.log("[filterProjectFromSearch] searching for:");
     console.log(document.getElementById("project-search").value); 
     searchAndRenderProjects(document.getElementById("project-search").value)
-    }
+}
+
+// function filterTaskFromSearch() {
+//     console.log("[filterTaskFromSearch] searching for:");
+//     console.log(document.getElementById("task-search").value); 
+//     searchAndRenderTasks(document.getElementById("task-search").value)
+// }

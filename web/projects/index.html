@@ -79,16 +79,16 @@
             </div>
 
             <div class="main norender" id="individual-project-pane">
-                <div class="project-bar">
-                    <div class="icon" id="project-back">
-                        <i class="fas fa-chevron-left"></i>
-                    </div>
-                    <div class="title">
-                        Project Name
-                    </div>
-                </div>
                 <div class="taskarea">
                     <div class="viewport">
+                        <div class="project-bar">
+                            <div class="icon" id="project-back">
+                                <i class="fas fa-chevron-left"></i>
+                            </div>
+                            <div class="title">
+                                Project Name
+                            </div>
+                        </div>
                         <div class="views">
                             <div class="search">
                                 <input id="task-search" class="search-input" type="text" autocomplete="off" placeholder="Search Board"></input>
@@ -96,7 +96,7 @@
                                     <span class="material-symbols-rounded">search</span>
                                 </div>
                                 <div class="search-icon clear-icon">
-                                    <span class="material-symbols-rounded">close</span>
+                                    <span class="material-symbols-rounded" id="delete-task-search">close</span>
                                 </div>
                             </div>
                             <div class="view selected">
@@ -262,7 +262,7 @@
                             <span class="material-symbols-rounded">search</span>
                         </div>
                         <div class="search-icon clear-icon">
-                            <span class="material-symbols-rounded" id="deleteSearch">close</span>
+                            <span class="material-symbols-rounded" id="delete-project-search">close</span>
                         </div>
                     </div>
                     <div class="filters">
