@@ -23,13 +23,12 @@ const SESSION_ENCRYPTION_ALGO = "aes-256-cbc";
 // both 256 bit keys
 const SESSION_ENCRYPTION_KEY_HEX = "session encryption key";
 const SESSION_HMAC_KEY_HEX = "session signing key";
-?>
 
 // gcp
 const GCP_CREDENTIALS_OBJECT = Array(); // creds.json array form
 
 const GOOGLE_ASSET_BUCKET_NAME = "usercontent.013.team"; // storage bucket name
-
+?>
 ```
 
 
