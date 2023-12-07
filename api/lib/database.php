@@ -133,25 +133,10 @@ function parse_database_row(Array $row, Table $table, Array $additional_collecta
     return $output;
 }
 
-
-// DEPRECATED FUNCTION
-// function encode_binary_fields(array $row) {
-//     foreach ($row as $key=>$value) {
-
-//         if (gettype($value) != "string") {
-//             continue;
-//         }
-
-//         // TODO: UUIDS COULD BE VALID UTF8
-//         if (strlen($value) == UUID_LENGTH) {
-//             if (!preg_match('//u', $value)) { // checks for not utf8
-//                 $row[$key] = bin2hex($row[$key]);
-//             }            
-//         } 
-//     }
-//     return $row;
-// }
-
+function create_array_binding(int $num) {
+    // substr removes the trailing ', ' from the end
+    return substr_replace(str_repeat("?, ", $num), "", -2);
+}
 
 
 function db_generic_new(Table $table, array $values, string $bind_format) {
@@ -159,7 +144,7 @@ function db_generic_new(Table $table, array $values, string $bind_format) {
 
 
     $stmt = "INSERT INTO ". $table->name ." VALUES ("
-    . substr_replace(str_repeat("?, ", count($values)), "", -2)
+    . create_array_binding(count($values))
     .");";
 
     $query = $db->prepare(
@@ -283,14 +268,25 @@ function db_asset_new(
 
 // posts
 
-function db_post_fetchall(string $search_term) {
+function db_post_fetchall(string $search_term, ?Array $tags) {
 
     global $db;
 
     $search = "%" . strtolower($search_term) . "%";
 
-    $query = $db->prepare(
-        "SELECT 
+    $tag_term = null;
+
+    if ($tags) {
+        $tags = array_map("hex2bin", $tags);
+
+        $tag_term = "AND `POST_TAGS`.tagID IN (" . create_array_binding(count($tags)) . ")";
+    } else {
+        $tags = [];
+    }
+    
+
+    $query = $db->prepare("
+        SELECT 
             POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical,
             `EMPLOYEES`.*, `ASSETS`.contentType,
             GROUP_CONCAT(DISTINCT `TAGS`.name SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
@@ -307,15 +303,16 @@ function db_post_fetchall(string $search_term) {
             ON `POST_TAGS`.tagID = `TAGS`.tagID
         LEFT JOIN `FORUM_ACCESSES` 
             ON `FORUM_ACCESSES`.postID = `POSTS`.postID
-        WHERE LOWER(`POSTS`.title) LIKE ?
+        WHERE LOWER(`POSTS`.title) LIKE ? " . $tag_term . "
         GROUP BY `POSTS`.postID
         ORDER BY views DESC
         LIMIT " . SEARCH_FETCH_LIMIT
     );
 
     $query->bind_param(
-        "s",
-        $search
+        str_repeat("s", count($tags) + 1),
+        $search,
+        ...$tags
     );
 
     $result = $query->execute();
@@ -513,7 +510,7 @@ function db_employee_fetch_by_ids(array $binary_ids) {
     JOIN `ACCOUNTS`
     ON EMPLOYEES.empID = ACCOUNTS.empID
     WHERE EMPLOYEES.empID IN ("
-    . substr_replace(str_repeat("?, ", $num) ,"", -2) . // remove the trailing ', ' from the end
+    . create_array_binding($num) .
     ")";
 
     $query = $db->prepare($stmt);
@@ -928,7 +925,7 @@ function db_task_overwrite_assignments(string $task_id, array $bin_assignments) 
 
     $query = $db->prepare(
         "INSERT INTO `EMPLOYEE_TASKS` (empID, taskID) VALUES " .
-        substr_replace(str_repeat("(?, ?), ", count($bin_assignments)), "", -2)
+        create_array_binding(count($bin_assignments) * 2)
     );
 
     $flattened = [];
@@ -1074,4 +1071,27 @@ function db_tag_delete(string $tag_id) {
     return $query->affected_rows > 0;
 
 }
+
+function db_tag_fetchall() {
+    global $db;
+
+    $query = $db->prepare(
+        "SELECT * FROM `TAGS`"
+    );
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_TAGS);
+        array_push($data, $encoded);
+    }
+    return $data;
+
+}
+
 ?>
