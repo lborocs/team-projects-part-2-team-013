@@ -159,10 +159,8 @@ views.forEach((view, i) => {
 })
 
 projectBackButton.addEventListener("click", () => {
-    setActivePane("select-projects-pane");
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
-    explainerTaskSetToDefault();
-    //make cursor be pointer when hovering over this button
+    renderFromBreadcrumb([null, null]);
 })
 
 explainerShowHide.addEventListener("click", () => {
@@ -521,7 +519,7 @@ async function renderFromBreadcrumb(locations) {
         return await fetchAndRenderAllProjects();
     }
 
-
+    setActivePane("individual-project-pane");
     let data = await get_api(`/project/project.php/project/${projID}`);
 
     if (!data.success) {
