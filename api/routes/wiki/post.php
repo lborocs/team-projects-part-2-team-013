@@ -39,7 +39,25 @@ const TAG_METHOD_CHECKS = [
 
 function r_post_fetchall_posts(RequestContext $ctx, string $args) {
 
-    $posts = db_post_fetchall();
+    $search_term = urldecode($_GET["q"] ?? "");
+
+    $tag_term = $_GET["tags"] ?? null;
+
+    $tags = null;
+    if ($tag_term !== null) {
+        $tags = explode(",", urldecode($tag_term));
+
+        $tags = array_unique($tags);
+        
+    
+        foreach ($tags as $tag) {
+            if (gettype($tag) != "string" || !@hex2bin($tag)) {
+                respond_bad_request("Expected param tags to be an array of hex strings", ERROR_BODY_FIELD_INVALID_TYPE);
+            }
+        }
+    }
+
+    $posts = db_post_fetchall($search_term, $tags);
 
     respond_ok(array(
         "posts"=>$posts
@@ -48,11 +66,59 @@ function r_post_fetchall_posts(RequestContext $ctx, string $args) {
 }
 
 function r_post_post(RequestContext $ctx, string $args) {
-    object_manipulation_generic(POST_METHOD_CHECKS, TABLE_POSTS, $ctx, $args);
+    // PUT MANAGES TAGS
+    if ($ctx->request_method == "PUT") {
+        [$post_id, $args] = explode_args_into_array($args);
+
+        if ($post_id === null) {
+            respond_bad_request("Expected a post id for method PUT", ERROR_REQUEST_URL_PATH_PARAMS_REQUIRED);
+        }
+
+        if ($args != "tags") {
+            respond_route_not_found("PUT /post/{post_id} only supports the /tags endpoint");
+        }
+
+    
+        $ctx->body_require_fields(["tags"]);
+
+        $tags = $ctx->request_body["tags"];
+
+        if (!is_array($tags)) {
+            respond_bad_request("Expected field tags to be an array", ERROR_BODY_FIELD_INVALID_TYPE);
+        }
+
+        $tags = array_unique($tags);
+
+        foreach ($tags as $tag) {
+            if (gettype($tag) != "string" || !@hex2bin($tag)) {
+                respond_bad_request("Expected field tags to be an array of hex strings", ERROR_BODY_FIELD_INVALID_TYPE);
+            }
+        }
+
+        object_check_post_exists($ctx, [$post_id]);
+        object_check_user_is_post_admin($ctx, []);
+
+
+        respond_debug("meow");
+
+
+    } else {
+        object_manipulation_generic(POST_METHOD_CHECKS, TABLE_POSTS, $ctx, $args);
+    }
+
 }
 
 function r_post_tag(RequestContext $ctx, string $args) {
     object_manipulation_generic(TAG_METHOD_CHECKS, TABLE_TAGS, $ctx, $args);
+}
+
+function r_post_tags(RequestContext $ctx, string $args) {
+
+    $tags = db_tag_fetchall();
+
+    respond_ok(array(
+        "tags"=>$tags
+    ));
 }
 
 register_route(new Route(
@@ -63,7 +129,7 @@ register_route(new Route(
 ));
 
 register_route(new Route(
-    OBJECT_GENERAL_ALLOWED_METHODS,
+    array_merge(OBJECT_GENERAL_ALLOWED_METHODS, ["PUT"]),
     "/post",
     "r_post_post",
     1,
@@ -83,6 +149,13 @@ register_route(new Route(
         "REQUIRES_BODY",
         "URL_PATH_ARGS_LEGAL",
     ]
+));
+
+register_route(new Route(
+    ["GET"],
+    "/tags",
+    "r_post_tags",
+    1,
 ));
 
 contextual_run();

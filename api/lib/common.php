@@ -3,6 +3,10 @@
 require_once("const.php");
 require_once("database.php");
 
+// workaround for json SOMETIMES!!! not supporting apostrophes
+const JSON_ENCODE_FLAGS = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE;
+
+
 class Route {
     public Array $allowed_methods;
     private string $callable;
@@ -345,7 +349,7 @@ function respond(bool $success, Array $data, int $status_code) {
         "sys_load"=>get_system_load(),
         "stacktrace"=>format_stack_trace(),
     );
-    $json = json_encode(array("success"=>$success, "data"=>$data,"_trace"=>$debug));
+    $json = json_encode(array("success"=>$success, "data"=>$data,"_trace"=>$debug), JSON_ENCODE_FLAGS);
 
     if ($json == false) {
         // catch json encoding error
@@ -443,8 +447,8 @@ function respond_infrastructure_error(string $message, int $code) {
     respond_error($message, $code, 503);
 }
 
-function respond_debug(string $message) {
-    respond_error($message, ERROR_BAD_REQUEST, 418);
+function respond_debug($object) {
+    respond(true, Array("debug_info"=>$object), 418);
 }
 
 ?>
