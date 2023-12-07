@@ -277,6 +277,59 @@
     font-size: 0.7em;
 }
 
+.add-task-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    height: 32px;
+    padding: 0 10px;
+    padding-left: 5px;
+
+    color: #172b4d;
+    background-color: var(--white, white);
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1;
+
+    border-radius: 3px;
+
+    cursor: pointer;
+    transition: background-color 0.1s ease-out;
+
+    .button-text {
+        margin: 0 2px;
+        line-height: 1;
+    }
+
+    .button-icon {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        justify-items: center;
+    
+        padding: 4px;
+        padding-right: 5px;
+    
+        & span {
+            font-size: 22px;
+            line-height: 1;
+        }
+    }
+
+    .button-icon:empty {
+        padding: 0;
+        padding-left: 5px;
+    }
+}
+
+.text-button:hover {
+    background-color: #dcdfe4;
+}
+
 .views {
     display: flex;
     flex-direction: row;
@@ -519,10 +572,10 @@
 .taskgrid {
     display: flex;
     align-self: flex-start;
+    width: 100%;
     gap: 1em;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    margin: 1em;
     margin-top: 0;
     justify-content: center;
 }
@@ -574,7 +627,7 @@
     justify-content: flex-start;
     align-items: center;
     padding-bottom: 0.75em;
-    gap: 0.75em;
+    gap: 0.85em;
     width: 22em;
     transition: 0.08s ease-out;
 }
