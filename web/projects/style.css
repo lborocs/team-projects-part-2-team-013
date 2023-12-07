@@ -1,6 +1,7 @@
 .selection-screen {
     gap: 0.5em;
     padding: 1em 2em;
+    overflow-y: scroll;
 
     .project-bar {
         padding: 0;
@@ -676,7 +677,10 @@
 
 .delete-button:hover {
     color: var(--overdue-red, #c04646);
-    transition-duration: 0.08s;
+    transition-duration: 0.1s;
+    background-color: #f0f0f0;
+    transition-duration: 0.1s;
+    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
 }
 
 .tasklist {
