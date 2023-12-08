@@ -167,7 +167,7 @@ input {
     color: #1f2328;
     transition: 0.05s ease-out;
     font-size: 1.2em;
-
+    
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -243,7 +243,7 @@ input {
 
 .visible {
     align-items: stretch;
-    width: auto;
+    width: 190px;
     gap: 0.5em;
     .sidebar-item {
         height: 2em;
@@ -397,10 +397,6 @@ input {
 
 #hamburger {
     cursor: pointer;
-}
-
-#workload {
-    font-size: 0.95em !important;
 }
 
 button {

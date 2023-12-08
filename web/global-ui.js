@@ -417,7 +417,6 @@ if (hamburger !== null) {
 
 if (homeButton !== null) {
     homeButton.addEventListener("click", () => {
-        animate(homeButton, "click")
         setTimeout(() => {
             window.location.href = "/projects/";
         }, 150)
@@ -426,7 +425,6 @@ if (homeButton !== null) {
 
 if (myListButton !== null) {
     myListButton.addEventListener("click", () => {
-        animate(myListButton, "click")
         setTimeout(() => {
             window.location.href = "/personal/";
         }, 150)
@@ -435,7 +433,6 @@ if (myListButton !== null) {
 
 if (wikiButton !== null) {
     wikiButton.addEventListener("click", () => {
-        animate(wikiButton, "click")
         setTimeout(() => {
             window.location.href = "/wiki/";
         }, 150)
@@ -444,7 +441,6 @@ if (wikiButton !== null) {
 
 if (workloadButton !== null) {
     workloadButton.addEventListener("click", () => {
-        animate(homeButton, "click")
         setTimeout(() => {
             window.location.href = "/workload/";
         }, 150)
@@ -453,7 +449,6 @@ if (workloadButton !== null) {
 
 if (logoutButton !== null) {
     logoutButton.addEventListener("click", () => {
-        animate(logoutButton, "click")
         delete_api("/employee/session.php/session").then(async () => {
             await clearStorages();
             window.location.href = "/";
