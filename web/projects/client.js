@@ -219,8 +219,13 @@ function updateTaskState(task) {
     }
     if (newState != state) {
         task.setAttribute("data-state", newState);
-        patch_api(`/project/project.php/task/${projID}/${taskID}`, {state:2});
-        console.log(`[updateTaskState] updated task ${taskID} to state ${newState}`);
+        patch_api(`/project/task.php/task/${projID}/${taskID}`, {state:2}).then((res) => {
+            if (!res) { // 204 no content (success)
+                console.log(`[updateTaskState] updated task ${taskID} to state ${newState}`);
+            } else {
+                console.error(`[updateTaskState] failed to update task ${taskID} to state ${newState}`);
+            }
+        });
     }
 }
 
