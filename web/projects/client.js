@@ -925,8 +925,6 @@ async function addTask(state) {
                 </div>
             </div>
             <input type="text" class="add-task-description-input" placeholder="Description"></input>
-            <input type="number" class="expected-hours-input" placeholder="Hours"></input>
-            <input type="date" class="add-task-date-input" placeholder="Due Date"></input>
             <div class="assigned-employees">
                 <div class="text-button" id="add-employee">
                     <div class="button-icon">
@@ -942,7 +940,8 @@ async function addTask(state) {
 
                 </div>
             </div>
-
+            <input type="number" class="expected-hours-input" placeholder="Hours"></input>
+            <input type="date" class="add-task-date-input" placeholder="Due Date"></input>    
         </dialog>
     `;
 
