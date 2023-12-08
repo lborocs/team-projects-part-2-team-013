@@ -12,6 +12,8 @@ console.log(selectedTags);
 
 async function fetchPosts() {
     
+    global.setBreadcrumb(["Wiki"], ["./"]);
+
     const data = await get_api("/wiki/post.php/posts");
     console.log(data);
     if (data.success == true) {
