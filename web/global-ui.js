@@ -24,6 +24,141 @@ export const FORWARD_BUTTON = 4;
 
 caches.open("employees");
 
+
+class GlobalEmployeeRequest {
+
+    STALL_TIMEOUT = 50;
+
+
+
+    timeout;
+    requestSet;
+    discardable; // object is discardable after the timeout has ran
+    id;
+    clients;
+
+    constructor() {
+        this.id = Math.random().toString(16).substring(2);
+        this.timeout = null;
+        this.discardable = false;
+        this.requestSet = new Set();
+        this.clients = 0;
+        
+    };
+
+    requestEmployees(employees) {
+        this.clients++;
+
+        employees.forEach((employee) => { this.requestSet.add(employee) });
+
+        this.setClock();
+
+        // kinda a hack but basically add a listener
+        // and when the listener is dispatched then resolve the promise
+
+        return new Promise((resolve) => {
+            const thisListener = (e) => {
+                document.removeEventListener(this.id, thisListener);
+                resolve(e.results);
+            };
+            document.addEventListener(this.id, thisListener);
+        });
+
+
+    }
+
+    async setClock() {
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+        }
+
+        this.timeout = setTimeout(() => {this.afterTimeout()}, this.STALL_TIMEOUT);
+    }
+
+    async afterTimeout() {
+        this.discardable = true;
+        console.log(`[GlobalEmployeeRequest(${this.id})] request timed out and is now discardable`);
+
+
+        let event = new Event(this.id);
+        event.results = await this._apiCall(this.requestSet);
+
+        console.log(`[GlobalEmployeeRequest(${this.id})] dispatching to ${this.clients} clients`);
+        document.dispatchEvent(event);
+        
+    }
+
+    async _apiCall() {
+        let found = new Map();
+        let to_req = new Set();
+    
+        let cache = await caches.open("employees");
+    
+        // if the employee is cached then add it to found
+        await Promise.all(Array.from(this.requestSet).map(async (employee) => {
+            let cache_emp = await cache.match("/employees/" + employee);
+            
+            // if the employee is in the cache
+            if (cache_emp) {
+                // if we are older than 1h
+                if (cache_emp.headers.get("date") < Date.now() - 60 * 60 * 60) {
+                    console.log(`[getEmployeesById] Purging ${employee} from cache`);
+                    to_req.add(employee)
+                    cache.delete("/employees/" + employee);
+                } else {
+                    found.set(employee, await cache_emp.json());
+                }
+            } else {
+                to_req.add(employee)
+            }
+        }
+        ));
+    
+        console.log(`[GlobalEmployeeRequest(${this.id})] Found ${found.size} cached requesting ${to_req.size}`);
+        
+    
+        // if we have none to fetch
+        if (to_req.size == 0) {
+            return new Map([...found]);
+        }
+    
+    
+        // fetch the remaining employees
+        let res = await get_api("/employee/employee.php/bulk?ids=" + Array.from(to_req).join(","));
+    
+        // cache all fetched employees
+        Object.entries(res.data.employees).forEach(async (employee) => {
+    
+            // here we make a "fake response" to cache
+            // we could in future cache this as a real /employee/empID endpoint
+            // if we decide to add it as an endpoint
+            let body = JSON.stringify(employee[1])
+    
+            await cache.put(
+                "/employees/" + employee[0], new Response(
+                    body,
+                    {
+                        headers: {
+                            "date": Date.now(),
+                            "content-type": "application/json",
+                            "content-length": body.length,
+                        }
+                    }
+                )
+            );
+        });
+    
+        // return requested employees with the cached ones
+        const results = new Map([...found, ...Object.entries(res.data.employees)]);
+        console.log(`[GlobalEmployeeRequest(${this.id})] Returning ${results.size} results`);
+        return results;
+    
+    }
+
+
+}
+
+
 //utility functions
 
 /**
@@ -207,68 +342,17 @@ export function showConfirmCheck(parent) {
  * //Fetch the data for employees with IDs 1, 2, and 3 and logs the result.
  * getEmployeesById([1, 2, 3]).then(data => console.log(data));
  */
+
+let _globalEmployeeRequest = new GlobalEmployeeRequest();
+
 export async function getEmployeesById(employees) {
-    let found = new Map();
-    let to_req = new Set();
 
-    let cache = await caches.open("employees");
-
-    // if the employee is cached then add it to found
-    await Promise.all(Array.from(employees).map(async (employee) => {
-        let cache_emp = await cache.match("/employees/" + employee);
-        
-        // if the employee is in the cache
-        if (cache_emp) {
-            // if we are older than 1h
-            if (cache_emp.headers.get("date") < Date.now() - 60 * 60 * 60) {
-                console.log(`[getEmployeesById] Purging ${employee} from cache`);
-                to_req.add(employee)
-                cache.delete("/employees/" + employee);
-            } else {
-                found.set(employee, await cache_emp.json());
-            }
-        } else {
-            to_req.add(employee)
-        }
-    }
-    ));
-
-    console.log(`[getEmployeesById] Found ${found.size} cached requesting ${to_req.size}`);
-    
-
-    // if we have none to fetch
-    if (to_req.size == 0) {
-        return new Map([...found]);
+    // if the timeout has expired we make a new object
+    if (_globalEmployeeRequest.discardable) {
+        _globalEmployeeRequest = new GlobalEmployeeRequest();
     }
 
-
-    // fetch the remaining employees
-    let res = await get_api("/employee/employee.php/bulk?ids=" + Array.from(to_req).join(","));
-
-    // cache all fetched employees
-    Object.entries(res.data.employees).forEach(async (employee) => {
-
-        // here we make a "fake response" to cache
-        // we could in future cache this as a real /employee/empID endpoint
-        // if we decide to add it as an endpoint
-        let body = JSON.stringify(employee[1])
-
-        await cache.put(
-            "/employees/" + employee[0], new Response(
-                body,
-                {
-                    headers: {
-                        "date": Date.now(),
-                        "content-type": "application/json",
-                        "content-length": body.length,
-                    }
-                }
-            )
-        );
-    });
-
-    // return requested employees with the cached ones
-    return new Map([...found, ...Object.entries(res.data.employees)]);
+    return await _globalEmployeeRequest.requestEmployees(employees);
 
 }
 
