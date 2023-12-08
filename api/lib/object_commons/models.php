@@ -144,7 +144,7 @@ class RestrictedDomainConstraint extends Constraint {
     }
 
     public function validate(string $user_column, $user_field) {
-        error_log("running domain constraint on" . $user_column . ":" . $user_field);
+        //error_log("running domain constraint on" . $user_column . ":" . $user_field);
         if (!in_array($user_field, $this->domain)) {
             respond_bad_request(
                 "Invalid value for column '$user_column'. Valid values are: " . implode(", ", $this->domain),
