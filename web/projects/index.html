@@ -294,78 +294,79 @@
                         </div>
                     </div>
                 </div>
-                
-                <table id="projects-table">
-                    <thead>
-                        <tr>
-                            <th>
-                                <div class="header-td">
-                                    <div class="name">
-                                        Name
+                <div class="project-table-div">
+                    <table id="projects-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <div class="header-td">
+                                        <div class="name">
+                                            Name
+                                        </div>
+                                        <div class="icon">
+                                            <i class="far fa-sort"></i>
+                                        </div>
                                     </div>
-                                    <div class="icon">
-                                        <i class="far fa-sort"></i>
+                                </th>
+                                <th>
+                                    <div class="header-td">
+                                        <div class="name">
+                                            Creation Date
+                                        </div>
+                                        <div class="icon">
+                                            <i class="far fa-sort"></i>
+                                        </div>
                                     </div>
-                                </div>
-                            </th>
-                            <th>
-                                <div class="header-td">
-                                    <div class="name">
-                                        Creation Date
+                                </th>
+                                <th>
+                                    <div class="header-td">
+                                        <div class="name">
+                                            Team Leader
+                                        </div>
+                                        <div class="icon">
+                                            <i class="far fa-sort"></i>
+                                        </div>
                                     </div>
-                                    <div class="icon">
-                                        <i class="far fa-sort"></i>
+                                </th>
+                                <th>Last Accessed</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- <tr class="project-row">
+                                <td>
+                                    <div class="project-card">
+                                        <div class="icon">
+                                            <i class="fas fa-users"></i>
+                                        </div>
+                                        <div class="name">
+                                            Myname Jeff's Project
+                                        </div>
                                     </div>
-                                </div>
-                            </th>
-                            <th>
-                                <div class="header-td">
-                                    <div class="name">
-                                        Team Leader
+                                </td>
+                                <td>3rd November 2023</td>
+                                <td>
+                                    <div class="name-card">
+                                        <div class="icon">
+                                            <img src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogIzAwMDsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiAnT3BlbiBTYW5zJywgc2Fucy1zZXJpZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTEyIiBmb250LXdlaWdodD0iNDAwIiBkeT0iLjFlbSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzAwMCIgeD0iNTAlIiB5PSI1MCUiPkpTPC90ZXh0PgogICAgPC9zdmc+" class="avatar">
+                                        </div>
+                                        <div class="name">
+                                            Jamie Skitt
+                                        </div>
                                     </div>
-                                    <div class="icon">
-                                        <i class="far fa-sort"></i>
+                                </td>
+                                <td>
+                                    Yesterday
+                                </td>
+                                <td>
+                                    <div class="icon-button no-box">
+                                        <i class="fa-solid fa-ellipsis"></i>
                                     </div>
-                                </div>
-                            </th>
-                            <th>Last Accessed</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- <tr class="project-row">
-                            <td>
-                                <div class="project-card">
-                                    <div class="icon">
-                                        <i class="fas fa-users"></i>
-                                    </div>
-                                    <div class="name">
-                                        Myname Jeff's Project
-                                    </div>
-                                </div>
-                            </td>
-                            <td>3rd November 2023</td>
-                            <td>
-                                <div class="name-card">
-                                    <div class="icon">
-                                        <img src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogIzAwMDsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiAnT3BlbiBTYW5zJywgc2Fucy1zZXJpZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTEyIiBmb250LXdlaWdodD0iNDAwIiBkeT0iLjFlbSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzAwMCIgeD0iNTAlIiB5PSI1MCUiPkpTPC90ZXh0PgogICAgPC9zdmc+" class="avatar">
-                                    </div>
-                                    <div class="name">
-                                        Jamie Skitt
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                Yesterday
-                            </td>
-                            <td>
-                                <div class="icon-button no-box">
-                                    <i class="fa-solid fa-ellipsis"></i>
-                                </div>
-                            </td>
-                        </tr> -->
-                    </tbody>
-                </table>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>  

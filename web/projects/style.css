@@ -291,6 +291,12 @@
     background-color: #dcdfe4;
 }
 
+.project-table-div{
+    width: 100%;
+    overflow-y: scroll;
+    display: grid;
+}
+
 .views {
     display: flex;
     flex-direction: row;
