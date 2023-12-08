@@ -194,23 +194,36 @@ function explainerTaskSetToDefault() {
 }
 
 function getTaskState(task) {
-    let taskState = 0;
-    if (task.querySelector(".not-started")) {
-        return 0;
-    } else if (task.querySelector(".in-progress")) {
-        return 1;
-    } else if (task.querySelector(".finished")) {
-        return 2;
-    } else if (task.parentElement == notStartedColumn) {
-        return 0;
+    let taskState = task.getAttribute("data-state");
+    if (taskState == null) {
+        console.error("[getTaskState] task has no state");
+        return null;
+    }
+    console.log(`[getTaskState] task state is ${parseInt(taskState)}`)
+    return parseInt(taskState);
+}
+
+function updateTaskState(task) {
+    let state = getTaskState(task);
+    let taskID = task.getAttribute("id");
+    let projID = document.querySelector(".project-row.selected").getAttribute("data-ID");
+    let newState = state;
+    if (task.parentElement == notStartedColumn) {
+        newState = 0;
     } else if (task.parentElement == inProgressColumn) {
-        return 1;
+        newState = 1;
     } else if (task.parentElement == finishedColumn) {
-        return 2;
+        newState = 2;
     } else {
-        console.error("invalid state");
+        console.error("[updateTaskState] how the hell did someone drop a task OUTSIDE a column");
+    }
+    if (newState != state) {
+        task.setAttribute("data-state", newState);
+        patch_api(`/project/project.php/task/${projID}/${taskID}`, {state:2});
+        console.log(`[updateTaskState] updated task ${taskID} to state ${newState}`);
     }
 }
+
 //shows the taskRow in the explainer
 //the taskRow contains title, due date and state in columns"
 //the rest of the informaton is in the data attributes: desc, assignee, date
@@ -307,6 +320,7 @@ function setUpTaskEventListeners() {
         taskCard.addEventListener("dragend", () => {
             taskCard.classList.remove("beingdragged");
             showTaskInExplainer(taskCard);
+            updateTaskState(taskCard);
             calculateTaskCount()
         });
     });
@@ -345,7 +359,9 @@ taskColumns.forEach((taskColumn) => {
             taskColumn.insertBefore(draggable, afterElement)
         }
         var addTask = taskColumn.querySelector(".add-task")
-        taskColumn.appendChild(addTask)
+        if (taskColumn.id === 'notstarted') {
+            taskColumn.appendChild(addTask);
+        }
     })
 
 })
@@ -597,6 +613,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     taskRow.setAttribute("data-assignee", assignee);
     taskRow.setAttribute("data-title", title);
     taskRow.setAttribute("data-expectedManHours", expectedManHours);
+    taskRow.setAttribute("data-state", state);
 
     //check if state is 0,1,2 and do separate things for each. otherwise, error
     if (state == 0) {
@@ -745,6 +762,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.setAttribute("data-date", date);
     task.setAttribute("data-title", title);
     task.setAttribute("data-expectedManHours", expectedManHours);
+    task.setAttribute("data-state", state);
 
     //generate the html for the task
     task.innerHTML = `
