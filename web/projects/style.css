@@ -283,6 +283,10 @@
     color: white;
 }
 
+#add-task-button:hover {
+    background-color: #2d8aff;
+}
+
 .text-button:hover {
     background-color: #dcdfe4;
 }
