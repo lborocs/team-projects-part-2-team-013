@@ -952,16 +952,24 @@ async function addTask(state) {
                 
                 </div>
             </div>
-            <p class="add-task-title" id="add-task-description">Description:</p>
-            <textarea placeholder="Task description..." class="add-task-description-input"></textarea>
-            <div class="date-picker">
-                <label for="due-date" class="due-date-prompt">Due Date:</label>
-                <input type="date" class="add-task-date-input">
+            <input type="text" class="add-task-description-input" placeholder="Description"></input>
+            <div class="assigned-employees">
+                <div class="text-button" id="add-employee">
+                    <div class="button-icon">
+                        <span class="material-symbols-rounded">
+                            add
+                        </span>
+                    </div>
+                    <div class="button-text">
+                        Add
+                    </div>
+                </div>
+                <div class="assigned">
+
+                </div>
             </div>
-            <div class="buttonForm">
-                <button class="closeButton">Cancel</button>
-                <button class="createButton">Create</button>
-            </div>
+            <input type="number" class="expected-hours-input" placeholder="Hours"></input>
+            <input type="date" class="add-task-date-input" placeholder="Due Date"></input>    
         </dialog>
     `;
 
