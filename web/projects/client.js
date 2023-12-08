@@ -22,6 +22,7 @@ const taskTable = document.querySelector(".tasktable")
 const taskTableBody = document.querySelector(".tasktable-body")
 const overlay = document.querySelector(".overlay")
 const explainer = document.querySelector(".explainer")
+const projectTitle = document.querySelector("#project-title")
 const explainerTitle = explainer.querySelector("#explainer-title")
 const explainerDescription = document.querySelector("#project-description")
 const explainerTeamLeaderAvatar = document.querySelector("#team-leader-avatar")
@@ -83,6 +84,7 @@ async function projectSwitchToOnClick(projectRow) {
     console.log("[projectSwitchToOnClick] selected " + title)
     //update the breadcrumb with the project name
     global.setBreadcrumb(["Projects", title], [window.location.pathname, "#" + id]);
+    projectTitle.innerText = title
     explainerTitle.innerText = title
     explainerDescription.innerText = description
     explainerTeamLeaderName.innerText = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
