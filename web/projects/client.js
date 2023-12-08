@@ -221,7 +221,7 @@ function updateTaskState(task) {
     }
     if (newState != state) {
         task.setAttribute("data-state", newState);
-        patch_api(`/project/task.php/task/${projID}/${taskID}`, {state:2}).then((res) => {
+        patch_api(`/project/task.php/task/${projID}/${taskID}`, {state:newState}).then((res) => {
             if (!res) { // 204 no content (success)
                 console.log(`[updateTaskState] updated task ${taskID} to state ${newState}`);
             } else {
