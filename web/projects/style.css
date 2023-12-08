@@ -37,6 +37,15 @@
         width: 10em;
     }
 
+    #new-project {
+        background-color: #3098ff;
+        color: white;
+    }
+
+    #new-project:hover {
+        background-color: #2d8aff;
+    }
+
     .name-card {
         display: flex;
         flex-direction: row;
