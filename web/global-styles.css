@@ -168,6 +168,8 @@ body {
     justify-content: flex-start;
     align-items: center;
     transition: 0.05s ease-out;
+
+    border-right: solid 2px rgba(0,0,0,0.1);
 }
 
 .sidebar-item{
