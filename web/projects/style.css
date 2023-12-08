@@ -277,54 +277,9 @@
     font-size: 0.7em;
 }
 
-.add-task-button {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-
-    margin-left: 1em;
-    height: 32px;
-    padding: 0 10px;
-    padding-left: 5px;
-
-    color: #172b4d;
-    background-color: var(--white, white);
-
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1;
-
-    border-radius: 3px;
-
-    cursor: pointer;
-    transition: background-color 0.1s ease-out;
-
-    .button-text {
-        margin: 0 2px;
-        line-height: 1;
-    }
-
-    .button-icon {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        justify-items: center;
-    
-        padding: 4px;
-        padding-right: 5px;
-    
-        & span {
-            font-size: 22px;
-            line-height: 1;
-        }
-    }
-
-    .button-icon:empty {
-        padding: 0;
-        padding-left: 5px;
-    }
+#add-task-button {
+    background-color: #3098ff;
+    color: white;
 }
 
 .text-button:hover {
@@ -354,6 +309,10 @@
         box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
         transition: 0.15s ease-out;
     };
+}
+
+.views > :last-child {
+    margin-left: auto;
 }
 
 .view {
