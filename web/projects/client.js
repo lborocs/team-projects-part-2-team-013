@@ -159,8 +159,10 @@ views.forEach((view, i) => {
 })
 
 projectBackButton.addEventListener("click", () => {
+    setActivePane("select-projects-pane");
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
-    renderFromBreadcrumb([null, null]);
+    explainerTaskSetToDefault();
+    //make cursor be pointer when hovering over this button
 })
 
 explainerShowHide.addEventListener("click", () => {
@@ -194,41 +196,23 @@ function explainerTaskSetToDefault() {
 }
 
 function getTaskState(task) {
-    let taskState = task.getAttribute("data-state");
-    if (taskState == null) {
-        console.error("[getTaskState] task has no state");
-        return null;
-    }
-    console.log(`[getTaskState] task state is ${parseInt(taskState)}`)
-    return parseInt(taskState);
-}
-
-function updateTaskState(task) {
-    let state = getTaskState(task);
-    let taskID = task.getAttribute("id");
-    let projID = document.querySelector(".project-row.selected").getAttribute("data-ID");
-    let newState = state;
-    if (task.parentElement == notStartedColumn) {
-        newState = 0;
+    let taskState = 0;
+    if (task.querySelector(".not-started")) {
+        return 0;
+    } else if (task.querySelector(".in-progress")) {
+        return 1;
+    } else if (task.querySelector(".finished")) {
+        return 2;
+    } else if (task.parentElement == notStartedColumn) {
+        return 0;
     } else if (task.parentElement == inProgressColumn) {
-        newState = 1;
+        return 1;
     } else if (task.parentElement == finishedColumn) {
-        newState = 2;
+        return 2;
     } else {
-        console.error("[updateTaskState] how the hell did someone drop a task OUTSIDE a column");
-    }
-    if (newState != state) {
-        task.setAttribute("data-state", newState);
-        patch_api(`/project/task.php/task/${projID}/${taskID}`, {state:2}).then((res) => {
-            if (!res) { // 204 no content (success)
-                console.log(`[updateTaskState] updated task ${taskID} to state ${newState}`);
-            } else {
-                console.error(`[updateTaskState] failed to update task ${taskID} to state ${newState}`);
-            }
-        });
+        console.error("invalid state");
     }
 }
-
 //shows the taskRow in the explainer
 //the taskRow contains title, due date and state in columns"
 //the rest of the informaton is in the data attributes: desc, assignee, date
@@ -325,7 +309,6 @@ function setUpTaskEventListeners() {
         taskCard.addEventListener("dragend", () => {
             taskCard.classList.remove("beingdragged");
             showTaskInExplainer(taskCard);
-            updateTaskState(taskCard);
             calculateTaskCount()
         });
     });
@@ -364,9 +347,7 @@ taskColumns.forEach((taskColumn) => {
             taskColumn.insertBefore(draggable, afterElement)
         }
         var addTask = taskColumn.querySelector(".add-task")
-        if (taskColumn.id === 'notstarted') {
-            taskColumn.appendChild(addTask);
-        }
+        taskColumn.appendChild(addTask)
     })
 
 })
@@ -540,7 +521,7 @@ async function renderFromBreadcrumb(locations) {
         return await fetchAndRenderAllProjects();
     }
 
-    setActivePane("individual-project-pane");
+
     let data = await get_api(`/project/project.php/project/${projID}`);
 
     if (!data.success) {
@@ -618,7 +599,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     taskRow.setAttribute("data-assignee", assignee);
     taskRow.setAttribute("data-title", title);
     taskRow.setAttribute("data-expectedManHours", expectedManHours);
-    taskRow.setAttribute("data-state", state);
 
     //check if state is 0,1,2 and do separate things for each. otherwise, error
     if (state == 0) {
@@ -767,7 +747,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.setAttribute("data-date", date);
     task.setAttribute("data-title", title);
     task.setAttribute("data-expectedManHours", expectedManHours);
-    task.setAttribute("data-state", state);
 
     //generate the html for the task
     task.innerHTML = `
@@ -939,29 +918,31 @@ async function addTask(state) {
     console.log("[addTask] before popup")
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
-            <p class="add-task-title">Create and assign new task:</p>
-            <input type="text" placeholder="Task title..." class="add-task-title-input">
-            <p class="add-task-title" id="add-task-description">Assign employees to task:</p>
-            <div class="dropdown-and-employee-list">
-                <div class="dropdown-button-container">
-                    <select class="dropdown", id="employee-select">
-                    </select>
-                    <button class="addButton">Add</button>
-                </div>
-                <div class="assigned-employees">
-                
+            <div class="title-and-close">
+                <input type="text" class="add-task-title-input" placeholder="Task name"></input>
+                <div class="closeButton">
+                    <i class="fa-solid fa-times"></i>
                 </div>
             </div>
-            <p class="add-task-title" id="add-task-description">Description:</p>
-            <textarea placeholder="Task description..." class="add-task-description-input"></textarea>
-            <div class="date-picker">
-                <label for="due-date" class="due-date-prompt">Due Date:</label>
-                <input type="date" class="add-task-date-input">
+            <input type="text" class="add-task-description-input" placeholder="Description"></input>
+            <input type="number" class="expected-hours-input" placeholder="Hours"></input>
+            <input type="date" class="add-task-date-input" placeholder="Due Date"></input>
+            <div class="assigned-employees">
+                <div class="text-button" id="add-employee">
+                    <div class="button-icon">
+                        <span class="material-symbols-rounded">
+                            add
+                        </span>
+                    </div>
+                    <div class="button-text">
+                        Add
+                    </div>
+                </div>
+                <div class="assigned">
+
+                </div>
             </div>
-            <div class="buttonForm">
-                <button class="closeButton">Cancel</button>
-                <button class="createButton">Create</button>
-            </div>
+
         </dialog>
     `;
 
@@ -1575,10 +1556,10 @@ document.getElementById("delete-project-search").addEventListener("click", () =>
     filterProjectFromSearch();
 })
 
-document.getElementById("delete-task-search").addEventListener("click", () => {
-    document.getElementById("task-search").value = "";
-    filterTaskFromSearch();
-})
+// document.getElementById("delete-task-search").addEventListener("click", () => {
+//     document.getElementById("task-search").value = "";
+//     filterTaskFromSearch();
+// })
 
 
 const sleep = (ms) => {
