@@ -330,6 +330,7 @@ body {
     align-items: center;
     font-size: 1.1em;
     border-bottom: 2px solid rgba(0,0,0,0.1);
+
     .item {
         display: flex;
         flex-direction: row;
@@ -356,6 +357,7 @@ body {
         align-items: center;
         white-space: nowrap;
     }
+
     .breadcrumb {
         position: relative;
         font-size: 0.9rem;
@@ -368,11 +370,14 @@ body {
         flex-direction: row;
         align-items: center;
         position: absolute;
-        margin-left: 45vw;
+        left: 50%;
+        transform: translate(-50%);
     }
 
     .fullLogo {
         height: 45px;
+        width: auto;
+        padding: 0.25em;
     }
 
     .right {
