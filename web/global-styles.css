@@ -7,8 +7,8 @@
     --box-shadow-softer-clr: rgba(0,0,0,0.1);
     --box-shadow-heavier-clr: rgba(0,0,0,0.3);
     --selectable: rgb(0,82,204);
-    --confirm-button-colour: rgb(66,116,255);
-    --view-selected-bg: rgb(246,246,245);
+    --confirm-button-colour: rgb(66,116,255)
+    --view-selected-bg:rgb(246,246,245);
     --text-off-black: rgb(15,15,15);
     --white: rgb(255,255,255);
     --team-leader-text-clr: rgb(47,47,47);

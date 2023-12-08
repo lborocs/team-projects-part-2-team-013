@@ -1,9 +1,6 @@
 .selection-screen {
     gap: 0.5em;
-    padding-left: 2em;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    padding-right: 0;
+    padding: 1em 2em;
     overflow-y: scroll;
     background-color: var(--light-grey-bg);
 
@@ -221,8 +218,6 @@
 
     #new-project {
         margin-left: auto;
-        background-color: var(--confirm-button-colour, rgb(66, 116, 255));
-        color: var(--white, white);
     }
 }
 
@@ -807,7 +802,6 @@
     user-select: none;
     padding-top: 0.25em;
     padding-bottom: 0.25em;
-    border-bottom: solid 1px rgba(105,112,125, 0.25);
 }
 
 #list-add:hover {
@@ -1111,18 +1105,6 @@
     padding-bottom: 1em;
     padding-top: 1em;
 
-}
-
-.title-and-close {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-}
-
-.hours-and-date {
-    display: flex;
-    width: 100%;
-    justify-content: space-around;
 }
 
 
