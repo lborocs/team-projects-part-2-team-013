@@ -2,6 +2,7 @@ import * as global from "../global-ui.js"
 
 const loginButton = document.getElementById("login")
 const passwordInput = document.getElementById("password")
+const emailInput = document.getElementById("email")
 
 function setLoginStatus(status) {
     document.getElementById("status").innerText = status;
@@ -48,6 +49,13 @@ passwordInput.addEventListener('keypress', function (e) {
         login();
     }
 });
+
+emailInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        login();
+    }
+});
+
 
 
 document.getElementById('togglePassword').addEventListener('click', function () {
