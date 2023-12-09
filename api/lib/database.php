@@ -289,7 +289,7 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
         SELECT 
             POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical,
             `EMPLOYEES`.*, `ASSETS`.contentType,
-            GROUP_CONCAT(DISTINCT `TAGS`.name SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+            GROUP_CONCAT(DISTINCT `TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
 	        COUNT(`FORUM_ACCESSES`.empID) as views
         FROM `POSTS`
         JOIN `EMPLOYEES`
