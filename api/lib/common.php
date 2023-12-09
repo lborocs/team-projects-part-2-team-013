@@ -1,10 +1,11 @@
 <?php
 
-require_once("const.php");
-require_once("database.php");
-
 // workaround for json SOMETIMES!!! not supporting apostrophes
 const JSON_ENCODE_FLAGS = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE;
+
+
+require_once("const.php");
+require_once("database.php");
 
 
 class Route {

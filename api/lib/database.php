@@ -10,7 +10,7 @@ $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATA
 
 // generic
 
-const DEBUG_PRINT = false;
+const DEBUG_PRINT = true;
 
 function _encode_field(string $type, $value) {
 
@@ -41,22 +41,45 @@ function _encode_field(string $type, $value) {
 }
 
 
-function _copy_database_cells($columns, $row) {
+function _get_common_name(Column $column, string $name) {
+
+    if ($column->dont_friendly_name) {
+        return $name;
+    }
+
+    if (
+        $column->parent->column_prefix &&
+        substr($name, 0, strlen($column->parent->column_prefix)) == $column->parent->column_prefix
+    ) {
+        $friendly_name = substr($name, strlen($column->parent->column_prefix));
+
+        if (ctype_upper($friendly_name[0])) {
+            return strtolower($friendly_name[0]) . substr($friendly_name, 1);
+        }
+        return $friendly_name;
+    }
+    return $name;
+}
+
+
+function _copy_database_cells($columns, $row, Array $greedy_skip=[]) {
     $collected = [];
 
     foreach ($columns as $column) {
         $name = $column->name;
         $type = $column->type;
 
-        if (!array_key_exists($name, $row)) {
+        if (!array_key_exists($name, $row) || array_key_exists($name, $greedy_skip)) {
+            if (DEBUG_PRINT) {error_log("skipping " . $name . " from ". $column->parent->name);}
             continue;
         }
 
-        //error_log("collecting " . $name . " from ". $column->parent->name);
 
-        $collected[$name] = _encode_field($type, $row[$name]);
+        $common_name = _get_common_name($column, $name);
 
-        if (DEBUG_PRINT) {error_log("collected " . $name . " from ". $column->parent->name);}
+        $collected[$common_name] = _encode_field($type, $row[$name]);
+
+        if (DEBUG_PRINT) {error_log("collected " . $name . " as " . $common_name . " from ". $column->parent->name);}
 
         // if the column has a foreign key constraint, dont remove it so it can be referenced
         if (count($column->get_constraints("ForeignKeyConstraint")) == 0) {
@@ -89,6 +112,8 @@ function _parse_foreign_keys(Column $column, $row, $output) {
         // consume the foreign key first so it doesnt get lost
         $foreign_key = _encode_field($type, $row[$name]);
 
+        $common_name = _get_common_name($column, $name);
+
         // if we share the same name as the foreign column
         // (e.g) empID = empID
         // we should use the friendly name:
@@ -97,10 +122,15 @@ function _parse_foreign_keys(Column $column, $row, $output) {
         // empID = {empID: "123", firstName: "aidan"}
         $original_name = $name;
         if ($name == $foreign_column->name) {
-            if (DEBUG_PRINT) {error_log("using friendly name for reference ". $column->name . " -> ". $foreign_column->name);}
+            if (DEBUG_PRINT) {error_log("using foreign table friendly name for reference ". $column->name . " -> ". $foreign_column->name);}
             unset($output[$name]);
             $name = $foreign_table->friendly_name;
+        } else {
+            unset($output[$name]);
+            if (DEBUG_PRINT) {error_log("using common name " . $common_name . " for reference ". $column->name . " -> ". $foreign_column->name);}
+            $name = $common_name;
         }
+
 
         // no point parsing a null foreign key
         // but we do want to use the friendly name
@@ -120,7 +150,7 @@ function _parse_foreign_keys(Column $column, $row, $output) {
 }
 
 
-function parse_database_row(Array $row, Table $table, Array $additional_collectables=[]) {
+function parse_database_row(Array $row, Table $table, Array $additional_collectables=[], Array $greedy_skip=[]) {
 
     [$row, $output] = _copy_database_cells($table->columns, $row);
 
@@ -131,6 +161,20 @@ function parse_database_row(Array $row, Table $table, Array $additional_collecta
     }
 
     return $output;
+}
+
+function parse_union_row(Array $row, Union $union, Array $additional_collectables=[], Array $greedy_skip=[]) {
+    $table = $union->parent;
+    $type = $union->determine_format_from_row($row);
+
+    [$row, $output] = _copy_database_cells($table->columns, $row, $greedy_skip);
+
+    $inner = parse_database_row($row, $type, $additional_collectables, $greedy_skip);
+
+    $output[$union->friendly_name] = $inner;
+
+    return $output;
+
 }
 
 function create_array_binding(int $num) {
@@ -287,23 +331,23 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
 
     $query = $db->prepare("
         SELECT 
-            POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical,
+            POSTS.postID, POSTS.postTitle, POSTS.postAuthor, POSTS.postCreatedAt, POSTS.postIsTechnical,
             `EMPLOYEES`.*, `ASSETS`.contentType,
             GROUP_CONCAT(DISTINCT `TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
-	        COUNT(`FORUM_ACCESSES`.empID) as views
+	        COUNT(`POST_VIEWS`.empID) as views
         FROM `POSTS`
         JOIN `EMPLOYEES`
-            ON `POSTS`.createdBy = `EMPLOYEES`.empID
+            ON `POSTS`.postAuthor = `EMPLOYEES`.empID
         LEFT JOIN `ASSETS`
             ON `EMPLOYEES`.avatar = `ASSETS`.assetID
-            AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
+            AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
         LEFT JOIN `POST_TAGS`
             ON `POSTS`.postID = `POST_TAGS`.postID
         LEFT JOIN `TAGS` 
             ON `POST_TAGS`.tagID = `TAGS`.tagID
-        LEFT JOIN `FORUM_ACCESSES` 
-            ON `FORUM_ACCESSES`.postID = `POSTS`.postID
-        WHERE LOWER(`POSTS`.title) LIKE ? " . $tag_term . "
+        LEFT JOIN `POST_VIEWS` 
+            ON `POST_VIEWS`.postID = `POSTS`.postID
+        WHERE LOWER(`POSTS`.postTitle) LIKE ? " . $tag_term . "
         GROUP BY `POSTS`.postID
         ORDER BY views DESC
         LIMIT " . SEARCH_FETCH_LIMIT
@@ -351,7 +395,7 @@ function db_post_accesses_add(string $emp_id, string $post_id) {
     $time = time();
 
     $query = $db->prepare(
-        "INSERT INTO `FORUM_ACCESSES` VALUES (?, ?, ?)"
+        "INSERT INTO `POST_VIEWS` VALUES (?, ?, ?)"
     );
     $query->bind_param("ssi", $bin_e_id, $bin_p_id, $time);
     $result = $query->execute();
@@ -366,7 +410,7 @@ function db_post_accesses_fetchall() {
     $epoch = time() - POST_ACCESS_DELTA;
     $query = $db->prepare(
         "SELECT empID, postID, COUNT(timeAccessed) as views 
-        FROM FORUM_ACCESSES WHERE timeAccessed > ?
+        FROM POST_VIEWS WHERE postViewAccessedAt > ?
         GROUP BY empID, postID
         ORDER BY views DESC
         "
@@ -387,7 +431,7 @@ function db_post_accesses_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_FORUM_ACCESSES);
+        $encoded = parse_database_row($row, TABLE_POST_VIEWS);
         array_push($data, $encoded);
     }
     return $data;
@@ -401,13 +445,13 @@ function db_post_fetch(string $hex_post_id) {
     $bin_id = hex2bin($hex_post_id);
 
     $query = $db->prepare(
-        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, POSTS.content, `EMPLOYEES`.*, `ASSETS`.contentType, GROUP_CONCAT(`TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
+        "SELECT `POSTS`.*, `EMPLOYEES`.*, `ASSETS`.contentType, GROUP_CONCAT(`TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
         FROM `POSTS`
         JOIN `EMPLOYEES`
-            ON `POSTS`.createdBy = `EMPLOYEES`.empID
+            ON `POSTS`.postAuthor = `EMPLOYEES`.empID
         LEFT JOIN `ASSETS`
             ON `EMPLOYEES`.avatar = `ASSETS`.assetID
-            AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
+            AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
         LEFT JOIN `POST_TAGS`
             ON `POSTS`.postID = `POST_TAGS`.postID
         LEFT JOIN `TAGS` 
@@ -506,7 +550,7 @@ function db_employee_fetch_by_ids(array $binary_ids) {
 
     $stmt = "SELECT EMPLOYEES.*, `ACCOUNTS`.email, `ASSETS`.contentType FROM `EMPLOYEES`
     LEFT JOIN `ASSETS`
-    ON `EMPLOYEES`.avatar = `ASSETS`.assetID AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
+    ON `EMPLOYEES`.avatar = `ASSETS`.assetID AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
     JOIN `ACCOUNTS`
     ON EMPLOYEES.empID = ACCOUNTS.empID
     WHERE EMPLOYEES.empID IN ("
@@ -543,7 +587,7 @@ function db_employee_fetch_personals($user_id) {
     $bin_u_id = hex2bin($user_id);
 
     $query = $db->prepare(
-        "SELECT * FROM EMPLOYEE_PERSONALS WHERE assignedTo = ?"
+        "SELECT * FROM EMPLOYEE_PERSONALS WHERE personalAssignedTo = ?"
     );
     $query->bind_param("s", $bin_u_id);
     $query->execute();
@@ -597,9 +641,9 @@ function db_employee_in_project(string $user_id, string $project_id) {
 
     $query = $db->prepare(
         "SELECT 1 FROM `EMPLOYEE_TASKS`, `TASKS`
-        WHERE EMPLOYEE_TASKS.empID = ?
-        AND TASKS.archived = 0
-        AND EMPLOYEE_TASKS.taskID = TASKS.taskID AND TASKS.projID = ?
+        WHERE `EMPLOYEE_TASKS`.empID = ?
+        AND `TASKS`.taskArchived = 0
+        AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `TASKS`.projID = ?
         LIMIT 1"
     );
     $query->bind_param("ss", $bin_u_id, $bin_p_id);
@@ -621,9 +665,9 @@ function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id
 
     $query = $db->prepare(
         "SELECT TASKS.* FROM TASKS, EMPLOYEE_TASKS
-        WHERE TASKS.projID = ? AND EMPLOYEE_TASKS.empID = ?
-        AND TASKS.archived = 0
-        AND EMPLOYEE_TASKS.taskID = TASKS.taskID 
+        WHERE `TASKS`.projID = ? AND `EMPLOYEE_TASKS`.empID = ?
+        AND `TASKS`.archived = 0
+        AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID 
         "
     );
 
@@ -660,14 +704,14 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
     $query = $db->prepare(
         "SELECT DISTINCT PROJECTS.* FROM PROJECTS, EMPLOYEE_TASKS, TASKS
         WHERE 
-        `PROJECTS`.projName LIKE ?
+        `PROJECTS`.projectName LIKE ?
         AND (
             (
-                EMPLOYEE_TASKS.empID = ?
-                AND TASKS.archived = 0
-                AND EMPLOYEE_TASKS.taskID = TASKS.taskID AND TASKS.projID = PROJECTS.projID
+                `EMPLOYEE_TASKS`.empID = ?
+                AND `TASKS`.taskArchived = 0
+                AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `TASKS`.projID = `PROJECTS`.projID
             )
-            OR PROJECTS.teamLeader = ?
+            OR `PROJECTS`.projectTeamLeader = ?
         )"
     );
     $query->bind_param("sss", $search_term, $bin_u_id, $bin_u_id);
@@ -692,9 +736,9 @@ function db_account_fetch(string $email) {
     global $db;
 
     $query = $db->prepare(
-        "SELECT ACCOUNTS.*, EMPLOYEES.isManager 
-        FROM ACCOUNTS, EMPLOYEES 
-        WHERE ACCOUNTS.email = ? AND ACCOUNTS.empID = EMPLOYEES.empID"
+        "SELECT `ACCOUNTS`.*, `EMPLOYEES`.isManager 
+        FROM `ACCOUNTS`, `EMPLOYEES`
+        WHERE `ACCOUNTS`.email = ? AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
     );
     $query->bind_param("s", $email);
     $result = $query->execute();
@@ -717,9 +761,9 @@ function db_account_fetch_by_id(string $hex_id) {
     $bin_id = hex2bin($hex_id);
 
     $query = $db->prepare(
-        "SELECT ACCOUNTS.*, EMPLOYEES.isManager 
-        FROM ACCOUNTS, EMPLOYEES 
-        WHERE ACCOUNTS.empID = ? AND ACCOUNTS.empID = EMPLOYEES.empID"
+        "SELECT ACCOUNTS.*, `EMPLOYEES`.isManager 
+        FROM `ACCOUNTS`, `EMPLOYEES` 
+        WHERE `ACCOUNTS`.empID = ? AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
     );
     $query->bind_param("s", $bin_id);
     $result = $query->execute();
@@ -804,7 +848,7 @@ function db_project_fetchall($search_term) {
 
 
     $query = $db->prepare(
-        "SELECT * FROM `PROJECTS` WHERE LOWER(`PROJECTS`.projName) LIKE ? LIMIT ". SEARCH_FETCH_LIMIT
+        "SELECT * FROM `PROJECTS` WHERE LOWER(`PROJECTS`.projectName) LIKE ? LIMIT ". SEARCH_FETCH_LIMIT
     );
     $query->bind_param("s", $search_term);
     $result = $query->execute();
@@ -837,7 +881,7 @@ function db_task_archive(string $task_id) {
 
     
     $query = $db->prepare(
-        "UPDATE `TASKS` SET `archived` = '1' WHERE `TASKS`.taskID = ?"
+        "UPDATE `TASKS` SET `taskArchived` = '1' WHERE `TASKS`.taskID = ?"
     );
     $query->bind_param("s", $bin_id);
     $result = $query->execute();
@@ -875,8 +919,8 @@ function db_task_fetchall(string $project_id) {
 
     $query = $db->prepare(
         "SELECT TASKS.* FROM TASKS
-        WHERE TASKS.projID = ?
-        AND TASKS.archived = 0
+        WHERE `TASKS`.projID = ?
+        AND `TASKS`.taskArchived = 0
         "
     );
 
@@ -954,10 +998,10 @@ function db_task_fetch_assignments(string $task_id) {
     global $db;
 
     $query = $db->prepare(
-        "SELECT EMPLOYEE_TASKS.* FROM TASKS, `EMPLOYEE_TASKS`
-        WHERE EMPLOYEE_TASKS.taskID = TASKS.taskID AND
-        TASKS.archived = 0
-        AND TASKS.taskID = ?
+        "SELECT `EMPLOYEE_TASKS`.* FROM `TASKS`, `EMPLOYEE_TASKS`
+        WHERE `EMPLOYEE_TASKS.`taskID = `TASKS`.taskID AND
+        `TASKS`.taskArchived = 0
+        AND `TASKS`.taskID = ?
         "
     );
 
@@ -988,10 +1032,10 @@ function db_project_fetch_assignments(string $project_id) {
     global $db;
 
     $query = $db->prepare(
-        "SELECT EMPLOYEE_TASKS.* FROM TASKS, `EMPLOYEE_TASKS`
-        WHERE EMPLOYEE_TASKS.taskID = TASKS.taskID AND
-        TASKS.archived = 0 AND
-        TASKS.projID = ?
+        "SELECT `EMPLOYEE_TASKS`.* FROM `TASKS`, `EMPLOYEE_TASKS`
+        WHERE `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND
+        `TASKS`.taskArchived = 0 AND
+        `TASKS`.projID = ?
         "
     );
 
@@ -1024,7 +1068,7 @@ function db_personal_delete(string $personal_id) {
     $bin_p_id = hex2bin($personal_id);
 
     $query = $db->prepare(
-        "DELETE FROM EMPLOYEE_PERSONALS WHERE itemID = ?"
+        "DELETE FROM `EMPLOYEE_PERSONALS` WHERE itemID = ?"
     );
     $query->bind_param("s", $bin_p_id);
     $query->execute();
@@ -1038,7 +1082,7 @@ function db_personal_fetch(string $personal_id) {
     $bin_p_id = hex2bin($personal_id);
 
     $query = $db->prepare(
-        "SELECT * FROM EMPLOYEE_PERSONALS WHERE itemID = ?"
+        "SELECT * FROM `EMPLOYEE_PERSONALS` WHERE itemID = ?"
     );
     $query->bind_param("s", $bin_p_id);
     $query->execute();
@@ -1088,6 +1132,56 @@ function db_tag_fetchall() {
     $data = [];
     while ($row = $res->fetch_assoc()) {
         $encoded = parse_database_row($row, TABLE_TAGS);
+        array_push($data, $encoded);
+    }
+    return $data;
+
+}
+
+// NOTIFS
+
+function db_notifications_fetch($employee_id) {
+
+    global $db;
+
+    $bin_e_id = hex2bin($employee_id);
+
+    $query = $db->prepare(
+        "
+        SELECT POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*,
+        `NOTIFICATIONS`.*
+        FROM `NOTIFICATIONS`
+        LEFT JOIN `EMPLOYEES` ON
+            `EMPLOYEES`.empID = ?
+        LEFT JOIN `ASSETS` ON
+            `EMPLOYEES`.avatar = `ASSETS`.assetID AND
+            `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
+        LEFT JOIN `EMPLOYEE_POST_META` ON
+            `EMPLOYEE_POST_META`.empID = `EMPLOYEES`.empID AND
+            `EMPLOYEE_POST_META`.postMetaSubscribed = '1'
+        LEFT JOIN `POST_UPDATE` ON
+            `NOTIFICATIONS`.eventID = `POST_UPDATE`.eventID AND
+            `POST_UPDATE`.postID = `EMPLOYEE_POST_META`.postID
+        LEFT JOIN `POSTS` ON
+            `POSTS`.postID = `POST_UPDATE`.postID
+        LEFT JOIN `TASK_UPDATE` ON
+            `NOTIFICATIONS`.eventID = `TASK_UPDATE`.eventID
+        LEFT JOIN `TASKS` ON
+            `TASKS`.taskID = `TASK_UPDATE`.taskID
+        "
+    );
+
+    $query->bind_param("s", $bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_union_row($row, UNION_NOTIFICATIONS);
         array_push($data, $encoded);
     }
     return $data;

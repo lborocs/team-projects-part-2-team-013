@@ -1413,7 +1413,7 @@ async function projectObjectRenderAndListeners(project) {
 
 
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
-    let element = renderProject(project.projID, project.projName, project.description, teamLeader, isTeamLeader, project.createdAt);
+    let element = renderProject(project.projID, project.name, project.description, teamLeader, isTeamLeader, project.createdAt);
 
     setUpProjectRowEventListeners(element);
     calculateTaskCount();
