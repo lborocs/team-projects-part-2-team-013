@@ -19,7 +19,7 @@ async function fetchPosts() {
     if (data.success == true) {
         console.log("Posts have been fetched")
         data.data.posts.forEach( post => {
-            renderPost(post.postID, post.title, post.createdBy, post.isTechnical)
+            renderPost(post.postID, post.title, post.author, post.isTechnical)
             postsContainer = document.querySelector('.posts');
             console.log(postsContainer);
         });
