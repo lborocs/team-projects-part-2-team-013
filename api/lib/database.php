@@ -401,7 +401,7 @@ function db_post_fetch(string $hex_post_id) {
     $bin_id = hex2bin($hex_post_id);
 
     $query = $db->prepare(
-        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, POSTS.content, `EMPLOYEES`.*, `ASSETS`.contentType, GROUP_CONCAT(`TAGS`.name SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
+        "SELECT POSTS.postID, POSTS.title, POSTS.createdBy, POSTS.createdAt, POSTS.isTechnical, POSTS.content, `EMPLOYEES`.*, `ASSETS`.contentType, GROUP_CONCAT(`TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
         FROM `POSTS`
         JOIN `EMPLOYEES`
             ON `POSTS`.createdBy = `EMPLOYEES`.empID
@@ -442,7 +442,7 @@ function db_employee_new(
 ) {
     global $db;
 
-    $bin_e_id = random_bytes(UUID_LENGTH);
+    $bin_e_id = generate_uuid();
 
     $query = $db->prepare(
         "INSERT INTO `EMPLOYEES` VALUES (?, ?, ?, '0')"

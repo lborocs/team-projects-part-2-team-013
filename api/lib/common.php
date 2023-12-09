@@ -283,6 +283,15 @@ class Session {
     }
 };
 
+function generate_uuid() {
+    $id = random_bytes(UUID_LENGTH);
+    if (str_contains($id, DB_ARRAY_DELIMITER)) {
+        return generate_uuid();
+    }
+
+    return $id;
+}
+
 
 function get_first_path(string $path) {
     $split = explode("/", $path, 3);

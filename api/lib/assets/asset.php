@@ -23,7 +23,7 @@ class Asset {
         $content_type = image_validation_and_mime($file);
 
 
-        $asset_id = bin2hex(random_bytes(16));
+        $asset_id = bin2hex(generate_uuid());
 
         $asset = new Asset($type, $owner_id, $asset_id, $content_type, $type);
 

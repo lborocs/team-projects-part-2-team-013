@@ -244,7 +244,7 @@ function _fetch_task(RequestContext $ctx, array $url_specifiers) {
 function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
     $author_id = $ctx->session->hex_associated_user_id;
 
-    $taskID = random_bytes(UUID_LENGTH);
+    $taskID = generate_uuid();
     $projectID = hex2bin($url_specifiers[0]);
     $createdBy = hex2bin($author_id);
     $title = $data["title"];
@@ -296,7 +296,7 @@ function _edit_task(RequestContext $ctx, array $url_specifiers) {
 function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
     $author_id = $ctx->session->hex_associated_user_id;
 
-    $projID = random_bytes(UUID_LENGTH);
+    $projID = generate_uuid();
     $projName = $body["projName"];
     $description = $body["description"];
     $createdBy = hex2bin($author_id);
@@ -344,7 +344,7 @@ function _fetch_project(RequestContext $ctx, array $url_specifiers) {
 function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
     $author_id = $ctx->session->hex_associated_user_id;
 
-    $postID = random_bytes(UUID_LENGTH);
+    $postID = generate_uuid();
     $title = $body["title"];
     $content = $body["content"];
     $createdBy = hex2bin($author_id);
@@ -392,7 +392,7 @@ function _fetch_post(RequestContext $ctx, array $url_specifiers) {
 function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) {
     $author_id = $ctx->session->hex_associated_user_id;
 
-    $itemID = random_bytes(UUID_LENGTH);
+    $itemID = generate_uuid();
     $assignedTo = hex2bin($url_specifiers[0]);
     $state = $body["state"];
     $dueDate = $body["dueDate"] ?? null;
@@ -442,7 +442,7 @@ function _new_tag(RequestContext $ctx, array $body, array $url_specifiers) {
     $name = $body["name"];
     $colour = $body["colour"];
 
-    $tagID = random_bytes(UUID_LENGTH);
+    $tagID = generate_uuid();
 
     if (db_generic_new(
         TABLE_TAGS ,
