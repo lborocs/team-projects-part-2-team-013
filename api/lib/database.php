@@ -334,7 +334,7 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
             $row,
             TABLE_POSTS,
             [
-                "tags"=>"a-string",
+                "tags"=>"a-binary",
                 "views"=>"integer",
             ]
         );
@@ -430,7 +430,7 @@ function db_post_fetch(string $hex_post_id) {
     }
     $post = $res->fetch_assoc(); // row 0
 
-    return parse_database_row($post, TABLE_POSTS, ["tags"=>"a-string"]);
+    return parse_database_row($post, TABLE_POSTS, ["tags"=>"a-binary"]);
 }
 
 
