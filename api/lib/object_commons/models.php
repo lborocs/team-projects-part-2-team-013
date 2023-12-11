@@ -326,7 +326,10 @@ const TABLE_POSTS = new Table(
 );
 
 
-const _TAGID = new Column("tagID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
+const _TAGID = new Column(
+    "tagID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+    dont_friendly_name:true
+);
 
 const TABLE_TAGS = new Table(
     "`TAGS`",
