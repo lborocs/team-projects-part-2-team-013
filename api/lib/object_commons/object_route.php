@@ -270,13 +270,14 @@ function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
         "sssssiiii"
     )) {
 
-        $data["taskID"] = bin2hex($taskID);
-        $data["projectID"] = $url_specifiers[0];
-        $data["taskCreatedby"] = $author_id;
+        $data["taskID"] = $taskID;
+        $data["projectID"] = $projectID;
+        $data["taskCreatedby"] = $createdBy;
         $data["taskArchived"] = false;
         $data["taskCreatedAt"] = $createdAt;
 
-        respond_ok($data);
+
+        respond_ok(parse_database_row($data, TABLE_TASKS));
     } else {
         respond_database_failure(true);
     }
@@ -316,12 +317,12 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
         "ssssss"
     )) {
 
-        $body["projID"] = bin2hex($projID);
-        $body["projectCreatedBy"] = $author_id;
-        $body["projectTeamLeader"] = bin2hex($teamLeader);
+        $body["projID"] = $projID;
+        $body["projectCreatedBy"] = $createdBy;
+        $body["projectTeamLeader"] = $teamLeader;
         $body["projectCreatedAt"] = $createdAt;
 
-        respond_ok($body);
+        respond_ok(parse_database_row($body, TABLE_PROJECTS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
     }
@@ -364,11 +365,11 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
         "sssssi"
     )) {
 
-        $body["postID"] = bin2hex($postID);
-        $body["postAuthor"] = $author_id;
+        $body["postID"] = $postID;
+        $body["postAuthor"] = $createdBy;
         $body["postCreatedAt"] = $createdAt;
 
-        respond_ok($body);
+        respond_ok(parse_database_row($body, TABLE_POSTS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
     }
@@ -412,8 +413,8 @@ function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) 
         "ssiiss"
     )) {
 
-        $body["itemID"] = bin2hex($itemID);
-        $body["personalAssignedTo"] = $url_specifiers[0];
+        $body["itemID"] = $itemID;
+        $body["personalAssignedTo"] = $assignedTo;
 
         respond_ok($body);
     } else {
@@ -453,7 +454,7 @@ function _new_tag(RequestContext $ctx, array $body, array $url_specifiers) {
         ],
         "sss"
     )) {
-        $body["tagID"] = bin2hex($tagID);
+        $body["tagID"] = $tagID;
         respond_ok($body);
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
