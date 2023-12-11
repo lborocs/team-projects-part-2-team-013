@@ -207,10 +207,10 @@ Written/designed by aidan F223129
   - [ ] DELETE (delete post)
   - [x] POST (new post) {"title":string, "isTechnical":int(0/1), "content":string}
 
-  - [x] **/wiki/post.php/tag/:TAG_ID:**
-    - [x] POST (create a new tag)
-    - [x] DELETE (delete a tag)
+- [x] **/wiki/post.php/tag/:TAG_ID:**
+  - [x] POST (create a new tag)
+  - [x] DELETE (delete a tag)
 
-  - [x] **/wiki/post.php/tags:**
-    - GET (get all tags)
+- [x] **/wiki/post.php/tags:**
+  - GET (get all tags)
  
