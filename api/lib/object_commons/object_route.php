@@ -416,7 +416,7 @@ function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) 
         $body["itemID"] = $itemID;
         $body["personalAssignedTo"] = $assignedTo;
 
-        respond_ok($body);
+        respond_ok(parse_database_row($body, TABLE_PERSONALS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
     }
@@ -455,7 +455,7 @@ function _new_tag(RequestContext $ctx, array $body, array $url_specifiers) {
         "sss"
     )) {
         $body["tagID"] = $tagID;
-        respond_ok($body);
+        respond_ok(parse_database_row($body, TABLE_TAGS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
     }
