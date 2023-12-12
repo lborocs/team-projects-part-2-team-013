@@ -1,6 +1,8 @@
 <?php
-require_once("models.php");
-require_once("object_checks.php");
+require_once("lib/object_commons/models.php");
+require_once("lib/object_commons/object_checks.php");
+require_once("lib/notifications/notification.php");
+require_once("lib/database.php");
 
 // this code is to abstract general object manpulation routes, e.g routes like task and project
 const OBJECT_GENERAL_ALLOWED_METHODS = ["POST", "GET", "PATCH", "DELETE"];
@@ -23,7 +25,10 @@ const OBJECT_GENERIC_FETCH_FUNCS = [
 const OBJECT_GENERIC_EDIT_FUNCS = [
     "`TASKS`"=>"_edit_task",
     "`POSTS`"=>"_edit_post",
-    "`PROJECTS`"=>"_edit_project",
+    "`EMPLOYEE_PERSONALS`"=>"_edit_personal",
+    "`PROJECTS`"=>"_use_common_edit",
+    "`TAGS`"=>"_use_common_edit",
+    "`EMPLOYEE_PERSONALS`"=>"_use_common_edit"
 ];
 
 const OBJECT_GENERIC_DELETE_FUNCS = [
@@ -226,12 +231,19 @@ function _generic_new(RequestContext $ctx, Table $table, array $data, array $url
 }
 
 function _generic_edit(RequestContext $ctx, Table $table, array $data, array $url_specifiers) {
+    $table_specifier = $table->name;
+    $func =  OBJECT_GENERIC_EDIT_FUNCS[$table_specifier] ?? respond_illegal_implementation("Object generic edit func missing");
 
+    if ($func === "_use_common_edit") {
+        return _use_common_edit($table, $data, $url_specifiers);
+    }
+    return $func($ctx, $data, $url_specifiers);    
+}
+
+function _use_common_edit(Table $table, array $data, array $url_specifiers) {
     $primary_keys = $table->name_url_specifiers($url_specifiers);
     db_generic_edit($table, $data, $primary_keys);
     respond_no_content();
-    
-    
 }
 
 // task funcs
@@ -288,8 +300,12 @@ function _delete_task(RequestContext $ctx, array $url_specifiers) {
     respond_no_content();
 }
 
-function _edit_task(RequestContext $ctx, array $url_specifiers) {
-    respond_not_implemented();
+function _edit_task(RequestContext $ctx, array $data, array $url_specifiers) {
+    // only dispatch notification if something other than task state changes
+    if (count($data) > 1 || !array_key_exists("taskState", $data)) {
+        notification_task_edit($url_specifiers[1]);
+    }
+    _use_common_edit(TABLE_TASKS, $data, $url_specifiers);
 }
 
 // project
@@ -328,9 +344,6 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
     }
 }
 
-function _edit_project(RequestContext $ctx, array $body, array $url_specifiers) {
-    respond_not_implemented();
-}
 
 function _delete_project(RequestContext $ctx, array $url_specifiers) {
     respond_not_implemented();
@@ -376,7 +389,8 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
 }
 
 function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
-    respond_not_implemented();
+    notification_post_edited($url_specifiers[0], $ctx->session->hex_associated_user_id);
+    _use_common_edit(TABLE_POSTS, $body, $url_specifiers);
 }
 
 function _delete_post(RequestContext $ctx, array $url_specifiers) {
@@ -394,7 +408,7 @@ function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) 
     $author_id = $ctx->session->hex_associated_user_id;
 
     $itemID = generate_uuid();
-    $assignedTo = hex2bin($url_specifiers[0]);
+    $assignedTo = hex2bin($author_id);
     $state = $body["personalState"];
     $dueDate = $body["personalDueDate"] ?? null;
     $title = $body["personalTitle"];
@@ -422,9 +436,6 @@ function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) 
     }
 }
 
-function _edit_personal(RequestContext $ctx, array $body, array $url_specifiers) {
-    respond_not_implemented();
-}
 
 function _delete_personal(RequestContext $ctx, array $url_specifiers) {
     db_personal_delete($url_specifiers[1]);

@@ -497,7 +497,6 @@ const TABLE_NOTIFICATIONS = new Table(
     [],
     [
         _EVENTID,
-        new Column("eventID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("notificationType", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("notificationTime", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
@@ -541,7 +540,6 @@ const TABLE_POST_UPDATE = new Table(
             "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_POSTS, _POSTID, "db_post_fetch")]
         ),
-        new Column("editedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
     "postUpdate",
     "postUpdate"
