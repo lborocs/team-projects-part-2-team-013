@@ -31,6 +31,25 @@
     flex-wrap: wrap;
 }
 
+.metric-card.add-metric {
+    display: flex;
+    background-color: white;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    transition: transform 0.3s ease;
+}
+
+.metric-card.add-metric:active {
+    transform: scale(0.99);
+}
+
+.metric-card.add-metric:hover {
+    background-color: var(--light-gray-bg, #f1f1f1);
+    cursor: pointer;
+    transition: background-color 0.1s ease-out, transform 0.05s ease-in;
+}
+
 @media (max-width: 1300px) {
     .metric-card {
         flex: 1 0 100%;
