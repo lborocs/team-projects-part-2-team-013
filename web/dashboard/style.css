@@ -27,7 +27,6 @@
 }
 
 .metric-card.add-metric {
-    display: flex;
     background-color: transparent;
     box-shadow: none;
     align-items: center;
