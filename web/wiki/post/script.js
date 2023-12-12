@@ -25,29 +25,20 @@ async function getPostData(postID){
     document.querySelector(".content").innerHTML = post.content
     document.querySelector(".author").innerText = global.bothNamesToString(post.author.firstName, post.author.lastName)
     document.querySelector(".date").innerText = global.formatDate(new Date(post.createdAt * 1000))
+    console.log(post)
 
     global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
     return post
 }
 
 const postData = await getPostData(postID)
-const technical = postData.isTechnical
-if (technical == 0) {
-    var tag1 = nonTechnicalTags[Math.floor(Math.random() * nonTechnicalTags.length)];
-    document.querySelector("#tag1").innerText = tag1
-    var tag2 = tag1
-    while (tag2 == tag1) {
-        tag2 = nonTechnicalTags[Math.floor(Math.random() * nonTechnicalTags.length)];
-    }
-    document.querySelector("#tag2").innerHTML = tag2
-} else if (technical == 1) {
-    var tag1 = technicalTags[Math.floor(Math.random() * technicalTags.length)];
-    document.querySelector("#tag1").innerText = tag1
-    var tag2 = tag1
-    while (tag2 == tag1) {
-        tag2 = technicalTags[Math.floor(Math.random() * technicalTags.length)];
-    }
-    document.querySelector("#tag2").innerText = tag2
+if (postData.tags == null || postData.tags.length == 0) {
+    document.querySelector(".tags").innerHTML += `<div class="tag">No Tags</div>`
+}
+else {
+for (let i = 0; i < postData.tags.length; i++) {
+    document.querySelector(".tags").innerHTML += `<div class="tag"><i class="fa-solid fa-tag"></i>${postData.tags[i]}</div>`
+}
 }
  console.log(postData.author.userID);
 let emp_icon = global.employeeAvatarOrFallback(postData.author);
