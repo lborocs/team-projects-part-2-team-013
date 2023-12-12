@@ -62,7 +62,7 @@ function _get_common_name(Column $column, string $name) {
 }
 
 
-function _copy_database_cells($columns, $row, Array $greedy_skip=[]) {
+function _copy_database_cells($columns, $row, Array $greedy_skip) {
     $collected = [];
 
     foreach ($columns as $column) {
@@ -85,13 +85,13 @@ function _copy_database_cells($columns, $row, Array $greedy_skip=[]) {
         if (count($column->get_constraints("ForeignKeyConstraint")) == 0) {
             unset($row[$name]);
         } else {
-            [$row, $collected] = _parse_foreign_keys($column, $row, $collected);
+            [$row, $collected] = _parse_foreign_keys($column, $row, $collected, $greedy_skip);
         }
     }
     return [$row, $collected];
 }
 
-function _parse_foreign_keys(Column $column, $row, $output) {
+function _parse_foreign_keys(Column $column, $row, Array $output, Array $greedy_skip) {
 
     $name = $column->name;
     $type = $column->type;
@@ -139,7 +139,7 @@ function _parse_foreign_keys(Column $column, $row, $output) {
             continue;
         }
 
-        [$row, $output[$name]] = _copy_database_cells($foreign_table->columns, $row);
+        [$row, $output[$name]] = _copy_database_cells($foreign_table->columns, $row, $greedy_skip);
         $output[$name][$foreign_column->name] = $foreign_key;
 
 
@@ -152,7 +152,7 @@ function _parse_foreign_keys(Column $column, $row, $output) {
 
 function parse_database_row(Array $row, Table $table, Array $additional_collectables=[], Array $greedy_skip=[]) {
 
-    [$row, $output] = _copy_database_cells($table->columns, $row);
+    [$row, $output] = _copy_database_cells($table->columns, $row, $greedy_skip);
 
     if (DEBUG_PRINT && count($row) > 0) {error_log("left with ". var_export($row, true));}
 
@@ -166,6 +166,9 @@ function parse_database_row(Array $row, Table $table, Array $additional_collecta
 function parse_union_row(Array $row, Union $union, Array $additional_collectables=[], Array $greedy_skip=[]) {
     $table = $union->parent;
     $type = $union->determine_format_from_row($row);
+
+    if (DEBUG_PRINT) {error_log("parsing union row ". $table->name . "{". $type->name . "}");}
+    if (DEBUG_PRINT) {error_log("row: ". var_export($row, true));}
 
     [$row, $output] = _copy_database_cells($table->columns, $row, $greedy_skip);
 
@@ -1165,7 +1168,11 @@ function db_notifications_fetch($employee_id) {
         LEFT JOIN `POSTS` ON
             `POSTS`.postID = `POST_UPDATE`.postID
         LEFT JOIN `TASK_UPDATE` ON
-            `NOTIFICATIONS`.eventID = `TASK_UPDATE`.eventID
+            `NOTIFICATIONS`.eventID = `TASK_UPDATE`.eventID AND
+            (
+                `TASK_UPDATE`.taskUpdateConcerns = `EMPLOYEES`.empID OR
+                `TASK_UPDATE`.taskUpdateConcerns IS NULL
+            )
         LEFT JOIN `TASKS` ON
             `TASKS`.taskID = `TASK_UPDATE`.taskID
         "
@@ -1187,5 +1194,67 @@ function db_notifications_fetch($employee_id) {
     return $data;
 
 }
+
+function db_post_updates_add(string $notification_id, string $post_id, string $author_id) {
+    global $db;
+
+    $bin_n_id = hex2bin($notification_id);
+    $bin_a_id = hex2bin($author_id);
+    $bin_p_id = hex2bin($post_id);
+
+    $query = $db->prepare(
+        "INSERT INTO `POST_UPDATE` VALUES (?, ?, ?)"
+    );
+    $query->bind_param("sss", $bin_n_id, $bin_p_id, $bin_a_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+}
+
+function db_task_updates_add(string $notification_id, string $task_id, ?string $concerns, int $detail) {
+    global $db;
+
+    $bin_n_id = hex2bin($notification_id);
+    $bin_t_id = hex2bin($task_id);
+
+    if ($concerns !== null) {
+        $bin_concerns = hex2bin($concerns);
+    } else {
+        $bin_concerns = null;
+    }
+
+    $query = $db->prepare(
+        "INSERT INTO `TASK_UPDATE` VALUES (?, ?, ?, ?)"
+    );
+    $query->bind_param("sssi", $bin_n_id, $bin_t_id, $bin_concerns, $detail);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+    
+}
+
+function db_notification_create(int $type) {
+    global $db;
+
+    $bin_n_id = generate_uuid();
+    $time = time();
+
+    $query = $db->prepare(
+        "INSERT INTO `NOTIFICATIONS` VALUES (?, ?, ?)"
+    );
+    $query->bind_param("sii", $bin_n_id, $type, $time);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return bin2hex($bin_n_id);
+}
+
 
 ?>
