@@ -14,8 +14,6 @@
 .metric-card {
     flex: 1 0 calc(33.33% - 20px);
     min-width: calc(25%);
-    max-width: calc(33.33% - 20px);
-    height: calc(50% - 20px);
     margin: 10px;
     padding: 10px;
     background-color: var(--white, #fff);
@@ -30,7 +28,8 @@
 
 .metric-card.add-metric {
     display: flex;
-    background-color: white;
+    background-color: transparent;
+    box-shadow: none;
     align-items: center;
     justify-content: center;
     user-select: none;
@@ -42,7 +41,7 @@
 }
 
 .metric-card.add-metric:hover {
-    background-color: var(--light-gray-bg, #f1f1f1);
+    background-color: white;
     cursor: pointer;
     transition: background-color 0.1s ease-out, transform 0.05s ease-in;
 }
