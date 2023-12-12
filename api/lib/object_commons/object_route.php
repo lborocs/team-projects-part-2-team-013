@@ -247,10 +247,10 @@ function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
     $taskID = generate_uuid();
     $projectID = hex2bin($url_specifiers[0]);
     $createdBy = hex2bin($author_id);
-    $title = $data["title"];
-    $description = $data["description"] ?? null;
-    $state = $data["state"];
-    $dueDate = $data["dueDate"] ?? null;
+    $title = $data["taskTitle"];
+    $description = $data["taskDescription"] ?? null;
+    $state = $data["taskState"];
+    $dueDate = $data["taskDueDate"] ?? null;
     $archived = false;
     $createdAt = time();
 
@@ -270,13 +270,14 @@ function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
         "sssssiiii"
     )) {
 
-        $data["taskID"] = bin2hex($taskID);
-        $data["projectID"] = $url_specifiers[0];
-        $data["createdby"] = $author_id;
-        $data["archived"] = false;
-        $data["createdAt"] = $createdAt;
+        $data["taskID"] = $taskID;
+        $data["projectID"] = $projectID;
+        $data["taskCreatedby"] = $createdBy;
+        $data["taskArchived"] = false;
+        $data["taskCreatedAt"] = $createdAt;
 
-        respond_ok($data);
+
+        respond_ok(parse_database_row($data, TABLE_TASKS));
     } else {
         respond_database_failure(true);
     }
@@ -297,10 +298,10 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
     $author_id = $ctx->session->hex_associated_user_id;
 
     $projID = generate_uuid();
-    $projName = $body["projName"];
-    $description = $body["description"];
+    $projName = $body["projectName"];
+    $description = $body["projectDescription"];
     $createdBy = hex2bin($author_id);
-    $teamLeader = hex2bin($body["teamLeader"]);
+    $teamLeader = hex2bin($body["projectTeamLeader"]);
     $createdAt = time();
 
     if (db_generic_new(
@@ -316,12 +317,12 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
         "ssssss"
     )) {
 
-        $body["projID"] = bin2hex($projID);
-        $body["createdBy"] = $author_id;
-        $body["teamLeader"] = bin2hex($teamLeader);
-        $body["createdAt"] = $createdAt;
+        $body["projID"] = $projID;
+        $body["projectCreatedBy"] = $createdBy;
+        $body["projectTeamLeader"] = $teamLeader;
+        $body["projectCreatedAt"] = $createdAt;
 
-        respond_ok($body);
+        respond_ok(parse_database_row($body, TABLE_PROJECTS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
     }
@@ -345,11 +346,11 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
     $author_id = $ctx->session->hex_associated_user_id;
 
     $postID = generate_uuid();
-    $title = $body["title"];
-    $content = $body["content"];
+    $title = $body["postTitle"];
+    $content = $body["postContent"];
     $createdBy = hex2bin($author_id);
     $createdAt = time();
-    $isTechnical = $body["isTechnical"];
+    $isTechnical = $body["postIsTechnical"];
 
     if (db_generic_new(
         TABLE_POSTS ,
@@ -364,11 +365,11 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
         "sssssi"
     )) {
 
-        $body["postID"] = bin2hex($postID);
-        $body["createdBy"] = $author_id;
-        $body["createdAt"] = $createdAt;
+        $body["postID"] = $postID;
+        $body["postAuthor"] = $createdBy;
+        $body["postCreatedAt"] = $createdAt;
 
-        respond_ok($body);
+        respond_ok(parse_database_row($body, TABLE_POSTS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
     }
@@ -394,10 +395,10 @@ function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) 
 
     $itemID = generate_uuid();
     $assignedTo = hex2bin($url_specifiers[0]);
-    $state = $body["state"];
-    $dueDate = $body["dueDate"] ?? null;
-    $title = $body["title"];
-    $content = $body["content"] ?? null;
+    $state = $body["personalState"];
+    $dueDate = $body["personalDueDate"] ?? null;
+    $title = $body["personalTitle"];
+    $content = $body["personalContent"] ?? null;
 
     if (db_generic_new(
         TABLE_PERSONALS ,
@@ -412,10 +413,10 @@ function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) 
         "ssiiss"
     )) {
 
-        $body["itemID"] = bin2hex($itemID);
-        $body["assignedTo"] = $url_specifiers[0];
+        $body["itemID"] = $itemID;
+        $body["personalAssignedTo"] = $assignedTo;
 
-        respond_ok($body);
+        respond_ok(parse_database_row($body, TABLE_PERSONALS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
     }
@@ -439,8 +440,8 @@ function _fetch_personal(RequestContext $ctx, array $url_specifiers) {
 
 function _new_tag(RequestContext $ctx, array $body, array $url_specifiers) {
 
-    $name = $body["name"];
-    $colour = $body["colour"];
+    $name = $body["tagName"];
+    $colour = $body["tagColour"];
 
     $tagID = generate_uuid();
 
@@ -453,8 +454,8 @@ function _new_tag(RequestContext $ctx, array $body, array $url_specifiers) {
         ],
         "sss"
     )) {
-        $body["tagID"] = bin2hex($tagID);
-        respond_ok($body);
+        $body["tagID"] = $tagID;
+        respond_ok(parse_database_row($body, TABLE_TAGS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
     }

@@ -93,6 +93,12 @@ async function projectSwitchToOnClick(projectRow) {
     teamLeaderEnableElementsIfTeamLeader()
 
     setActivePane("individual-project-pane");
+    clearProjectList();
+}
+
+function clearProjectList() {
+    let projectsTable = document.querySelector("#projects-table");
+    projectsTable.querySelector("tbody").replaceChildren();
 }
 
 function setActivePane(newPane) {
@@ -512,8 +518,7 @@ async function fetchAndRenderAllProjects() {
     console.log(data);
     // process the data here
     if (data.success == true) {
-        let projectsTable = document.querySelector("#projects-table");
-        projectsTable.querySelector("tbody").replaceChildren();
+        clearProjectList();
         console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
         await Promise.all(data.data.projects.map(async (project) => {
 
@@ -1599,13 +1604,12 @@ const sleep = (ms) => {
 
 async function searchAndRenderProjects(search) {
     const data = await get_api('/project/project.php/projects?q=' + search);
-    console.log("[searchAndRenderProjects" + search + "] fetched projects");
+    console.log("[searchAndRenderProjects(" + search + ")] fetched projects");
     console.log(data);
     console.log('.project-row.selected');
     // process the data here
     if (data.success == true) {
-        let projectsTable = document.querySelector("#projects-table");
-        projectsTable.querySelector("tbody").replaceChildren();
+        clearProjectList();
         console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
         await Promise.all(data.data.projects.map(async (project) => {
 

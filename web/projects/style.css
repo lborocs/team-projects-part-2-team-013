@@ -552,12 +552,14 @@
 .taskgrid {
     display: flex;
     align-self: flex-start;
-    width: 100%;
+    flex-wrap: wrap;
     gap: 1em;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     margin-top: 0;
-    justify-content: center;
+    margin-left: 1em;
+    margin-right: 1em;
+    justify-content: flex-start;
 }
 
 .columntitle {

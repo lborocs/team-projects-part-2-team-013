@@ -10,7 +10,7 @@ $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATA
 
 // generic
 
-const DEBUG_PRINT = true;
+const DEBUG_PRINT = false;
 
 function _encode_field(string $type, $value) {
 
@@ -666,7 +666,7 @@ function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id
     $query = $db->prepare(
         "SELECT TASKS.* FROM TASKS, EMPLOYEE_TASKS
         WHERE `TASKS`.projID = ? AND `EMPLOYEE_TASKS`.empID = ?
-        AND `TASKS`.archived = 0
+        AND `TASKS`.taskArchived = 0
         AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID 
         "
     );

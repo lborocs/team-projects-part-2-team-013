@@ -70,12 +70,14 @@ The site should now function like normal on your local machine.
 12. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
 
 
-# Important notes for pt2
-- Fontawesome import has now changed to be hosted on cdnjs.cloudflare.com
-- We are no longer going to use the 3rd party avatar api as it shares data (employee names with a 3rd party site)
-- assets like images should be stored on the cdn, not the repo
-- hostable user data (like wiki post images) should never be accessed via the root domain (013.team), only the usercontent cdn (usercontent.013.team)
-- dont use inline anything (no css in html, no scripts in html, no onClick attributes for elements)
+# Plan
+## Individual Tasks
+![Todo list for christmas](https://cdn.013.team/development/todolist.jpg)
+
+## Good practicies
+![Good practices](https://cdn.013.team/development/todolist.jpg)
+
+
 
 ### jamie
 ![30th feb moment](https://cdn.013.team/Screenshot2023-11-28-024447.png)
