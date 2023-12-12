@@ -106,6 +106,12 @@ Written/designed by aidan F223129
 - [ ] **/employee/session.php/register**
     - POST (register account)
 
+## meta.php
+
+- [x] **/employee/meta.php/notifications**
+  - GET get all notifications (defined in notifications.md)
+
+
 # project
 
 ## task.php
