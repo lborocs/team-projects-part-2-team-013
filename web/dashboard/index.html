@@ -7,6 +7,15 @@
     <title>Workload</title>
     <link rel="stylesheet" href="../global-styles.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../ui-elements/dropdown.css">
+    <link rel="stylesheet" href="../ui-elements/search-bar.css">
+    <link rel="stylesheet" href="../ui-elements/task-card.css">
+    <link rel="stylesheet" href="../ui-elements/text-button.css">
+    <link rel="stylesheet" href="../ui-elements/icon-button.css">
+    <link rel="stylesheet" href="../ui-elements/small-icon.css">
+    <link rel="stylesheet" href="../ui-elements/popover.css">
+
+
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -71,6 +80,44 @@
 
             </div>
             <div class="main">
+                <div class="dashboard-options">
+                    <div class="dropdown" tabindex="0" id="project-selector">
+                        <div class="dropdown-text">
+                            Mobile App Development
+                        </div>
+                        <div class="dropdown-chevron">
+                            <span class="material-symbols-rounded">
+                                expand_more
+                            </span>
+                        </div>
+                        <div class="dropdown-list">
+                            <div class="dropdown-option">Option 1</div>
+                            <div class="dropdown-option">Option 2</div>
+                            <div class="dropdown-option">Option 3</div>
+                        </div>
+                    </div>
+                    <div class="option" id="workload">
+                        <span class="material-symbols-rounded">
+                            space_dashboard
+                        </span>
+                    </div>
+                    <div class="option selected" id="training">
+                        <span class="material-symbols-rounded">
+                            grid_view
+                        </span>
+                    </div>
+                    <div class="option" id="wiki">
+                        <span class="material-symbols-rounded">
+                            grid_3x3
+                        </span>
+                    </div>
+                    <div class="option" id="mylist">
+                        <span class="material-symbols-rounded">
+                            grid_3x3_off
+                        </span>
+                    </div>
+
+                </div>
                 <div class="dashboard-container">
                     <div class="metric-card">
                         your mum
