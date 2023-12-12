@@ -519,7 +519,7 @@ function db_employee_fetchall() {
         "SELECT `EMPLOYEES`.*, `ACCOUNTS`.email, `ASSETS`.contentType
         FROM `EMPLOYEES` LEFT JOIN `ASSETS`
         ON `EMPLOYEES`.avatar = `ASSETS`.assetID
-        AND `ASSETS`.type = " . ASSET_TYPE::USER_AVATAR . "
+        AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
         JOIN `ACCOUNTS`
         ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
         "
