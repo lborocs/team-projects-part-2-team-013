@@ -40,9 +40,10 @@
 }
 
 .metric-card.add-metric:hover {
-    background-color: white;
+    background-color: var(--white, #fff);
     cursor: pointer;
     transition: background-color 0.1s ease-out, transform 0.05s ease-in;
+    outline: 2px solid var(--box-shadow-clr);
 }
 
 .dashboard-options {
