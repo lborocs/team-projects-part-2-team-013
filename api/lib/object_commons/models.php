@@ -23,9 +23,28 @@ enum TASK_UPDATE_TYPE {
 }
 
 
-// THIS MIGHT JUST BE JAVA
-// if it was java maybe i would make a not null constraint
-// and enums
+function prepend_col_prefixes(Table $table, Array $body) {
+    $prefix = $table->column_prefix;
+
+    if ($prefix === null) {
+        return $body;
+    }
+    $prefixed = [];
+
+    foreach ($body as $key => $value) {
+        $col = $table->get_column($key);
+
+        if ($col->dont_friendly_name) {
+            $prefixed[$key] = $value;
+        } else {
+            $prefixed[$prefix . $key] = $value;
+        }
+    }
+    return $prefixed;
+}
+
+
+// actual OOP wizardry
 
 
 class Union {
@@ -516,8 +535,12 @@ const TABLE_EMPLOYEE_POST_META = new Table(
             "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_POSTS, _POSTID, "db_post_fetch")]
         ),
-        new Column("postMetaFeedback", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
-        new Column("postMetaSubscribed", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column(
+            "postMetaFeedback", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false
+        ),
+        new Column(
+            "postMetaSubscribed", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false
+        ),
     ],
     "meta",
     "postMeta"

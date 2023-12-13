@@ -185,6 +185,12 @@ function create_array_binding(int $num) {
     return substr_replace(str_repeat("?, ", $num), "", -2);
 }
 
+function create_chunked_array_binding(int $chunks, int $chunk_size) {
+    return substr_replace(
+        str_repeat("(" . create_array_binding($chunk_size) . "), ", $chunks),
+        "", -2
+    );
+}
 
 function db_generic_new(Table $table, array $values, string $bind_format) {
     global $db;
@@ -817,6 +823,33 @@ function db_account_insert(
 
 // projects
 
+function db_project_accesses_set(string $project_id, string $user_id) {
+    global $db;
+
+    $bin_p_id = hex2bin($project_id);
+    $bin_u_id = hex2bin($user_id);
+    $time = time();
+
+    $query = $db->prepare(
+        "INSERT INTO PROJECT_ACCESSED VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE projectAccessTime = ?"
+    );
+
+    $query->bind_param(
+        "ssii",
+        $bin_p_id,
+        $bin_u_id,
+        $time,
+        $time
+    );
+
+    $res = $query->execute();
+
+    if (!$res) {
+        respond_database_failure(true);
+    }
+}
+
 function db_project_fetch(string $project_id) {
     global $db;
 
@@ -950,49 +983,13 @@ function db_task_fetchall(string $project_id) {
     return $data;
 }
 
-function db_task_overwrite_assignments(string $task_id, array $bin_assignments) {
-    global $db;
-
-    $bin_t_id = hex2bin($task_id);
-
-    $query = $db->prepare(
-        "DELETE FROM `EMPLOYEE_TASKS` WHERE taskID = ?"
-    );
-    $query->bind_param("s", $bin_t_id);
-    $result = $query->execute();
-
-    if (!$result) {
-        respond_database_failure();
-    }
-
-    if (count($bin_assignments) == 0) {
-        return;
-    }
+function db_task_assign_bulk(string $task_id, Array $bin_employee_ids) {
+    respond_not_implemented();
+}
 
 
-    $query = $db->prepare(
-        "INSERT INTO `EMPLOYEE_TASKS` (empID, taskID) VALUES " .
-        create_array_binding(count($bin_assignments) * 2)
-    );
-
-    $flattened = [];
-
-    foreach ($bin_assignments as $item) {
-        array_push($flattened, $item);
-        array_push($flattened, $bin_t_id);
-    };
-
-    $query->bind_param(
-        str_repeat("s", count($flattened)),
-        ...$flattened
-    );
-
-    $result = $query->execute();
-
-    if (!$result) {
-        respond_database_failure(true);
-    }
-    
+function db_task_unassign_bulk(string $task_id, Array $bin_employee_ids) {
+    respond_not_implemented();
 }
 
 function db_task_fetch_assignments(string $task_id) {
@@ -1235,6 +1232,34 @@ function db_task_updates_add(string $notification_id, string $task_id, ?string $
         respond_database_failure();
     }
     
+}
+
+function db_task_updates_add_bulk(string $notification_id, Array $fields) {
+    global $db;
+
+    $bin_n_id = hex2bin($notification_id);
+
+    $bin_fields = array_merge(...array_map(function ($field) use ($bin_n_id) {
+
+        return [$bin_n_id, hex2bin($field[0]), hex2bin($field[1]), $field[2]];
+    }, $fields));
+
+    $len = count($bin_fields);
+    $query = "
+    INSERT INTO `TASK_UPDATE` VALUES
+    " . create_chunked_array_binding($len, 4);
+
+    $query = $db->prepare($query);
+    $query->bind_param(
+        str_repeat("sssi", $len),
+        ...$bin_fields
+    );
+
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
 }
 
 function db_notification_create(int $type) {

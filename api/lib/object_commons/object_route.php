@@ -137,6 +137,8 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
 }
 
 function _ensure_body_validity(Table $model, array $body) {
+    $body = prepend_col_prefixes($model, $body);
+
     // this function ensures that every field in the body
     // is a valid field in the model
     // it also checks the types and parses ids
@@ -350,6 +352,7 @@ function _delete_project(RequestContext $ctx, array $url_specifiers) {
 }
 
 function _fetch_project(RequestContext $ctx, array $url_specifiers) {
+    db_project_accesses_set($ctx->project["projID"], $ctx->session->hex_associated_user_id);
     respond_ok($ctx->project);
 }
 

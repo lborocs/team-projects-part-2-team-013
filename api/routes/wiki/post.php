@@ -74,39 +74,60 @@ function r_post_post(RequestContext $ctx, string $args) {
             respond_bad_request("Expected a post id for method PUT", ERROR_REQUEST_URL_PATH_PARAMS_REQUIRED);
         }
 
-        if ($args != "tags") {
-            respond_route_not_found("PUT /post/{post_id} only supports the /tags endpoint");
-        }
-
-    
-        $ctx->body_require_fields(["tags"]);
-
-        $tags = $ctx->request_body["tags"];
-
-        if (!is_array($tags)) {
-            respond_bad_request("Expected field tags to be an array", ERROR_BODY_FIELD_INVALID_TYPE);
-        }
-
-        $tags = array_unique($tags);
-
-        foreach ($tags as $tag) {
-            if (gettype($tag) != "string" || !@hex2bin($tag)) {
-                respond_bad_request("Expected field tags to be an array of hex strings", ERROR_BODY_FIELD_INVALID_TYPE);
-            }
-        }
-
         object_check_post_exists($ctx, [$post_id]);
-        object_check_user_is_post_admin($ctx, []);
 
 
-        respond_debug("meow");
-
-
+        switch ($args) {
+            case "tags":
+                r_post_post_tags($ctx, $args, $post_id);
+                break;
+            case "meta":
+                r_post_post_meta($ctx, $args, $post_id);
+                break;
+            default:
+                respond_route_not_found(
+                    "Expected a valid subroute for method PUT valid methods are [/tags, /meta]",
+                    ERROR_REQUEST_URL_PATH_PARAMS_INVALID
+                );
+        }
     } else {
         object_manipulation_generic(POST_METHOD_CHECKS, TABLE_POSTS, $ctx, $args);
     }
 
 }
+
+//post PUT
+
+function r_post_post_tags(RequestContext $ctx, string $args, string $post_id) {
+
+    $ctx->body_require_fields(["tags"]);
+
+    $tags = $ctx->request_body["tags"];
+
+    if (!is_array($tags)) {
+        respond_bad_request("Expected field tags to be an array", ERROR_BODY_FIELD_INVALID_TYPE);
+    }
+
+    $tags = array_unique($tags);
+
+    foreach ($tags as $tag) {
+        if (gettype($tag) != "string" || !@hex2bin($tag)) {
+            respond_bad_request("Expected field tags to be an array of hex strings", ERROR_BODY_FIELD_INVALID_TYPE);
+        }
+    }
+
+    object_check_user_is_post_admin($ctx, []);
+
+
+    respond_debug("meow");
+}
+
+function r_post_post_meta(RequestContext $ctx, string $args) {
+    _ensure_body_validity(TABLE_EMPLOYEE_POST_META, $ctx->body);
+    respond_not_implemented();
+    
+}
+
 
 function r_post_tag(RequestContext $ctx, string $args) {
     object_manipulation_generic(TAG_METHOD_CHECKS, TABLE_TAGS, $ctx, $args);
