@@ -1172,6 +1172,7 @@ function db_notifications_fetch($employee_id) {
             )
         LEFT JOIN `TASKS` ON
             `TASKS`.taskID = `TASK_UPDATE`.taskID
+        ORDER BY `NOTIFICATIONS`.notificationTime DESC
         "
     );
 

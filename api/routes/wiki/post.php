@@ -123,7 +123,8 @@ function r_post_post_tags(RequestContext $ctx, string $args, string $post_id) {
 }
 
 function r_post_post_meta(RequestContext $ctx, string $args) {
-    _ensure_body_validity(TABLE_EMPLOYEE_POST_META, $ctx->body);
+    _ensure_body_validity(TABLE_EMPLOYEE_POST_META, $ctx);
+    respond_debug($ctx->request_body);
     respond_not_implemented();
     
 }
