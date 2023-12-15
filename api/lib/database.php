@@ -396,6 +396,93 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
     return $data;
 }
 
+function db_post_meta_set(string $post_id, string $user_id, Array $body) {
+    global $db;
+
+    $bin_p_id = hex2bin($post_id);
+    $bin_u_id = hex2bin($user_id);
+
+    $subscribed = $body["postMetaSubscribed"];
+    $feedback = $body["postMetaFeedback"];
+
+    $query = $db->prepare(
+        "INSERT INTO `EMPLOYEE_POST_META` VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE postMetaFeedback = ?, postMetaSubscribed = ?"
+    );
+
+    $query->bind_param(
+        "ssiiii",
+        $bin_u_id,
+        $bin_p_id,
+        $feedback,
+        $subscribed,
+        $feedback,
+        $subscribed,
+    );
+
+    $res = $query->execute();
+
+    if (!$res) {
+        respond_database_failure(true);
+    }
+    return $query->affected_rows > 0;
+}
+
+function db_post_meta_fetch(string $post_id, string $user_id) {
+    global $db;
+
+    $bin_p_id = hex2bin($post_id);
+    $bin_u_id = hex2bin($user_id);
+
+    $query = $db->prepare(
+        "SELECT * FROM `EMPLOYEE_POST_META` WHERE empID = ? AND postID = ?"
+    );
+    $query->bind_param("ss", $bin_u_id, $bin_p_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    // query and check we have 1 row
+    $res = $query->get_result();
+    if ($res->num_rows != 1) {
+        return false;
+    }
+    return parse_database_row($res->fetch_assoc(), TABLE_EMPLOYEE_POST_META); // row 0
+}
+
+function db_post_set_tags(string $post_id, Array $tags) {
+    global $db;
+
+    $bin_p_id = hex2bin($post_id);
+
+    $bin_tag_ids = array_merge(...array_map(function ($tag) use ($bin_p_id) {
+        return [hex2bin($tag), $bin_p_id];
+    }, $tags));
+
+
+    $delete_query = $db->prepare(
+        "DELETE FROM `POST_TAGS` WHERE postID = ?",
+    );
+    $delete_query->execute([$bin_p_id]);
+
+
+    $query = $db->prepare(
+        "INSERT INTO `POST_TAGS` VALUES " . create_chunked_array_binding(count($tags), 2)
+    );
+    $query->bind_param(
+        str_repeat("ss", count($tags)),
+        ...$bin_tag_ids
+    );
+
+    if (!$query->execute()) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+}
+
 function db_post_accesses_add(string $emp_id, string $post_id) {
     global $db;
 
