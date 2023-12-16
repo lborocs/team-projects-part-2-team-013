@@ -8,6 +8,8 @@
     background-color: white;
 
     z-index: 999;
+
+    
 }
 
 .popover-header {
@@ -23,36 +25,9 @@
     padding-bottom: 5px;
 }
 
-.name-card {
-    display: flex;
-    align-items: center;
-    padding: 3px 5px;
-    gap: 5px;
-    border-radius: 3px;
 
-    font-size: 14px;
-    line-height: 1;
 
-    transition: background-color 0.1s ease-out;
 
-    .icon {
-        visibility: hidden;
-        margin-left: auto;
-
-        color: rgb(98, 111, 134);
-        
-    }
-}
-
-.name-card:hover {
-    background-color: #f1f2f4;
-    cursor: pointer;
-    
-}
-
-.name-card:hover span {
-    visibility: visible;
-}
 
 .show-more {
     background-color: transparent;
@@ -79,4 +54,37 @@
 
 .search:focus-within ~ .popover {
     display: block;
+}
+
+.popover-content, .popover {
+    .name-card {
+        display: flex;
+        align-items: center;
+        padding: 3px 5px;
+        gap: 5px;
+        border-radius: 3px;
+    
+        font-size: 14px;
+        line-height: 1;
+    
+        transition: background-color 0.1s ease-out;
+    
+        .icon {
+            visibility: hidden;
+            margin-left: auto;
+    
+            color: rgb(98, 111, 134);
+            
+        }
+    }
+
+    .name-card:hover {
+        background-color: #f1f2f4;
+        cursor: pointer;
+        
+    }
+    
+    .name-card:hover span {
+        visibility: visible;
+    }
 }

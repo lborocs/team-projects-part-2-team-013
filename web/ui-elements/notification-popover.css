@@ -2,18 +2,25 @@
     position: relative;
 }
 
-.popover-content {
+.notification-popover {
     position: relative;
-    top: 40px;
-    right: 420px;
+}
+
+.popover-content {
+    position: absolute;
+    top: 50px;
+    right: 1px;
     width: 400px;
     background-color: #fff;
     border: solid 1px rgba(105, 112, 125, 0.1);
     border-radius: 4px;
     padding: 10px;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
-    display: none;
+    opacity: 0;
+    pointer-events: none;
     z-index: 999;
+    transform: translateX(-2%);
+    transition: opacity 0.1s ease-out, transform 0.1s ease-out;
     & a {
         text-decoration: none;
         color: black;
@@ -26,8 +33,11 @@
     }
 }
 
-.notification-popover:hover .popover-content {
+.notification-popover:focus .popover-content {
     display: block;
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .notification-card {

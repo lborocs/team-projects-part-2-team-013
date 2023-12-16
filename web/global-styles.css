@@ -341,12 +341,10 @@ input {
     .item {
         display: flex;
         flex-direction: row;
-        padding: 0.5em;
+        padding: 0.25em;
         margin-left: 0.25em;
         margin-right: 0.25em;
-        text-align: center;
-        border-radius: 8px;
-        font-size: 1.2em;
+        border-radius: 3px;
         transition: 0.1s ease-out;
         user-select: none;
     }
@@ -431,8 +429,8 @@ button:hover {
 #inbox-icon::after {
     content: "";
     position: absolute;
-    bottom: 7px;
-    right: 6px;
+    bottom: 5px;
+    right: 5px;
     width: 10px;
     height: 10px;
     background-color: rgb(214, 83, 83);
