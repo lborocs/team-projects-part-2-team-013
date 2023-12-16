@@ -7,6 +7,7 @@ export const myListButton = document.querySelector("#mylist")
 export const wikiButton = document.querySelector("#wiki")
 export const workloadButton = document.querySelector("#workload")
 export const settingsButton = document.querySelector("#settings")
+export const trainingButton = document.querySelector("#training")
 export const logoutButton = document.querySelector("#logout")
 
 export const userBoth = document.querySelector(".user-both")
@@ -446,6 +447,15 @@ if (workloadButton !== null) {
         }, 150)
     });
 }
+
+if (trainingButton !== null) {
+    trainingButton.addEventListener("click", () => {
+        setTimeout(() => {
+            window.location.href = "/dashboard/";
+        }, 150)
+    });
+}
+
 
 if (logoutButton !== null) {
     logoutButton.addEventListener("click", () => {
