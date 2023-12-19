@@ -64,9 +64,23 @@ async function api_request(route, method, body, options={}) {
     }
 
     const raw_response = await fetch(API_BASE + route, reqInit);
+
+
+    let raw_res = {};
+
+    if (raw_response.status == 204) {
+        raw_res = {
+            success: true,
+            data: null
+        }
+    } else {
+        raw_res = await raw_response.json();
+    }
+
+
     const res = new APIResponse(
         raw_response.status,
-        await raw_response.json(),
+        raw_res,
         raw_response.headers
     );
 
