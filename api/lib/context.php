@@ -6,13 +6,20 @@ set_exception_handler("global_exception_handler");
 // secrets are dynamic so we load them in context
 require_once("secrets.php");
 // common is static and can load everything else
-require_once("common.php");
+require_once("lib/common.php");
+// we need this for the exception handler
+require_once("lib/assets/asset.php");
 
 
 $routes = Array();
 
 // bit of a hack cause we arent guarunteed to have common.php loaded
 function global_exception_handler(Throwable $exception) {
+
+    if ($exception instanceof AssetException) {
+        $exception->send_to_client();
+    }
+
     $printed = $exception->__toString();
     error_log($printed);
     http_response_code(520);
