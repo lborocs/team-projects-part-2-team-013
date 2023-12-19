@@ -236,6 +236,8 @@ register_route(new Route(
 function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
     $author_id = $ctx->session->hex_associated_user_id;
 
+    ensure_html_is_clean($body["postContent"]);
+
     $postID = generate_uuid();
     $title = $body["postTitle"];
     $content = $body["postContent"];
@@ -267,6 +269,7 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
 }
 
 function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
+    ensure_html_is_clean($body["postContent"]);
     notification_post_edited($url_specifiers[0], $ctx->session->hex_associated_user_id);
     _use_common_edit(TABLE_POSTS, $body, $url_specifiers);
 }

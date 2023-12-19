@@ -154,4 +154,17 @@ function explode_args_into_array(string $args) {
     }
 }
 
+
+function ensure_html_is_clean(string $html) {
+    // ensure no classes
+    // ensure no ids
+    // ensure no draggable
+    if (preg_match("/<[^>]*(class|id|draggable)=[\s\S]*/i", $html)) {
+        respond_bad_request("HTML contains disallowed content", ERROR_HTML_ILLEGAL_FORMAT);
+    }
+
+    // csp checks for unsafe scripts and inline attributes
+
+}
+
 ?>
