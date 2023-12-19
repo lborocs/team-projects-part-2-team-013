@@ -15,6 +15,10 @@ class AssetException extends Exception {
         parent::__construct($message, $code);
     }
 
+    public function send_to_client() {
+        respond_infrastructure_error($this->message, $this->code);
+    }
+
 }
 
 class Asset {
