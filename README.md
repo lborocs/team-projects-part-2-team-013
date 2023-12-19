@@ -75,7 +75,7 @@ The site should now function like normal on your local machine.
 ![Todo list for christmas](https://cdn.013.team/development/todolist.jpg)
 
 ## Good practicies
-![Good practices](https://cdn.013.team/development/todolist.jpg)
+![Good practices](https://cdn.013.team/development/rules.jpg)
 
 
 
