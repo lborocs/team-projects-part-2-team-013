@@ -54,7 +54,10 @@ function r_employee_personal(RequestContext $ctx, string $args) {
 }
 
 function r_employee_all(RequestContext $ctx, string $args) {
-    $employees=db_employee_fetchall();
+
+    $search_term = urldecode($_GET["q"] ?? "");
+
+    $employees=db_employee_fetchall($search_term);
     respond_ok(array(
         "employees"=>$employees
     ));
