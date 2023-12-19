@@ -20,7 +20,7 @@ class Asset {
     public static function create($file, int $type, string $owner_id) {
 
 
-        $content_type = image_validation_and_mime($file);
+        $content_type = image_validation_and_mime($file, $type);
 
 
         $asset_id = bin2hex(generate_uuid());
