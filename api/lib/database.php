@@ -604,19 +604,36 @@ function db_employee_new(
 }
 
 
-function db_employee_fetchall() {
+function db_employee_fetchall(string $search_term) {
     global $db;
 
 
     $query = $db->prepare(
         "SELECT `EMPLOYEES`.*, `ACCOUNTS`.email, `ASSETS`.contentType
-        FROM `EMPLOYEES` LEFT JOIN `ASSETS`
-        ON `EMPLOYEES`.avatar = `ASSETS`.assetID
-        AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
+        FROM `EMPLOYEES`
+        LEFT JOIN `ASSETS`
+            ON `EMPLOYEES`.avatar = `ASSETS`.assetID
+            AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
         JOIN `ACCOUNTS`
-        ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
+            ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
+        WHERE (
+            LOWER(`EMPLOYEES`.firstName) LIKE ?
+            OR LOWER(`EMPLOYEES`.lastName) LIKE ?
+            OR LOWER(`ACCOUNTS`.email) LIKE ?
+        )
+        LIMIT 10
         "
     );
+
+    $search = "%" . strtolower($search_term) . "%";
+
+    $query->bind_param(
+        "sss",
+        $search,
+        $search,
+        $search,
+    );
+
     $result = $query->execute();
 
     // select error
@@ -632,7 +649,7 @@ function db_employee_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_EMPLOYEES);
+        $encoded = parse_database_row($row, TABLE_EMPLOYEES, ["email"=>"string"]);
         array_push($data, $encoded);
     }
     return $data;
