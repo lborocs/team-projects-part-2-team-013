@@ -13,11 +13,11 @@ enum ASSET_TYPE {
 class Asset {
 
     public string $asset_id;
-    public string $owner_id;
+    public string $bucket_id;
     public string $content_type;
     public int $type;
 
-    public static function create($file, int $type, string $owner_id) {
+    public static function create($file, int $type, string $bucket_id) {
 
 
         $content_type = image_validation_and_mime($file, $type);
@@ -25,13 +25,13 @@ class Asset {
 
         $asset_id = bin2hex(generate_uuid());
 
-        $asset = new Asset($type, $owner_id, $asset_id, $content_type, $type);
+        $asset = new Asset($type, $bucket_id, $asset_id, $content_type, $type);
 
         if (upload_file($asset, $file, $content_type)) {
 
 
             // then insert it into the database
-            if (!db_asset_new($asset_id, $owner_id, $type, $content_type)) {
+            if (!db_asset_new($asset_id, $bucket_id, $type, $content_type)) {
 
                 // if we cant insert it into the database, delete it from the cloud
                 if (!$asset->delete()) {
@@ -53,16 +53,16 @@ class Asset {
     public static function from_db(Array $row) {
         return new Asset(
             $row["type"],
-            $row["owner_id"],
+            $row["bucket_id"],
             $row["asset_id"],
             $row["content_type"],
             $row["type"]
         );
     }
 
-    function __construct(int $type, string $owner_id, string $asset_id, string $content_type, int $asset_type) {
+    function __construct(int $type, string $bucket_id, string $asset_id, string $content_type, int $asset_type) {
         $this->type = $type;
-        $this->owner_id = $owner_id;
+        $this->bucket_id = $bucket_id;
         $this->asset_id = $asset_id;
         $this->content_type = $content_type;
         $this->type = $asset_type;
@@ -102,7 +102,7 @@ class Asset {
     public function implode_path() {
         return implode("/", [
             $this->type_to_path(),
-            $this->owner_id,
+            $this->bucket_id,
             $this->asset_id . "." . explode("/", $this->content_type)[1] // 2nd part of content type is extension
         ]);
     }
