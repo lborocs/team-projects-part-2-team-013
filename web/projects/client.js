@@ -228,7 +228,7 @@ function updateTaskState(task) {
     if (newState != state) {
         task.setAttribute("data-state", newState);
         patch_api(`/project/task.php/task/${projID}/${taskID}`, {state:newState}).then((res) => {
-            if (!res) { // 204 no content (success)
+            if (res.status == 204) { // 204 no content (success)
                 console.log(`[updateTaskState] updated task ${taskID} to state ${newState}`);
             } else {
                 console.error(`[updateTaskState] failed to update task ${taskID} to state ${newState}`);
@@ -548,19 +548,19 @@ async function renderFromBreadcrumb(locations) {
     }
 
     setActivePane("individual-project-pane");
-    let data = await get_api(`/project/project.php/project/${projID}`);
+    let res = await get_api(`/project/project.php/project/${projID}`);
 
-    if (!data.success) {
+    if (!res.success) {
 
-        if (data.data.code == 4002) { // resource not found code
+        if (res.error.code == 4002) { // resource not found code
             alert("You appear to have followed a link to a project that either does not exist or you do not have access to.")
         }
 
-        console.error(`[renderFromBreadcrumb] Error fetching project ${projID}: ${data.data.message} (${data.data.code})`);
+        console.error(`[renderFromBreadcrumb] Error fetching project ${projID}: ${res.error.message} (${res.error.code})`);
         return false;
     }
 
-    let project = data.data;
+    let project = res.data;
 
     for (let i = 0; i < projectRows.length; i++) {
         if (projectRows[i].getAttribute("data-ID") == projID) {
@@ -1056,7 +1056,7 @@ async function addTask(state) {
             );
 
             // 204 no content
-            if (!assignmentsRes) {
+            if (assignmentsRes.status == 204) {
 
                 // render task then assignments
                 taskObjectRenderAll(newTask);
@@ -1077,7 +1077,7 @@ async function addTask(state) {
             }
 
         } else {
-            let error = `${res.data.message} (${res.data.code})`
+            let error = `${res.error.message} (${res.error.code})`
             console.error("[addTask] Error creating new task : " + error);
         }
         
@@ -1388,7 +1388,7 @@ async function addProjectPopup(){
             await projectObjectRenderAndListeners(newProject);
 
         } else {
-            let error = `${res.data.message} (${res.data.code})`
+            let error = `${res.error.message} (${res.error.code})`
             console.error("Error creating new project : " + error);
         }
         
@@ -1533,7 +1533,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
             await projectObjectRenderAndListeners(newProject);
 
         } else {
-            let error = `${res.data.message} (${res.data.code})`
+            let error = `${res.error.message} (${res.error.code})`
             console.error("Error creating new project : " + error);
         }
 

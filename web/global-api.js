@@ -4,6 +4,32 @@ const DEFAULT_OPTIONS = {
     retries: 3,
 }
 
+class APIResponse {
+
+    data;
+    error;
+
+    status;
+    success;
+
+    headers;
+
+
+    constructor(status, body, headers) {
+        this.status = status;
+        this.headers = headers;
+        if (body.success) {
+            this.success = true;
+            this.data = body.data;
+        }
+        else {
+            this.success = false;
+            this.error = body.data;
+        }
+    }
+
+}
+
 //const API_BASE = "http://localhost:4444";
 const API_BASE = "https://013.team/api";
 
@@ -37,31 +63,33 @@ async function api_request(route, method, body, options={}) {
         reqInit.body = JSON.stringify(body);
     }
 
-    const response = await fetch(API_BASE + route, reqInit);
-    const status = response.status;
+    const raw_response = await fetch(API_BASE + route, reqInit);
+    const res = new APIResponse(
+        raw_response.status,
+        await raw_response.json(),
+        raw_response.headers
+    );
 
     // 204 no content has no content
-    if (response.status == 204) {
+    if (res.status == 204) {
         console.log(`[API] ${method} ${route} 204 NO CONTENT`);
-        return null;
+        return res;
     }
 
-    const data = await response.json();
-
     // if we success
-    if (data.success) {
-        console.log(`[API] ${method} ${route} ${status} ${response.statusText}`)
-        return data;
+    if (res.success) {
+        console.log(`[API] ${method} ${route} ${res.status} ${raw_response.statusText}`)
+        return res;
     }
 
     // failure
     //document.body.innerHTML = `<h1>${status} ${response.statusText}</h1><p>${data.data.message}</p><img src="https://http.cat/${status}" alt="HTTP ${status}">`;
 
 
-    const error_code = data.data.code;
-    const error_message = data.data.message;
+    const error_code = res.error.code;
+    const error_message = res.error.message;
 
-    console.error(`[API] ${method} ${route} ERRORED: ${status} - ${error_code} - ${error_message}`);
+    console.error(`[API] ${method} ${route} ERRORED: ${res.status} - ${error_code} - ${error_message}`);
 
     switch (error_code) {
         case 1004: // session expired
@@ -71,6 +99,7 @@ async function api_request(route, method, body, options={}) {
                 alert("Your session has expired, please log in again");
 
             }
+            // notice the important lack of break.
         case 1000: // not authenticated
 
             localStorage.clear();
@@ -97,7 +126,7 @@ async function api_request(route, method, body, options={}) {
                 return await api_request(route, method, body, options);
             } else {
                 console.error(`Retries exhausted: returning error message`);
-                return data;
+                return res;
             }
             break;
     
@@ -105,7 +134,7 @@ async function api_request(route, method, body, options={}) {
             break;
     }
 
-    return data;
+    return res;
 }
 
 async function get_api(route, options=DEFAULT_OPTIONS) {
