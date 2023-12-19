@@ -868,7 +868,8 @@ function db_account_fetch(string $email) {
     $query = $db->prepare(
         "SELECT `ACCOUNTS`.*, `EMPLOYEES`.isManager 
         FROM `ACCOUNTS`, `EMPLOYEES`
-        WHERE `ACCOUNTS`.email = ? AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
+        WHERE `ACCOUNTS`.email = ?
+        AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
     );
     $query->bind_param("s", $email);
     $result = $query->execute();

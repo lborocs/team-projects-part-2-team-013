@@ -30,6 +30,8 @@ class Session {
     }
 
     function encrypt() {
+        // encrypted format = user_id.hmac.iv-encrypted_session
+        // the hmac is over the iv and encrypted session
 
         $iv = random_bytes(16);
 
@@ -177,5 +179,17 @@ function auth_invalidate_account($account_id) {
     }
 }
 
+function auth_signup_validate_token(string $token) {
+    respond_not_implemented();
+}
+
+function auth_signup_create_token(string $email) {
+    // requires email is a real email and doesnt exist
+    $email = strtolower($email);
+    
+
+
+    respond_not_implemented();
+}
 
 ?>

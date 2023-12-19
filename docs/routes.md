@@ -96,15 +96,12 @@ Written/designed by aidan F223129
     ```
   - [x] PUT (renew session and discard old)
 
-- [ ] **/employee/session.php/otp**
-  - POST {"password"}
-
 - [ ] **/employee/session.php/account**
     - [ ] GET (account info)
     - [ ] PATCH {"password"} (requires otp)
 
-- [ ] **/employee/session.php/register**
-    - POST (register account)
+- [x] **/employee/session.php/register**
+    - POST (register account) {firstName:?string, lastName:string, password:string, email:string, token:string}
 
 ## meta.php
 
