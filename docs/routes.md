@@ -96,9 +96,21 @@ Written/designed by aidan F223129
     ```
   - [x] PUT (renew session and discard old)
 
-- [ ] **/employee/session.php/account**
-    - [ ] GET (account info)
-    - [ ] PATCH {"password"} (requires otp)
+- [x] **/employee/session.php/account**
+    - [x] GET (account info)
+      ```jsonc
+      {
+        "success": true,
+        "data": {
+          "email": "employee email",
+          "empID": "employee id",
+          // timestamps in seconds
+          "passwordLastChanged": 1703029106,
+          "createdAt": 1698417895
+        },
+      }
+      ```
+    - [x] PATCH {"password":string, "newPassword":string} (requires otp)
 
 - [x] **/employee/session.php/register**
     - POST (register account) {firstName:?string, lastName:string, password:string, email:string, token:string}
