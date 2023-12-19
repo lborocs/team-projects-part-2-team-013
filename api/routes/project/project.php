@@ -35,7 +35,7 @@ function r_project_fetchall_projects(RequestContext $ctx, string $args) {
 
     // managers can get all projects
     if ($ctx->session->auth_level > 1) {
-        $projects = db_project_fetchall($search_term);
+        $projects = db_project_fetchall($search_term, $ctx->session->hex_associated_user_id);
         respond_ok(
             array(
                 "projects"=>$projects,

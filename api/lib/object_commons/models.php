@@ -9,6 +9,10 @@ const TASK_VALID_STATES = [TASK_STATE_TODO, TASK_STATE_INPROGRESS, TASK_STATE_CO
 
 const TAG_COLOURS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
+const FEEDBACK_STATE_NONE = 0;
+const FEEDBACK_STATE_HELPFUL = 1;
+const FEEDBACK_VALID_STATES = [FEEDBACK_STATE_NONE, FEEDBACK_STATE_HELPFUL];
+
 
 enum NOTIFICATION_TYPE {
     const POST_UPDATE = 0;
@@ -23,9 +27,29 @@ enum TASK_UPDATE_TYPE {
 }
 
 
-// THIS MIGHT JUST BE JAVA
-// if it was java maybe i would make a not null constraint
-// and enums
+function prepend_col_prefixes(Table $table, Array $body) {
+    $prefix = $table->column_prefix;
+
+    if ($prefix === null) {
+        return $body;
+    }
+    $prefixed = [];
+
+    foreach ($body as $key => $value) {
+        $col = $table->get_column($prefix . strtoupper($key[0]) . substr($key, 1));
+
+        if ($col === null) {
+            $prefixed[$key] = $value;
+        } else {
+            $prefixed[$col->name] = $value;
+        }
+        
+    }
+    return $prefixed;
+}
+
+
+// actual OOP wizardry
 
 
 class Union {
@@ -516,8 +540,13 @@ const TABLE_EMPLOYEE_POST_META = new Table(
             "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_POSTS, _POSTID, "db_post_fetch")]
         ),
-        new Column("postMetaFeedback", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
-        new Column("postMetaSubscribed", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column(
+            "postMetaFeedback", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
+            constraints:[new RestrictedDomainConstraint(FEEDBACK_VALID_STATES)]
+        ),
+        new Column(
+            "postMetaSubscribed", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:true, is_server_generated:false
+        ),
     ],
     "meta",
     "postMeta"

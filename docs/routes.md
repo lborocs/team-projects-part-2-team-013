@@ -192,7 +192,7 @@ Written/designed by aidan F223129
     ```
 
 - [ ] **/wiki/post.php/post/:POST_ID:**
-  - [ ] PUT /post/:POST_ID:/tags
+  - [x] PUT /post/:POST_ID:/tags
     manages tags for a post {tags:[tagid1,tagid2]}
 
   - [x] GET (get individual post)
@@ -212,6 +212,10 @@ Written/designed by aidan F223129
   - [x] PATCH (modify post)
   - [ ] DELETE (delete post)
   - [x] POST (new post) {"title":string, "isTechnical":int(0/1), "content":string}
+
+- [x] **/wiki/post.php/meta/:POST_ID:**
+  - [x] GET (get post feedback and subscription)
+  - [x] PUT (overwrite post meta {subscribed:0/1, feedback:int})
 
 - [x] **/wiki/post.php/tag/:TAG_ID:**
   - [x] POST (create a new tag)

@@ -5,7 +5,7 @@ require_once("lib/assets/asset.php");
 require_once("lib/object_commons/models.php");
 
 // p: forces persistency
-// this decrease response times by over a second
+// this decreases response times by over a second
 $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 
 // generic
@@ -185,6 +185,12 @@ function create_array_binding(int $num) {
     return substr_replace(str_repeat("?, ", $num), "", -2);
 }
 
+function create_chunked_array_binding(int $chunks, int $chunk_size) {
+    return substr_replace(
+        str_repeat("(" . create_array_binding($chunk_size) . "), ", $chunks),
+        "", -2
+    );
+}
 
 function db_generic_new(Table $table, array $values, string $bind_format) {
     global $db;
@@ -388,6 +394,93 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
         array_push($data, $encoded);
     }
     return $data;
+}
+
+function db_post_meta_set(string $post_id, string $user_id, Array $body) {
+    global $db;
+
+    $bin_p_id = hex2bin($post_id);
+    $bin_u_id = hex2bin($user_id);
+
+    $subscribed = $body["postMetaSubscribed"];
+    $feedback = $body["postMetaFeedback"];
+
+    $query = $db->prepare(
+        "INSERT INTO `EMPLOYEE_POST_META` VALUES (?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE postMetaFeedback = ?, postMetaSubscribed = ?"
+    );
+
+    $query->bind_param(
+        "ssiiii",
+        $bin_u_id,
+        $bin_p_id,
+        $feedback,
+        $subscribed,
+        $feedback,
+        $subscribed,
+    );
+
+    $res = $query->execute();
+
+    if (!$res) {
+        respond_database_failure(true);
+    }
+    return $query->affected_rows > 0;
+}
+
+function db_post_meta_fetch(string $post_id, string $user_id) {
+    global $db;
+
+    $bin_p_id = hex2bin($post_id);
+    $bin_u_id = hex2bin($user_id);
+
+    $query = $db->prepare(
+        "SELECT * FROM `EMPLOYEE_POST_META` WHERE empID = ? AND postID = ?"
+    );
+    $query->bind_param("ss", $bin_u_id, $bin_p_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    // query and check we have 1 row
+    $res = $query->get_result();
+    if ($res->num_rows != 1) {
+        return false;
+    }
+    return parse_database_row($res->fetch_assoc(), TABLE_EMPLOYEE_POST_META); // row 0
+}
+
+function db_post_set_tags(string $post_id, Array $tags) {
+    global $db;
+
+    $bin_p_id = hex2bin($post_id);
+
+    $bin_tag_ids = array_merge(...array_map(function ($tag) use ($bin_p_id) {
+        return [hex2bin($tag), $bin_p_id];
+    }, $tags));
+
+
+    $delete_query = $db->prepare(
+        "DELETE FROM `POST_TAGS` WHERE postID = ?",
+    );
+    $delete_query->execute([$bin_p_id]);
+
+
+    $query = $db->prepare(
+        "INSERT INTO `POST_TAGS` VALUES " . create_chunked_array_binding(count($tags), 2)
+    );
+    $query->bind_param(
+        str_repeat("ss", count($tags)),
+        ...$bin_tag_ids
+    );
+
+    if (!$query->execute()) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
 }
 
 function db_post_accesses_add(string $emp_id, string $post_id) {
@@ -705,19 +798,36 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
     $bin_u_id = hex2bin($user_id);
 
     $query = $db->prepare(
-        "SELECT DISTINCT PROJECTS.* FROM PROJECTS, EMPLOYEE_TASKS, TASKS
-        WHERE 
-        `PROJECTS`.projectName LIKE ?
+        "SELECT DISTINCT PROJECTS.*, `PROJECT_ACCESSED`.projectAccessTime as lastAccessed FROM PROJECTS
+        LEFT JOIN `TASKS`
+            ON `TASKS`.projID = `PROJECTS`.projID
+            AND `TASKS`.taskArchived = 0
+        LEFT JOIN `EMPLOYEE_TASKS`
+            ON `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID
+            AND `TASKS`.projID = `PROJECTS`.projID
+        LEFT JOIN `PROJECT_ACCESSED`
+            ON `PROJECT_ACCESSED`.projID = `PROJECTS`.projID
+            AND `PROJECT_ACCESSED`.empID = ?
+        WHERE
+        LOWER(`PROJECTS`.projectName) LIKE ?
         AND (
             (
                 `EMPLOYEE_TASKS`.empID = ?
-                AND `TASKS`.taskArchived = 0
-                AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `TASKS`.projID = `PROJECTS`.projID
+                AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID
+                AND `TASKS`.projID = `PROJECTS`.projID
             )
             OR `PROJECTS`.projectTeamLeader = ?
-        )"
+        )
+        ORDER BY lastAccessed DESC
+        LIMIT " . SEARCH_FETCH_LIMIT
     );
-    $query->bind_param("sss", $search_term, $bin_u_id, $bin_u_id);
+    $query->bind_param(
+        "ssss",
+        $bin_u_id,
+        $search_term,
+        $bin_u_id,
+        $bin_u_id
+    );
     $query->execute();
     $res = $query->get_result();
 
@@ -727,7 +837,7 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
     
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_PROJECTS);
+        $encoded = parse_database_row($row, TABLE_PROJECTS, ["lastAccessed"=>"integer"]);
         array_push($data, $encoded);
     }
     return $data;
@@ -817,6 +927,35 @@ function db_account_insert(
 
 // projects
 
+function db_project_accesses_set(string $project_id, string $user_id) {
+    global $db;
+
+    $bin_p_id = hex2bin($project_id);
+    $bin_u_id = hex2bin($user_id);
+    $time = time();
+
+    $query = $db->prepare(
+        "INSERT INTO PROJECT_ACCESSED VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE projectAccessTime = ?"
+    );
+
+    $query->bind_param(
+        "ssii",
+        $bin_p_id,
+        $bin_u_id,
+        $time,
+        $time
+    );
+
+    $res = $query->execute();
+
+    if (DEBUG_PRINT) {error_log("setting project accessed, affected rows: " . $query->affected_rows);}
+
+    if (!$res) {
+        respond_database_failure(true);
+    }
+}
+
 function db_project_fetch(string $project_id) {
     global $db;
 
@@ -843,17 +982,29 @@ function db_project_fetch(string $project_id) {
     return parse_database_row($data, TABLE_PROJECTS);
 }
 
-function db_project_fetchall($search_term) {
+function db_project_fetchall(string $search_term, string $emp_id) {
     global $db;
 
     // like functionality and case insensitive
     $search_term = "%" . strtolower($search_term) . "%";
 
+    $bin_e_id = hex2bin($emp_id);
+
 
     $query = $db->prepare(
-        "SELECT * FROM `PROJECTS` WHERE LOWER(`PROJECTS`.projectName) LIKE ? LIMIT ". SEARCH_FETCH_LIMIT
+        "SELECT `PROJECTS`.*, `PROJECT_ACCESSED`.projectAccessTime as lastAccessed FROM `PROJECTS`
+        LEFT JOIN `PROJECT_ACCESSED` ON
+            `PROJECT_ACCESSED`.projID = `PROJECTS`.projID
+            AND `PROJECT_ACCESSED`.empID = ?
+        WHERE LOWER(`PROJECTS`.projectName) LIKE ?
+        ORDER BY lastAccessed DESC
+        LIMIT ". SEARCH_FETCH_LIMIT
     );
-    $query->bind_param("s", $search_term);
+    $query->bind_param(
+        "ss",
+        $bin_e_id,
+        $search_term
+    );
     $result = $query->execute();
 
     // select error
@@ -869,7 +1020,7 @@ function db_project_fetchall($search_term) {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_PROJECTS);
+        $encoded = parse_database_row($row, TABLE_PROJECTS, ["lastAccessed"=>"integer"]);
         array_push($data, $encoded);
     }
     return $data;
@@ -950,49 +1101,13 @@ function db_task_fetchall(string $project_id) {
     return $data;
 }
 
-function db_task_overwrite_assignments(string $task_id, array $bin_assignments) {
-    global $db;
-
-    $bin_t_id = hex2bin($task_id);
-
-    $query = $db->prepare(
-        "DELETE FROM `EMPLOYEE_TASKS` WHERE taskID = ?"
-    );
-    $query->bind_param("s", $bin_t_id);
-    $result = $query->execute();
-
-    if (!$result) {
-        respond_database_failure();
-    }
-
-    if (count($bin_assignments) == 0) {
-        return;
-    }
+function db_task_assign_bulk(string $task_id, Array $bin_employee_ids) {
+    respond_not_implemented();
+}
 
 
-    $query = $db->prepare(
-        "INSERT INTO `EMPLOYEE_TASKS` (empID, taskID) VALUES " .
-        create_array_binding(count($bin_assignments) * 2)
-    );
-
-    $flattened = [];
-
-    foreach ($bin_assignments as $item) {
-        array_push($flattened, $item);
-        array_push($flattened, $bin_t_id);
-    };
-
-    $query->bind_param(
-        str_repeat("s", count($flattened)),
-        ...$flattened
-    );
-
-    $result = $query->execute();
-
-    if (!$result) {
-        respond_database_failure(true);
-    }
-    
+function db_task_unassign_bulk(string $task_id, Array $bin_employee_ids) {
+    respond_not_implemented();
 }
 
 function db_task_fetch_assignments(string $task_id) {
@@ -1175,6 +1290,7 @@ function db_notifications_fetch($employee_id) {
             )
         LEFT JOIN `TASKS` ON
             `TASKS`.taskID = `TASK_UPDATE`.taskID
+        ORDER BY `NOTIFICATIONS`.notificationTime DESC
         "
     );
 
@@ -1235,6 +1351,34 @@ function db_task_updates_add(string $notification_id, string $task_id, ?string $
         respond_database_failure();
     }
     
+}
+
+function db_task_updates_add_bulk(string $notification_id, Array $fields) {
+    global $db;
+
+    $bin_n_id = hex2bin($notification_id);
+
+    $bin_fields = array_merge(...array_map(function ($field) use ($bin_n_id) {
+
+        return [$bin_n_id, hex2bin($field[0]), hex2bin($field[1]), $field[2]];
+    }, $fields));
+
+    $len = count($bin_fields);
+    $query = "
+    INSERT INTO `TASK_UPDATE` VALUES
+    " . create_chunked_array_binding($len, 4);
+
+    $query = $db->prepare($query);
+    $query->bind_param(
+        str_repeat("sssi", $len),
+        ...$bin_fields
+    );
+
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
 }
 
 function db_notification_create(int $type) {

@@ -62,7 +62,7 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
 
     // ensure the every body field corresponds to a valid model field
     if ($ctx->method_allows_body()) {
-        _ensure_body_validity($model, $ctx->request_body);
+        _ensure_body_validity($model, $ctx);
     }
 
     foreach ($method_checks[$ctx->request_method] as $check) {
@@ -91,10 +91,11 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
             }
 
             $field = $column->name;
-
+            $common = _get_common_name($column, $field);
+            
             if (!array_key_exists($field ,$ctx->request_body)) {
                 respond_bad_request(
-                    "Expected field $field to be set",
+                    "Expected field $common to be set",
                     ERROR_BODY_MISSING_REQUIRED_FIELD
                 );
             }
@@ -136,7 +137,10 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
 
 }
 
-function _ensure_body_validity(Table $model, array $body) {
+function _ensure_body_validity(Table $model, RequestContext $ctx) {
+    $ctx->request_body = prepend_col_prefixes($model, $ctx->request_body);
+    $body = $ctx->request_body;
+
     // this function ensures that every field in the body
     // is a valid field in the model
     // it also checks the types and parses ids
@@ -350,6 +354,7 @@ function _delete_project(RequestContext $ctx, array $url_specifiers) {
 }
 
 function _fetch_project(RequestContext $ctx, array $url_specifiers) {
+    db_project_accesses_set($ctx->project["projID"], $ctx->session->hex_associated_user_id);
     respond_ok($ctx->project);
 }
 

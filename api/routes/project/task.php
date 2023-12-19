@@ -74,10 +74,12 @@ function r_task_assignments(RequestContext $ctx, string $args) {
 
     // ensure task exists
     object_check_task_exists($ctx, $resource_specifiers);
+
+    $task_id = $resource_specifiers[1];
     
     if ($ctx->request_method == "GET") {
         respond_ok(array(
-            "assignments"=>db_task_fetch_assignments($resource_specifiers[1])
+            "assignments"=>db_task_fetch_assignments($task_id)
         ));
     }
     else if ($ctx->request_method == "PUT") {
@@ -93,6 +95,7 @@ function r_task_assignments(RequestContext $ctx, string $args) {
         }
 
         // convert assignments to binary
+        $assignments = array_unique($assignments);
         $bin_assignments = array_map(
             function($id) {
 
@@ -110,6 +113,8 @@ function r_task_assignments(RequestContext $ctx, string $args) {
             $assignments
         );
 
+
+
         if (count($assignments) > 0) {
 
             $fetched = db_employee_fetch_by_ids($bin_assignments);
@@ -124,11 +129,42 @@ function r_task_assignments(RequestContext $ctx, string $args) {
         }
 
 
-        db_task_overwrite_assignments($resource_specifiers[1], $bin_assignments);
+        // todo:
+        // assigned = fetch_current_assignments
+
+        $current_assignments = db_task_fetch_assignments($task_id);
+
+
+        // to_assign = assignments - fetched
+
+        $to_assign = array_diff($assignments, $current_assignments);
+    
+        // to_unassign = fetched - assignments
+
+        $to_unassign = array_diff($current_assignments, $assignments);
+
+        // unassign(to_unassigned)
+        // db_assign(to_assign)
+
+        if (count($to_unassign) > 0) {
+            db_task_unassign_bulk($task_id, $to_unassign);
+
+
+            notification_task_unassigned_bulk($task_id, $to_unassign);
+        }
+
+        if (count($to_assign) > 0) {
+            db_task_assign_bulk($task_id, $to_assign);
+        }
+
+        // dispatch notification assigned
+        // dispatch notification unassigned
+
+
+        respond_not_implemented();
 
         respond_no_content();
     }
-    
 
 }
 
