@@ -10,6 +10,13 @@ enum ASSET_TYPE {
     const PROJECT_ICON = 3;
 }
 
+class AssetException extends Exception {
+    public function __construct($message, $code) {
+        parent::__construct($message, $code);
+    }
+
+}
+
 class Asset {
 
     public string $asset_id;
@@ -17,10 +24,15 @@ class Asset {
     public string $content_type;
     public int $type;
 
-    public static function create($file, int $type, string $bucket_id) {
+    // the following function must not end execution when provided a mime
+    public static function create($file, int $type, string $bucket_id, string $pre_validated_mime=null) {
 
 
-        $content_type = image_validation_and_mime($file, $type);
+        if ($pre_validated_mime !== null) {
+            $content_type = $pre_validated_mime;
+        } else {
+            $content_type = image_validation_and_mime($file, $type);
+        }
 
 
         $asset_id = bin2hex(generate_uuid());
@@ -37,35 +49,33 @@ class Asset {
                 if (!$asset->delete()) {
                     // if we cant delete it from the cloud, then we have a problem
                     error_log("Failed to delete asset from cloud follwing db insertion error: " . $asset->implode_path());
-                    respond_infrastructure_error("Failed to delete asset from cloud following db insertion error", ERROR_CLOUD_UPLOAD_FAILED);
+                    throw new AssetException("Failed to delete asset from cloud following db insertion error", ERROR_CLOUD_UPLOAD_FAILED);
                 
                 } else {
                     error_log("Failed to insert asset into database - deleted it from the cloud: " . $asset->implode_path());
-                    respond_database_failure(true);
+                    throw new AssetException("Failed to insert asset into database - deleted it from the cloud", ERROR_DB_INSERTION_FAILED);
                 }
             }
             return $asset;
         } else {
-            respond_infrastructure_error("Failed to upload file to cloud", ERROR_CLOUD_UPLOAD_FAILED);
+            throw new AssetException("Failed to upload file to cloud", ERROR_CLOUD_UPLOAD_FAILED);
         }
     }
 
     public static function from_db(Array $row) {
         return new Asset(
-            $row["type"],
-            $row["bucket_id"],
-            $row["asset_id"],
+            $row["assetType"],
+            $row["bucketID"],
+            $row["assetID"],
             $row["content_type"],
-            $row["type"]
         );
     }
 
-    function __construct(int $type, string $bucket_id, string $asset_id, string $content_type, int $asset_type) {
+    function __construct(int $type, string $bucket_id, string $asset_id, string $content_type) {
         $this->type = $type;
         $this->bucket_id = $bucket_id;
         $this->asset_id = $asset_id;
         $this->content_type = $content_type;
-        $this->type = $asset_type;
     }
 
     public function delete() {
@@ -76,13 +86,13 @@ class Asset {
             // if we succeed, delete from database
             if (!db_asset_delete($this->asset_id)) {
                 error_log("Failed to delete asset from database following cloud deletion: " . $this->implode_path());
-                respond_database_failure(false);
+                throw new AssetException("Failed to delete asset from database following cloud deletion", ERROR_DB_GENERAL_FAILURE);
             } else {
                 return true;
             }
         } else {
             error_log("Failed to delete asset from cloud: " . $this->implode_path());
-            respond_infrastructure_error("Failed to delete asset from cloud", ERROR_CLOUD_DELETE_FAILED);
+            throw new AssetException("Failed to delete asset from cloud", ERROR_CLOUD_DELETE_FAILED);
         }
     }
 
@@ -105,6 +115,30 @@ class Asset {
             $this->bucket_id,
             $this->asset_id . "." . explode("/", $this->content_type)[1] // 2nd part of content type is extension
         ]);
+    }
+
+    public static function from_multiple_bytes(Array $files, int $type) {
+
+        $types = [];
+
+        foreach ($files as $file) {
+            array_push($types, image_validation_and_mime($file, $type));
+        }
+
+        $assets = [];
+
+        try {
+            foreach ($files as $index => $file) {
+                array_push($assets, Asset::create($file, $type, $types[$index]));
+            }
+        } catch (AssetException $e) {
+            foreach ($assets as $asset) {
+                try {$asset->delete();} catch (AssetException $e) {}
+            }
+            throw $e;
+        }
+    
+        return $assets;
     }
 
 }
