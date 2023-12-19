@@ -339,7 +339,7 @@ const TABLE_POSTS = new Table(
             constraints:[new ContentLengthConstraint(4, 65535)]
         ),
         new Column(
-            "postAuthor", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            "postAuthor", is_primary_key:false, type:"binary", is_nullable:true, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
         new Column("postCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
