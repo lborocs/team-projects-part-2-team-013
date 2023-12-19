@@ -20,6 +20,48 @@ function auth_session_issue_new($account) {
     return $new_session->encrypt();
 }
 
+function validate_password_constraints(string $password, Array $banned_words) {
+    if (ACCOUNT_PASSWORD_MIN_LENGTH > strlen($password) || strlen($password) > ACCOUNT_PASSWORD_MAX_LENGTH) {
+        respond_bad_request(
+            "Expected password to be between ". ACCOUNT_PASSWORD_MIN_LENGTH ." and ". ACCOUNT_PASSWORD_MAX_LENGTH ." bytes",
+            ERROR_BODY_FIELD_INVALID_DATA
+        );
+    }
+
+    if (strtoupper($password) == $password || strtolower($password) == $password) {
+        respond_bad_request(
+            "Expected password to contain at least one uppercase and lowercase letter",
+            ERROR_BODY_FIELD_INVALID_DATA
+        );
+    }
+
+    if (!preg_match("/[0-9]/", $password)) {
+        respond_bad_request(
+            "Expected password to contain at least one number",
+            ERROR_BODY_FIELD_INVALID_DATA
+        );
+    }
+
+    if (!preg_match(PASSWORD_SPECIAL_CHARS_REGEX, $password)) {
+        respond_bad_request(
+            "Expected password to contain at least one special character",
+            ERROR_BODY_FIELD_INVALID_DATA
+        );
+    }
+
+    $_lower_password = strtolower($password);
+    foreach ($banned_words as $banned_word) {
+        if (strpos($_lower_password, strtolower($banned_word)) !== false) {
+            respond_bad_request(
+                "Expected password to not contain any banned words (". $banned_word .")",
+                ERROR_BODY_FIELD_INVALID_DATA
+            );
+        }
+    }
+    unset($_lower_password);
+
+}
+
 function r_session_login(RequestContext $ctx, string $args) {
     $ctx->body_require_fields_as_types(
         [
@@ -85,49 +127,8 @@ function r_session_register(RequestContext $ctx, string $args) {
         );
     }
 
-    if (ACCOUNT_PASSWORD_MIN_LENGTH > strlen($password) || strlen($password) > ACCOUNT_PASSWORD_MAX_LENGTH) {
-        respond_bad_request(
-            "Expected field password to be between ". ACCOUNT_PASSWORD_MIN_LENGTH ." and ". ACCOUNT_PASSWORD_MAX_LENGTH ." bytes",
-            ERROR_BODY_FIELD_INVALID_DATA
-        );
-    }
-
-    if (strtoupper($password) == $password || strtolower($password) == $password) {
-        respond_bad_request(
-            "Expected field password to contain at least one uppercase and lowercase letter",
-            ERROR_BODY_FIELD_INVALID_DATA
-        );
-    }
-
-    if (!preg_match("/[0-9]/", $password)) {
-        respond_bad_request(
-            "Expected field password to contain at least one number",
-            ERROR_BODY_FIELD_INVALID_DATA
-        );
-    }
-
-    if (!preg_match(PASSWORD_SPECIAL_CHARS_REGEX, $password)) {
-        respond_bad_request(
-            "Expected field password to contain at least one special character",
-            ERROR_BODY_FIELD_INVALID_DATA
-        );
-    }
-
-
-    // ban the first name, last name, and first part of the email
     $banned_words = array_merge(PASSWORD_BANNED_PHRASES, [$first_name, $last_name, explode($email, "@")[0]]);
-
-    $_lower_password = strtolower($password);
-    foreach ($banned_words as $banned_word) {
-        if (strpos($_lower_password, strtolower($banned_word)) !== false) {
-            respond_bad_request(
-                "Expected field password to not contain any banned words (". $banned_word .")",
-                ERROR_BODY_FIELD_INVALID_DATA
-            );
-        }
-    }
-    unset($_lower_password);
-
+    validate_password_constraints($password, $banned_words);
     
     // check token
     // if (strtolower($email) !== auth_signup_validate_token($ctx->request_body["token"])) {
@@ -192,20 +193,52 @@ function r_session_session(RequestContext $ctx, string $args) {
     }
     
     
-};  
-
-function r_session_otp(RequestContext $ctx, string $args) {
-    $ctx->body_require_fields(["password"]);
-}
+};
 
 function r_session_account(RequestContext $ctx, string $args) {
     // PATCH to edit the current users account
+
+    $account = db_account_fetch_by_id($ctx->session->hex_associated_user_id);
+
     if ($ctx->request_method == "PATCH") {
-        $ctx->body_require_fields(["password", "otp"]);
+        $ctx->body_require_fields_as_types([
+            "password"=>"string",
+            "newPassword"=>"string",
+        ]);
+
+        $password = $ctx->request_body["password"];
+        $new_password = $ctx->request_body["newPassword"];
+
+        $employee = db_employee_fetch($account["empID"]);
+
+        $banned_words = array_merge(PASSWORD_BANNED_PHRASES, [$employee["firstName"], $employee["lastName"], explode($account["email"], "@")[0]]);
+        validate_password_constraints($new_password, $banned_words);
+
+        if (!password_verify($password, $account["passwordHash"])) {
+            respond_bad_request(
+                "Password is incorrect",
+                ERROR_LOGIN_DETAILS_INCORRECT
+            );
+        }
+
+
+        db_account_password_change(
+            $ctx->session->hex_associated_user_id,
+            hash_pass($new_password)
+        );
+
+        auth_invalidate_account($ctx->session->hex_associated_user_id);
+        respond_no_content();
+        
     }
     // GET to return the current users account
     else if ($ctx->request_method == "GET") {
-
+        respond_ok(array(
+            "email"=>$account["email"],
+            "empID"=>$account["empID"],
+            "passwordLastChanged"=>$account["passwordLastChanged"],
+            "createdAt"=>$account["createdAt"],
+        ));
     } 
 }
 

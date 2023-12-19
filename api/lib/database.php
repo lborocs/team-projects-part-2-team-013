@@ -908,7 +908,7 @@ function db_account_fetch_by_id(string $hex_id) {
     if ($res->num_rows != 1) {
         return false;
     }
-    return $res->fetch_assoc(); // row 0
+    return parse_database_row($res->fetch_assoc(), TABLE_ACCOUNTS);
 }
 
 function db_account_insert(
@@ -940,7 +940,32 @@ function db_account_insert(
         respond_database_failure(true);
     }
 
+}
 
+function db_account_password_change(string $user_id, string $new_password_hash) {
+    global $db;
+
+    $bin_e_id = hex2bin($user_id);
+    $updated_at = time();
+
+    $query = $db->prepare(
+        "UPDATE `ACCOUNTS` SET `passwordHash` = ?, `passwordLastChanged` = ? WHERE `empID` = ?"
+    );
+
+    $query->bind_param(
+        "sis",
+        $new_password_hash,
+        $updated_at,
+        $bin_e_id
+    );
+
+    $res = $query->execute();
+
+    if (!$res) {
+        respond_database_failure(true);
+    }
+    
+    return $query->affected_rows > 0;
 }
 
 // projects

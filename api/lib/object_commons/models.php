@@ -321,6 +321,20 @@ CONST TABLE_EMPLOYEES = new Table(
     null
 );
 
+const TABLE_ACCOUNTS = new Table(
+    "`ACCOUNTS`",
+    [],
+    [
+        _EMPID,
+        new Column("email", is_primary_key:false, type:"string", is_nullable:false, is_editable:false, is_server_generated:false),
+        new Column("passwordHash", is_primary_key:false, type:"string", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("accountCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("passwordLastChanged", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+    ],
+    "account",
+    "account"
+);
+
 const _POSTID = new Column(
     "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true, dont_friendly_name:true
 );
