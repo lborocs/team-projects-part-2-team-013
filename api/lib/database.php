@@ -798,20 +798,28 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
     $bin_u_id = hex2bin($user_id);
 
     $query = $db->prepare(
-        "SELECT DISTINCT PROJECTS.* FROM PROJECTS, EMPLOYEE_TASKS, TASKS, `PROJECT_ACCESSED`.projectAccessTime as lastAccessed
+        "SELECT DISTINCT PROJECTS.*, `PROJECT_ACCESSED`.projectAccessTime as lastAccessed FROM PROJECTS
+        LEFT JOIN `TASKS`
+            ON `TASKS`.projID = `PROJECTS`.projID
+            AND `TASKS`.taskArchived = 0
+        LEFT JOIN `EMPLOYEE_TASKS`
+            ON `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID
+            AND `TASKS`.projID = `PROJECTS`.projID
+        LEFT JOIN `PROJECT_ACCESSED`
+            ON `PROJECT_ACCESSED`.projID = `PROJECTS`.projID
+            AND `PROJECT_ACCESSED`.empID = ?
         WHERE
         LOWER(`PROJECTS`.projectName) LIKE ?
-        AND `PROJECT_ACCESSED`.empID = ?
-        AND `PROJECTS`.projID = `PROJECT_ACCESSED`.projID
         AND (
             (
                 `EMPLOYEE_TASKS`.empID = ?
-                AND `TASKS`.taskArchived = 0
-                AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `TASKS`.projID = `PROJECTS`.projID
+                AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID
+                AND `TASKS`.projID = `PROJECTS`.projID
             )
             OR `PROJECTS`.projectTeamLeader = ?
-        ) 
-        "
+        )
+        ORDER BY lastAccessed DESC
+        LIMIT " . SEARCH_FETCH_LIMIT
     );
     $query->bind_param(
         "ssss",
