@@ -5,7 +5,7 @@ require_once("lib/assets/asset.php");
 require_once("lib/object_commons/models.php");
 
 // p: forces persistency
-// this decrease response times by over a second
+// this decreases response times by over a second
 $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
 
 // generic
@@ -798,9 +798,11 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
     $bin_u_id = hex2bin($user_id);
 
     $query = $db->prepare(
-        "SELECT DISTINCT PROJECTS.* FROM PROJECTS, EMPLOYEE_TASKS, TASKS
-        WHERE 
-        `PROJECTS`.projectName LIKE ?
+        "SELECT DISTINCT PROJECTS.* FROM PROJECTS, EMPLOYEE_TASKS, TASKS, `PROJECT_ACCESSED`.projectAccessTime as lastAccessed
+        WHERE
+        LOWER(`PROJECTS`.projectName) LIKE ?
+        AND `PROJECT_ACCESSED`.empID = ?
+        AND `PROJECTS`.projID = `PROJECT_ACCESSED`.projID
         AND (
             (
                 `EMPLOYEE_TASKS`.empID = ?
@@ -808,9 +810,16 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
                 AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `TASKS`.projID = `PROJECTS`.projID
             )
             OR `PROJECTS`.projectTeamLeader = ?
-        )"
+        ) 
+        "
     );
-    $query->bind_param("sss", $search_term, $bin_u_id, $bin_u_id);
+    $query->bind_param(
+        "ssss",
+        $bin_u_id,
+        $search_term,
+        $bin_u_id,
+        $bin_u_id
+    );
     $query->execute();
     $res = $query->get_result();
 
@@ -820,7 +829,7 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
     
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_PROJECTS);
+        $encoded = parse_database_row($row, TABLE_PROJECTS, ["lastAccessed"=>"integer"]);
         array_push($data, $encoded);
     }
     return $data;
@@ -932,6 +941,8 @@ function db_project_accesses_set(string $project_id, string $user_id) {
 
     $res = $query->execute();
 
+    if (DEBUG_PRINT) {error_log("setting project accessed, affected rows: " . $query->affected_rows);}
+
     if (!$res) {
         respond_database_failure(true);
     }
@@ -963,17 +974,29 @@ function db_project_fetch(string $project_id) {
     return parse_database_row($data, TABLE_PROJECTS);
 }
 
-function db_project_fetchall($search_term) {
+function db_project_fetchall(string $search_term, string $emp_id) {
     global $db;
 
     // like functionality and case insensitive
     $search_term = "%" . strtolower($search_term) . "%";
 
+    $bin_e_id = hex2bin($emp_id);
+
 
     $query = $db->prepare(
-        "SELECT * FROM `PROJECTS` WHERE LOWER(`PROJECTS`.projectName) LIKE ? LIMIT ". SEARCH_FETCH_LIMIT
+        "SELECT `PROJECTS`.*, `PROJECT_ACCESSED`.projectAccessTime as lastAccessed FROM `PROJECTS`
+        LEFT JOIN `PROJECT_ACCESSED` ON
+            `PROJECT_ACCESSED`.projID = `PROJECTS`.projID
+            AND `PROJECT_ACCESSED`.empID = ?
+        WHERE LOWER(`PROJECTS`.projectName) LIKE ?
+        ORDER BY lastAccessed DESC
+        LIMIT ". SEARCH_FETCH_LIMIT
     );
-    $query->bind_param("s", $search_term);
+    $query->bind_param(
+        "ss",
+        $bin_e_id,
+        $search_term
+    );
     $result = $query->execute();
 
     // select error
@@ -989,7 +1012,7 @@ function db_project_fetchall($search_term) {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_PROJECTS);
+        $encoded = parse_database_row($row, TABLE_PROJECTS, ["lastAccessed"=>"integer"]);
         array_push($data, $encoded);
     }
     return $data;
