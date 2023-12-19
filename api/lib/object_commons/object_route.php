@@ -358,55 +358,6 @@ function _fetch_project(RequestContext $ctx, array $url_specifiers) {
     respond_ok($ctx->project);
 }
 
-// posts
-
-function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
-    $author_id = $ctx->session->hex_associated_user_id;
-
-    $postID = generate_uuid();
-    $title = $body["postTitle"];
-    $content = $body["postContent"];
-    $createdBy = hex2bin($author_id);
-    $createdAt = time();
-    $isTechnical = $body["postIsTechnical"];
-
-    if (db_generic_new(
-        TABLE_POSTS ,
-        [
-            $postID,
-            $title,
-            $content,
-            $createdBy,
-            $createdAt,
-            $isTechnical
-        ],
-        "sssssi"
-    )) {
-
-        $body["postID"] = $postID;
-        $body["postAuthor"] = $createdBy;
-        $body["postCreatedAt"] = $createdAt;
-
-        respond_ok(parse_database_row($body, TABLE_POSTS));
-    } else {
-        respond_internal_error(ERROR_DB_INSERTION_FAILED);
-    }
-}
-
-function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
-    notification_post_edited($url_specifiers[0], $ctx->session->hex_associated_user_id);
-    _use_common_edit(TABLE_POSTS, $body, $url_specifiers);
-}
-
-function _delete_post(RequestContext $ctx, array $url_specifiers) {
-    respond_not_implemented();
-}
-
-function _fetch_post(RequestContext $ctx, array $url_specifiers) {
-    db_post_accesses_add($ctx->session->hex_associated_user_id, $ctx->post["postID"]);
-    respond_ok($ctx->post);
-}
-
 // personals
 
 function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) {
@@ -450,39 +401,6 @@ function _delete_personal(RequestContext $ctx, array $url_specifiers) {
 function _fetch_personal(RequestContext $ctx, array $url_specifiers) {
 
     respond_ok($ctx->personal);
-}
-
-// tags
-
-function _new_tag(RequestContext $ctx, array $body, array $url_specifiers) {
-
-    $name = $body["tagName"];
-    $colour = $body["tagColour"];
-
-    $tagID = generate_uuid();
-
-    if (db_generic_new(
-        TABLE_TAGS ,
-        [
-            $tagID,
-            $name,
-            $colour
-        ],
-        "sss"
-    )) {
-        $body["tagID"] = $tagID;
-        respond_ok(parse_database_row($body, TABLE_TAGS));
-    } else {
-        respond_internal_error(ERROR_DB_INSERTION_FAILED);
-    }
-}
-
-function _delete_tag(RequestContext $ctx, array $url_specifiers) {
-    if (db_tag_delete($url_specifiers[0])) {
-        respond_no_content();
-    } else {
-        respond_resource_not_found("tag ". $url_specifiers[0]);
-    }
 }
 
 ?>
