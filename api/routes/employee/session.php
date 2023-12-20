@@ -13,7 +13,7 @@ function auth_session_issue_new($account) {
     // id must be 32bits for serialisation
     $new_session = new Session(
         bin2hex(generate_uuid()),
-        bin2hex($account["empID"]),
+        $account["empID"],
         $account["isManager"] + 1,
         time()
     );
