@@ -157,8 +157,8 @@ Written/designed by aidan F223129
   - [x] DELETE (delete task)
 
 - [x] **/project/task.php/assignments/:PROJECT_ID:/:TASK_ID:**
-  - [ ] GET (get assignments for a task)
-  - [ ] PUT (overwrite task assignments) {assignments:[empid1, empid2]}
+  - [x] GET (get assignments for a task)
+  - [x] PUT (overwrite task assignments) {assignments:[empid1, empid2]}
     ```jsonc
     {
       "success":true,
