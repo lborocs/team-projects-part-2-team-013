@@ -69,7 +69,7 @@ let postList = document.querySelectorAll('.post');
 function setUpPostsEventListeners() {
     postList = document.querySelectorAll('.post');
     postList.forEach((post) => {
-        post.querySelector(".delete").addEventListener("click", (event) => {
+        post.querySelector("#trash").addEventListener("click", (event) => {
             event.stopPropagation();
             confirmDelete().then(() => {
                 post.remove();
@@ -78,6 +78,11 @@ function setUpPostsEventListeners() {
             });
         });
 
+        post.querySelector("#edit").addEventListener("click", (event) => {
+            event.stopPropagation();
+            let postID = post.getAttribute("data-postID")
+            window.location.href = `/wiki/edit/#${postID}`;
+        });
         post.addEventListener("click", () => {
             let postID = post.getAttribute("data-postID")
             console.log("Post clicked")
@@ -116,10 +121,11 @@ function renderPost(postID, title, author, isTechnical) {
             <div class="tag" name="${tag2}"><i class="fa-solid fa-tag"></i>
                 ${tag2}
             </div>
-            <div class="delete manager-only">
-                <i class="fa-regular fa-trash-can"></i>
+            <div class="postIcons manager-only">
+                <i id="trash" class="fa-regular fa-trash-can"></i>
+                <i id="edit" class="fa-regular fa-edit"></i>
             </div>
-        </div>
+            <div>
     `;
 
     post.setAttribute("data-postID", postID)
