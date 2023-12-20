@@ -883,7 +883,7 @@ function db_account_fetch(string $email) {
     if ($res->num_rows != 1) {
         return false;
     }
-    return $res->fetch_assoc(); // row 0
+    return parse_database_row($res->fetch_assoc(), TABLE_ACCOUNTS,["isManager"=>"boolean"]); // row 0
 }
 
 function db_account_fetch_by_id(string $hex_id) {
@@ -908,7 +908,7 @@ function db_account_fetch_by_id(string $hex_id) {
     if ($res->num_rows != 1) {
         return false;
     }
-    return parse_database_row($res->fetch_assoc(), TABLE_ACCOUNTS);
+    return parse_database_row($res->fetch_assoc(), TABLE_ACCOUNTS,["isManager"=>"boolean"]);
 }
 
 function db_account_insert(
@@ -1160,8 +1160,9 @@ function db_task_fetch_assignments(string $task_id) {
 
     $query = $db->prepare(
         "SELECT `EMPLOYEE_TASKS`.* FROM `TASKS`, `EMPLOYEE_TASKS`
-        WHERE `EMPLOYEE_TASKS.`taskID = `TASKS`.taskID AND
-        `TASKS`.taskArchived = 0
+        WHERE
+        `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID
+        AND `TASKS`.taskArchived = 0
         AND `TASKS`.taskID = ?
         "
     );
