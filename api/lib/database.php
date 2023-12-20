@@ -535,13 +535,17 @@ function db_post_accesses_fetchall() {
 }
 
 
-function db_post_fetch(string $hex_post_id) {
+function db_post_fetch(string $hex_post_id, string $fetcher_id) {
     global $db;
 
-    $bin_id = hex2bin($hex_post_id);
+    $bin_fetcher_id = hex2bin($fetcher_id);
+    $bin_post_id = hex2bin($hex_post_id);
 
     $query = $db->prepare(
-        "SELECT `POSTS`.*, `EMPLOYEES`.*, `ASSETS`.contentType, GROUP_CONCAT(`TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
+        "SELECT `POSTS`.*, `EMPLOYEES`.*, `ASSETS`.contentType,
+        GROUP_CONCAT(`TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+        `EMPLOYEE_POST_META`.postMetaFeedback as feedback,
+        `EMPLOYEE_POST_META`.postMetaSubscribed as subscribed
         FROM `POSTS`
         JOIN `EMPLOYEES`
             ON `POSTS`.postAuthor = `EMPLOYEES`.empID
@@ -552,11 +556,17 @@ function db_post_fetch(string $hex_post_id) {
             ON `POSTS`.postID = `POST_TAGS`.postID
         LEFT JOIN `TAGS` 
             ON `POST_TAGS`.tagID = `TAGS`.tagID
+        LEFT JOIN `EMPLOYEE_POST_META`
+            ON `EMPLOYEE_POST_META`.postID = `POSTS`.postID
+            AND `EMPLOYEE_POST_META`.empID = ?
         WHERE POSTS.postID = ?
         GROUP BY `POSTS`.postID
         "
     );
-    $query->bind_param("s", $bin_id);
+    $query->bind_param("ss",
+        $bin_fetcher_id,
+        $bin_post_id
+);
     $result = $query->execute();
 
     if (!$result) {
@@ -570,7 +580,7 @@ function db_post_fetch(string $hex_post_id) {
     }
     $post = $res->fetch_assoc(); // row 0
 
-    return parse_database_row($post, TABLE_POSTS, ["tags"=>"a-binary"]);
+    return parse_database_row($post, TABLE_POSTS, ["tags"=>"a-binary", "subscribed"=>"integer", "feedback"=>"integer"]);
 }
 
 
