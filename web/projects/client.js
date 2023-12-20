@@ -905,7 +905,6 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
                 </div>
             </div>
         </td>
-        <td>${date}</td>
         <td>
             <div class="name-card">
                 <div class="icon">
@@ -916,6 +915,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
                 </div>
             </div>
         </td>
+        <td>${date}</td>
         <td>
             Not implemented
         </td>
