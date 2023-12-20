@@ -413,7 +413,7 @@ export async function clearStorages() {
 export async function getEmployeeNotifications() {
     const data = await get_api("/employee/meta.php/notifications");
     if (data.success) {
-        console.log(console.log(`[getEmployeeNotifications] notifications found`));
+        console.log(`[getEmployeeNotifications] notifications found`);
         return data.data.notifications;
     } else {
         console.error("[getEmployeeNotifications] FAILED TO GET NOTIFICATIONS");
@@ -425,49 +425,82 @@ export function renderNotifications(notifications) {
     let popoverContent = '';
 
     notifications.forEach(notification => {
-        //decides the icon based on the type of notification
-        let icon;
-        switch (notification.type) {
-            case 0:
-                icon = "add_box";
+        console.log(notification)
+        let icon = ""
+        let link = "https://www.google.com"
+        let name = "Not Implemented"
+        let avatar = "#"
+        switch(notification.type) {
+            case 0: // post they are following has been edited
+                icon = "edit_note";
+                popoverContent += `
+                    <a class="notification-card" href="${link}">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                ${icon}
+                            </span>
+                        </div>
+                        <div class="details">
+                            <div class="name-card">
+                                <img src="${avatar}" class="avatar">
+                                <span>${name}</span>
+                            </div>
+                            <div class="text">${notification.eventID}</div>
+                        </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                open_in_new
+                            </span>
+                        </div>
+                    </a>
+                `;
                 break;
-            case 1:
-                icon = "edit";
+            case 1: // task they are involved in has been updated in some way
+                switch(notification.body.detail) {
+                    case 0: // task has been created
+                        icon = "add_task";
+                        break;
+                    case 1: // task has been updated
+                        icon = "change_circle";
+                        break;
+                    case 2: // task has been assigned to you
+                        icon = "person_add";
+                        break;
+                    case 3: // task has been unassigned to you
+                        icon = "person_remove";
+                        break;
+                    default: // unknown
+                        icon = "question_mark";
+                }
+                popoverContent += `
+                    <a class="notification-card" href="${link}">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                ${icon}
+                            </span>
+                        </div>
+                        <div class="details">
+                            <div class="name-card">
+                                <img src="${avatar}" class="avatar">
+                                <span>${name}</span>
+                            </div>
+                            <div class="text">${notification.eventID}</div>
+                        </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                open_in_new
+                            </span>
+                        </div>
+                    </a>
+                `;
                 break;
-            case 2:
-                icon = "assignment_add";
-                break;
-            default:
-                icon = "notifications";
-                break;
+                
+            default: // unknown
+                icon = "question_mark";
+
         }
 
-        //these are placeholders for now
-        let link = `https://www.google.com`
-        let avatar = `#`
-        let name = "not implemented"
-
-        popoverContent += `
-            <a class="notification-card" href="${link}">
-                <div class="icon">
-                    <span class="material-symbols-rounded">
-                        ${icon}
-                    </span>
-                </div>
-                <div class="details">
-                    <div class="name-card">
-                        <img src="${avatar}" class="avatar">
-                        <span>${name}</span>
-                    </div>
-                    <div class="text">${notification.body.detail}</div>
-                </div>
-                <div class="arrow">
-                    <span class="material-symbols-rounded">
-                        open_in_new
-                    </span>
-                </div>
-            </a>
-        `;
+        
     });
 
     notificationsButton.querySelector('.popover-content').innerHTML = `<div class="title">Activity</div>`
