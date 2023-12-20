@@ -505,7 +505,7 @@ function db_post_accesses_fetchall() {
     global $db;
     $epoch = time() - POST_ACCESS_DELTA;
     $query = $db->prepare(
-        "SELECT empID, postID, COUNT(timeAccessed) as views 
+        "SELECT empID, postID, COUNT(postViewAccessedAt) as views 
         FROM POST_VIEWS WHERE postViewAccessedAt > ?
         GROUP BY empID, postID
         ORDER BY views DESC
@@ -527,7 +527,7 @@ function db_post_accesses_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_POST_VIEWS);
+        $encoded = parse_database_row($row, TABLE_POST_VIEWS, ["views"=>"integer"]);
         array_push($data, $encoded);
     }
     return $data;
