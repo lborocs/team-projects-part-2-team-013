@@ -178,6 +178,7 @@ body {
 
 .post {
     display: flex;
+    position: relative;
     flex-direction: column;
     justify-content: flex-start;
     padding: 0.75em;
@@ -412,11 +413,10 @@ input[type="radio"] + label {
 }
 
 
-.delete {
+.postIcons {
     font-size: 1.1em;
     color: #494b4e;
     z-index: 1;
-    aspect-ratio: 1;
     border-radius: 4px;
     margin-left: auto;
     margin-right: 0.5em;
@@ -424,11 +424,29 @@ input[type="radio"] + label {
 
 }
 
-.delete:hover {
-    color: #f44336;
+.postIcons:hover {
     cursor: pointer;
-    background-color: #f6f6f6;
     transition: 0.1s ease-out;
+}
+
+#edit{
+    position: absolute;
+    top: 1em;
+    right: 1em;
+}
+
+#trash{
+    position: absolute;
+    bottom: 0.9em;
+    right: 1.2em;
+}
+
+#trash:hover{
+    color: #f44336;
+}
+
+#edit:hover{
+    color: orange;
 }
 
 input[type="text"]:focus {
