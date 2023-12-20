@@ -156,6 +156,19 @@ Written/designed by aidan F223129
       {"title":string, "description":string?, "state":integer, "dueDate":integer}
   - [x] DELETE (delete task)
 
+- [x] **/project/task.php/assignments/:PROJECT_ID:/:TASK_ID:**
+  - [x] GET (get assignments for a task)
+  - [x] PUT (overwrite task assignments) {assignments:[empid1, empid2]}
+    ```jsonc
+    {
+      "success":true,
+      "data":{
+        "assigned":[...],
+        "unassigned":[...]
+      }
+    }
+    ```
+
 ## project.php
 - [x] **/project/project.php/projects?q=search_term**
     - GET (Get all projects)

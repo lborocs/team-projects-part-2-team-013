@@ -27,7 +27,7 @@ function object_check_not_implemented(RequestContext $ctx, array $resource_ids) 
 }
 
 function object_check_post_exists(RequestContext $ctx, array $resource_ids) {
-    $post = db_post_fetch($resource_ids[0]);
+    $post = db_post_fetch($resource_ids[0], $ctx->session->hex_associated_user_id);
     
     if ($post == false) {
         respond_resource_not_found("post ". $resource_ids[0]);

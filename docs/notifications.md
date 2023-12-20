@@ -5,8 +5,9 @@ the standard notification body is as follows:
 ```jsonc
 {
     "eventID":"uuid",
-    "type":POST_TYPE,
-    "body":Union(POST_TYPES)
+    "type":NOTIFICATION_TYPE,
+    "body":NOTIFICATION_BODY_UNION,
+    "time":0
 }
 ```
 
