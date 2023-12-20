@@ -440,9 +440,9 @@ export function renderNotifications(notifications) {
                 icon = "notifications";
                 break;
         }
-        
+
         //these are placeholders for now
-        let link = `#`
+        let link = `https://www.google.com`
         let avatar = `#`
         let name = "not implemented"
 
@@ -690,7 +690,5 @@ getEmployeeNotifications().then((items) => {
         console.log("[getEmployeeNotifications] notifications found and display badge");
         console.log(items);
         notifications = items
-
     }
-    
 })
