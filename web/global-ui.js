@@ -13,6 +13,7 @@ export const logoutButton = document.querySelector("#logout")
 export const userBoth = document.querySelector(".user-both")
 export const userAvatar = document.getElementById("user-icon")
 export const userName = document.getElementById("user-name")
+export const notificationsButton = document.getElementById("inbox-icon")
 
 //groups of things
 export const sidebarItems = document.querySelectorAll(".sidebar-item")
@@ -423,7 +424,7 @@ export async function getEmployeeNotifications() {
 export function renderNotifications(notifications) {
     let popoverContent = '';
 
-    popoverContent.forEach(notification => {
+    notifications.forEach(notification => {
         //decides the icon based on the type of notification
         let icon;
         switch (notification.type) {
@@ -469,8 +470,8 @@ export function renderNotifications(notifications) {
         `;
     });
 
-    document.querySelector('.popover-content').innerHTML = `<div class="title">Activity</div>`
-    document.querySelector('.popover-content').innerHTML += popoverContent;
+    notificationsButton.querySelector('.popover-content').innerHTML = `<div class="title">Activity</div>`
+    notificationsButton.querySelector('.popover-content').innerHTML += popoverContent;
 }
 
 
@@ -690,5 +691,6 @@ getEmployeeNotifications().then((items) => {
         console.log("[getEmployeeNotifications] notifications found and display badge");
         console.log(items);
         notifications = items
+        renderNotifications(items);
     }
 })
