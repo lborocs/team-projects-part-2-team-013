@@ -509,7 +509,7 @@ function db_post_accesses_fetchall() {
         FROM POST_VIEWS WHERE postViewAccessedAt > ?
         GROUP BY empID, postID
         ORDER BY views DESC
-        "
+        LIMIT " . DATA_FETCH_LIMIT
     );
 
     $query->bind_param(
@@ -543,9 +543,9 @@ function db_post_fetch(string $hex_post_id, string $fetcher_id) {
 
     $query = $db->prepare(
         "SELECT `POSTS`.*, `EMPLOYEES`.*, `ASSETS`.contentType,
-        GROUP_CONCAT(`TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
-        `EMPLOYEE_POST_META`.postMetaFeedback as feedback,
-        `EMPLOYEE_POST_META`.postMetaSubscribed as subscribed
+            GROUP_CONCAT(`TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+            `EMPLOYEE_POST_META`.postMetaFeedback as feedback,
+            `EMPLOYEE_POST_META`.postMetaSubscribed as subscribed
         FROM `POSTS`
         JOIN `EMPLOYEES`
             ON `POSTS`.postAuthor = `EMPLOYEES`.empID
@@ -1348,7 +1348,44 @@ function db_tag_fetchall() {
         array_push($data, $encoded);
     }
     return $data;
+}
 
+function db_tag_fetch_popular() {
+    global $db;
+
+    $epoch = time() - POST_ACCESS_DELTA;
+
+    $query = $db->prepare(
+        "SELECT `TAGS`.*, `POPULAR_TAGS`.views FROM `TAGS`
+        LEFT JOIN (
+            SELECT `POST_TAGS`.tagID, COUNT(`POST_TAGS`.tagID) as views
+            FROM `POST_TAGS`
+            LEFT JOIN `POST_VIEWS`
+                ON `POST_TAGS`.postID = `POST_VIEWS`.postID
+            WHERE `POST_VIEWS`.postViewAccessedAt > ?
+            GROUP BY `POST_TAGS`.tagID
+            ORDER BY views DESC
+        ) as `POPULAR_TAGS`
+        ON `POPULAR_TAGS`.tagID = `TAGS`.tagID
+        ORDER BY views DESC
+        LIMIT " . DATA_FETCH_LIMIT
+    );
+    
+    $query->bind_param("i", $epoch);
+    $query->execute();
+    $res = $query->get_result();
+
+
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_TAGS, ["views"=>"integer"]);
+        array_push($data, $encoded);
+    }
+    return $data;
 }
 
 // NOTIFS

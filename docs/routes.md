@@ -60,8 +60,22 @@ Written/designed by aidan F223129
       "success":true,
       "data":[
         {
-          "accesses":[
+          "posts":[
             {"empID":"emp id","postID":"post id", "views":"number"}
+          ]
+        }
+      ]
+    }
+    ``` 
+- [x] **/frequentedtags**
+  - GET (return most viewed tags)
+    ```jsonc
+    {
+      "success":true,
+      "data":[
+        {
+          "tags":[
+            {"tagID":"tagid here","tagName":"tag name here", "views":"number"}
           ]
         }
       ]
