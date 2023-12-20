@@ -17,6 +17,10 @@ export const userName = document.getElementById("user-name")
 //groups of things
 export const sidebarItems = document.querySelectorAll(".sidebar-item")
 export const topbarItems = document.querySelectorAll(".item")
+
+//global variables
+export var notifications = []
+
 console.log("[import] loaded global-ui.js")
 
 export const BACK_BUTTON = 3;
@@ -400,6 +404,74 @@ export async function clearStorages() {
 }
 
 
+/**
+ * Fetches the notifications for the logged in employee.
+ *
+ * @returns {Promise<Array>} A promise that resolves to an array of notifications.
+ */
+export async function getEmployeeNotifications() {
+    const data = await get_api("/employee/meta.php/notifications");
+    if (data.success) {
+        console.log(console.log(`[getEmployeeNotifications] notifications found`));
+        return data.data.notifications;
+    } else {
+        console.error("[getEmployeeNotifications] FAILED TO GET NOTIFICATIONS");
+    }
+
+}
+
+export function renderNotifications(notifications) {
+    let popoverContent = '';
+
+    popoverContent.forEach(notification => {
+        //decides the icon based on the type of notification
+        let icon;
+        switch (notification.type) {
+            case 0:
+                icon = "add_box";
+                break;
+            case 1:
+                icon = "edit";
+                break;
+            case 2:
+                icon = "assignment_add";
+                break;
+            default:
+                icon = "notifications";
+                break;
+        }
+        
+        //these are placeholders for now
+        let link = `#`
+        let avatar = `#`
+        let name = "not implemented"
+
+        popoverContent += `
+            <a class="notification-card" href="${link}">
+                <div class="icon">
+                    <span class="material-symbols-rounded">
+                        ${icon}
+                    </span>
+                </div>
+                <div class="details">
+                    <div class="name-card">
+                        <img src="${avatar}" class="avatar">
+                        <span>${name}</span>
+                    </div>
+                    <div class="text">${notification.body.detail}</div>
+                </div>
+                <div class="arrow">
+                    <span class="material-symbols-rounded">
+                        open_in_new
+                    </span>
+                </div>
+            </a>
+        `;
+    });
+
+    document.querySelector('.popover-content').innerHTML = `<div class="title">Activity</div>`
+    document.querySelector('.popover-content').innerHTML += popoverContent;
+}
 
 
 
@@ -613,3 +685,12 @@ export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHas
 
 fillCurrentUserInfo();
 managerElementsEnableIfManager();
+getEmployeeNotifications().then((items) => {
+    if (items.length > 0) {
+        console.log("[getEmployeeNotifications] notifications found and display badge");
+        console.log(items);
+        notifications = items
+
+    }
+    
+})
