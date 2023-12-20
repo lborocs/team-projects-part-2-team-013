@@ -93,7 +93,7 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
             $field = $column->name;
             $common = _get_common_name($column, $field);
             
-            if (!array_key_exists($field ,$ctx->request_body)) {
+            if (!array_key_exists($field ,$ctx->request_body) && !$column->is_nullable) {
                 respond_bad_request(
                     "Expected field $common to be set",
                     ERROR_BODY_MISSING_REQUIRED_FIELD
@@ -248,68 +248,6 @@ function _use_common_edit(Table $table, array $data, array $url_specifiers) {
     $primary_keys = $table->name_url_specifiers($url_specifiers);
     db_generic_edit($table, $data, $primary_keys);
     respond_no_content();
-}
-
-// task funcs
-
-function _fetch_task(RequestContext $ctx, array $url_specifiers) {
-    // task is already fetched from the task_exists check
-    respond_ok($ctx->task);
-}
-
-function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
-    $author_id = $ctx->session->hex_associated_user_id;
-
-    $taskID = generate_uuid();
-    $projectID = hex2bin($url_specifiers[0]);
-    $createdBy = hex2bin($author_id);
-    $title = $data["taskTitle"];
-    $description = $data["taskDescription"] ?? null;
-    $state = $data["taskState"];
-    $dueDate = $data["taskDueDate"] ?? null;
-    $archived = false;
-    $createdAt = time();
-
-    if (db_generic_new(
-        TABLE_TASKS ,
-        [
-            $taskID,
-            $projectID,
-            $createdBy,
-            $title,
-            $description,
-            $state,
-            $archived,
-            $createdAt,
-            $dueDate,
-        ],
-        "sssssiiii"
-    )) {
-
-        $data["taskID"] = $taskID;
-        $data["projectID"] = $projectID;
-        $data["taskCreatedby"] = $createdBy;
-        $data["taskArchived"] = false;
-        $data["taskCreatedAt"] = $createdAt;
-
-
-        respond_ok(parse_database_row($data, TABLE_TASKS));
-    } else {
-        respond_database_failure(true);
-    }
-}
-
-function _delete_task(RequestContext $ctx, array $url_specifiers) {
-    db_task_archive($url_specifiers[1]);
-    respond_no_content();
-}
-
-function _edit_task(RequestContext $ctx, array $data, array $url_specifiers) {
-    // only dispatch notification if something other than task state changes
-    if (count($data) > 1 || !array_key_exists("taskState", $data)) {
-        notification_task_edit($url_specifiers[1]);
-    }
-    _use_common_edit(TABLE_TASKS, $data, $url_specifiers);
 }
 
 // project
