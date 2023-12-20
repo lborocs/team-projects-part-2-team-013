@@ -132,7 +132,7 @@ function r_task_assignments(RequestContext $ctx, string $args) {
         // todo:
         // assigned = fetch_current_assignments
 
-        $current_assignments = db_task_fetch_assignments($task_id);
+        $current_assignments = array_map(function($emp) {return $emp["employee"]["empID"];}, db_task_fetch_assignments($task_id));
 
 
         // to_assign = assignments - fetched
@@ -148,8 +148,6 @@ function r_task_assignments(RequestContext $ctx, string $args) {
 
         if (count($to_unassign) > 0) {
             db_task_unassign_bulk($task_id, $to_unassign);
-
-
             notification_task_unassigned_bulk($task_id, $to_unassign);
         }
 
@@ -160,10 +158,10 @@ function r_task_assignments(RequestContext $ctx, string $args) {
         // dispatch notification assigned
         // dispatch notification unassigned
 
-
-        respond_not_implemented();
-
-        respond_no_content();
+        respond_ok(array(
+            "assigned"=>$to_assign,
+            "unassigned"=>$to_unassign,
+        ));
     }
 
 }

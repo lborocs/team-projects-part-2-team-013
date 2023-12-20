@@ -1144,13 +1144,54 @@ function db_task_fetchall(string $project_id) {
     return $data;
 }
 
-function db_task_assign_bulk(string $task_id, Array $bin_employee_ids) {
-    respond_not_implemented();
+function db_task_assign_bulk(string $task_id, Array $employee_ids) {
+    
+    global $db;
+
+    $values = array_merge(...array_map(function ($emp_id) use ($task_id) {
+        return [hex2bin($emp_id), hex2bin($task_id)];
+    }, $employee_ids));
+
+    $query = $db->prepare(
+        "INSERT INTO `EMPLOYEE_TASKS` VALUES " . create_chunked_array_binding(count($employee_ids), 2)
+    );
+
+    $query->bind_param(
+        str_repeat("ss", count($employee_ids)),
+        ...$values
+    );
+
+    if (!$query->execute()) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+
 }
 
 
-function db_task_unassign_bulk(string $task_id, Array $bin_employee_ids) {
-    respond_not_implemented();
+function db_task_unassign_bulk(string $task_id, Array $employee_ids) {
+
+    global $db;
+
+    $values = array_merge(...array_map(function ($emp_id) use ($task_id) {
+        return [hex2bin($emp_id), hex2bin($task_id)];
+    }, $employee_ids));
+
+    $query = $db->prepare(
+        "DELETE FROM `EMPLOYEE_TASKS` WHERE (empID, taskID) IN (" . create_chunked_array_binding(count($employee_ids), 2) . ")"
+    );
+
+    $query->bind_param(
+        str_repeat("ss", count($employee_ids)),
+        ...$values
+    );
+
+    if (!$query->execute()) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
 }
 
 function db_task_fetch_assignments(string $task_id) {
@@ -1407,14 +1448,13 @@ function db_task_updates_add_bulk(string $notification_id, Array $fields) {
         return [$bin_n_id, hex2bin($field[0]), hex2bin($field[1]), $field[2]];
     }, $fields));
 
-    $len = count($bin_fields);
     $query = "
     INSERT INTO `TASK_UPDATE` VALUES
-    " . create_chunked_array_binding($len, 4);
+    " . create_chunked_array_binding(count($fields), 4);
 
     $query = $db->prepare($query);
     $query->bind_param(
-        str_repeat("sssi", $len),
+        str_repeat("sssi", count($fields)),
         ...$bin_fields
     );
 
