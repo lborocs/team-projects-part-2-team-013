@@ -1084,6 +1084,7 @@ async function addTask(state) {
     let dialog = popupDiv.querySelector('.popupDialog');
     dialog.style.transform = 'translateY(0px)'
     dialog.style.opacity = '1';
+    
     // let createButton = dialog.querySelector('.create-button');
     let closeButton = dialog.querySelector('.close-button');
     // let deleteButton = dialog.querySelector('.delete-button');
@@ -1097,7 +1098,15 @@ async function addTask(state) {
         
         fullscreenDiv.style.filter = 'none';
         console.log("[addTaskCloseButton] rejecting")
-        reject();
+    });
+    dialog.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addTaskEscape] rejecting")
+        }
     });
     // createButton.addEventListener('click', async (event) => {
     //     event.preventDefault();
