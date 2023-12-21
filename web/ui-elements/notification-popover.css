@@ -90,7 +90,7 @@
     }
 }
 
-.notification-popover:focus .popover-content {
+.notification-popover:focus-within .popover-content {
     display: block;
     pointer-events: auto;
     opacity: 1;
