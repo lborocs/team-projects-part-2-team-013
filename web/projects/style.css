@@ -1173,7 +1173,7 @@
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
     }
-    
+
 }
 
 .add-task-description-input:focus{
@@ -1222,14 +1222,6 @@
     transition: 0.2s ease-out;
 }
 
-#employee-select {
-    display: flex;
-    flex-direction: row;
-    align-self: center;
-    text-align: center;
-    height: 1.6em;
-    border-radius: 4px;
-}
 
 #add-task-description {
     
