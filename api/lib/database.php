@@ -1423,6 +1423,8 @@ function db_notifications_fetch($employee_id) {
             )
         LEFT JOIN `TASKS` ON
             `TASKS`.taskID = `TASK_UPDATE`.taskID
+
+        -- check for each row there is atleast 1 notification
         WHERE (
             `TASK_UPDATE`.eventID IS NOT NULL
             OR `POST_UPDATE`.eventID IS NOT NULL
@@ -1432,6 +1434,7 @@ function db_notifications_fetch($employee_id) {
     );
     // WHERE clause checks we have atleast 1 notification per row that pertains to us
     // as we are using left join we join null on a notification not belonging to us
+    // instead of ignoring the row
 
     $query->bind_param(
         "s",
