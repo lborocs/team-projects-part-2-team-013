@@ -90,14 +90,14 @@ input {
     visibility: hidden;
     width: fit-content;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.3s 0.6s;
     background-color: #2f2f2fee;
     box-shadow: 0 0 6px rgba(0,0,0,0.15);
     color: #ffffff;
     text-align: center;
-    padding: 5px 0;
-    border-radius: 6px;
-    font-size: 0.85em;
+    padding: 5px 2px;
+    border-radius: 3px;
+    font-size: 13px;
     font-weight: 500;
     white-space: nowrap;
     padding-left: 10px;
@@ -138,7 +138,7 @@ input {
 .tooltip.tooltip-right .tooltiptext {
     top: 50%;
     left: 100%;
-    transform: translate(0, -50%);
+    transform: translate(0, -100%);
 }
 
 .tooltip.tooltip-right .tooltiptext::after{
@@ -151,8 +151,8 @@ input {
 
 .tooltip.tooltip-left .tooltiptext {
     top: 50%;
-    right: 100%;
-    transform: translate(0, -50%);
+    right: 125%;
+    transform: translate(0, -100%);
 }
 
 .tooltip.tooltip-left .tooltiptext::after{
