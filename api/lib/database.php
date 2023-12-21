@@ -760,13 +760,15 @@ function db_employee_in_project(string $user_id, string $project_id) {
     $bin_u_id = hex2bin($user_id);
 
     $query = $db->prepare(
-        "SELECT 1 FROM `EMPLOYEE_TASKS`, `TASKS`
+        "SELECT 1 FROM PROJECTS WHERE projID = ? AND projectTeamLeader = ?
+        UNION
+        SELECT 1 FROM `EMPLOYEE_TASKS`, `TASKS`
         WHERE `EMPLOYEE_TASKS`.empID = ?
-        AND `TASKS`.taskArchived = 0
-        AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `TASKS`.projID = ?
+            AND `TASKS`.taskArchived = 0
+            AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND `TASKS`.projID = ?
         LIMIT 1"
     );
-    $query->bind_param("ss", $bin_u_id, $bin_p_id);
+    $query->bind_param("ssss", $bin_p_id, $bin_u_id, $bin_u_id, $bin_p_id);
     $query->execute();
     $result = $query->get_result();
 

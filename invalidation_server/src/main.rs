@@ -1,7 +1,7 @@
 // Designed and written by Aidan F223129
 
 use actix_web::body::BoxBody;
-use actix_web::{Responder, web, HttpServer, App, route, HttpResponse};
+use actix_web::{Responder, web, HttpServer, App, route, HttpResponse, rt};
 use bloomfilter::Bloom;
 use time::{format_description, OffsetDateTime};
 use std::collections::HashMap;
@@ -13,6 +13,7 @@ use std::sync::{Arc, Mutex};
 const EXPECTED_ITEMS: usize = 1_000;
 const FALSE_POSITIVE_RATE: f64 = 0.0001; // 0.01%
 const MIN_LIFETIME: u64 = 60 * 30; // 30 minutes
+const GARBAGE_COLLECTION_CYCLE_TIME: u64 = MIN_LIFETIME + 60; // 30 minutes + 1 minute
 const BIND_ADDR: &str = "localhost";
 const BIND_PORT: u16 = 4231;
 
@@ -210,6 +211,7 @@ async fn set_account(path: web::Path<String>, data: web::Data<Arc<Mutex<State>>>
     };
 
     data.lock().unwrap().map.set(id, OffsetDateTime::now_utc());
+    println!("Inserting account {}", &path);
     HttpResponse::Ok().finish()
 }
 
@@ -222,6 +224,7 @@ async fn set_session(path: web::Path<String>, data: web::Data<Arc<Mutex<State>>>
     };
 
     data.lock().unwrap().bf.set(id);
+    println!("Inserting session {}", &path);
     HttpResponse::Ok().finish()
 }
 
@@ -246,6 +249,9 @@ async fn main() -> std::io::Result<()>{
     let data = web::Data::new(lock);
 
     println!("Starting server on {}:{} at {}", BIND_ADDR, BIND_PORT, get_current_time());
+
+    rt::spawn(garbage_collector(data.clone()));
+
     HttpServer::new(move || {
         App::new()
             .app_data(data.clone())
@@ -257,4 +263,28 @@ async fn main() -> std::io::Result<()>{
     .run()
     .await
 
+}
+
+
+async fn garbage_collector(state: web::Data<Arc<Mutex<State>>>) {
+    loop {
+        rt::time::sleep(Duration::from_secs(GARBAGE_COLLECTION_CYCLE_TIME)).await;
+        let mut state = state.lock().unwrap();
+        let lifetime = state.map.min_lifetime;
+
+        let before = Instant::now();
+
+        // rotate filters
+        state.bf.rotate_filters_if_needed();
+
+        // drop dead accounts
+        state.map.map.retain(|_, v| {
+            let dur = OffsetDateTime::now_utc() - *v;
+            dur < lifetime
+        });
+
+        drop(state);
+
+        println!("Garbage collected in {:?} at {}", before.elapsed(), get_current_time());
+    }
 }

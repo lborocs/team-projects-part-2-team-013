@@ -81,3 +81,6 @@ The site should now function like normal on your local machine.
 
 ### jamie
 ![30th feb moment](https://cdn.013.team/Screenshot2023-11-28-024447.png)
+
+### compiling jumpscare
+![lets use a compiled language guys](https://cdn.013.team/development/jumpscare.png)
