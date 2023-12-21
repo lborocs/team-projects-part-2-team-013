@@ -957,30 +957,38 @@ async function addTask(state) {
                 <div id="description-editor"></div>
             </div>
             <div class="dropdown-and-employee-list">
-                <div class="dropdown-button-container">
-                    <select class="dropdown", id="employee-select">
-                    </select>
-                    <button class="addButton">Add</button>
+                <div class="search-dropdown">
+                    <div class="search">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+            
+                        
+                        <div class="search-icon">
+                            <span class="material-symbols-rounded">search</span>
+                        </div>
+                        <div class="search-icon clear-icon">
+                            <span class="material-symbols-rounded">close</span>
+                        </div>
+                    </div>
+                    <div class="popover">
+                        <div class="employee-list" id="employee-select">
+                        </div>
+                        <div class="show-more text-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">
+                                    more_horiz
+                                </span>
+                            </div>
+                            <div class="button-text">
+                                Show More
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="assigned-employees">
                 
                 </div>
             </div>
-            <div class="assigned-employees">
-                <div class="text-button" id="add-employee">
-                    <div class="button-icon">
-                        <span class="material-symbols-rounded">
-                            add
-                        </span>
-                    </div>
-                    <div class="button-text">
-                        Add
-                    </div>
-                </div>
-                <div class="assigned">
-
-                </div>
-            </div>
+            
             <input type="number" class="expected-hours-input" placeholder="Hours"></input>
             <input type="date" class="add-task-date-input" placeholder="Due Date"></input>    
         </dialog>
@@ -1006,9 +1014,16 @@ async function addTask(state) {
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
         let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
-        let option = document.createElement("option");
-        option.value = emp.empID;
-        option.innerText = emp_name;
+        let option = document.createElement("div");
+        option.classList.add("name-card");
+        option.innerHTML = `
+            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+            <span>${emp_name}</span>
+            <span class="material-symbols-rounded icon">
+                person_add
+            </span>
+        `
+        option.setAttribute("data-id", emp.empID);
         empList.appendChild(option);
     });
 
@@ -1146,6 +1161,11 @@ addButtonArray.forEach((button) => {
 
 let listAddTaskButton = document.getElementById("list-add");
 listAddTaskButton.addEventListener("click", async () => {
+    await addTask(0);
+});
+
+let boardAddTaskButton = document.getElementById("add-task-button");
+boardAddTaskButton.addEventListener("click", async () => {
     await addTask(0);
 });
 
