@@ -48,6 +48,8 @@
 
     font-size: 14px;
 
+    min-height: 72px;
+
     border-radius: 3px;
     border-bottom: 1px solid #dddddd;
 
@@ -118,4 +120,6 @@
 .notification-card .text {
     color: #666;
     font-size: 14px;
+    white-space: pre-wrap;
+
 }
