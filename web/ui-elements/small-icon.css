@@ -10,7 +10,7 @@
     border-radius: 3px;
     cursor: pointer;
     user-select: none;
-    transition: background-color 0.1s ease-out;
+    transition: background-color 0.1s ease-out, outline 0.1s ease-out;
 
     & span {
         line-height: 1;
@@ -22,6 +22,11 @@
     background-color: #f1f2f4;
     color: black;
     & span {
-        color: black !important;
+        color: black;
     }
+}
+
+.small-icon:active {
+    background-color: #fafafa;
+    outline: solid 1px #aaa;
 }

@@ -218,6 +218,42 @@ export function formatDateFull(date) {
     return formattedDate;
 }
 
+/**
+ * 
+ * @param {Date} timestamp as a Date object
+ * @returns {string} how long ago the timestamp was in a human readable format
+ */
+export function howLongAgo(timestamp) {
+    let currentTime = new Date();
+    let diff = currentTime - timestamp;
+    let seconds = Math.floor(diff / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+    let days = Math.floor(hours / 24);
+
+    if (seconds < 60) {
+        return "Now";
+    }
+
+    if (minutes < 60) {
+        return `${minutes}m ago`;
+    }
+
+    if (hours < 24) {
+        return `${hours}h ago`;
+    }
+
+    if (days < 7) {
+        return `${days}d ago`;
+    }
+
+    return formatDate(timestamp);
+
+}
+
+
+
+
 function hash(str) {
     let hash = str.charCodeAt(0) + 0x1dc5;
     for (let i = 0; i < str.length; i++) {
@@ -460,12 +496,14 @@ export async function renderNotifications(notifications) {
         let link = "https://www.google.com"
         let name = "Not Implemented"
         let desc = "Not Implemented"
+        let time = howLongAgo(new Date(notification.time * 1000))
+
         //huge placeholder
         let avatar = "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWMwZTUiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogIzAwMDsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiAnT3BlbiBTYW5zJywgc2Fucy1zZXJpZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTEyIiBmb250LXdlaWdodD0iNDAwIiBkeT0iLjFlbSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzAwMCIgeD0iNTAlIiB5PSI1MCUiPkQ8L3RleHQ+CiAgICA8L3N2Zz4="
         switch(notification.type) {
             case 0: // post they are following has been edited
             console.log("[renderNotifications] post edited")
-                icon = "edit_note";
+                icon = "checkbook";
                 empID = notification.body.editor.empID;
                 name = bothNamesToString(employees.get(empID).firstName, employees.get(empID).lastName);
                 avatar = employeeAvatarOrFallback(employees.get(empID));
@@ -491,6 +529,7 @@ export async function renderNotifications(notifications) {
                                 open_in_new
                             </span>
                         </div>
+                        <div class="time">${time}</div>
                     </a>
                 `;
                 break;
@@ -546,6 +585,7 @@ export async function renderNotifications(notifications) {
                                 open_in_new
                             </span>
                         </div>
+                        <div class="time">${time}</div>
                     </a>
                 `;
                 break;
