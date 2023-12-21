@@ -153,6 +153,7 @@ function r_task_assignments(RequestContext $ctx, string $args) {
 
         if (count($to_assign) > 0) {
             db_task_assign_bulk($task_id, $to_assign);
+            notification_task_assigned_bulk($task_id, $to_assign);
         }
 
         // dispatch notification assigned
