@@ -1,0 +1,99 @@
+/* search bar start */
+
+.date-picker {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    height: 32px;
+
+    border-radius: 3px;
+
+    font-size: 14px;
+    color: rgb(23, 43, 77);
+    background-color: #f1f2f4;
+
+    cursor: pointer;
+    user-select: none;
+
+    transition: background-color 0.1s ease-in-out;
+
+}
+
+.date-picker:hover {
+    background-color: #dcdfe4;
+    
+}
+
+.date-picker:focus-within {
+    border-color: #388bffaa;
+}
+
+.date-picker-input {
+    padding: 4px 6px;
+    padding-left: 0;
+    border: none;
+    outline: none;
+    
+    color: inherit;
+    background-color: transparent;
+    box-sizing: border-box;
+    border-radius: 2px;
+
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+
+    cursor: pointer;
+    user-select: none;
+
+}
+
+.date-picker-input::placeholder {
+    color: rgb(98, 111, 134);
+    font-weight: 600;
+}
+
+.date-picker-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: rgb(98, 111, 134);
+    margin: 0 8px;
+    width: 16px;
+    height: 16px;
+
+    & span {
+        font-size: 16px;
+        line-height: 1;
+    }
+}
+
+.clear-icon {
+    border-radius: 3px;
+    transition: background-color 0.2s ease-in-out;
+    & span {
+        font-size: 14px;
+    }
+}
+
+.clear-icon:hover {
+    background-color: rgb(228, 230, 234);
+    cursor: pointer;
+}
+
+.clear-icon:active {
+    background-color: rgb(208, 212, 218);
+}
+
+/* magnifying glass / clear icon logic */
+.search-input:not(:placeholder-shown) ~ .search-icon:nth-of-type(1) {
+    display: none;
+}
+.search-input:placeholder-shown ~ .search-icon:nth-of-type(2) {
+    display: none;
+}
+
+/* search bar end */
