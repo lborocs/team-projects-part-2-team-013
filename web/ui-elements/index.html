@@ -18,7 +18,9 @@
     <link rel="stylesheet" href="popover.css">
     <link rel="stylesheet" href="notification-popover.css">
     <link rel="stylesheet" href="small-icon.css">
+    <link rel="stylesheet" href="number-picker.css">
     <script src="task-card.js" defer></script>
+    <script src="number-picker.js" defer></script>
   </head>
   <body>
 <body>
@@ -410,6 +412,21 @@
             </div>
         </div>
         
+        <div class="number-picker">
+            <div class = "stepper decrement" tabindex="0">
+                <span class="material-symbols-rounded">
+                    remove
+                </span>
+            </div>
+
+            <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+            <div class="stepper increment" tabindex="0">
+                <span class="material-symbols-rounded">
+                    add
+                </span>
+            </div>
+        </div>
         
     </div>
 </body>
