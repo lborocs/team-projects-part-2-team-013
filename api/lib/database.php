@@ -1398,7 +1398,7 @@ function db_notifications_fetch($employee_id) {
 
     $query = $db->prepare(
         "
-        SELECT POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*,
+        SELECT DISTINCT POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*,
         `NOTIFICATIONS`.*
         FROM `NOTIFICATIONS`
         LEFT JOIN `EMPLOYEES` ON
@@ -1414,17 +1414,26 @@ function db_notifications_fetch($employee_id) {
             `POST_UPDATE`.postID = `EMPLOYEE_POST_META`.postID
         LEFT JOIN `POSTS` ON
             `POSTS`.postID = `POST_UPDATE`.postID
+        LEFT JOIN `EMPLOYEE_TASKS` ON
+            `EMPLOYEE_TASKS`.empID = `EMPLOYEES`.empID
         LEFT JOIN `TASK_UPDATE` ON
-            `NOTIFICATIONS`.eventID = `TASK_UPDATE`.eventID AND
-            (
+            `NOTIFICATIONS`.eventID = `TASK_UPDATE`.eventID
+            AND `TASK_UPDATE`.taskID = `EMPLOYEE_TASKS`.taskID
+            AND (
                 `TASK_UPDATE`.taskUpdateConcerns = `EMPLOYEES`.empID OR
                 `TASK_UPDATE`.taskUpdateConcerns IS NULL
             )
         LEFT JOIN `TASKS` ON
             `TASKS`.taskID = `TASK_UPDATE`.taskID
+        WHERE (
+            `TASK_UPDATE`.eventID IS NOT NULL
+            OR `POST_UPDATE`.eventID IS NOT NULL
+        )
         ORDER BY `NOTIFICATIONS`.notificationTime DESC
         "
     );
+    // WHERE clause checks we have atleast 1 notification per row that pertains to us
+    // as we are using left join we join null on a notification not belonging to us
 
     $query->bind_param("s", $bin_e_id);
     $query->execute();
