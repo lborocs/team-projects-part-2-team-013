@@ -123,6 +123,10 @@ async function api_request(route, method, body, options={}) {
                 console.log("[API] Explicitly told not to redirect");
                 break;
             } else {
+                // dont redirect if we are already on the login page
+                if (window.location.pathnames == "/") {
+                    break
+                }
                 let after_login = window.location.pathname + window.location.hash;
                 window.location.href = `/#${after_login}` // redirect to login
                 break;

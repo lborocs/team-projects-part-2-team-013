@@ -38,7 +38,7 @@ async function login() {
         });
     } else {
         statusElement.classList.add("status-incorrect");
-        setLoginStatus(`Error: ${res.data.message} (${res.data.code})`);
+        setLoginStatus(`Error: ${res.error.message} (${res.error.code})`);
     }
 }
 
