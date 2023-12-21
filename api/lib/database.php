@@ -349,7 +349,6 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
             ON `POSTS`.postAuthor = `EMPLOYEES`.empID
         LEFT JOIN `ASSETS`
             ON `EMPLOYEES`.avatar = `ASSETS`.assetID
-            AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
         LEFT JOIN `POST_TAGS`
             ON `POSTS`.postID = `POST_TAGS`.postID
         LEFT JOIN `TAGS` 
@@ -551,7 +550,6 @@ function db_post_fetch(string $hex_post_id, string $fetcher_id) {
             ON `POSTS`.postAuthor = `EMPLOYEES`.empID
         LEFT JOIN `ASSETS`
             ON `EMPLOYEES`.avatar = `ASSETS`.assetID
-            AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
         LEFT JOIN `POST_TAGS`
             ON `POSTS`.postID = `POST_TAGS`.postID
         LEFT JOIN `TAGS` 
@@ -623,7 +621,6 @@ function db_employee_fetchall(string $search_term) {
         FROM `EMPLOYEES`
         LEFT JOIN `ASSETS`
             ON `EMPLOYEES`.avatar = `ASSETS`.assetID
-            AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
         JOIN `ACCOUNTS`
             ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
         WHERE (
@@ -673,10 +670,10 @@ function db_employee_fetch_by_ids(array $binary_ids) {
 
     $stmt = "SELECT EMPLOYEES.*, `ACCOUNTS`.email, `ASSETS`.contentType FROM `EMPLOYEES`
     LEFT JOIN `ASSETS`
-    ON `EMPLOYEES`.avatar = `ASSETS`.assetID AND `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
+        ON `EMPLOYEES`.avatar = `ASSETS`.assetID
     JOIN `ACCOUNTS`
-    ON EMPLOYEES.empID = ACCOUNTS.empID
-    WHERE EMPLOYEES.empID IN ("
+        ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
+    WHERE `EMPLOYEES`.empID IN ("
     . create_array_binding($num) .
     ")";
 
@@ -1397,15 +1394,14 @@ function db_notifications_fetch($employee_id) {
     $bin_e_id = hex2bin($employee_id);
 
     $query = $db->prepare(
-        "
-        SELECT DISTINCT POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*,
-        `NOTIFICATIONS`.*
+        "SELECT DISTINCT 
+            POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*,
+            `NOTIFICATIONS`.*
         FROM `NOTIFICATIONS`
         LEFT JOIN `EMPLOYEES` ON
             `EMPLOYEES`.empID = ?
         LEFT JOIN `ASSETS` ON
-            `EMPLOYEES`.avatar = `ASSETS`.assetID AND
-            `ASSETS`.assetType = " . ASSET_TYPE::USER_AVATAR . "
+            `EMPLOYEES`.avatar = `ASSETS`.assetID
         LEFT JOIN `EMPLOYEE_POST_META` ON
             `EMPLOYEE_POST_META`.empID = `EMPLOYEES`.empID AND
             `EMPLOYEE_POST_META`.postMetaSubscribed = '1'
@@ -1435,7 +1431,10 @@ function db_notifications_fetch($employee_id) {
     // WHERE clause checks we have atleast 1 notification per row that pertains to us
     // as we are using left join we join null on a notification not belonging to us
 
-    $query->bind_param("s", $bin_e_id);
+    $query->bind_param(
+        "s",
+        $bin_e_id
+    );
     $query->execute();
     $res = $query->get_result();
 
