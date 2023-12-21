@@ -989,10 +989,47 @@ async function addTask(state) {
                 </div>
             </div>
             
-            <input type="number" class="expected-hours-input" placeholder="Hours"></input>
+            <div class="number-picker">
+                <div class = "stepper decrement" tabindex="0">
+                    <span class="material-symbols-rounded">
+                        remove
+                    </span>
+                </div>
+
+                <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+                <div class="stepper increment" tabindex="0">
+                    <span class="material-symbols-rounded">
+                        add
+                    </span>
+                </div>
+            </div>
             <input type="date" class="add-task-date-input" placeholder="Due Date"></input>    
         </dialog>
     `;
+    
+    //event listeners for the number picker
+    let numberPickers = document.querySelectorAll(".number-picker");
+    numberPickers.forEach((numberPicker) => {
+        let input = numberPicker.querySelector('input[type="number"]')
+        let plus = numberPicker.querySelector('.stepper.increment')
+        let minus = numberPicker.querySelector('.stepper.decrement')
+
+        plus.addEventListener('click', e => {
+            e.preventDefault()
+            input.stepUp()
+        })
+
+        minus.addEventListener('click', e => {
+            e.preventDefault()
+            input.stepDown()
+        })
+
+        input.addEventListener('focus', e => {
+            input.select()
+        })
+    })
+
     //quill for description
     var quill = new Quill('#description-editor', {
         modules: {
