@@ -190,7 +190,7 @@ function r_project_fetchall_tasks(RequestContext $ctx, string $args) {
     object_check_user_is_part_of_project($ctx, $resource_specifiers);
 
     // if we are a team admin then return associated employee data too
-    $is_team_admin =  ($ctx->session->auth_level >= 2 || $ctx->session->hex_associated_user_id == $ctx->project["teamLeader"]);
+    $is_team_admin =  ($ctx->session->auth_level >= 2 || $ctx->session->hex_associated_user_id == $ctx->project["teamLeader"]["empID"]);
     fetchall_tasks($ctx->session->hex_associated_user_id, $resource_specifiers[0], $is_team_admin);
 
 }

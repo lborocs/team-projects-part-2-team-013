@@ -89,7 +89,7 @@ function object_check_user_is_admin_of_project(RequestContext $ctx, array $resou
 
     $author = $ctx->session->hex_associated_user_id;
 
-    error_log($author);
+
     if ($ctx->session->auth_level < 2 && $author != $ctx->project["teamLeader"]["empID"]) {
         respond_insufficient_authorization();
     }
