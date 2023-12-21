@@ -397,7 +397,7 @@ input {
     cursor: pointer;
 }
 
-button {
+/* button {
     padding: 0.2em;
     font: inherit;
     border-radius: 8px;
@@ -412,7 +412,7 @@ button {
     text-align: center;
     border: solid 2px rgba(105,112,125, 0.75);
     width: 100%;
-}
+} */
 
 button:hover {
     background-color: rgb(244,244,244);

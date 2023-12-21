@@ -10,6 +10,20 @@
         margin-bottom: 0.5em;
     }
 
+    .projects-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 0.5em;
+        width: 100%;
+        padding: 0.5em;
+        margin: 0;
+        background-color: white;
+        border-radius: 4px;
+
+
+    }
+
     .search-row {
         display: flex;
         flex-direction: row;
@@ -37,6 +51,7 @@
     #new-project {
         background-color: #3098ff;
         color: white;
+        margin-left: auto;
     }
 
     #new-project:hover {
@@ -980,7 +995,7 @@
 }
 
 .popupDialog {
-    top: 5%;
+    top: 8%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -988,25 +1003,11 @@
     width: fit-content;
     max-height: 800px;
     background-color: #fff;
-    border-radius: 10px;
-    border: 1px solid var(--border-clr, #e0e0e0);
-    box-shadow: 0px 0px 4px 1px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
-    padding: 3em;
-    padding-top: 0;
-    padding-bottom: 0;
-    text-align: center;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0px 4px 18px 0px var(--box-shadow-heavier-clr, rgba(0,0,0,0.3));
+    padding: 2em;
     width: 510px;
-}
-
-.popupDialog p:first-child {
-    font-size: 1.5em;
-}
-.popupDialog p:nth-child(2) {
-    padding-bottom: 0.7em;
-    font-size: 1.3em;
-}
-.popupDialog p {
-    margin: 0.1em 0;
 }
 
 .buttonForm {
@@ -1099,36 +1100,41 @@
 }
 
 .add-task-title{
-    font-weight: bold;
-    padding-bottom: 0.8em;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text-off-black, #0f0f0f);
 }
 
 #add-task-popup {
-    padding-bottom: 1em;
-    padding-top: 1em;
+    padding: 18px;
+    padding-top: 14px;
+    max-width: 840px;
+    width: calc(100% - 2.5em);
+    gap: 0.75em;
 
 }
 
 
 .add-task-title-input{
-    align-self: center;
-    font-size: 1em !important;
-    font-weight: 700 !important;
     color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row;
-    height: 24px;
-    max-width: 100% !important;
     text-align: left; 
-    border: 1px solid var(--add-task-border, #d3d3d3);
+    border: 1px solid #cacaca;
     border-radius: 5px;
-    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
+    font-family: 'Open Sans', sans-serif;
+    padding: 0.5em;
+    font-size: 18px;
+    font-weight: 500;
+    width: 100%;
+
 }
 
-.add-task-title-input:focus{
-    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3));
-    outline: none;
+.add-task-title-input::placeholder {
+    color: rgba(0,0,0,0.5);
 }
+
+
 
 .dropdown-and-employee-list {
     display: flex;
@@ -1140,20 +1146,34 @@
     flex-direction: row;
 }
 
-.add-task-description-input{
-    text-align: left;
-    resize: none;
+.add-task-description-container {
     width: 100%;
-    height: 20em;
+    line-height: 1;
+    /* quill override */
+    .ql-toolbar.ql-snow {
+        font-family: 'Open Sans', system-ui;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+    
+}
+
+#description-editor{
+    width: 100%;
+    height: 10em;
     color: var(--text-off-black, #0f0f0f);
-    display: flex;
-    flex-direction: row;
-    max-width: 100% !important;
-    border: 1px solid var(--add-task-border, #d3d3d3);
-    border-radius: 5px;
-    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
     font-family: 'Open Sans', sans-serif;
-    padding: 1em;
+    font-size: 14px;
+    caret-color: var(--text-off-black, #0f0f0f);
+
+    /* makes both the standard border and selection borders rounded */
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    .ql-editor.ql-blank {
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+    
 }
 
 .add-task-description-input:focus{
@@ -1163,6 +1183,8 @@
 
 .add-task-description-input::placeholder {
     text-align: left;
+    font-weight: 600;
+    
 }
 
 .date-picker {
@@ -1181,7 +1203,6 @@
     display: flex;
     flex-direction: row-reverse;
     height: 24px;
-    max-width: 100% !important;
     text-align: center;
     border: 1px solid var(--add-task-border, #d3d3d3);
     border-radius: 5px;
@@ -1207,12 +1228,11 @@
     align-self: center;
     text-align: center;
     height: 1.6em;
-    box-shadow: none !important;
     border-radius: 4px;
 }
 
 #add-task-description {
-    padding-top: 0.8em;
+    
 }
 
 #task-create-avatar {
@@ -1273,15 +1293,14 @@
 
 .edit-task-title-input{
     align-self: center;
-    font-size: 1em !important;
-    font-weight: 700 !important;
+    font-size: 1em;
+    font-weight: 700;
     color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row;
     height: 24px;
-    max-width: 100% !important;
     text-align: left; 
-    border: 1px solid var(--team-leader-text-clr, #2f2f2f) !important;
+    border: 1px solid var(--team-leader-text-clr, #2f2f2f);
     border-radius: 5px;
 }
 
@@ -1298,7 +1317,6 @@
     color: var(--text-off-black, #0f0f0f);
     display: flex;
     flex-direction: row;
-    max-width: 100% !important;
     border: 1px solid #2e2e2e;
     border-radius: 5px;
     font-family: 'Open Sans', sans-serif;

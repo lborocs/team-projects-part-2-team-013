@@ -1,4 +1,3 @@
-//Written by Jamie Skitt F226141
 import * as global from "../global-ui.js"
 import { animate } from "../global-ui.js"
 import { getEmployeesById } from '../global-ui.js';
@@ -50,6 +49,9 @@ var taskCards = document.querySelectorAll(".task")
 var taskRows = document.querySelectorAll(".taskrow") 
 const dropdowns = document.querySelectorAll(".dropdown")
 const dragIndicators = document.querySelectorAll(".draggable")
+
+
+
 console.log("[import] loaded client.js")
 
 
@@ -939,6 +941,8 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
     return project
 }
 async function addTask(state) {
+    
+
     console.log("[addTask] Creating popup")
     let popupDiv = document.querySelector('.popup');
     console.log(popupDiv)
@@ -946,9 +950,12 @@ async function addTask(state) {
     console.log("[addTask] before popup")
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
-            <p class="add-task-title">Create and assign new task:</p>
-            <input type="text" placeholder="Task title..." class="add-task-title-input">
-            <p class="add-task-title" id="add-task-description">Assign employees to task:</p>
+            <div class="add-task-title">Create Task</div>
+            <input type="text" placeholder="Task title" class="add-task-title-input">
+            
+            <div class="add-task-description-container">
+                <div id="description-editor"></div>
+            </div>
             <div class="dropdown-and-employee-list">
                 <div class="dropdown-button-container">
                     <select class="dropdown", id="employee-select">
@@ -959,7 +966,6 @@ async function addTask(state) {
                 
                 </div>
             </div>
-            <input type="text" class="add-task-description-input" placeholder="Description"></input>
             <div class="assigned-employees">
                 <div class="text-button" id="add-employee">
                     <div class="button-icon">
@@ -979,6 +985,18 @@ async function addTask(state) {
             <input type="date" class="add-task-date-input" placeholder="Due Date"></input>    
         </dialog>
     `;
+    //quill for description
+    var quill = new Quill('#description-editor', {
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                ['image', 'code-block']
+            ]
+        },
+        placeholder: 'Description...',
+        theme: 'snow'
+    });
 
     let assignedEmployees = new Set();
     let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
@@ -1003,94 +1021,94 @@ async function addTask(state) {
 
     console.log(popupDiv.innerHTML)
     console.log("[addTask] after popup")
-    fullscreenDiv.style.filter = 'brightness(0.6)';
+    fullscreenDiv.style.filter = 'brightness(0.75)';
     let dialog = popupDiv.querySelector('.popupDialog');
     let createButton = dialog.querySelector('.createButton');
-    let closeButton = dialog.querySelector('.closeButton');
+    // let closeButton = dialog.querySelector('.closeButton');
     let deleteButton = dialog.querySelector('.deleteButton');
     let addButton = dialog.querySelector('.addButton');
-    closeButton.addEventListener('click', (event) => {
-        event.preventDefault(); 
-        dialog.style.display = 'none';
-        fullscreenDiv.style.filter = 'none';
-        console.log("[addTaskCloseButton] rejecting")
-        reject();
-    });
-    createButton.addEventListener('click', async (event) => {
-        event.preventDefault();
+    // closeButton.addEventListener('click', (event) => {
+    //     event.preventDefault(); 
+    //     dialog.style.display = 'none';
+    //     fullscreenDiv.style.filter = 'none';
+    //     console.log("[addTaskCloseButton] rejecting")
+    //     reject();
+    // });
+    // createButton.addEventListener('click', async (event) => {
+    //     event.preventDefault();
         
-        let selectedProject = document.querySelector(".project-row.selected");
-        console.log("[addTaskCreateButton] selectedProject: " + selectedProject)
-        let projID = selectedProject.getAttribute("data-ID");
+    //     let selectedProject = document.querySelector(".project-row.selected");
+    //     console.log("[addTaskCreateButton] selectedProject: " + selectedProject)
+    //     let projID = selectedProject.getAttribute("data-ID");
 
-        let titleInput = dialog.querySelector('.add-task-title-input');
-        let descInput = dialog.querySelector('.add-task-description-input');
-        let dateInput = dialog.querySelector('.add-task-date-input');
-        console.log("[addTaskCreateButton] dateinput: " + dateInput.value)
-        let date = new Date(dateInput.value);
-        let timestamp = Math.floor(date.getTime() / 1000);
-
-
-        let createTaskRes = await post_api(
-            `/project/task.php/task/${projID}`,
-            {
-                title: titleInput.value,
-                state: state,
-                description: descInput.value,
-                dueDate: timestamp,
-                //assignedEmployees: [...assignedEmployees]
-            }
-        );
-
-        if (createTaskRes.success) {
-            let newTask = createTaskRes.data;
-
-            // put assignments
+    //     let titleInput = dialog.querySelector('.add-task-title-input');
+    //     let descInput = dialog.querySelector('.add-task-description-input');
+    //     let dateInput = dialog.querySelector('.add-task-date-input');
+    //     console.log("[addTaskCreateButton] dateinput: " + dateInput.value)
+    //     let date = new Date(dateInput.value);
+    //     let timestamp = Math.floor(date.getTime() / 1000);
 
 
-            let assignedArray = [...assignedEmployees];
+    //     let createTaskRes = await post_api(
+    //         `/project/task.php/task/${projID}`,
+    //         {
+    //             title: titleInput.value,
+    //             state: state,
+    //             description: descInput.value,
+    //             dueDate: timestamp,
+    //             //assignedEmployees: [...assignedEmployees]
+    //         }
+    //     );
 
-            let assignmentsRes = await put_api(
-                `/project/task.php/assignments/${projID}/${createTaskRes.data.taskID}`,
-                {assignments:assignedArray}
-            );
+    //     if (createTaskRes.success) {
+    //         let newTask = createTaskRes.data;
 
-            // 204 no content
-            if (assignmentsRes.status == 204) {
+    //         // put assignments
 
-                // render task then assignments
-                taskObjectRenderAll(newTask);
 
-                let assignmentMap = assignedArray.map((empID) => {
-                    return {
-                        empID: empID,
-                        taskID: newTask.taskID
-                    }
-                });
+    //         let assignedArray = [...assignedEmployees];
 
-                renderAssignments(assignmentMap).then(() => {
-                    console.log("[addTaskRenderAssignmentsCallback] assignments rendered for new task");
-                });
-            } else {
-                // render task
-                taskObjectRenderAll(newTask);
-            }
+    //         let assignmentsRes = await put_api(
+    //             `/project/task.php/assignments/${projID}/${createTaskRes.data.taskID}`,
+    //             {assignments:assignedArray}
+    //         );
 
-        } else {
-            let error = `${res.error.message} (${res.error.code})`
-            console.error("[addTask] Error creating new task : " + error);
-        }
+    //         // 204 no content
+    //         if (assignmentsRes.status == 204) {
+
+    //             // render task then assignments
+    //             taskObjectRenderAll(newTask);
+
+    //             let assignmentMap = assignedArray.map((empID) => {
+    //                 return {
+    //                     empID: empID,
+    //                     taskID: newTask.taskID
+    //                 }
+    //             });
+
+    //             renderAssignments(assignmentMap).then(() => {
+    //                 console.log("[addTaskRenderAssignmentsCallback] assignments rendered for new task");
+    //             });
+    //         } else {
+    //             // render task
+    //             taskObjectRenderAll(newTask);
+    //         }
+
+    //     } else {
+    //         let error = `${res.error.message} (${res.error.code})`
+    //         console.error("[addTask] Error creating new task : " + error);
+    //     }
         
 
-        dialog.style.display = 'none';
-        fullscreenDiv.style.filter = 'none';
-        console.log("[addTask] resolving")
-    });
+    //     dialog.style.display = 'none';
+    //     fullscreenDiv.style.filter = 'none';
+    //     console.log("[addTask] resolving")
+    // });
 
-    addButton.addEventListener('click', (event) => {
-        assignedEmployees.add(empList.value);
-        updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
-    });
+    // addButton.addEventListener('click', (event) => {
+    //     assignedEmployees.add(empList.value);
+    //     updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+    // });
 
 }
 
@@ -1208,8 +1226,8 @@ function confirmDelete() {
         console.log("[confirmDelete] before popup")
         popupDiv.innerHTML = `
             <dialog open class='popupDialog' id="delete-popup">
-                <p>Are you sure you want to delete this task?</p>
-                <p><strong>This change cannot be undone.</strong></p>
+                <div>Are you sure you want to delete this task?</div>
+                <div><strong>This change cannot be undone.</strong></div>
                 <form method="dialog" class = "buttonForm">
                     <button class="closeButton">Cancel</button>
                     <button class="deleteButton">Delete</button> 
@@ -1331,7 +1349,7 @@ async function addProjectPopup(){
         </dialog>
     `;
 
-    fullscreenDiv.style.filter = 'brightness(0.6)';
+    fullscreenDiv.style.filter = 'brightness(0.75)';
     let dialog = popupDiv.querySelector('.popupDialog');
     let createButton = dialog.querySelector('.createButton');
     let closeButton = dialog.querySelector('.closeButton');
