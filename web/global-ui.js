@@ -422,7 +422,7 @@ export async function getEmployeeNotifications() {
 }
 
 export async function renderNotifications(notifications) {
-    let popoverContent = '';
+    let content = '';
 
     //gets any employee ids in the notifications so their details can be fetched
     let empIDs = new Set();
@@ -472,7 +472,7 @@ export async function renderNotifications(notifications) {
                 
                 
 
-                popoverContent += `
+                content += `
                     <a class="notification-card" href="${link}">
                         <div class="icon">
                             <span class="material-symbols-rounded">
@@ -528,7 +528,7 @@ export async function renderNotifications(notifications) {
                         desc = "Not Implemented"
 
                 }
-                popoverContent += `
+                content += `
                     <a class="notification-card" href="${link}">
                         <div class="icon">
                             <span class="material-symbols-rounded">
@@ -558,8 +558,8 @@ export async function renderNotifications(notifications) {
         
     });
 
-    notificationsButton.querySelector('.popover-content').innerHTML = `<div class="title">Activity</div>`
-    notificationsButton.querySelector('.popover-content').innerHTML += popoverContent;
+    notificationsButton.querySelector('.content').innerHTML = content;
+
 }
 
 

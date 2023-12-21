@@ -15,10 +15,12 @@
     border: solid 1px rgba(105, 112, 125, 0.1);
     border-radius: 4px;
     padding: 10px;
+    padding-top: 0;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.1);
     opacity: 0;
     pointer-events: none;
     z-index: 999;
+
     transform: translateX(-2%);
     transition: opacity 0.1s ease-out, transform 0.1s ease-out;
     & a {
@@ -28,9 +30,21 @@
 
 
     .title {
-        font-size: 18px;
         font-weight: 700;
-        margin-bottom: 2px;
+        padding: 5px;
+    }
+
+    .content {
+        max-height: 360px;
+        overflow-y: scroll;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        &::-webkit-scrollbar-track {
+            background-color: white;
+        }
+
     }
 }
 
@@ -49,9 +63,6 @@
 
     font-size: 14px;
 
-    min-height: 72px;
-
-    border-radius: 3px;
     border-bottom: 1px solid #dddddd;
 
     transition: background-color 0.1s ease-out;
