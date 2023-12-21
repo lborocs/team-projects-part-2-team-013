@@ -1011,7 +1011,12 @@ async function addTask(state) {
                     </span>
                 </div>
             </div>
-            <input type="date" class="add-task-date-input" placeholder="Due Date"></input>    
+            <div class="date-picker">
+                <div class="date-picker-icon">
+                    <span class="material-symbols-rounded">event</span>
+                </div>
+                <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
+            </div>  
         </dialog>
     `;
 
@@ -1049,6 +1054,18 @@ async function addTask(state) {
         placeholder: 'Description...',
         theme: 'snow'
     });
+
+    //flatpickr for date picker
+    let datePickerInput = popupDiv.querySelector('.date-picker-input')
+    let fp = flatpickr(datePickerInput, {
+        dateFormat: 'd/m/Y',
+        altInput: true,
+        altFormat: 'F j, Y',
+        disableMobile: true,
+        onChange: (selectedDates, dateStr, instance) => {
+            datePickerInput.dispatchEvent(new Event('change'))
+        }
+    })
 
     let assignedEmployees = new Set();
     let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
