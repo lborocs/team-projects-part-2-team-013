@@ -21,8 +21,8 @@ Written/designed by aidan F223129
     }
     ```
 
-- [x] **/employee/employee.php/all**
-  - GET (get all employees ever)
+- [x] **/employee/employee.php/all?q=search_query**
+  - GET (searches employees)
   ```jsonc
   {
     "success":true,
