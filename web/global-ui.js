@@ -411,7 +411,7 @@ export async function clearStorages() {
  * @returns {Promise<Array>} A promise that resolves to an array of notifications.
  */
 export async function getEmployeeNotifications() {
-    const data = await get_api("/employee/meta.php/notifications");
+    const data = await get_api("/employee/meta.php/notifications", {redirect_on_error:false});
     if (data.success) {
         console.log(`[getEmployeeNotifications] notifications found`);
         return data.data.notifications;
