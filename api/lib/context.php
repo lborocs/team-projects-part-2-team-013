@@ -62,7 +62,7 @@ function contextual_run() {
         header("Access-Control-Allow-Origin: https://013.team");
     }
 
-    
+
 
     $ctx = new RequestContext();
     $routing_params = get_first_path($ctx->request_uri);
