@@ -30,6 +30,7 @@
     .title {
         font-size: 18px;
         font-weight: 700;
+        margin-bottom: 2px;
     }
 }
 
@@ -80,7 +81,8 @@
         aspect-ratio: 1;
 
         & span {
-            font-size: 20px;
+            color: #333;
+            font-size: 24px;
         }
 
     }

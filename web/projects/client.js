@@ -950,7 +950,14 @@ async function addTask(state) {
     console.log("[addTask] before popup")
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
-            <div class="add-task-title">Create Task</div>
+            <div class="add-task-title">
+            <span>Create Task</span>
+            <div class="small-icon close-button">
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+            </div>
+            </div>
             <input type="text" placeholder="Task title" class="add-task-title-input">
             
             <div class="add-task-description-container">
@@ -1007,7 +1014,7 @@ async function addTask(state) {
             <input type="date" class="add-task-date-input" placeholder="Due Date"></input>    
         </dialog>
     `;
-    
+
     //event listeners for the number picker
     let numberPickers = document.querySelectorAll(".number-picker");
     numberPickers.forEach((numberPicker) => {
@@ -1075,17 +1082,23 @@ async function addTask(state) {
     console.log("[addTask] after popup")
     fullscreenDiv.style.filter = 'brightness(0.75)';
     let dialog = popupDiv.querySelector('.popupDialog');
-    let createButton = dialog.querySelector('.createButton');
-    // let closeButton = dialog.querySelector('.closeButton');
-    let deleteButton = dialog.querySelector('.deleteButton');
-    let addButton = dialog.querySelector('.addButton');
-    // closeButton.addEventListener('click', (event) => {
-    //     event.preventDefault(); 
-    //     dialog.style.display = 'none';
-    //     fullscreenDiv.style.filter = 'none';
-    //     console.log("[addTaskCloseButton] rejecting")
-    //     reject();
-    // });
+    dialog.style.transform = 'translateY(0px)'
+    dialog.style.opacity = '1';
+    // let createButton = dialog.querySelector('.create-button');
+    let closeButton = dialog.querySelector('.close-button');
+    // let deleteButton = dialog.querySelector('.delete-button');
+    // let addButton = dialog.querySelector('.add-button');
+    closeButton.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
+        dialog.style.display = 'none';
+        
+        
+        fullscreenDiv.style.filter = 'none';
+        console.log("[addTaskCloseButton] rejecting")
+        reject();
+    });
     // createButton.addEventListener('click', async (event) => {
     //     event.preventDefault();
         

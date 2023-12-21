@@ -9,7 +9,7 @@
 
     border-radius: 3px;
     cursor: pointer;
-
+    user-select: none;
     transition: background-color 0.1s ease-out;
 
     & span {

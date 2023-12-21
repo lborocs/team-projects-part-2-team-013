@@ -986,6 +986,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: filter 0.1s ease-out;
 }
 
 .popup {
@@ -997,6 +998,7 @@
 .popupDialog {
     top: 8%;
     display: flex;
+    opacity: 0;
     flex-direction: column;
     justify-content: center;
     align-items:flex-start;
@@ -1005,9 +1007,12 @@
     background-color: #fff;
     border: none;
     border-radius: 8px;
-    box-shadow: 0px 4px 18px 0px var(--box-shadow-heavier-clr, rgba(0,0,0,0.3));
+    box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));
     padding: 2em;
     width: 510px;
+
+    transform: translateY(-1%);
+    transition: opacity 0.15s ease-out, transform 0.1s ease-out;
 }
 
 .buttonForm {
@@ -1100,9 +1105,17 @@
 }
 
 .add-task-title{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
     font-weight: 700;
     font-size: 20px;
     color: var(--text-off-black, #0f0f0f);
+    width: 100%;
+    .small-icon {
+        margin-left: auto;
+    }
 }
 
 #add-task-popup {
