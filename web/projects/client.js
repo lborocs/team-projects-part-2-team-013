@@ -473,7 +473,7 @@ async function renderAssignments(assignments) {
         // create child
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
-        assignmentElem.classList.add("tooltip", "under");
+        assignmentElem.classList.add("tooltip", "tooltip-under");
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
         <img src="${emp_icon}" class="avatar">`
 
@@ -820,7 +820,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         task.innerHTML += `
 
         <div class="date-and-users">
-            <div class="tooltip under status-container">
+            <div class="tooltip tooltip-under status-container">
                 <p class="tooltiptext">${dateTooltip}</p>
                 ${statusIcon}
                 <div class="date" id="task-date">
@@ -861,7 +861,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 //     project.classList.add("project")
 //     if(isTeamLeader) {
 //         project.innerHTML = `
-//         <div class="tooltip under">
+//         <div class="tooltip tooltip-under">
 //             <p class="tooltiptext">You are the team leader for this project</p>
 //             <i class="fa-solid fa-user-gear"></i> ${title}
 //         </div>
@@ -1197,7 +1197,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
         let emp_icon = global.employeeAvatarOrFallback(emp);
         let listItem = document.createElement("div");
         listItem.classList.add("employee-list-item");
-        listItem.classList.add("tooltip", "under");
+        listItem.classList.add("tooltip", "tooltip-under");
         listItem.innerHTML = `
         <img src="${emp_icon}" class="avatar" id="task-create-avatar">
         <p class="tooltiptext">${emp_name}</p>`;

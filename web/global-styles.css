@@ -121,13 +121,13 @@ input {
     border-width: 5px;
 }
 
-.tooltip.under .tooltiptext {
+.tooltip.tooltip-under .tooltiptext {
     top: 80%;
     left: 50%;
     transform: translate(-50%);
 }
 
-.tooltip.under .tooltiptext::after{
+.tooltip.tooltip-under .tooltiptext::after{
     bottom: 100%;
     left: 50%;
     margin-left: -5px;
@@ -135,18 +135,46 @@ input {
     border-color: transparent transparent #2f2f2fcc transparent;
 }
 
-.tooltip.right .tooltiptext {
+.tooltip.tooltip-right .tooltiptext {
     top: 50%;
     left: 100%;
     transform: translate(0, -50%);
 }
 
-.tooltip.right .tooltiptext::after{
+.tooltip.tooltip-right .tooltiptext::after{
     top: 50%;
     right: 100%;
     margin-top: -5px;
     border-style: solid;
     border-color: transparent #2f2f2fcc transparent transparent;
+}
+
+.tooltip.tooltip-left .tooltiptext {
+    top: 50%;
+    right: 100%;
+    transform: translate(0, -50%);
+}
+
+.tooltip.tooltip-left .tooltiptext::after{
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-style: solid;
+    border-color: transparent transparent transparent #2f2f2fcc;
+}
+
+.tooltip.tooltip-above .tooltiptext {
+    bottom: 100%;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.tooltip.tooltip-above .tooltiptext::after{
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-style: solid;
+    border-color: #2f2f2fcc transparent transparent transparent;
 }
 
 .sidebar-container {

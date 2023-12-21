@@ -8,6 +8,7 @@
     line-height: 1;
 
     border-radius: 3px;
+    outline-color: white;
     cursor: pointer;
     user-select: none;
     transition: background-color 0.1s ease-out, outline 0.1s ease-out;
@@ -28,5 +29,5 @@
 
 .small-icon:active {
     background-color: #fafafa;
-    outline: solid 1px #aaa;
+    outline: solid 1px #f0f0f0;
 }
