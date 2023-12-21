@@ -1402,8 +1402,6 @@ function db_notifications_fetch($employee_id) {
         FROM `NOTIFICATIONS`
         LEFT JOIN `EMPLOYEES` ON
             `EMPLOYEES`.empID = ?
-        LEFT JOIN `ASSETS` ON
-            `EMPLOYEES`.avatar = `ASSETS`.assetID
         LEFT JOIN `EMPLOYEE_POST_META` ON
             `EMPLOYEE_POST_META`.empID = `EMPLOYEES`.empID AND
             `EMPLOYEE_POST_META`.postMetaSubscribed = '1'
@@ -1416,10 +1414,12 @@ function db_notifications_fetch($employee_id) {
             `EMPLOYEE_TASKS`.empID = `EMPLOYEES`.empID
         LEFT JOIN `TASK_UPDATE` ON
             `NOTIFICATIONS`.eventID = `TASK_UPDATE`.eventID
-            AND `TASK_UPDATE`.taskID = `EMPLOYEE_TASKS`.taskID
             AND (
-                `TASK_UPDATE`.taskUpdateConcerns = `EMPLOYEES`.empID OR
-                `TASK_UPDATE`.taskUpdateConcerns IS NULL
+                `TASK_UPDATE`.taskUpdateConcerns = `EMPLOYEES`.empID
+                OR (
+                    `TASK_UPDATE`.taskUpdateConcerns IS NULL
+                    AND `TASK_UPDATE`.taskID = `EMPLOYEE_TASKS`.taskID
+                )
             )
         LEFT JOIN `TASKS` ON
             `TASKS`.taskID = `TASK_UPDATE`.taskID
