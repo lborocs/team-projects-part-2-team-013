@@ -20,11 +20,13 @@ async function getPostData(postID){
 
     const post = data.data;
 
-    document.querySelector(".title").innerText = post.title
-    document.querySelector("#postTitle").innerHTML = post.title
-    document.querySelector(".content").innerHTML = post.content
-    document.querySelector(".author").innerText = global.bothNamesToString(post.author.firstName, post.author.lastName)
-    document.querySelector(".date").innerText = global.formatDate(new Date(post.createdAt * 1000))
+    let postElement = document.querySelector(".post")
+
+    postElement.querySelector(".title").innerText = post.title
+    postElement.querySelector("#postTitle").innerHTML = post.title
+    postElement.querySelector(".content").innerHTML = post.content
+    postElement.querySelector(".author").innerText = global.bothNamesToString(post.author.firstName, post.author.lastName)
+    postElement.querySelector(".date").innerText = global.formatDate(new Date(post.createdAt * 1000))
     console.log(post)
 
     global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
