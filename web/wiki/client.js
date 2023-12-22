@@ -243,28 +243,39 @@ function confirmDelete() {
         let fullscreenDiv = document.querySelector('.fullscreen');
 
         popupDiv.innerHTML = `
-            <dialog open class='popupDialog'>
-                <div class="popupTitle">Delete Post</div>
-                <div class="popupText">Are you sure you want to delete this post?</div>
-                <div class="popupText">This action cannot be undone?</div>
-                <div class="popupText">Reason for deleting</div>
-                <ul class="popupList">
-                    <li class="popupListItem"><input type="radio" name="deleteReason" value="1">Duplicate</li>
-                    <li class="popupListItem"><input type="radio" name="deleteReason" value="2">Out of Date</li>
-                    <li class="popupListItem"><input type="radio" name="deleteReason" value="3">Incorrect information</li>
-                    <li class="popupListItem"><input type="radio" name="deleteReason" value="4">Other</li>
+            <dialog open class='popup-dialog'>
+                <div class="popup-title">
+                Delete Post
+                <div class="small-icon close-button">
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+                </div>
+                </div>
+                <div class="popup-text">Are you sure you want to delete this post?</div>
+                <div class="popup-text">This action cannot be undone?</div>
+                <div class="popup-text">Reason for deleting</div>
+                <ul class="popup-list">
+                    <li class="popup-list-item"><input type="radio" name="deleteReason" value="1">Duplicate</li>
+                    <li class="popup-list-item"><input type="radio" name="deleteReason" value="2">Out of Date</li>
+                    <li class="popup-list-item"><input type="radio" name="deleteReason" value="3">Incorrect information</li>
+                    <li class="popup-list-item"><input type="radio" name="deleteReason" value="4">Other</li>
                 </ul>
-                <div class="popupButtons">
-                    <div class="text-button red" id="deleteButton">Delete</div>
-                    <div class="text-button" id="closeButton">Cancel</div>
+                <div class="popup-buttons">
+                    <div class="text-button" id="closeButton">
+                        <div class="button-text">Cancel</div>
+                    </div>
+                    <div class="text-button red" id="deleteButton">
+                        <div class="button-text">Delete</div>
+                    </div>
                 </div>
             </dialog>
         `;
-        fullscreenDiv.style.filter = 'brightness(0.6)';
+        fullscreenDiv.style.filter = 'brightness(0.75)';
 
-        let dialog = popupDiv.querySelector('.popupDialog');
-        let closeButton = dialog.querySelector('.closeButton');
-        let deleteButton = dialog.querySelector('.deleteButton');
+        let dialog = popupDiv.querySelector('.popup-dialog');
+        let closeButton = dialog.querySelector('#close-button');
+        let deleteButton = dialog.querySelector('#delete-button');
 
         closeButton.addEventListener('click', (event) => {
             event.preventDefault(); 
