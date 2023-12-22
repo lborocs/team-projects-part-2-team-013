@@ -26,7 +26,7 @@ async function getPostData(postID){
     postElement.querySelector("#postTitle").innerHTML = post.title
     postElement.querySelector(".content").innerHTML = post.content
     postElement.querySelector(".author").innerText = global.bothNamesToString(post.author.firstName, post.author.lastName)
-    postElement.querySelector(".date").innerText = global.formatDate(new Date(post.createdAt * 1000))
+    postElement.querySelector(".date").innerText = global.formatDateFull(new Date(post.createdAt * 1000))
     console.log(post)
 
     global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
