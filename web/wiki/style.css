@@ -461,7 +461,7 @@ input[type="text"]:focus {
     height: 100vh;
 }
 
-.popupDialog {
+.popup-dialog {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -476,46 +476,3 @@ input[type="text"]:focus {
     padding: 6em;
     text-align: center;
 }
-.popupDialog p:first-child {
-    font-size: 1.8em;
-}
-.popupDialog p:nth-child(2) {
-    padding-bottom: 0.7em;
-    font-size: 1.3em;
-}
-.popupDialog p {
-    margin: 0.1em 0;
-}
-
-.buttonForm {
-    display: flex;
-    justify-content: center;
-}
-
-.closeButton, .deleteButton {
-    padding: 0.5em 0.8em;
-    margin: 0 0.5em;
-    border: none;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0);
-    box-sizing: border-box;
-}
-
-.deleteButton {
-    background-color: rgb(218,55, 60);
-    color: white;
-}
-
-.deleteButton:hover {
-    background-color: rgb(161, 40, 40);
-    color: white;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-        border: none;
-}
-
-.closeButton:hover{
-    border: none;
-    background-color: rgb(34, 32, 32);
-    color: white;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3); 
-}
-

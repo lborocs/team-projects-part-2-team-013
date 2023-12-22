@@ -244,12 +244,20 @@ function confirmDelete() {
 
         popupDiv.innerHTML = `
             <dialog open class='popupDialog'>
-                <p>Are you sure you want to delete this post?</p>
-                <p><strong>This change cannot be undone.</strong></p>
-                <form method="dialog" class = "buttonForm">
-                    <button class="closeButton">Cancel</button>
-                    <button class="deleteButton">Delete</button> 
-                </form>
+                <div class="popupTitle">Delete Post</div>
+                <div class="popupText">Are you sure you want to delete this post?</div>
+                <div class="popupText">This action cannot be undone?</div>
+                <div class="popupText">Reason for deleting</div>
+                <ul class="popupList">
+                    <li class="popupListItem"><input type="radio" name="deleteReason" value="1">Duplicate</li>
+                    <li class="popupListItem"><input type="radio" name="deleteReason" value="2">Out of Date</li>
+                    <li class="popupListItem"><input type="radio" name="deleteReason" value="3">Incorrect information</li>
+                    <li class="popupListItem"><input type="radio" name="deleteReason" value="4">Other</li>
+                </ul>
+                <div class="popupButtons">
+                    <div class="text-button red" id="deleteButton">Delete</div>
+                    <div class="text-button" id="closeButton">Cancel</div>
+                </div>
             </dialog>
         `;
         fullscreenDiv.style.filter = 'brightness(0.6)';
