@@ -43,6 +43,40 @@
     }
 }
 
+.header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5em;
+    position: relative;
+}
+
+.left-column {
+    flex: 1;
+}
+
+.right-column {
+    width: 10em;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    position:relative;
+}
+
+.useful {
+    position: absolute;
+    top: 0;
+    right:0;
+}
+
+.watching {
+    position: absolute;
+    bottom: 0;
+    right:0;
+}
+
 .authorIcon {
     display: flex;
     flex-direction: row;
@@ -144,3 +178,5 @@
     border: 1px solid #e0e0e0;
     box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.1);
   }
+
+
