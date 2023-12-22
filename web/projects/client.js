@@ -1724,7 +1724,7 @@ async function searchAndRenderProjects(search) {
     // process the data here
     if (data.success == true) {
         clearProjectList();
-        console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
+        console.log("[searchAndRenderAllProjects] projects have been fetched successfully")
         await Promise.all(data.data.projects.map(async (project) => {
 
             await projectObjectRenderAndListeners(project);
