@@ -418,7 +418,7 @@ const TABLE_POST_VIEWS = new Table(
             "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_POSTS, _POSTID, "db_post_fetch")]
         ),
-        new Column("postViewTime", is_primary_key:true, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("postViewAccessedAt", is_primary_key:true, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
     "access",
     "postView"
