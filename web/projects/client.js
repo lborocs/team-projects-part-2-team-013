@@ -72,6 +72,7 @@ async function projectSwitchToOnClick(projectRow) {
         console.error(`[projectSwitchToOnClick] Error fetching project`);
         return false;
     }
+
     globalCurrentProject = project;
 
     let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
@@ -204,10 +205,10 @@ function explainerTaskSetToDefault() {
     let statusElement = document.querySelector(".status");
     statusElement.innerHTML = "";
 
-    let currentProject = document.querySelector(".project.selected");
-    if (currentProject) {
-        let projName = currentProject.getAttribute("data-title");
-        let projID = currentProject.getAttribute("data-ID");
+    //using globalCurrentProject
+    if (globalCurrentProject) {
+        let projName = globalCurrentProject.name
+        let projID = globalCurrentProject.projID
         global.setBreadcrumb(["Projects", projName], [window.location.pathname, "#" + projID]);
     } else {
         global.setBreadcrumb(["Projects"], [window.location.pathname]);
@@ -228,7 +229,7 @@ function getTaskState(task) {
 function updateTaskState(task) {
     let state = getTaskState(task);
     let taskID = task.getAttribute("id");
-    let projID = document.querySelector(".project-row.selected").getAttribute("data-ID");
+    let projID = globalCurrentProject.projID;
     let newState = state;
     if (task.parentElement == notStartedColumn) {
         newState = 0;
