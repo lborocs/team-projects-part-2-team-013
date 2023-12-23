@@ -1025,14 +1025,6 @@
     justify-content: center;
 }
 
-.closeButton, .deleteButton, .createButton, .editButton{
-    padding: 0.5em 0.8em;
-    margin: 0 0.5em;
-    border: none;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0);
-    box-sizing: border-box;
-}
-
 .editButton {
     background-color: var(--confirm-button-colour, rgb(66, 116, 255));
     color: var(--white, white);
@@ -1203,6 +1195,23 @@
     font-weight: 600;
     
 }
+.confirm-buttons-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 0.5em;
+
+    #create-button {
+        background-color: #3098ff;
+        color: white;
+    }
+
+    #create-button:hover {
+        background-color: #2d8aff;
+    }
+}
+
 
 
 .edit-button {

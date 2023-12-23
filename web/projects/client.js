@@ -976,7 +976,7 @@ async function addTask(state) {
         <dialog open class='popupDialog' id="add-task-popup">
             <div class="add-task-title">
             <span>Create Task</span>
-            <div class="small-icon close-button">
+            <div class="small-icon" id="close-button">
                 <span class="material-symbols-rounded">
                     close
                 </span>
@@ -1040,7 +1040,19 @@ async function addTask(state) {
                     <span class="material-symbols-rounded">event</span>
                 </div>
                 <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
-            </div>  
+            </div>
+            <div class="confirm-buttons-row">
+                <div class="text-button" id="discard-button">
+                    <div class="button-text">
+                        Discard
+                    </div>  
+                </div>
+                <div class="text-button" id="create-button">
+                    <div class="button-text">
+                        Create
+                    </div>
+                </div>
+            </div>
         </dialog>
     `;
 
@@ -1131,10 +1143,10 @@ async function addTask(state) {
     dialog.style.transform = 'translateY(0px)'
     dialog.style.opacity = '1';
     
-    // let createButton = dialog.querySelector('.create-button');
-    let closeButton = dialog.querySelector('.close-button');
-    // let deleteButton = dialog.querySelector('.delete-button');
-    // let addButton = dialog.querySelector('.add-button');
+    let createButton = dialog.querySelector('#create-button');
+    let closeButton = dialog.querySelector('#close-button');
+    let discardButton = dialog.querySelector('#discard-button');
+
     closeButton.addEventListener('click', (event) => {
         event.preventDefault(); 
         dialog.style.transform = 'translateY(-1%)'
@@ -1145,6 +1157,16 @@ async function addTask(state) {
         fullscreenDiv.style.filter = 'none';
         console.log("[addTaskCloseButton] rejecting")
     });
+
+    discardButton.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
+        dialog.style.display = 'none';
+        fullscreenDiv.style.filter = 'none';
+        console.log("[addTaskDiscardButton] rejecting")
+    });
+
     dialog.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             dialog.style.transform = 'translateY(-1%)'
@@ -1154,81 +1176,50 @@ async function addTask(state) {
             console.log("[addTaskEscape] rejecting")
         }
     });
-    // createButton.addEventListener('click', async (event) => {
-    //     event.preventDefault();
-        
-    //     let selectedProject = document.querySelector(".project-row.selected");
-    //     console.log("[addTaskCreateButton] selectedProject: " + selectedProject)
-    //     let projID = selectedProject.getAttribute("data-ID");
 
-    //     let titleInput = dialog.querySelector('.add-task-title-input');
-    //     let descInput = dialog.querySelector('.add-task-description-input');
-    //     let dateInput = dialog.querySelector('.add-task-date-input');
-    //     console.log("[addTaskCreateButton] dateinput: " + dateInput.value)
-    //     let date = new Date(dateInput.value);
-    //     let timestamp = Math.floor(date.getTime() / 1000);
+    createButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        let title = dialog.querySelector('.add-task-title-input').value;
+        let description = quill.root.innerHTML;
+        let expectedManHours = parseInt(numberPickerInput.value, 10);
+        let dueDate = fp.selectedDates[0];
+        let dueDateTimestamp = dueDate ? dueDate.getTime() : null;
+        let state = 0;
+        let assignedEmployeesArray = [...assignedEmployees];
+        //post the task without assignments
+        let taskRes = await post_api(`/project/task.php/task/${globalCurrentProject.projID}`, {
+            title: title,
+            description: description,
+            expectedManHours: expectedManHours,
+            dueDate: dueDateTimestamp,
+            state: state,
+        });
+        if (taskRes.success) {
+            let task = taskRes.data;
+            //post the assignments
+            let assignmentRes = await put_api(`/project/task.php/assignments/${globalCurrentProject.projID}/${task.taskID}`, {
+                assignments: assignedEmployeesArray
+            });   
+            if (assignmentRes.success) {
+                let assignments = assignmentRes.data;
+                task.assignments = assignments;
+                taskObjectRenderAll(task, RENDER_BOTH);
+                dialog.style.transform = 'translateY(-1%)'
+                dialog.style.opacity = '0';
+                dialog.style.display = 'none';
+                fullscreenDiv.style.filter = 'none';
+                console.log("[addTaskCreateButton] resolving")
+            } else {
+                console.error("[addTaskCreateButton] Error creating assignments: ", assignmentRes.error.message);
+                alert("An error occurred while creating the task. Please try again later.");
+            }
+        } else {
+            console.log("[addTaskCreateButton] rejecting")
+        }
+    })
 
 
-    //     let createTaskRes = await post_api(
-    //         `/project/task.php/task/${projID}`,
-    //         {
-    //             title: titleInput.value,
-    //             state: state,
-    //             description: descInput.value,
-    //             dueDate: timestamp,
-    //             //assignedEmployees: [...assignedEmployees]
-    //         }
-    //     );
-
-    //     if (createTaskRes.success) {
-    //         let newTask = createTaskRes.data;
-
-    //         // put assignments
-
-
-    //         let assignedArray = [...assignedEmployees];
-
-    //         let assignmentsRes = await put_api(
-    //             `/project/task.php/assignments/${projID}/${createTaskRes.data.taskID}`,
-    //             {assignments:assignedArray}
-    //         );
-
-    //         // 204 no content
-    //         if (assignmentsRes.status == 204) {
-
-    //             // render task then assignments
-    //             taskObjectRenderAll(newTask);
-
-    //             let assignmentMap = assignedArray.map((empID) => {
-    //                 return {
-    //                     empID: empID,
-    //                     taskID: newTask.taskID
-    //                 }
-    //             });
-
-    //             renderAssignments(assignmentMap).then(() => {
-    //                 console.log("[addTaskRenderAssignmentsCallback] assignments rendered for new task");
-    //             });
-    //         } else {
-    //             // render task
-    //             taskObjectRenderAll(newTask);
-    //         }
-
-    //     } else {
-    //         let error = `${res.error.message} (${res.error.code})`
-    //         console.error("[addTask] Error creating new task : " + error);
-    //     }
-        
-
-    //     dialog.style.display = 'none';
-    //     fullscreenDiv.style.filter = 'none';
-    //     console.log("[addTask] resolving")
-    // });
-
-    // addButton.addEventListener('click', (event) => {
-    //     assignedEmployees.add(empList.value);
-    //     updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
-    // });
 
 }
 
