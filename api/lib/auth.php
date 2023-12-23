@@ -9,13 +9,13 @@ class Session {
     public int $auth_level;
 
     function to_unencrypted_bytes() {
-        return pack("a16a16Ic", hex2bin($this->hex_id), hex2bin($this->hex_associated_user_id), $this->issued, $this->auth_level);
+        return pack("a16a16Qc", hex2bin($this->hex_id), hex2bin($this->hex_associated_user_id), $this->issued, $this->auth_level);
     }
 
 
     static function from_unencrypted_bytes(string $bytearray) {
 
-        $data = unpack("a16s_id/a16u_id/Iissued/cauth", $bytearray);
+        $data = unpack("a16s_id/a16u_id/Qissued/cauth", $bytearray);
 
         if ($data == false) {
             respond_internal_error(ERROR_SESSION_CANT_UNPACK);
