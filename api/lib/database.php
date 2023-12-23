@@ -1397,19 +1397,24 @@ function db_notifications_fetch($employee_id) {
 
     $query = $db->prepare(
         "SELECT DISTINCT 
-            POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*,
+            POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*, `PROJECTS`.*
             `NOTIFICATIONS`.*
         FROM `NOTIFICATIONS`
         LEFT JOIN `EMPLOYEES` ON
             `EMPLOYEES`.empID = ?
+        -- check that the we are subscribed to the post
         LEFT JOIN `EMPLOYEE_POST_META` ON
             `EMPLOYEE_POST_META`.empID = `EMPLOYEES`.empID AND
             `EMPLOYEE_POST_META`.postMetaSubscribed = '1'
+
         LEFT JOIN `POST_UPDATE` ON
             `NOTIFICATIONS`.eventID = `POST_UPDATE`.eventID AND
             `POST_UPDATE`.postID = `EMPLOYEE_POST_META`.postID
+        -- auxilary info for POST_UPDATE
         LEFT JOIN `POSTS` ON
             `POSTS`.postID = `POST_UPDATE`.postID
+
+        -- check that we are assigned to a task OR the update concerns us
         LEFT JOIN `EMPLOYEE_TASKS` ON
             `EMPLOYEE_TASKS`.empID = `EMPLOYEES`.empID
         LEFT JOIN `TASK_UPDATE` ON
@@ -1421,8 +1426,11 @@ function db_notifications_fetch($employee_id) {
                     AND `TASK_UPDATE`.taskID = `EMPLOYEE_TASKS`.taskID
                 )
             )
+        -- auxilary info for TASK_UPADTE
         LEFT JOIN `TASKS` ON
             `TASKS`.taskID = `TASK_UPDATE`.taskID
+        LEFT JOIN `PROJECTS` ON
+            `PROJECTS`.projID = `TASKS`.projID
 
         -- check for each row there is atleast 1 notification
         WHERE (
