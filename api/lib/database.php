@@ -1397,7 +1397,11 @@ function db_notifications_fetch($employee_id) {
 
     $query = $db->prepare(
         "SELECT DISTINCT 
-            POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*, `PROJECTS`.*,
+            -- post type
+            POST_UPDATE.*, `POSTS`.postTitle, `POSTS`.postAuthor
+            -- task type
+            `TASK_UPDATE`.*, `TASKS`.*, `PROJECTS`.*,
+            -- union header
             `NOTIFICATIONS`.*
         FROM `NOTIFICATIONS`
         LEFT JOIN `EMPLOYEES` ON
