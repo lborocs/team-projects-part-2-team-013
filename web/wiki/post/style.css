@@ -83,6 +83,10 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 0.25em;
+
+    .active {
+        color: red;
+    }
 }
 
 .authorIcon {
