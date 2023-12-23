@@ -567,7 +567,7 @@ export async function renderNotifications(notifications) {
                         break;
                     case 1: // task has been updated
                         icon = "change_circle";
-                        desc = `Moved <span>${task.title}</span> to <span>${formatTaskState(task.state)}</span>.`
+                        desc = `Updated <span>${task.title}</span> in <span>${project.name}</span>.`
                         break;
                     case 2: // task has been assigned to you
                         icon = "person_add";
