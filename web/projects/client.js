@@ -437,7 +437,7 @@ async function fetchAndRenderTasks(projID) {
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
     console.log("[taskObjectRenderAll] rendering task object "+task.title)
-    let date = task.dueDate ? global.formatDate(new Date(task.dueDate * 1000)) : "Due date not set";
+    let date = task.dueDate ? global.formatDate(new Date(task.dueDate)) : "Due date not set";
     let desc = task.description
     let title = task.title || "No Title";
     let createdBy = task.createdBy || "Unknown";
@@ -919,7 +919,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
 
     console.log(`[renderProject] using icon: ${icon}`)
-    let date = createdAt ? global.formatDateFull(new Date(createdAt * 1000)) : "No creation date found";
+    let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -1618,7 +1618,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
     let closeButton = dialog.querySelector('.closeButton');
     let addButton = dialog.querySelector('.addButton');
     let dateSelector = dialog.querySelector('.add-task-date-input');
-    let date = new Date(timestamp * 1000).toISOString().split('T')[0];
+    let date = new Date(timestamp).toISOString().split('T')[0];
     console.log("[editTaskPopup] current date is")
     console.log(date)
 
