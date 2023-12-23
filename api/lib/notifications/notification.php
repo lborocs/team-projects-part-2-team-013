@@ -34,7 +34,7 @@ function _create_notification_bulk(int $type, string $author_id, Array $array_of
 }
 
 function notification_task_edit(string $task_id, string $edited_by) {
-    return _create_notification(NOTIFICATION_TYPE::TASK_UPDATE, $task_id, null, TASK_UPDATE_TYPE::EDITED);
+    return _create_notification(NOTIFICATION_TYPE::TASK_UPDATE, $edited_by, $task_id, null, TASK_UPDATE_TYPE::EDITED);
 }
 
 function notification_task_assigned_bulk(string $task_id, string $assigned_by, Array $assignees) {
