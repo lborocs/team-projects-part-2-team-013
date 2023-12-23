@@ -1397,7 +1397,7 @@ function db_notifications_fetch($employee_id) {
 
     $query = $db->prepare(
         "SELECT DISTINCT 
-            POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*, `PROJECTS`.*
+            POST_UPDATE.*, `POSTS`.postTitle, `TASK_UPDATE`.*, `TASKS`.*, `PROJECTS`.*,
             `NOTIFICATIONS`.*
         FROM `NOTIFICATIONS`
         LEFT JOIN `EMPLOYEES` ON
