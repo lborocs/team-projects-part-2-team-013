@@ -250,6 +250,23 @@ export function howLongAgo(timestamp) {
     return formatDate(timestamp);
 
 }
+/**
+ * 
+ * @param {number} state 0 - not started, 1 - in progress, 2 - finished
+ * @returns {string} the state in a human readable format
+ */
+export function formatTaskState(state) {
+    switch (state) {
+        case 0:
+            return "Not started";
+        case 1:
+            return "In progress";
+        case 2:
+            return "Finished";
+        default:
+            return "unknown task state, how did this even happen";
+    }
+}
 
 
 
@@ -478,51 +495,40 @@ export async function renderNotifications(notifications) {
     notifications.forEach(notification => {
         switch(notification.type) {
             case 0:
-                empIDs.add(notification.body.editor.empID);
+                empIDs.add(notification.body.post.author.empID);
                 break;
             case 1:
                 break;
             default:
         }
+        empIDs.add(notification.author.empID)
     });
 
     //getting data needed for rendering
     let employees = await getEmployeesById(empIDs);
-    let projData = await get_api('/project/project.php/projects');
-    if(!projData.success) {
-        console.error("[renderNotifications] FAILED TO GET PROJECTS");
-    }
-    //makeshift get projects by id function
-    let projects = new Map();
-    projData.data.projects.forEach(project => {
-        projects.set(project.projID, project);
-    });
+    //no longer need to get projects because they are returned in the notification body
     
 
     
     //rendering notifications
     notifications.forEach(notification => {
         console.log(notification)
-        let empID;
-        let projectName;
         let icon = ""
         let link = "https://www.google.com"
-        let name = "Not Implemented"
         let desc = "Not Implemented"
-        let time = howLongAgo(new Date(notification.time * 1000))
+        let time = howLongAgo(new Date(notification.time * 1000));
 
-        //huge placeholder
-        let avatar = "data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWMwZTUiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogIzAwMDsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiAnT3BlbiBTYW5zJywgc2Fucy1zZXJpZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTEyIiBmb250LXdlaWdodD0iNDAwIiBkeT0iLjFlbSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzAwMCIgeD0iNTAlIiB5PSI1MCUiPkQ8L3RleHQ+CiAgICA8L3N2Zz4="
+        //notification author
+        let empID = notification.author.empID;
+        let name = bothNamesToString(employees.get(empID).firstName, employees.get(empID).lastName);
+        let avatar = employeeAvatarOrFallback(employees.get(empID));
+
+        
         switch(notification.type) {
             case 0: // post they are following has been edited
             console.log("[renderNotifications] post edited")
                 icon = "checkbook";
-                empID = notification.body.editor.empID;
-                name = bothNamesToString(employees.get(empID).firstName, employees.get(empID).lastName);
-                avatar = employeeAvatarOrFallback(employees.get(empID));
                 
-                
-
                 content += `
                     <a class="notification-card" href="${link}">
                         <div class="icon">
@@ -548,37 +554,32 @@ export async function renderNotifications(notifications) {
                 break;
             case 1: // task they are involved in has been updated in some way
                 console.log("[renderNotifications] task updated")
+
+                //task, project for this notification
+                let task = notification.body.task;
+                let project = task.project;
+                link = `/projects/#${project.projID}-${task.taskID}`;
+
                 switch(notification.body.detail) {
                     case 0: // task has been created
                         icon = "add_task";
-                        name = notification.body.task.title;
-                        projectName = projects.get(notification.body.task.project.projID).name;
-                        desc = `<span>${projectName}</span> was created.`
+                        desc = `Created <span>${task.title}</span> in <span>${project.name}</span>.`
                         break;
                     case 1: // task has been updated
                         icon = "change_circle";
-                        name = notification.body.task.title;
-                        projectName = projects.get(notification.body.task.project.projID).name;
-                        desc = `<span>${name}</span> was updated.`
+                        desc = `Moved <span>${task.title}</span> to <span>${formatTaskState(task.state)}</span>.`
                         break;
                     case 2: // task has been assigned to you
                         icon = "person_add";
-                        name = notification.body.task.title;
-                        projectName = projects.get(notification.body.task.project.projID).name;
-                        desc = `You were assigned <span>${name}</span>.`
+                        desc = `Assigned you to <span>${task.title}</span> in <span>${project.name}</span>.`
                         break;
                     case 3: // task has been unassigned to you
                         icon = "person_remove";
-                        name = notification.body.task.title;
-                        projectName = projects.get(notification.body.task.project.projID).name;
-                        desc = `You were removed from <span>${name}</span>.`
+                        desc = `Removed you from <span>${task.title}</span> in <span>${project.name}</span>.`
                         break;
                     default: // unknown
                         icon = "question_mark";
-                        name = "Not Implemented"
-                        projectName = "Not Implemented"
                         desc = "Not Implemented"
-
                 }
                 content += `
                     <a class="notification-card" href="${link}">
@@ -589,7 +590,8 @@ export async function renderNotifications(notifications) {
                         </div>
                         <div class="details">
                             <div class="name-card">
-                                <span>${projectName}</span>
+                                <img src="${avatar}" class="avatar">
+                                <span>${name}</span>
                             </div>
                             <div class="text">${desc}</div>
                         </div>
@@ -602,13 +604,9 @@ export async function renderNotifications(notifications) {
                     </a>
                 `;
                 break;
-                
             default: // unknown
                 icon = "question_mark";
-
         }
-
-        
     });
 
     notificationsButton.querySelector('.content').innerHTML = content;
@@ -827,11 +825,11 @@ export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHas
 
 fillCurrentUserInfo();
 managerElementsEnableIfManager();
-// getEmployeeNotifications().then((items) => {
-//     if (items.length > 0) {
-//         console.log("[getEmployeeNotifications] notifications found and display badge");
-//         console.log(items);
-//         notifications = items
-//         renderNotifications(items);
-//     }
-// })
+getEmployeeNotifications().then((items) => {
+    if (items.length > 0) {
+        console.log("[getEmployeeNotifications] notifications found and display badge");
+        console.log(items);
+        notifications = items
+        renderNotifications(items);
+    }
+})
