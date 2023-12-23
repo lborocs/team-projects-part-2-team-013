@@ -45,3 +45,13 @@ for (let i = 0; i < postData.tags.length; i++) {
  console.log(postData.author.userID);
 let emp_icon = global.employeeAvatarOrFallback(postData.author);
 document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
+
+document.querySelector("#watching").addEventListener("click", function() {
+    button = document.querySelector("#watching");
+    button.toggleAttribute("active");
+});
+
+document.querySelector("#useful").addEventListener("click", function() {
+    button = document.querySelector("#useful");
+    button.toggleAttribute("active");
+});
