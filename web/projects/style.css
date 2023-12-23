@@ -355,7 +355,7 @@
     display: flex;
     align-items: center;
     margin-left: 1em;
-    padding-left: 0.5em;
+    padding-left: 0.25em;
     padding-right: 0.5em;
     background-color: var(--view-selected-bg, rgb(246,246,245));
     font-weight: 700;
@@ -364,6 +364,10 @@
     transition: 0.1s ease-out;
     cursor: pointer;
     user-select: none;
+
+    & span {
+        font-size: 20px;
+    }
 }
 
 .view:hover {
