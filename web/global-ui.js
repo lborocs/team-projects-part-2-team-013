@@ -534,7 +534,7 @@ export async function renderNotifications(notifications) {
                 let post = notification.body.post;
 
                 icon = "checkbook";
-                link = `/wiki/#${post.postID}`;
+                link = `/wiki/post/#${post.postID}`;
                 notificationCard.href = link;
                 
                 notificationCard.innerHTML = `
