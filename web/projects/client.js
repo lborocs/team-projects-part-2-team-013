@@ -964,7 +964,7 @@ async function addTask(state) {
                 <div id="description-editor"></div>
             </div>
             <div class="dropdown-and-employee-list">
-                <div class="search-dropdown" tabindex="0">
+                <div class="search-dropdown" id="employee-select" tabindex="0">
                     <div class="search">
                         <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
             
@@ -977,7 +977,7 @@ async function addTask(state) {
                         </div>
                     </div>
                     <div class="popover">
-                        <div class="employee-list" id="employee-select">
+                        <div class="employee-list">
                         </div>
                         <div class="show-more text-button">
                             <div class="button-icon">
@@ -996,7 +996,7 @@ async function addTask(state) {
                 </div>
             </div>
             
-            <div class="number-picker">
+            <div class="number-picker" id="expected-man-hours">
                 <div class = "stepper decrement" tabindex="0">
                     <span class="material-symbols-rounded">
                         remove
@@ -1011,7 +1011,7 @@ async function addTask(state) {
                     </span>
                 </div>
             </div>
-            <div class="date-picker">
+            <div class="date-picker" id="due-date">
                 <div class="date-picker-icon">
                     <span class="material-symbols-rounded">event</span>
                 </div>
@@ -1019,28 +1019,6 @@ async function addTask(state) {
             </div>  
         </dialog>
     `;
-
-    //event listeners for the number picker
-    let numberPickers = document.querySelectorAll(".number-picker");
-    numberPickers.forEach((numberPicker) => {
-        let input = numberPicker.querySelector('input[type="number"]')
-        let plus = numberPicker.querySelector('.stepper.increment')
-        let minus = numberPicker.querySelector('.stepper.decrement')
-
-        plus.addEventListener('click', e => {
-            e.preventDefault()
-            input.stepUp()
-        })
-
-        minus.addEventListener('click', e => {
-            e.preventDefault()
-            input.stepDown()
-        })
-
-        input.addEventListener('focus', e => {
-            input.select()
-        })
-    })
 
     //quill for description
     var quill = new Quill('#description-editor', {
@@ -1054,6 +1032,23 @@ async function addTask(state) {
         placeholder: 'Description...',
         theme: 'snow'
     });
+
+    //event listeners for the number picker
+    let numberPicker = document.querySelector("#expected-man-hours");
+    let numberPickerInput = numberPicker.querySelector('input[type="number"]')
+    let numberPickerPlus = numberPicker.querySelector('.stepper.increment')
+    let numberPickerMinus = numberPicker.querySelector('.stepper.decrement')
+    numberPickerPlus.addEventListener('click', e => {
+        e.preventDefault()
+        numberPickerInput.stepUp()
+    })
+    numberPickerMinus.addEventListener('click', e => {
+        e.preventDefault()
+        numberPickerInput.stepDown()
+    })
+    numberPickerInput.addEventListener('focus', e => {
+        numberPickerInput.select()
+    })
 
     //flatpickr for date picker
     let datePickerInput = popupDiv.querySelector('.date-picker-input')
@@ -1070,7 +1065,7 @@ async function addTask(state) {
     let assignedEmployees = new Set();
     let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
 
-    let empList = popupDiv.querySelector('#employee-select');
+    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
@@ -1093,6 +1088,16 @@ async function addTask(state) {
     employeeList.forEach((emp) => {
         employeeMap.set(emp.empID, emp);
     });
+
+    // add event listeners to employee list
+    let employeeListOptions = empList.querySelectorAll(".name-card");
+    employeeListOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+            let empID = option.getAttribute("data-id");
+            assignedEmployees.add(empID);
+            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap)
+        })
+    })
 
 
     console.log(popupDiv.innerHTML)
