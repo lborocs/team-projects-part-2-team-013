@@ -1,7 +1,8 @@
 .main {
     display: flex;
     align-items: center;
-    background-color: var(--light-grey-bg)
+    background-color: var(--light-grey-bg);
+    overflow-y: scroll;
 }
 
 
@@ -21,7 +22,6 @@
     border-radius: 8px;
     border: 1px solid #e0e0e0;
     box-shadow: 0 0 6px rgba(0,0,0,0.1);
-    overflow-y: auto;
     .title{
         font-size: 1.5em;
         font-weight: 700;
@@ -29,6 +29,8 @@
     }
     .content{
         font-size: 0.9em;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
         & h2 {
             font-size: 1.25em;
             font-weight: 600;
@@ -40,6 +42,22 @@
             font-weight: 600;
         
         }
+
+        & p {
+            margin-block-end: 0;
+            margin-block-start: 0;
+        }
+
+        & ul {
+            margin-block-end: 0.25em;
+            margin-block-start: 0.25em;
+        }
+
+        & img {
+            max-width: 100%;
+            height: auto;
+
+        }
     }
 }
 
@@ -47,34 +65,24 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5em;
     position: relative;
 }
 
-.left-column {
-    flex: 1;
+.footer {
+    height: 32px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.25em;
 }
 
-.right-column {
-    width: 10em;
+.buttons {
     height: 100%;
     display: flex;
     flex-direction: column;
-    text-align: right;
-    position:relative;
-}
-
-.useful {
-    position: absolute;
-    top: 0;
-    right:0;
-}
-
-.watching {
-    position: absolute;
-    bottom: 0;
-    right:0;
+    justify-content: flex-start;
+    gap: 0.25em;
 }
 
 .authorIcon {
@@ -160,8 +168,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 0.5em;
-    margin-top: 1em;
     border: solid 1px #e0e0e0;
 }
 

@@ -43,4 +43,8 @@
     background-color: #f1f2f4;
 }
 
+.icon-button.circle {
+    border-radius: 50%;
+}
+
 

@@ -56,5 +56,14 @@
     background-color: #dcdfe4;
 }
 
+.text-button.no-box {
+    background-color: transparent;
+}
+
+.text-button.no-box:hover {
+    background-color: #f1f2f4;
+}
+
+
 
 

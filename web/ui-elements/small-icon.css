@@ -31,3 +31,7 @@
     background-color: #fafafa;
     outline: solid 1px #f0f0f0;
 }
+
+.small-icon.circle {
+    border-radius: 50%;
+}
