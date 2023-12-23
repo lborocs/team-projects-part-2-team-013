@@ -17,7 +17,7 @@ function auth_session_issue_new($account) {
         $account["isManager"] + 1,
         timestamp()
     );
-    return $new_session->encrypt();
+    return $new_session;
 }
 
 function validate_password_constraints(string $password, Array $banned_words) {
@@ -87,7 +87,8 @@ function r_session_login(RequestContext $ctx, string $args) {
     if (password_verify($password, $account["passwordHash"])) {
         $session = auth_session_issue_new($account);
         respond_ok(Array(
-            "session_token"=>$session,
+            "session_token"=>$session->encrypt(),
+            "expires"=>$session->issued + SESSION_INACTIVITY_EPOCH,
         ));
     } else {
         respond_not_authenticated(
@@ -180,8 +181,10 @@ function r_session_session(RequestContext $ctx, string $args) {
 
         $account = db_account_fetch_by_id($ctx->session->hex_associated_user_id);
 
+        $session = auth_session_issue_new($account);
+
         respond_ok(array(
-            "session_token"=>auth_session_issue_new($account),
+            "session_token"=>$session->encrypt(),
         ));
     }
     else if ($ctx->request_method == "DELETE") {
