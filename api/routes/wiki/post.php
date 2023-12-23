@@ -269,8 +269,10 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
 }
 
 function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
-    ensure_html_is_clean($body["postContent"]);
-    notification_post_edited($url_specifiers[0], $ctx->session->hex_associated_user_id);
+    if (array_key_exists("postContent", $body)) {
+        ensure_html_is_clean($body["postContent"]);
+    }
+        notification_post_edited($url_specifiers[0], $ctx->session->hex_associated_user_id);
     _use_common_edit(TABLE_POSTS, $body, $url_specifiers);
 }
 
