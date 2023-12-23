@@ -488,7 +488,8 @@ export async function getEmployeeNotifications() {
  */
 
 export async function renderNotifications(notifications) {
-    let content = '';
+    let content = notificationsButton.querySelector('.content');
+    content.innerHTML = "";
 
     //gets any employee ids in the notifications so their details can be fetched
     let empIDs = new Set();
@@ -523,34 +524,52 @@ export async function renderNotifications(notifications) {
         let name = bothNamesToString(employees.get(empID).firstName, employees.get(empID).lastName);
         let avatar = employeeAvatarOrFallback(employees.get(empID));
 
+        //notification card
+        let notificationCard = document.createElement("a");
+        notificationCard.classList.add("notification-card");
         
         switch(notification.type) {
             case 0: // post they are following has been edited
             console.log("[renderNotifications] post edited")
+                let post = notification.body.post;
+
                 icon = "checkbook";
+                link = `/wiki/#${post.postID}`;
+                notificationCard.href = link;
                 
-                content += `
-                    <a class="notification-card" href="${link}">
-                        <div class="icon">
-                            <span class="material-symbols-rounded">
-                                ${icon}
-                            </span>
+                notificationCard.innerHTML = `
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            ${icon}
+                        </span>
+                    </div>
+                    <div class="details">
+                        <div class="name-card">
+                            <img src="${avatar}" class="avatar">
+                            <span>${name}</span>
                         </div>
-                        <div class="details">
-                            <div class="name-card">
-                                <img src="${avatar}" class="avatar">
-                                <span>${name}</span>
-                            </div>
-                            <div class="text">Edited the post <span>${notification.body.post.title}</span>.</div>
-                        </div>
-                        <div class="arrow">
-                            <span class="material-symbols-rounded">
-                                open_in_new
-                            </span>
-                        </div>
-                        <div class="time">${time}</div>
-                    </a>
+                        <div class="text">Edited the post <span>${post.title}</span>.</div>
+                    </div>
+                    <div class="arrow">
+                        <span class="material-symbols-rounded">
+                            open_in_new
+                        </span>
+                    </div>
+                    <div class="time">${time}</div>
                 `;
+
+                content.appendChild(notificationCard);
+
+                notificationCard.addEventListener("click", () => {
+                    console.log("[renderNotifications] notification clicked")
+
+                    //
+                    // TODO: mark notification as read
+                    //
+
+                    dispatchBreadcrumbnavigateEvent("notificationsTray");
+                })
+
                 break;
             case 1: // task they are involved in has been updated in some way
                 console.log("[renderNotifications] task updated")
@@ -581,36 +600,47 @@ export async function renderNotifications(notifications) {
                         icon = "question_mark";
                         desc = "Not Implemented"
                 }
-                content += `
-                    <a class="notification-card" href="${link}">
-                        <div class="icon">
-                            <span class="material-symbols-rounded">
-                                ${icon}
-                            </span>
+                notificationCard.innerHTML = `
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            ${icon}
+                        </span>
+                    </div>
+                    <div class="details">
+                        <div class="name-card">
+                            <img src="${avatar}" class="avatar">
+                            <span>${name}</span>
                         </div>
-                        <div class="details">
-                            <div class="name-card">
-                                <img src="${avatar}" class="avatar">
-                                <span>${name}</span>
-                            </div>
-                            <div class="text">${desc}</div>
-                        </div>
-                        <div class="arrow">
-                            <span class="material-symbols-rounded">
-                                open_in_new
-                            </span>
-                        </div>
-                        <div class="time">${time}</div>
-                    </a>
+                        <div class="text">${desc}</div>
+                    </div>
+                    <div class="arrow">
+                        <span class="material-symbols-rounded">
+                            open_in_new
+                        </span>
+                    </div>
+                    <div class="time">${time}</div>
                 `;
+
+                content.appendChild(notificationCard);
+
+                notificationCard.addEventListener("click", () => {
+                    console.log("[renderNotifications] notification clicked")
+
+                    //
+                    // TODO: mark notification as read
+                    //
+
+                    dispatchBreadcrumbnavigateEvent("notificationsTray");
+                    
+                })
+
                 break;
             default: // unknown
                 icon = "question_mark";
         }
+
+       
     });
-
-    notificationsButton.querySelector('.content').innerHTML = content;
-
 }
 
 
