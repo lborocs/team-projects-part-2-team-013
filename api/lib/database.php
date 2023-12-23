@@ -1395,13 +1395,18 @@ function db_notifications_fetch($employee_id) {
 
     $bin_e_id = hex2bin($employee_id);
 
+
+    // select notifications and join on the possible union bodies
+    // then we determine the union from the type and then parse the row
+    // as normal, discarding the rest of the event types (other union bodies)
+
     $query = $db->prepare(
         "SELECT DISTINCT 
-            -- post type
-            POST_UPDATE.*, `POSTS`.postTitle, `POSTS`.postAuthor
-            -- task type
+        -- post type
+            POST_UPDATE.*, `POSTS`.postTitle, `POSTS`.postAuthor,
+        -- task type
             `TASK_UPDATE`.*, `TASKS`.*, `PROJECTS`.*,
-            -- union header
+        -- union header
             `NOTIFICATIONS`.*
         FROM `NOTIFICATIONS`
         LEFT JOIN `EMPLOYEES` ON
