@@ -516,7 +516,7 @@ export async function renderNotifications(notifications) {
         let icon = ""
         let link = "https://www.google.com"
         let desc = "Not Implemented"
-        let time = howLongAgo(new Date(notification.time * 1000));
+        let time = howLongAgo(new Date(notification.time));
 
         //notification author
         let empID = notification.author.empID;
