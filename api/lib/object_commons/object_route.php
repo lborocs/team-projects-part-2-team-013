@@ -260,7 +260,7 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
     $description = $body["projectDescription"];
     $createdBy = hex2bin($author_id);
     $teamLeader = hex2bin($body["projectTeamLeader"]);
-    $createdAt = time();
+    $createdAt = timestamp();
 
     if (db_generic_new(
         TABLE_PROJECTS ,

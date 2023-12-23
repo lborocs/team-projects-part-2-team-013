@@ -487,7 +487,7 @@ function db_post_accesses_add(string $emp_id, string $post_id) {
 
     $bin_e_id = hex2bin($emp_id);
     $bin_p_id = hex2bin($post_id);
-    $time = time();
+    $time = timestamp();
 
     $query = $db->prepare(
         "INSERT INTO `POST_VIEWS` VALUES (?, ?, ?)"
@@ -502,7 +502,7 @@ function db_post_accesses_add(string $emp_id, string $post_id) {
 
 function db_post_accesses_fetchall() {
     global $db;
-    $epoch = time() - POST_ACCESS_DELTA;
+    $epoch = timestamp() - POST_ACCESS_DELTA;
     $query = $db->prepare(
         "SELECT empID, postID, COUNT(postViewAccessedAt) as views 
         FROM POST_VIEWS WHERE postViewAccessedAt > ?
@@ -928,7 +928,7 @@ function db_account_insert(
     global $db;
 
     $bin_e_id = hex2bin($employee_id);
-    $created_at = time();
+    $created_at = timestamp();
 
     $query = $db->prepare(
         "INSERT INTO `ACCOUNTS` VALUES (?, ?, ?, ?, ?)"
@@ -955,7 +955,7 @@ function db_account_password_change(string $user_id, string $new_password_hash) 
     global $db;
 
     $bin_e_id = hex2bin($user_id);
-    $updated_at = time();
+    $updated_at = timestamp();
 
     $query = $db->prepare(
         "UPDATE `ACCOUNTS` SET `passwordHash` = ?, `passwordLastChanged` = ? WHERE `empID` = ?"
@@ -984,7 +984,7 @@ function db_project_accesses_set(string $project_id, string $user_id) {
 
     $bin_p_id = hex2bin($project_id);
     $bin_u_id = hex2bin($user_id);
-    $time = time();
+    $time = timestamp();
 
     $query = $db->prepare(
         "INSERT INTO PROJECT_ACCESSED VALUES (?, ?, ?)
@@ -1352,7 +1352,7 @@ function db_tag_fetchall() {
 function db_tag_fetch_popular() {
     global $db;
 
-    $epoch = time() - POST_ACCESS_DELTA;
+    $epoch = timestamp() - POST_ACCESS_DELTA;
 
     $query = $db->prepare(
         "SELECT `TAGS`.*, `POPULAR_TAGS`.views FROM `TAGS`
@@ -1546,7 +1546,7 @@ function db_notification_create(int $type, string $user_id) {
 
     $bin_n_id = generate_uuid();
     $bin_u_id = hex2bin($user_id);
-    $time = time();
+    $time = timestamp();
 
     $query = $db->prepare(
         "INSERT INTO `NOTIFICATIONS` VALUES (?, ?, ?, ?)"

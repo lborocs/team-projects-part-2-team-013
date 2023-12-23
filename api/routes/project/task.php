@@ -250,7 +250,7 @@ function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
     $state = $data["taskState"];
     $dueDate = $data["taskDueDate"] ?? null;
     $archived = false;
-    $createdAt = time();
+    $createdAt = timestamp();
     $expectedManHours = $data["taskExpectedManHours"];
 
     if (db_generic_new(

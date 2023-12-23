@@ -242,7 +242,7 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
     $title = $body["postTitle"];
     $content = $body["postContent"];
     $createdBy = hex2bin($author_id);
-    $createdAt = time();
+    $createdAt = timestamp();
     $isTechnical = $body["postIsTechnical"];
 
     if (db_generic_new(

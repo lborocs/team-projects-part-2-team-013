@@ -154,6 +154,14 @@ function explode_args_into_array(string $args) {
     }
 }
 
+function timestamp() {
+
+    if (PHP_INT_SIZE < 8) {
+        throw new RuntimeException("PHP_INT_SIZE is too small to store a timestamp");
+    }
+
+    return (int) (microtime(true) * 1000);
+}
 
 function ensure_html_is_clean(string $html) {
     // ensure no classes

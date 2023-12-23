@@ -100,7 +100,7 @@ class Session {
     }
 
     function ensure_still_valid() {
-        if (($this->issued + SESSION_INACTIVITY_EPOCH) <= time()) {
+        if (($this->issued + SESSION_INACTIVITY_EPOCH) <= timestamp()) {
             respond_not_authenticated("Session has expired", ERROR_SESSION_EXPIRED);
         }
 

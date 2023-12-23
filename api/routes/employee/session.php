@@ -15,7 +15,7 @@ function auth_session_issue_new($account) {
         bin2hex(generate_uuid()),
         $account["empID"],
         $account["isManager"] + 1,
-        time()
+        timestamp()
     );
     return $new_session->encrypt();
 }
