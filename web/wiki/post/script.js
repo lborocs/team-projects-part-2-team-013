@@ -46,12 +46,13 @@ for (let i = 0; i < postData.tags.length; i++) {
 let emp_icon = global.employeeAvatarOrFallback(postData.author);
 document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
 
-document.querySelector("#watching").addEventListener("click", function() {
-    button = document.querySelector("#watching");
-    button.toggleAttribute("active");
+let watchingButton = document.querySelector("#watching");
+watchingButton.addEventListener("click", function() {
+    watchingButton.classList.add("active");
+    console.log("watching"); //I'm gonna delete this please dont kill me
 });
 
-document.querySelector("#useful").addEventListener("click", function() {
-    button = document.querySelector("#useful");
-    button.toggleAttribute("active");
+let usefulButton = document.querySelector("#useful");
+usefulButton.addEventListener("click", function() {
+    usefulButton.classList.add("active");
 });
