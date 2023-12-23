@@ -964,7 +964,7 @@ async function addTask(state) {
                 <div id="description-editor"></div>
             </div>
             <div class="dropdown-and-employee-list">
-                <div class="search-dropdown">
+                <div class="search-dropdown" tabindex="0">
                     <div class="search">
                         <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
             

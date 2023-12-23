@@ -52,7 +52,7 @@
     display: none;
 }
 
-.search:focus-within ~ .popover {
+.search-dropdown:focus-within .popover {
     display: block;
 }
 
