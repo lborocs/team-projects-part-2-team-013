@@ -578,6 +578,7 @@ export async function renderNotifications(notifications) {
                 let task = notification.body.task;
                 let project = task.project;
                 link = `/projects/#${project.projID}-${task.taskID}`;
+                notificationCard.href = link;
 
                 switch(notification.body.detail) {
                     case 0: // task has been created
