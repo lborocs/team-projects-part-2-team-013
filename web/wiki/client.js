@@ -109,23 +109,38 @@ function renderPost(postID, title, author, isTechnical) {
     let post = document.createElement("div")
     post.classList.add("post")
     post.innerHTML = `
-        <div class="title">${title}</div>
-        <div class="author">
-            <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
-            ${global.bothNamesToString(author.firstName, author.lastName)}
+        <div class="post-info">
+            <div class="title">${title}</div>
+            <div class="author">
+                <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
+                ${global.bothNamesToString(author.firstName, author.lastName)}
+            </div>
+            <div class="tags">
+                <div class="tag" name="${tag1}"><span class="material-symbols-rounded">sell</span>
+                    ${tag1}
+                </div>
+                <div class="tag" name="${tag2}"><span class="material-symbols-rounded">sell</span>
+                    ${tag2}
+                </div>
+                
+            </div>
         </div>
-        <div class="tags">
-            <div class="tag" name="${tag1}"><i class="fa-solid fa-tag"></i>
-                ${tag1}
+        <div class="post-icons manager-only">
+            <div class="icon-button no-box" id="edit">
+                <div class="button-icon">
+                    <span class="material-symbols-rounded">
+                        edit
+                    </span>
+                </div>
             </div>
-            <div class="tag" name="${tag2}"><i class="fa-solid fa-tag"></i>
-                ${tag2}
+            <div class="icon-button no-box" id="trash">
+            <div class="button-icon">
+                    <span class="material-symbols-rounded">
+                        delete
+                    </span>
+                </div>
             </div>
-            <div class="postIcons manager-only">
-                <i id="trash" class="fa-regular fa-trash-can"></i>
-                <i id="edit" class="fa-regular fa-edit"></i>
-            </div>
-            <div>
+        </div>
     `;
 
     post.setAttribute("data-postID", postID)
@@ -293,6 +308,6 @@ function confirmDelete() {
     });
 }
 
-document.getElementById("newPost").addEventListener("click", () => {
+document.getElementById("new-post").addEventListener("click", () => {
     window.location.href = "/wiki/create/";
 })
