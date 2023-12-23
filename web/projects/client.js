@@ -90,6 +90,7 @@ async function projectSwitchToOnClick(projectRow) {
     let tasks = await fetchAndRenderTasks(id);
     console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + project.name)
     globalTasksList = tasks;
+    console.log("global tasks list:")
     console.log(globalTasksList)
 
     
@@ -406,6 +407,12 @@ function findNext(container, y) {
     return closest;
 }
 
+
+/**
+ * Fetches and renders all tasks for a project
+ * @param {*} projID 
+ * @returns {Array} tasks
+ */
 async function fetchAndRenderTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
     console.log("[fetchAndRenderTasks] fetched tasks for " + projID);
