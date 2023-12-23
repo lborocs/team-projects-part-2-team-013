@@ -8,6 +8,7 @@ const RENDER_BOTH = 3;
 
 //important shit
 var globalTasksList = [];
+var globalCurrentProject;
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
 let statusButton = document.getElementById("status-column");
@@ -64,11 +65,21 @@ async function projectSwitchToOnClick(projectRow) {
     explainerTaskSetToDefault();
 
     let id = projectRow.getAttribute("data-ID");
-    let title = projectRow.getAttribute("data-title");
-    let description = projectRow.getAttribute("data-description") ?? "";
-    let teamLeader = JSON.parse(projectRow.getAttribute("data-team-leader"));
 
-   
+
+    let project = await getProjectById(id);
+    if (!project) {
+        console.error(`[projectSwitchToOnClick] Error fetching project`);
+        return false;
+    }
+    globalCurrentProject = project;
+
+    let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
+    if (!teamLeader) {
+        console.error(`[projectSwitchToOnClick] Error fetching team leader`);
+        return false;
+    }
+    teamLeader = teamLeader.get(project.teamLeader.empID);
     //remove tasks currently on the screen
     taskCards.forEach((task) => {
         task.remove()
@@ -77,18 +88,18 @@ async function projectSwitchToOnClick(projectRow) {
         task.remove()
     }) 
     let tasks = await fetchAndRenderTasks(id);
-    console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + title)
+    console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + project.name)
     globalTasksList = tasks;
     console.log(globalTasksList)
 
     
     // unselect not this project
-    console.log("[projectSwitchToOnClick] selected " + title)
+    console.log("[projectSwitchToOnClick] selected " + project.name)
     //update the breadcrumb with the project name
-    global.setBreadcrumb(["Projects", title], [window.location.pathname, "#" + id]);
-    projectTitle.innerText = title
-    explainerTitle.innerText = title
-    explainerDescription.innerText = description
+    global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
+    projectTitle.innerText = project.name;
+    explainerTitle.innerText = project.name;
+    explainerDescription.innerText = project.description;
     explainerTeamLeaderName.innerText = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
@@ -285,12 +296,7 @@ function showTaskInExplainer(task) {
     statusElement.innerHTML = `${icon} ${statusText}`;;
     animate(document.querySelector(".task-overview"), "flash")
 
-    //get currently selected project
-    let selectedProject = document.querySelector(".project-row.selected");
-    let projName = selectedProject.getAttribute("data-title");
-    let projID = selectedProject.getAttribute("data-ID");
-
-    global.setBreadcrumb(["Projects", projName, taskTitle], [window.location.pathname, "#" + projID, "#" + projID + "-" + taskID])
+    global.setBreadcrumb(["Projects", globalCurrentProject.name, taskTitle], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + taskID])
 }
 
 
@@ -508,8 +514,18 @@ async function teamLeaderEnableElementsIfTeamLeader() {
         } else {
             elem.classList.remove("norender");
         }
-        
-})
+    })
+}
+
+
+
+async function getProjectById(projID) {
+    let data = await get_api(`/project/project.php/project/${projID}`);
+    if (!data.success) {
+        console.error(`[getProjectById] Error fetching project ${projID}: ${res.error.message} (${res.error.code})`);
+        return null;
+    }
+    return data.data;
 }
 
 async function fetchAndRenderAllProjects() {
