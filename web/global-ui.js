@@ -457,6 +457,19 @@ export async function getEmployeeNotifications() {
 
 }
 
+/**
+ * Renders the notifications passed in depending on their type.
+ * Format: 
+ * Type: 0 - Post edited
+ * Type: 1 - Task updated:
+ * Detail 0 - Task created
+ * Detail 1 - Task updated
+ * Detail 2 - Task assigned to you
+ * Detail 3 - Task unassigned to you
+ * 
+ * @param {Array} notifications 
+ */
+
 export async function renderNotifications(notifications) {
     let content = '';
 
