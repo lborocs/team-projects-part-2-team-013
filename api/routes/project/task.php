@@ -146,14 +146,16 @@ function r_task_assignments(RequestContext $ctx, string $args) {
         // unassign(to_unassigned)
         // db_assign(to_assign)
 
+        $author_id = $ctx->session->hex_associated_user_id;
+
         if (count($to_unassign) > 0) {
             db_task_unassign_bulk($task_id, $to_unassign);
-            notification_task_unassigned_bulk($task_id, $to_unassign);
+            notification_task_unassigned_bulk($task_id, $author_id, $to_unassign);
         }
 
         if (count($to_assign) > 0) {
             db_task_assign_bulk($task_id, $to_assign);
-            notification_task_assigned_bulk($task_id, $to_assign);
+            notification_task_assigned_bulk($task_id, $author_id, $to_assign);
         }
 
         // dispatch notification assigned
@@ -289,7 +291,7 @@ function _delete_task(RequestContext $ctx, array $url_specifiers) {
 function _edit_task(RequestContext $ctx, array $data, array $url_specifiers) {
     // only dispatch notification if something other than task state changes
     if (count($data) > 1 || !array_key_exists("taskState", $data)) {
-        notification_task_edit($url_specifiers[1]);
+        notification_task_edit($url_specifiers[1], $ctx->session->hex_associated_user_id);
     }
     _use_common_edit(TABLE_TASKS, $data, $url_specifiers);
 }
