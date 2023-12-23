@@ -10,50 +10,34 @@ var nonTechnicalTags = ["Printer", "Stationary", "Meeting Rooms", "Office Suppli
 var technicalTags = ["HTML", "CSS", "JavaScript", "Python", "Java", "C++", "Ruby", "PHP", "Swift", "Kotlin", "TypeScript", "Go"]
 console.log(selectedTags);
 
+var postsMap = new Map();
+
 async function fetchPosts() {
-    
     global.setBreadcrumb(["Wiki"], ["./"]);
 
     const data = await get_api("/wiki/post.php/posts");
     console.log(data);
     if (data.success == true) {
         console.log("Posts have been fetched")
-        data.data.posts.forEach( post => {
-            renderPost(post.postID, post.title, post.author, post.isTechnical)
+        data.data.posts.forEach(post => {
+            renderPost(post.postID, post.title, post.author, post.isTechnical, post.tags)
             postsContainer = document.querySelector('.posts');
-            console.log(postsContainer);
+            // Store the post in the Map using postID as the key
+            postsMap.set(post.postID, post);
+            console.log(post)
         });
         setUpPostsEventListeners();
         posts = document.querySelectorAll('.post');
+        console.log(postsMap)
     } else {
         console.log("Posts failed to be fetched")
     }
-
-
-
-  
 }
 
-
+//I removed the tag assigning code here because we will be getting tags from the database
+//tag rendering code should live in the renderPost
 fetchPosts().then(() => {
     posts.forEach((post) => {
-        let postTags = post.querySelectorAll(".tag");
-        let postTagNames = [];
-        postTags.forEach((tag) => {
-            postTagNames.push(tag.innerText);
-        })
-        console.log(postTagNames);
-        let containsTag = false;
-        selectedTags.forEach((tag) => {
-            if (postTagNames.includes(tag.innerText)) {
-                containsTag = true;
-            }
-        })
-        if (!containsTag) {
-            post.classList.add("norender");
-        } else {
-            post.classList.remove("norender"); 
-        }
         selectedCategory = document.querySelector('input[name="category"]:checked')
         selectedValue = selectedCategory.value
         if (post.getAttribute("data-isTechnical") != selectedValue) {
@@ -92,20 +76,17 @@ function setUpPostsEventListeners() {
 }
 
 
-function renderPost(postID, title, author, isTechnical) {
-    if (isTechnical == 0) {
-        var tag1 = nonTechnicalTags[Math.floor(Math.random() * nonTechnicalTags.length)];
-        var tag2 = tag1
-        while (tag2 == tag1) {
-            tag2 = nonTechnicalTags[Math.floor(Math.random() * nonTechnicalTags.length)];
-        }
-    } else if (isTechnical == 1) {
-        var tag1 = technicalTags[Math.floor(Math.random() * technicalTags.length)];
-        var tag2 = tag1
-        while (tag2 == tag1) {
-            tag2 = technicalTags[Math.floor(Math.random() * technicalTags.length)];
-        }
+/**
+ * @param {Array} tags 
+ */
+function renderPost(postID, title, author, isTechnical, tags) {
+    if (tags == null) {
+        tags = ["Tag 1", "Tag 2"];
     }
+
+    let tag1 = tags[0];
+    let tag2 = tags[1];
+    
     let post = document.createElement("div")
     post.classList.add("post")
     post.innerHTML = `
@@ -170,7 +151,7 @@ function updatePosts() {
             }
         })
     } else {
-        console.log(posts.length)
+        console.log(`posts length ${posts.length}`)
         posts.forEach((post) => {
             let postTags = post.querySelectorAll(".tag");
             let postTagNames = [];
@@ -220,18 +201,22 @@ function filterFromSearch() {
     console.log("searching")
     console.log(document.getElementById("inputField").value)
     let search = document.getElementById("inputField");
-    updateTags()
     updatePosts()
     if (search.length !== 0) {
-    let searchValue = search.value.toUpperCase();
-    let postTitles = document.querySelectorAll(".title");
-    postTitles.forEach((title) => {
-        let titleValue = title.innerText.toUpperCase();
-        if (!titleValue.includes(searchValue)) {
-            title.parentElement.classList.add("norender");
-        }
-    })
-}
+        let searchValue = search.value.toUpperCase();
+        let postTitles = document.querySelectorAll(".title");
+        postTitles.forEach((title) => {
+            let titleValue = title.innerText.toUpperCase();
+            if (!titleValue.includes(searchValue)) {
+                title.parentElement.classList.add("norender");
+            }
+        })
+    } else {
+        posts.forEach((post) => {
+            post.classList.remove("norender");
+        })
+    
+    }
 }
 
 document.querySelectorAll('.tag').forEach((tag) => {

@@ -231,6 +231,8 @@ body {
     font-weight: 600;
     gap: 0.25em;
 
+    user-select: none;
+
     & span {
         color: #4e5057;
         font-size: 16px;
@@ -274,6 +276,14 @@ input[type="text"] {
     border: 1px solid #e0e0e0;
     background-color: #fff;
     position: relative;
+
+    & span {
+        font-size: 22px;
+        color: #494b4e;
+        margin-left: 0.25em;
+        transform: rotate(90deg);
+        user-select: none;
+    }
 }
 
 #new-post {
@@ -290,11 +300,7 @@ input[type="text"] {
     background-color: #2d8aff;
 }
 
-.post-search i {
-    font-size: 1.2em;
-    color: #494b4e;
-    margin-left: 0.5em;
-}
+
 
 
 .buttons {
