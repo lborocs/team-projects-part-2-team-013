@@ -1456,17 +1456,16 @@ function db_notifications_fetch($employee_id) {
 
 }
 
-function db_post_updates_add(string $notification_id, string $post_id, string $author_id) {
+function db_post_updates_add(string $notification_id, string $post_id) {
     global $db;
 
     $bin_n_id = hex2bin($notification_id);
-    $bin_a_id = hex2bin($author_id);
     $bin_p_id = hex2bin($post_id);
 
     $query = $db->prepare(
-        "INSERT INTO `POST_UPDATE` VALUES (?, ?, ?)"
+        "INSERT INTO `POST_UPDATE` VALUES (?, ?)"
     );
-    $query->bind_param("sss", $bin_n_id, $bin_p_id, $bin_a_id);
+    $query->bind_param("ss", $bin_n_id, $bin_p_id);
     $result = $query->execute();
 
     if (!$result) {
@@ -1525,16 +1524,17 @@ function db_task_updates_add_bulk(string $notification_id, Array $fields) {
     }
 }
 
-function db_notification_create(int $type) {
+function db_notification_create(int $type, string $user_id) {
     global $db;
 
     $bin_n_id = generate_uuid();
+    $bin_u_id = hex2bin($user_id);
     $time = time();
 
     $query = $db->prepare(
-        "INSERT INTO `NOTIFICATIONS` VALUES (?, ?, ?)"
+        "INSERT INTO `NOTIFICATIONS` VALUES (?, ?, ?, ?)"
     );
-    $query->bind_param("sii", $bin_n_id, $type, $time);
+    $query->bind_param("siis", $bin_n_id, $type, $time, $bin_u_id);
     $result = $query->execute();
 
     if (!$result) {

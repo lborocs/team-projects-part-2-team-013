@@ -538,6 +538,9 @@ const TABLE_NOTIFICATIONS = new Table(
         _EVENTID,
         new Column("notificationType", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("notificationTime", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("notificationAuthor", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
+        ),
     ],
     "notification",
     "notification"
@@ -575,10 +578,6 @@ const TABLE_POST_UPDATE = new Table(
         new Column(
             "eventID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_NOTIFICATIONS, _EVENTID)]
-        ),
-        new Column(
-            "postUpdateEditor", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
-            constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
         new Column(
             "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
