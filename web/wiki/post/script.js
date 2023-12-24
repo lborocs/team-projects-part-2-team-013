@@ -22,7 +22,7 @@ async function getPostData(postID){
 
     let postElement = document.querySelector(".post")
 
-    postElement.querySelector(".title").innerText = post.title
+    document.querySelector(".title").innerText = post.title
     postElement.querySelector("#postTitle").innerHTML = post.title
     postElement.querySelector(".content").innerHTML = post.content
     postElement.querySelector(".author").innerText = global.bothNamesToString(post.author.firstName, post.author.lastName)

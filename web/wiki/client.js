@@ -65,7 +65,7 @@ function setUpPostsEventListeners() {
         post.querySelector("#edit").addEventListener("click", (event) => {
             event.stopPropagation();
             let postID = post.getAttribute("data-postID")
-            window.location.href = `/wiki/edit/#${postID}`;
+            window.location.href = `/wiki/create/#${postID}`;
         });
         post.addEventListener("click", () => {
             let postID = post.getAttribute("data-postID")
