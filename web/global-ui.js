@@ -809,8 +809,9 @@ export function setBreadcrumb(breadcrumbPaths, hrefs) {
         });
 
         breadcrumb.appendChild(child);
-        let divider = document.createElement("i");
-        divider.classList.add("fa-solid", "fa-chevron-right");
+        let divider = document.createElement("span");
+        divider.classList.add("material-symbols-rounded");
+        divider.textContent = "chevron_right";
         divider.classList.add("breadcrumb-child", "breadcrumb-divider");
         breadcrumb.appendChild(divider);
     }
