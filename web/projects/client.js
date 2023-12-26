@@ -1106,10 +1106,11 @@ async function addTask(state) {
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
         let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let avatar = global.employeeAvatarOrFallback(emp);
         let option = document.createElement("div");
         option.classList.add("name-card");
         option.innerHTML = `
-            <img src="https://ui-avatars.com/api/?name=Jamie-Skitt&amp;background=89e5b4&amp;size=256&amp;color=000&amp;rounded=true" class="avatar">
+            <img src="${avatar}" class="avatar">
             <span>${emp_name}</span>
             <span class="material-symbols-rounded icon">
                 person_add
