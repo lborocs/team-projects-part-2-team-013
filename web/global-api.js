@@ -106,11 +106,17 @@ async function api_request(route, method, body, options={}) {
     console.error(`[API] ${method} ${route} ERRORED: ${res.status} - ${error_code} - ${error_message}`);
 
     switch (error_code) {
+
+        // bad session
+        case 3001:
+        case 3002:
+        case 3003:
+
         case 1004: // session expired
         case 1005: // session revoked
 
             if (options.redirect_on_error) {
-                alert("Your session has expired, please log in again");
+                alert("Your session is no longer valid, please log in again");
 
             }
             // notice the important lack of break.
