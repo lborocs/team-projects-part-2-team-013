@@ -59,11 +59,14 @@ input {
 
 
 .breadcrumb-child {
+    display: flex !important; /* this is genuinely needed to override google material symbols without putting the chevron in a container */
+    flex-direction: row;
+    align-items: center;
+
     text-decoration: none;
-    padding: 0.3em;
-    padding-top: 0.35em;
-    padding-bottom: 0.35em;
+    padding: 0.25rem;
     line-height: 1;
+    height: 32px;
     color: rgb(110,110,110);
     border-radius: 3px;
     transition: 0.1s ease-out;
@@ -98,7 +101,7 @@ input {
     text-align: center;
     padding: 5px 2px;
     border-radius: 3px;
-    font-size: 13px;
+    font-size: 0.8rem;
     font-weight: 500;
     white-space: nowrap;
     padding-left: 10px;
@@ -195,7 +198,7 @@ input {
     background-color: #fff;
     color: #1f2328;
     transition: 0.05s ease-out;
-    font-size: 1.2em;
+    font-size: 20px;
     
     display: flex;
     flex-direction: column;
@@ -204,6 +207,30 @@ input {
     transition: 0.05s ease-out;
 
     border-right: solid 2px rgba(0,0,0,0.1);
+
+    .mobile-sidebar-header {
+        display: none;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        height: 3.5rem;
+        gap: 1rem;
+        border-bottom: solid 2px lightgrey;
+
+        & img {
+            height: 32px;
+            margin-left: 1rem;
+        }
+
+        #close-sidebar {
+            margin-right: 0.5rem;
+            font-size: 1.5rem;
+            padding: 0.5rem;
+            
+        }
+
+    }
 }
 
 .sidebar-item{
@@ -211,19 +238,21 @@ input {
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    padding: 0.5em;
-    margin: 0.5em;
-    margin-left: 0.25em;
-    margin-right: 0.25em;
+    padding: 0.5rem;
+    margin: 0.5rem;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
     text-align: center;
     border-radius: 6px;
     transition: 0.05s ease-out;
     gap: 0.5em;
     user-select: none;
-    color:rgb(69, 69, 69)
+    color:rgb(69, 69, 69);
+    /* to stop the selection border pushing content */
+    border-left: solid 2px transparent;
 }
 .sidebar-item.selected {
-    background-color: rgb(100,100,100, 0.1);
+    background-color: #f1f2f4;
     border-radius: 3px !important;
     border-bottom-left-radius: 0 !important;
     border-top-left-radius: 0 !important;
@@ -239,17 +268,17 @@ input {
 }
 
 .sidebar-item p {
-    font-size: 0.8em;
+    font-size: 15px;
+    margin: 0;
 }
 
-.sidebar-item:first-child {
+.sidebar-item:nth-child(2) {
     margin-top: 0.25em !important;
 }
 
 .sidebar-item:last-child {
-    position: absolute;
-    bottom: 0.25em !important;
-    margin-bottom: 0 !important;
+    margin-top: auto !important;
+    margin-bottom: 0.25rem !important;
 }
 
 .sidebar-item span {
@@ -257,14 +286,14 @@ input {
 }
 
 .sidebar-item:hover {
-    background-color: rgb(244,244,244);
+    background-color: #f1f2f4;
     color: #000000;
     transition-duration: 0.05s;
     cursor: pointer;
 }
 
 .sidebar-close {
-    font-size: 1.2em;
+    font-size: 1.2rem;
     display: flex;
     justify-content: flex-end;
 
@@ -278,7 +307,7 @@ input {
         height: 2em;
         margin: 0;
         margin-left: 0.25em;
-        margin-right: 0.5em;
+        margin-right: 0.5rem;
         padding-right: 1.25em;
         font-weight: 500;
         border-radius: 3px;
@@ -362,24 +391,23 @@ input {
     flex-direction: row;
     justify-content: space-between; 
     width: 100%;
-    height: 3em;
+    height: 3.5rem;
+    flex: 0 0 3.5rem;
+    padding-left: 0.5rem;
+    padding-right: 1rem;
     align-items: center;
-    font-size: 1.1em;
+    font-size: 1.2rem;
     border-bottom: 2px solid rgba(0,0,0,0.1);
 
     .item {
         display: flex;
         flex-direction: row;
-        padding: 0.25em;
-        margin-left: 0.25em;
-        margin-right: 0.25em;
         border-radius: 3px;
         transition: 0.1s ease-out;
         user-select: none;
     }
 
     .item:hover {
-        background-color: rgb(244,244,244);
         color: #000000;
         transition-duration: 0.05s;
         cursor: pointer;
@@ -390,6 +418,7 @@ input {
         flex-direction: row;
         align-items: center;
         white-space: nowrap;
+        gap: 0.5rem;
     }
 
     .breadcrumb {
@@ -409,9 +438,8 @@ input {
     }
 
     .fullLogo {
-        height: 45px;
+        height: 32px;
         width: auto;
-        padding: 0.25em;
     }
 
     .right {
@@ -419,12 +447,15 @@ input {
         flex-direction: row;
         align-items: center;
         white-space: nowrap;
+        gap: 0.5rem;
     }
 }
 
 #hamburger {
-    cursor: pointer;
-    margin-left: 0.42em;
+    padding: 0;
+    & span {
+        font-size: 24px;
+    }
 }
 
 button:hover {
@@ -437,22 +468,28 @@ button:hover {
 #inbox-icon {
     position: relative;
     padding: 0;
-    margin-right: 0.42em;
+
+    .icon-button {
+        & span {
+            font-size: 24px;
+        }
+    }
+    
 }
 
 #inbox-icon::after {
     content: "";
     position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 10px;
-    height: 10px;
+    top: 1px;
+    right: 1px;
+    width: 9px;
+    height: 9px;
     background-color: rgb(214, 83, 83);
     border-radius: 50%;
     border: solid 2px white;
 }
 
-#user-name {
+/* #user-name {
     font-size: 0.85em !important;
     font-weight: 600 !important;
     margin-right: 0 !important;
@@ -462,25 +499,18 @@ button:hover {
     justify-content: center;
     text-align: center;
     padding-left: 0 !important;
-}
+} */
 
 #user-icon {
-    margin-left: 0 !important;
-    padding: 0 !important;
-    margin-right: 0 !important;
+    width: 1.5em;
+    height: auto;
+    aspect-ratio: 1;
 }
 
 #user-icon:hover {
-    background-color: rgba(0,0,0,0) !important;
+    background-color: rgba(0,0,0,0);
 }
 
-#user-icon img {
-    width: 1.5rem !important;
-    height: 1.5rem !important;
-    
-    border-radius: 50% !important;
-    background-color: rgba(0,0,0,0) !important;
-}
 
 .edit-and-save {
     display: flex;
@@ -490,7 +520,7 @@ button:hover {
     margin-right: 0.25em;
     text-align: center;
     border-radius: 8px;
-    font-size: 1.2em;
+    font-size: 1.2rem;
     transition: 0.1s ease-out;
     user-select: none;
     .button:hover {

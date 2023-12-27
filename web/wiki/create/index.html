@@ -22,6 +22,7 @@
     <script defer src="client.js"></script>
     <link rel="stylesheet" href="/global-styles.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile.css">
     <link rel="stylesheet" href="/ui-elements/search-bar.css">
     <link rel="stylesheet" href="/ui-elements/dropdown.css">
     <link rel="stylesheet" href="/ui-elements/text-button.css">
@@ -39,9 +40,13 @@
         <header class="topbar">
             <div class="left">
                 <div class="item" id="hamburger">
-                    <span class="material-symbols-rounded">
-                        menu
-                    </span>
+                    <div class="icon-button no-box">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                menu
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div class="breadcrumb">
                 </div>
@@ -90,6 +95,13 @@
         </header>
         <div class="sidebar-container sidebar-open">
             <div class="sidebar visible">
+                <div class="mobile-sidebar-header">
+                    <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="fullLogo">
+                    <div class="small-icon" id="close-sidebar">
+                        <span class="material-symbols-rounded">close</span>
+                    </div>
+                </div>
+
                 <div class="sidebar-item" id="home">
                     <span class="material-symbols-rounded">home</span>
                     <p class="">Projects</p>

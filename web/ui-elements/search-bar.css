@@ -36,15 +36,18 @@
 
 }
 
+
+
 .search-input::placeholder {
     color: rgb(98, 111, 134);
+    user-select: none;
 }
 
 .search-icon {
     display: flex;
     justify-content: center;
     align-items: center;
-
+    user-select: none;
     color: rgb(98, 111, 134);
     margin: 0 8px;
     width: 16px;
@@ -81,4 +84,9 @@
     display: none;
 }
 
-/* search bar end */
+
+
+.search.white {
+    color: black;
+    background-color: white;
+}

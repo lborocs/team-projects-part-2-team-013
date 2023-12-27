@@ -1,5 +1,6 @@
 //single things
 export const hamburger = document.querySelector("#hamburger")
+export const closeSidebar = document.querySelector("#close-sidebar")
 export const sidebar = document.querySelector(".sidebar")
 export const container = document.querySelector(".sidebar-container")
 export const homeButton = document.querySelector("#home")
@@ -10,9 +11,7 @@ export const settingsButton = document.querySelector("#settings")
 export const trainingButton = document.querySelector("#training")
 export const logoutButton = document.querySelector("#logout")
 
-export const userBoth = document.querySelector(".user-both")
-export const userAvatar = document.getElementById("user-icon")
-export const userName = document.getElementById("user-name")
+export const userAvatar = document.getElementById("user-icon-container")
 export const notificationsButton = document.getElementById("inbox-icon")
 
 //groups of things
@@ -21,6 +20,10 @@ export const topbarItems = document.querySelectorAll(".item")
 
 //global variables
 export var notifications = []
+
+//sidebar state is either "open" or "closed", default is open
+export var sidebarState = localStorage.getItem("sidebarState") || "open";
+localStorage.setItem("sidebarState", sidebarState);
 
 console.log("[import] loaded global-ui.js")
 
@@ -659,6 +662,16 @@ if (hamburger !== null) {
     })
 }
 
+if (closeSidebar !== null) {
+    closeSidebar.addEventListener("click", () => {
+        sidebar.classList.toggle("visible")
+        container.classList.toggle("sidebar-open")
+        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+            paragraph.classList.toggle("norender")
+        })
+    })
+}
+
 if (homeButton !== null) {
     homeButton.addEventListener("click", () => {
         setTimeout(() => {
@@ -746,7 +759,7 @@ export function managerElementsEnableIfManager() {
 
 function fillCurrentUserInfo() {
 
-    if (userAvatar === null || userName === null) {
+    if (userAvatar === null) {
         return;
     }
 
@@ -759,18 +772,23 @@ function fillCurrentUserInfo() {
 
         let employee = session.employee;
 
-        let emp_name = bothNamesToString(employee.firstName, employee.lastName);
         let emp_icon = employeeAvatarOrFallback(employee);
-
+        let emp_name = bothNamesToString(employee.firstName, employee.lastName);
 
         let icon = document.createElement("img");
         icon.src=emp_icon;
         icon.classList.add("avatar");
+        icon.id = "user-icon";
 
-        userAvatar.replaceChildren(
-            icon
-        );
-        userName.innerText = emp_name;
+        userAvatar.classList.add("tooltip");
+        userAvatar.classList.add("tooltip-left");
+
+        let tooltip = document.createElement("div");
+        tooltip.classList.add("tooltiptext");
+        tooltip.innerText = `Logged in as ${emp_name}`;
+
+        userAvatar.appendChild(tooltip);
+        userAvatar.appendChild(icon);
     });
 }
 

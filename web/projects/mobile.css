@@ -3,22 +3,27 @@
         height: max(auto, (100% - 3em));
     }
 
-    #user-name {
-        display: none;
-    }
-
     .sidebar{
         margin-left: -100%;
         position: absolute;
         z-index: 1;
         transition: 0.1s ease-out;
-        border-radius: 5px;
-        height: auto;
-        box-shadow: 0 0 6px rgba(0,0,0,0.2);
+        border-radius: 0;
+        height: 100%;
+        gap: 0;
+        box-shadow: 0 0 24px 12px rgba(0,0,0,0.2);
+
+        .mobile-sidebar-header {
+            display: flex;
+        }
     }
 
     .sidebar-item {
-        font-size: 1.2em;
+        font-size: 1.5rem;
+
+        & p {
+            margin: 0;
+        }
     }
 
     .sidebar-item:last-child {
@@ -27,11 +32,12 @@
     }
 
     .visible {
-        margin-left: 0.25em;
+        margin-left: 0;
         position: absolute;
-        top: 3em;
-        z-index: 3;
+        top: 0;
+        z-index: 9999;
         transition: 0.2s ease-out;
+        width: min(80%, 300px);
     }
     
     .topbar {
@@ -42,17 +48,27 @@
         background-color: #ffffff;
         box-shadow: 0 0 4px rgba(0,0,0,0.1);
 
+        
+
         .fullLogo {
             display: none;
         }
+
+        .left {
+            overflow: clip;
+        }
+    }
+
+    #global-search {
+        display: none;
     }
 
     .views {
         height: 3.5em;
-        width: 100%;
         position: relative;
         z-index: 0;
         justify-content: flex-start;
+        margin: 0 10px;
     }
 
     .view {
@@ -149,9 +165,23 @@
     }
 
     .taskgrid {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: scroll;
+        width: 100%;
+
+        scroll-snap-type: x mandatory;
+        scroll-padding: 0 1em;
+
+    }
+
+    .taskcolumn {
+        width: auto;
+        flex: 0 0 22em;
+        /* scroll snap */
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        
     }
 
     .tasklist {
