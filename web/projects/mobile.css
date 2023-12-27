@@ -10,15 +10,19 @@
         transition: 0.1s ease-out;
         border-radius: 0;
         height: 100%;
-        box-shadow: 0 0 6px rgba(0,0,0,0.2);
+        gap: 0;
+        box-shadow: 0 0 24px 12px rgba(0,0,0,0.2);
+
+        .mobile-sidebar-header {
+            display: flex;
+        }
     }
 
     .sidebar-item {
         font-size: 1.5rem;
-
+        
         & p {
             margin: 0;
-            font-size: 1.25rem;
         }
     }
 

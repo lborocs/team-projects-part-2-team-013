@@ -1,5 +1,6 @@
 //single things
 export const hamburger = document.querySelector("#hamburger")
+export const closeSidebar = document.querySelector("#close-sidebar")
 export const sidebar = document.querySelector(".sidebar")
 export const container = document.querySelector(".sidebar-container")
 export const homeButton = document.querySelector("#home")
@@ -661,6 +662,16 @@ if (hamburger !== null) {
     })
 }
 
+if (closeSidebar !== null) {
+    closeSidebar.addEventListener("click", () => {
+        sidebar.classList.toggle("visible")
+        container.classList.toggle("sidebar-open")
+        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+            paragraph.classList.toggle("norender")
+        })
+    })
+}
+
 if (homeButton !== null) {
     homeButton.addEventListener("click", () => {
         setTimeout(() => {
@@ -762,13 +773,21 @@ function fillCurrentUserInfo() {
         let employee = session.employee;
 
         let emp_icon = employeeAvatarOrFallback(employee);
-
+        let emp_name = bothNamesToString(employee.firstName, employee.lastName);
 
         let icon = document.createElement("img");
         icon.src=emp_icon;
         icon.classList.add("avatar");
         icon.id = "user-icon";
 
+        userAvatar.classList.add("tooltip");
+        userAvatar.classList.add("tooltip-left");
+
+        let tooltip = document.createElement("div");
+        tooltip.classList.add("tooltiptext");
+        tooltip.innerText = `Logged in as ${emp_name}`;
+
+        userAvatar.appendChild(tooltip);
         userAvatar.appendChild(icon);
     });
 }
