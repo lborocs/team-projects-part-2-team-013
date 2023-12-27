@@ -38,7 +38,7 @@
         top: 0;
         z-index: 9999;
         transition: 0.2s ease-out;
-        width: min(70%, 300px);
+        width: min(80%, 300px);
     }
     
     .topbar {
