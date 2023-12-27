@@ -197,14 +197,13 @@ input {
     top: 0;
     background-color: #fff;
     color: #1f2328;
-    transition: 0.05s ease-out;
+    transition: 0.2s ease-out;
     font-size: 20px;
     
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    transition: 0.05s ease-out;
 
     border-right: solid 2px rgba(0,0,0,0.1);
 
@@ -301,7 +300,7 @@ input {
 
 .visible {
     align-items: stretch;
-    width: 190px;
+    flex: 0 0 180px;
     gap: 0.5em;
     .sidebar-item {
         height: 2em;
