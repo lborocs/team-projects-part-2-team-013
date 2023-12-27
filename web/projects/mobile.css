@@ -168,19 +168,25 @@
         align-items: flex-start;
         flex-wrap: nowrap;
         overflow-x: scroll;
-        width: 100%;
+        width: 100vw;
 
         scroll-snap-type: x mandatory;
         scroll-padding: 0 1em;
+
+        padding-left: 1rem;
+        padding-right: 1rem;
+
+        margin-left: 0;
+        margin-right: 0;
 
     }
 
     .taskcolumn {
         width: auto;
         flex: 0 0 22em;
-        /* scroll snap */
+
         scroll-snap-align: start;
-        scroll-snap-stop: always;
+        scroll-snap-stop: normal;
 
     }
 
