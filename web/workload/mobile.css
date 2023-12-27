@@ -5,7 +5,7 @@
 
     .sidebar{
         margin-left: -100%;
-        position: absolute;
+        position: fixed;
         z-index: 1;
         transition: 0.1s ease-out;
         border-radius: 0;
@@ -33,7 +33,7 @@
 
     .visible {
         margin-left: 0;
-        position: absolute;
+        position: fixed;
         top: 0;
         z-index: 9999;
         transition: 0.2s ease-out;
