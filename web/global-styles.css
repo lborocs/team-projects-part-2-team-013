@@ -281,7 +281,7 @@ input {
         margin-right: 0.5em;
         padding-right: 1.25em;
         font-weight: 500;
-        border-radius: 5px;
+        border-radius: 3px;
     }
 
 }
@@ -345,7 +345,7 @@ input {
     display: flex;
     padding-top: 0;
     padding-bottom: 0;
-    border-radius: 8px;
+    border-radius: 3px;
     transition: 0.1s ease-out;
 }
 
@@ -424,6 +424,7 @@ input {
 
 #hamburger {
     cursor: pointer;
+    margin-left: 0.42em;
 }
 
 button:hover {
@@ -435,14 +436,15 @@ button:hover {
 
 #inbox-icon {
     position: relative;
-    margin-left: 0;
+    padding: 0;
+    margin-right: 0.42em;
 }
 
 #inbox-icon::after {
     content: "";
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    bottom: 2px;
+    right: 2px;
     width: 10px;
     height: 10px;
     background-color: rgb(214, 83, 83);
