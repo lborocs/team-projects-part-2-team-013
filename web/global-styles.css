@@ -226,7 +226,7 @@ input {
     color:rgb(69, 69, 69)
 }
 .sidebar-item.selected {
-    background-color: rgb(100,100,100, 0.1);
+    background-color: #f1f2f4;
     border-radius: 3px !important;
     border-bottom-left-radius: 0 !important;
     border-top-left-radius: 0 !important;
@@ -260,7 +260,7 @@ input {
 }
 
 .sidebar-item:hover {
-    background-color: rgb(244,244,244);
+    background-color: #f1f2f4;
     color: #000000;
     transition-duration: 0.05s;
     cursor: pointer;
@@ -376,14 +376,12 @@ input {
     .item {
         display: flex;
         flex-direction: row;
-        padding: 0.25rem;
         border-radius: 3px;
         transition: 0.1s ease-out;
         user-select: none;
     }
 
     .item:hover {
-        background-color: rgb(244,244,244);
         color: #000000;
         transition-duration: 0.05s;
         cursor: pointer;
@@ -428,7 +426,10 @@ input {
 }
 
 #hamburger {
-    cursor: pointer;
+    padding: 0;
+    & span {
+        font-size: 24px;
+    }
 }
 
 button:hover {
@@ -442,18 +443,21 @@ button:hover {
     position: relative;
     padding: 0;
 
-    & span {
-        font-size: 24px;
+    .icon-button {
+        & span {
+            font-size: 24px;
+        }
     }
+    
 }
 
 #inbox-icon::after {
     content: "";
     position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 10px;
-    height: 10px;
+    top: 1px;
+    right: 1px;
+    width: 9px;
+    height: 9px;
     background-color: rgb(214, 83, 83);
     border-radius: 50%;
     border: solid 2px white;
