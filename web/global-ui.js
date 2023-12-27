@@ -10,9 +10,7 @@ export const settingsButton = document.querySelector("#settings")
 export const trainingButton = document.querySelector("#training")
 export const logoutButton = document.querySelector("#logout")
 
-export const userBoth = document.querySelector(".user-both")
-export const userAvatar = document.getElementById("user-icon")
-export const userName = document.getElementById("user-name")
+export const userAvatar = document.getElementById("user-icon-container")
 export const notificationsButton = document.getElementById("inbox-icon")
 
 //groups of things
@@ -746,7 +744,7 @@ export function managerElementsEnableIfManager() {
 
 function fillCurrentUserInfo() {
 
-    if (userAvatar === null || userName === null) {
+    if (userAvatar === null) {
         return;
     }
 
@@ -759,18 +757,15 @@ function fillCurrentUserInfo() {
 
         let employee = session.employee;
 
-        let emp_name = bothNamesToString(employee.firstName, employee.lastName);
         let emp_icon = employeeAvatarOrFallback(employee);
 
 
         let icon = document.createElement("img");
         icon.src=emp_icon;
         icon.classList.add("avatar");
+        icon.id = "user-icon";
 
-        userAvatar.replaceChildren(
-            icon
-        );
-        userName.innerText = emp_name;
+        userAvatar.appendChild(icon);
     });
 }
 

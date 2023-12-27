@@ -23,6 +23,7 @@
     .button-text {
         margin: 0 2px;
         line-height: 1;
+        white-space: nowrap;
     }
 
     .button-icon {

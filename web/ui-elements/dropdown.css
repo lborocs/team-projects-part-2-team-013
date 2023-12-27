@@ -33,6 +33,8 @@
 
     margin: 2px 8px;
     user-select: none;
+
+    white-space: nowrap;
 }
 
 .dropdown-chevron {

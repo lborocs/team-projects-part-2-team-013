@@ -36,6 +36,8 @@
 
 }
 
+
+
 .search-input::placeholder {
     color: rgb(98, 111, 134);
 }
@@ -81,4 +83,9 @@
     display: none;
 }
 
-/* search bar end */
+
+
+.search.white {
+    color: black;
+    background-color: white;
+}

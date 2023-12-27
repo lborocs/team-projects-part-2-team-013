@@ -3,22 +3,23 @@
         height: max(auto, (100% - 3em));
     }
 
-    #user-name {
-        display: none;
-    }
-
     .sidebar{
         margin-left: -100%;
         position: absolute;
         z-index: 1;
         transition: 0.1s ease-out;
-        border-radius: 5px;
-        height: auto;
+        border-radius: 0;
+        height: 100%;
         box-shadow: 0 0 6px rgba(0,0,0,0.2);
     }
 
     .sidebar-item {
-        font-size: 1.2em;
+        font-size: 1.5rem;
+
+        & p {
+            margin: 0;
+            font-size: 1.25rem;
+        }
     }
 
     .sidebar-item:last-child {
@@ -27,11 +28,12 @@
     }
 
     .visible {
-        margin-left: 0.25em;
+        margin-left: 0;
         position: absolute;
-        top: 3em;
-        z-index: 3;
+        top: 0;
+        z-index: 9999;
         transition: 0.2s ease-out;
+        width: min(70%, 300px);
     }
     
     .topbar {

@@ -1,7 +1,6 @@
 .selection-screen {
     gap: 0.5em;
     padding: 1em 2em;
-    overflow-y: scroll;
     background-color: var(--light-grey-bg);
 
     .project-bar {
