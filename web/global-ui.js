@@ -20,6 +20,10 @@ export const topbarItems = document.querySelectorAll(".item")
 //global variables
 export var notifications = []
 
+//sidebar state is either "open" or "closed", default is open
+export var sidebarState = localStorage.getItem("sidebarState") || "open";
+localStorage.setItem("sidebarState", sidebarState);
+
 console.log("[import] loaded global-ui.js")
 
 export const BACK_BUTTON = 3;
