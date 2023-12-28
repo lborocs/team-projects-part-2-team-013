@@ -8,6 +8,7 @@ const RENDER_BOTH = 3;
 
 //important shit
 var globalTasksList = [];
+var globalAssignments = [];
 var globalCurrentProject;
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
@@ -41,6 +42,8 @@ const notStartedAddButton = document.querySelector("#notstarted-add")
 const listAddButtonRow = document.querySelector("#list-add-row")
 const listAddButton = document.querySelector("#list-add")
 const projectBackButton = document.querySelector("#project-back")
+const projectSearchInput = document.querySelector("#project-search")
+const taskSearchInput = document.querySelector("#task-search")
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -88,7 +91,13 @@ async function projectSwitchToOnClick(projectRow) {
     taskRows.forEach((task) => {
         task.remove()
     }) 
-    let tasks = await fetchAndRenderTasks(id);
+    let tasks = await fetchTasks(id);
+    if (!tasks) {
+        console.error(`[projectSwitchToOnClick] Error fetching tasks`);
+        return false;
+    }
+    
+    await renderTasks(tasks);
     console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + project.name)
     globalTasksList = tasks;
     console.log("global tasks list:")
@@ -255,6 +264,7 @@ function updateTaskState(task) {
 //shows the taskRow in the explainer
 //the taskRow contains title, due date and state in columns"
 //the rest of the informaton is in the data attributes: desc, assignee, date
+//THIS WILL BE REFACTORED
 function showTaskInExplainer(task) {
 
 
@@ -410,29 +420,43 @@ function findNext(container, y) {
 
 
 /**
- * Fetches and renders all tasks for a project
+ * Fetches all tasks for a project
  * @param {*} projID 
  * @returns {Array} tasks
  */
-async function fetchAndRenderTasks(projID) {
+async function fetchTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
-    console.log("[fetchAndRenderTasks] fetched tasks for " + projID);
+    console.log("[fetchTasks] fetched tasks for " + projID);
     console.log(data);
-    // process the data here
     if (data.success == true) {
         console.log(`tasks have been fetched for ${projID}`)
-        globalTasksList = data.data.tasks;
-        await Promise.all(data.data.tasks.map((task) => {
-            taskObjectRenderAll(task)
-        }));
-        setUpTaskEventListeners();
         if (data.data.contains_assignments) {
-            renderAssignments(data.data.assignments).then(() => {
-                console.log("[fetchAndRenderTasks] assignments rendered");
+            globalAssignments = data.data.assignments;
+
+            data.data.tasks.forEach((task) => {
+                task.assignments = [];
+                data.data.assignments.forEach((assignment) => {
+                    if (assignment.task.taskID === task.taskID) {
+                        task.assignments.push(assignment.employee.empID);
+                    }
+                });
             });
         }
+        globalTasksList = data.data.tasks;
         return data.data.tasks
     }
+}
+
+/**
+ * Renders all tasks from a given list of tasks
+ * @param {Array} tasks 
+ */
+async function renderTasks(tasks) {
+    await Promise.all(tasks.map((task) => {
+        taskObjectRenderAll(task)
+    }));
+    setUpTaskEventListeners();
+    renderAssignments(globalAssignments);
 }
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
@@ -494,6 +518,15 @@ async function renderAssignments(assignments) {
         // add child element
         usersAssigned.appendChild(assignmentElem);
     });
+}
+
+function clearRenderedTasks() {
+    taskCards.forEach((task) => {
+        task.remove()
+    })
+    taskRows.forEach((task) => {
+        task.remove()
+    }) 
 }
 
 
@@ -1707,27 +1740,27 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
     );
 });
 
-document.getElementById("project-search").addEventListener("keydown", (e) => {
+projectSearchInput.addEventListener("keydown", (e) => {
     sleep(10).then(() => {
-        filterProjectFromSearch();
+        searchAndRenderProjects(projectSearchInput.value)
     })
 })
 
-// document.getElementById("task-search").addEventListener("keydown", (e) => {
-//     sleep(10).then(() => {
-//         filterTaskFromSearch();
-//     })
-// })
+document.getElementById("task-search").addEventListener("keydown", (e) => {
+    sleep(10).then(() => {
+        searchAndRenderTasks()
+    })
+})
 
 
 document.getElementById("delete-project-search").addEventListener("click", () => {
-    document.getElementById("project-search").value = "";
-    filterProjectFromSearch();
+    projectSearchInput.value = "";
+    searchAndRenderProjects()
 })
 
 document.getElementById("delete-task-search").addEventListener("click", () => {
-    document.getElementById("task-search").value = "";
-    filterTaskFromSearch();
+    taskSearchInput.value = "";
+    searchAndRenderTasks()
 })
 
 
@@ -1742,7 +1775,6 @@ async function searchAndRenderProjects(search) {
     console.log("[searchAndRenderProjects(" + search + ")] fetched projects");
     console.log(data);
     console.log('.project-row.selected');
-    // process the data here
     if (data.success == true) {
         clearProjectList();
         console.log("[searchAndRenderAllProjects] projects have been fetched successfully")
@@ -1755,30 +1787,26 @@ async function searchAndRenderProjects(search) {
 }
 
 
-// async function searchAndRenderTasks(search) {
-//     const data = await get_api('/project/task.php/tasks?q=' + search);
-//     console.log("[searchAndRenderTasks" + search + "] fetched tasks");
-//     console.log(data);
-//     if (data.success == true) {
-//         let tasksTable = document.querySelector("#tasks-table");
-//         tasksTable.querySelector("tbody").replaceChildren();
-//         console.log("[fetchAndRenderAllTasks] tasks have been fetched successfully")
-//         await Promise.all(data.data.tasks.map(async (task) => {
-//             await taskObjectRenderAll(task, RENDER_LIST);
-//         }));
-//         return data.data.tasks
-//     }
-// }
-
-
-function filterProjectFromSearch() {
-    console.log("[filterProjectFromSearch] searching for:");
-    console.log(document.getElementById("project-search").value); 
-    searchAndRenderProjects(document.getElementById("project-search").value)
+async function searchTasks(search) {
+    let tasks = globalTasksList;
+    let filteredTasks = [];
+    tasks.forEach((task) => {
+        let title = task.title;
+        let desc = task.description;
+        let dueDate = task.dueDate;
+        dueDate = dueDate ? global.formatDateFull(new Date(dueDate)) : null; //gets it into searchable format
+        if (title.includes(search) || desc.includes(search) || (dueDate && dueDate.includes(search))) {
+            filteredTasks.push(task);
+        }
+    });
+    return filteredTasks;
 }
 
-// function filterTaskFromSearch() {
-//     console.log("[filterTaskFromSearch] searching for:");
-//     console.log(document.getElementById("task-search").value); 
-//     searchAndRenderTasks(document.getElementById("task-search").value)
-// }
+async function searchAndRenderTasks() {
+    let search = taskSearchInput.value;
+    let tasks = await searchTasks(search);
+    console.log("[renderTasksFromSearch] filtered tasks: ");
+    console.log(tasks);
+    clearRenderedTasks()
+    renderTasks(tasks);
+}
