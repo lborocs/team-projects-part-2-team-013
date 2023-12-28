@@ -33,6 +33,7 @@
 
 .icon-button:hover {
     background-color: #dcdfe4;
+    transition: background-color 0.05s ease-out;
 }
 
 .icon-button.no-box {

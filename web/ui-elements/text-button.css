@@ -55,6 +55,7 @@
 
 .text-button:hover {
     background-color: #dcdfe4;
+    transition: background-color 0.05s ease-out;
 }
 
 .text-button.no-box {
@@ -64,6 +65,7 @@
 .text-button.no-box:hover {
     background-color: #f1f2f4;
 }
+
 
 
 
