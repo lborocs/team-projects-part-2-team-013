@@ -34,6 +34,45 @@ export const FORWARD_BUTTON = 4;
 caches.open("employees");
 
 
+export class RollingTimeout {
+
+    duration;
+    _timeout;
+    callback;
+    dirty;
+
+    constructor(callback, duration) {
+        this.callback = callback;
+        this.duration = duration;
+        this.dirty = false;
+    }
+
+    roll() {
+
+        if (this.dirty) {
+            throw new Error("Cannot roll a dirty timeout, timeout has already completed.");
+        }
+
+        if (this._timeout) {
+            clearTimeout(this._timeout);
+        }
+
+        // use an anoymous function to call the callback
+        // so that javascript doesnt magic away the "this" keyword
+        this._timeout = setTimeout(
+            () => {this._callTimeout()},
+            this.duration
+        );
+    }
+
+    _callTimeout() {
+        this.dirty = true;
+        this.callback();
+    }
+
+}
+
+
 class GlobalEmployeeRequest {
 
     STALL_TIMEOUT = 50;
@@ -48,7 +87,12 @@ class GlobalEmployeeRequest {
 
     constructor() {
         this.id = Math.random().toString(16).substring(2);
-        this.timeout = null;
+
+        this.timeout = new RollingTimeout(
+            () => {this.afterTimeout()},
+            this.STALL_TIMEOUT
+        );
+
         this.discardable = false;
         this.requestSet = new Set();
         this.clients = 0;
@@ -60,7 +104,7 @@ class GlobalEmployeeRequest {
 
         employees.forEach((employee) => { this.requestSet.add(employee) });
 
-        this.setClock();
+        this.timeout.roll();
 
         // kinda a hack but basically add a listener
         // and when the listener is dispatched then resolve the promise
@@ -74,14 +118,6 @@ class GlobalEmployeeRequest {
         });
 
 
-    }
-
-    async setClock() {
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-        }
-
-        this.timeout = setTimeout(() => {this.afterTimeout()}, this.STALL_TIMEOUT);
     }
 
     async afterTimeout() {
