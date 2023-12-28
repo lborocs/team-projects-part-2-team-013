@@ -1577,8 +1577,7 @@ async function addProjectPopup(){
 }
 
 async function projectObjectRenderAndListeners(project) {
-    console.log("[projectObjectRenderAndListeners] rendering project:")
-    console.log(project)
+    console.log("[projectObjectRenderAndListeners] rendering project: ", project.projID, project.name);
     let session = await global.getCurrentSession();
     let isTeamLeader = (project.teamLeader.empID === session.employee.empID);
     let emps = await global.getEmployeesById([project.teamLeader.empID, project.createdBy.empID]);
