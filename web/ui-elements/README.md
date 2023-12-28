@@ -16,4 +16,4 @@ Other elements we will end up needing:
 - (done) Drop down window for the notifications panel.
 
 
-**the js files are there to show the bar minimum needed for the element to function. Make sure you got event listeners on all elements you want to interact with**
+**the js files are there to show the bare minimum needed for the element to function. Make sure you've got event listeners on all elements you want to interact with**
