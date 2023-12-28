@@ -332,8 +332,8 @@ function setUpTaskEventListeners() {
         taskCard.addEventListener("touchstart", () => {
             //show explainer
             console.log("[taskCardOnTouch] clicked")
-            animate(taskRow, "click-small")
-            showTaskInExplainer(taskRow);
+            animate(taskCard, "click-small")
+            showTaskInExplainer(taskCard);
         });
 
         taskCard.addEventListener("dragstart", () => {
