@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="small-icon.css">
     <link rel="stylesheet" href="number-picker.css">
     <link rel="stylesheet" href="date-picker.css">
+    <link rel="stylesheet" href="context-menu.css">
     
     <!-- flatpickr.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" 
@@ -38,6 +39,7 @@
     <script src="task-card.js" defer></script>
     <script src="number-picker.js" defer></script>
     <script src="date-picker.js" defer></script>
+    <script src="context-menu.js" defer></script>
   </head>
   <body>
 <body>
@@ -156,10 +158,63 @@
                 </span>
             </div>
         </div>
-        <div class="small-icon">
+        <div class="small-icon context-menu">
             <span class="material-symbols-rounded">
                 more_horiz
             </span>
+            <div class="context-menu-popover visible">
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            edit
+                        </span>
+                    </div>
+                    <div class="text">
+                        Edit
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            delete
+                        </span>
+                    </div>
+                    <div class="text">
+                        Delete
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            share
+                        </span>
+                    </div>
+                    <div class="text">
+                        Open in new tab
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            visibility
+                        </span>
+                    </div>
+                    <div class="text">
+                        Copy link
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            file_download
+                        </span>
+                    </div>
+                    <div class="text">
+                        Download
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="taskcolumn">

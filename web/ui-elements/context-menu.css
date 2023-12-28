@@ -1,0 +1,98 @@
+
+/* put this on the button to make the popover position correctly */
+.context-menu {
+    position: relative;
+}
+
+
+/* the actual context menu */
+.context-menu-popover {
+    position: absolute;
+    top: calc(100% + 5px);
+    right: 0;
+    background-color: #fff;
+    border: solid 1px rgba(105, 112, 125, 0.1);
+    border-radius: 5px;
+    
+    padding: 3px;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 999;
+
+    transform: translateY(-2%);
+    transition: opacity 0.1s ease-out, transform 0.1s ease-out;
+    
+
+    .item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        font-weight: 500;
+
+        padding: 5px;
+        padding-right: 1.5rem;
+        gap: 5px;
+        border-radius: 3px;
+
+        transition: background-color 0.1s ease-out;
+
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 24px;
+            height: auto;
+            aspect-ratio: 1;
+
+            margin-right: 2px;
+
+            & span {
+                color: #444;
+                font-size: 19px;
+            }
+
+        }
+
+        .text {
+            font-size: 14px;
+            color: #333;
+            white-space: nowrap;
+        }
+
+    }
+
+    .item:hover {
+        background-color: #f1f2f4;
+        transition: background-color 0.05s ease-out;
+    }
+
+    .item:last-child {
+        border-bottom: none;
+    }
+
+    .item.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .item.disabled:hover {
+        background-color: transparent;
+    }
+
+    .divider {
+        height: 1px;
+        background-color: #dddddd;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+}
+
+.context-menu-popover.visible {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0%);
+}
+
