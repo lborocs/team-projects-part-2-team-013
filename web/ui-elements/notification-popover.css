@@ -41,6 +41,8 @@
         padding: 9px 0;
         margin-right: 10px;
 
+        border-bottom: solid 1px #dddddd;
+
         .icon {
             display: flex;
             justify-content: center;
@@ -159,6 +161,8 @@
         display: flex;
     }
 }
+
+
 
 .notification-card:last-child {
     border-bottom: none;
