@@ -15,7 +15,7 @@ class Session {
 
     static function from_unencrypted_bytes(string $bytearray) {
 
-        $data = unpack("a16s_id/a16u_id/Qissued/cauth", $bytearray);
+        $data = @unpack("a16s_id/a16u_id/Qissued/cauth", $bytearray);
 
         if ($data == false) {
             respond_internal_error(ERROR_SESSION_CANT_UNPACK);
