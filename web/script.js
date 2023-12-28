@@ -19,7 +19,7 @@ async function login() {
         password: password
     }
 
-    const res = await post_api("/employee/session.php/login", loginData);
+    const res = await post_api("/employee/session.php/login", loginData, {use_auth: false, redirect_on_error: false});
 
     if (res.success) {
         localStorage.setItem("token", res.data.session_token);

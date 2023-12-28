@@ -2,6 +2,7 @@
 const DEFAULT_OPTIONS = {
     redirect_on_error: true,
     retries: 3,
+    use_auth: true,
 }
 
 class APIResponse {
@@ -43,7 +44,7 @@ async function api_request(route, method, body, options={}) {
 
     let token = localStorage.getItem("token")
 
-    if (token !== null) {
+    if (token !== null && options.use_auth) {
         headers = {
             "Content-Type": "application/json",
             "Authorization": token
