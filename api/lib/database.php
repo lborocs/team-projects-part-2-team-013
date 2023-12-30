@@ -628,7 +628,7 @@ function db_post_fetch_assets($post_id) {
         "SELECT
             `ASSETS`.assetID, `POST_ASSET`.postAssetIndex, `ASSETS`.contentType
         FROM `POST_ASSET`, `ASSETS`
-        WHERE postID = ?"
+        WHERE postID = ? AND `POST_ASSET`.assetID = `ASSETS`.assetID"
     );
     $query->bind_param("s", $bin_p_id);
     $result = $query->execute();
