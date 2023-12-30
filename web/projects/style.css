@@ -335,7 +335,7 @@
     color: #555555;
     z-index: 1;
     border-bottom: solid 2px var(--border-clr, #e0e0e0);
-    background-color: transparent;
+    background-color: inherit;
     flex: 0 0 3em;
     .selected {
         background-color: var(--view-selected-bg, rgb(246,246,245));
@@ -541,6 +541,7 @@
     flex-direction: column;
     align-items: center;
     gap: 0.75em;
+    background-color: inherit;
 }
 
 .create-task-area {

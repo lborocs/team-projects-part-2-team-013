@@ -321,36 +321,48 @@ function setUpTaskEventListeners() {
 
         let contextMenuButton = taskCard.querySelector(".context-menu");
         let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
-        contextMenuButton.addEventListener("click", (e) => {
-            e.stopPropagation()
 
+        contextMenuButton.addEventListener("click", (e) => {
+            e.stopPropagation();
             //closes the rest of them first
             let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
             contextMenus.forEach(menu => {
                 if (menu !== contextMenuPopover) {
                     menu.classList.remove("visible");
-                    menu.parentElement.classList.remove("active")
+                    menu.parentElement.classList.remove("active");
                 }
             });
+            contextMenuPopover.classList.toggle("visible");
+            contextMenuButton.classList.toggle("active");
+        });
 
-            contextMenuPopover.classList.toggle("visible")
-            contextMenuButton.classList.toggle("active")
-        })
+        //stops the context menu from closing when you click on the options
+        let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
+        contextMenuItems.forEach(item => {
+            item.addEventListener("click", (e) => {
+                e.stopPropagation();
+                console.log("[contextMenuItemOnClick] clicked")
+            });
+        });
+
+        
+
         //have to include mouse up and down this is crazy event propagation
         contextMenuButton.addEventListener("mouseup", (e) => {
-            e.stopPropagation()
-        }) 
+            e.stopPropagation();
+        });
+
         contextMenuButton.addEventListener("mousedown", (e) => {
-            e.stopPropagation()
-        }) 
+            e.stopPropagation();
+        });
+
         //closes the context menu if they click outside
         document.addEventListener("click", (e) => {
             if (!contextMenuButton.contains(e.target)) {
-                contextMenuPopover.classList.remove("visible")
-                contextMenuButton.classList.remove("active")
+                contextMenuPopover.classList.remove("visible");
+                contextMenuButton.classList.remove("active");
             }
-        })
-
+        });
 
 
         taskCard.addEventListener("mousedown", (e) => {
@@ -892,6 +904,48 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                         </div>
                         <div class="text">
                             Edit
+                        </div>
+                    </div>
+                    <div class="item state-selector">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                move_group
+                            </span>
+                        </div>
+                        <div class="text">
+                            Move to
+                        </div>
+                        <div class="submenu">
+                            <div class="item">
+                                <div class="icon">
+                                    <span class="material-symbols-rounded">
+                                        move_group
+                                    </span>
+                                </div>
+                                <div class="text">
+                                    Not Started
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="icon">
+                                    <span class="material-symbols-rounded">
+                                        move_group
+                                    </span>
+                                </div>
+                                <div class="text">
+                                    In Progress
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="icon">
+                                    <span class="material-symbols-rounded">
+                                        move_group
+                                    </span>
+                                </div>
+                                <div class="text">
+                                    Finished
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="item">
