@@ -1001,21 +1001,21 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     <div class="item">
                         <div class="icon">
                             <span class="material-symbols-rounded">
-                                share
+                                link
                             </span>
                         </div>
                         <div class="text">
-                            Open in new tab
+                            Copy link
                         </div>
                     </div>
                     <div class="item">
                         <div class="icon">
                             <span class="material-symbols-rounded">
-                                visibility
+                                open_in_new
                             </span>
                         </div>
                         <div class="text">
-                            Copy link
+                            Open in new tab
                         </div>
                     </div>
                     <div class="item disabled">
@@ -1026,17 +1026,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                         </div>
                         <div class="text">
                             Export
-                        </div>
-                    </div>
-
-                    <div class="item">
-                        <div class="icon">
-                            <span class="material-symbols-rounded">
-                                file_download
-                            </span>
-                        </div>
-                        <div class="text">
-                            Download
                         </div>
                     </div>
                 </div>
