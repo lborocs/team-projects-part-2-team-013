@@ -156,10 +156,6 @@
         .finished-state:hover {
             background-color: var(--finished-status-cell-hover);
         }
-
-        .selected {
-            outline: solid 2px #388bffaa;
-        }
         
     }
 
