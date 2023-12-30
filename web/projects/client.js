@@ -251,6 +251,17 @@ function updateTaskState(task) {
     }
     if (newState != state) {
         task.setAttribute("data-state", newState);
+
+        //update the disabled option in the context menu
+        let contextMenu = task.querySelector(".context-menu-popover");
+        let stateSelector = contextMenu.querySelector(".state-selector .submenu");
+        let stateItems = stateSelector.querySelectorAll(".item");
+        stateItems.forEach((item) => {
+            item.classList.remove("disabled");
+        });
+        stateItems[newState].classList.add("disabled");
+
+
         patch_api(`/project/task.php/task/${projID}/${taskID}`, {state:newState}).then((res) => {
             if (res.status == 204) { // 204 no content (success)
                 console.log(`[updateTaskState] updated task ${taskID} to state ${newState}`);
@@ -362,6 +373,23 @@ function setUpTaskEventListeners() {
                 contextMenuPopover.classList.remove("visible");
                 contextMenuButton.classList.remove("active");
             }
+        });
+
+        taskCard.addEventListener("contextmenu", (e) => {
+            e.preventDefault(); //stop the browser putting its own right click menu over the top
+            e.stopPropagation();
+        
+            //closes the rest of them first
+            let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+            contextMenus.forEach(menu => {
+                if (menu !== contextMenuPopover) {
+                    menu.classList.remove("visible");
+                    menu.parentElement.classList.remove("active");
+                }
+            });
+        
+            contextMenuPopover.classList.toggle("visible");
+            contextMenuButton.classList.toggle("active");
         });
 
 
