@@ -382,6 +382,12 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
         
         ensure_html_is_clean($after_content);
 
+
+        // asset management on edit should follow
+        // to delete = (before_tags - after_tags) UNION provided_tags
+        // to add = (after_tags - before_tags) UNION provided_tags
+
+
         if (
             array_key_exists("images", $body)
             || post_body_get_image_indexes($before_content) != post_body_get_image_indexes($after_content)
