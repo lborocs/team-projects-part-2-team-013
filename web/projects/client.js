@@ -251,6 +251,17 @@ function updateTaskState(task) {
     }
     if (newState != state) {
         task.setAttribute("data-state", newState);
+
+        //update the disabled option in the context menu
+        let contextMenu = task.querySelector(".context-menu-popover");
+        let stateSelector = contextMenu.querySelector(".state-selector .submenu");
+        let stateItems = stateSelector.querySelectorAll(".item");
+        stateItems.forEach((item) => {
+            item.classList.remove("disabled");
+        });
+        stateItems[newState].classList.add("disabled");
+
+
         patch_api(`/project/task.php/task/${projID}/${taskID}`, {state:newState}).then((res) => {
             if (res.status == 204) { // 204 no content (success)
                 console.log(`[updateTaskState] updated task ${taskID} to state ${newState}`);
@@ -321,36 +332,65 @@ function setUpTaskEventListeners() {
 
         let contextMenuButton = taskCard.querySelector(".context-menu");
         let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
-        contextMenuButton.addEventListener("click", (e) => {
-            e.stopPropagation()
 
+        contextMenuButton.addEventListener("click", (e) => {
+            e.stopPropagation();
             //closes the rest of them first
             let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
             contextMenus.forEach(menu => {
                 if (menu !== contextMenuPopover) {
                     menu.classList.remove("visible");
-                    menu.parentElement.classList.remove("active")
+                    menu.parentElement.classList.remove("active");
                 }
             });
+            contextMenuPopover.classList.toggle("visible");
+            contextMenuButton.classList.toggle("active");
+        });
 
-            contextMenuPopover.classList.toggle("visible")
-            contextMenuButton.classList.toggle("active")
-        })
+        //stops the context menu from closing when you click on the options
+        let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
+        contextMenuItems.forEach(item => {
+            item.addEventListener("click", (e) => {
+                e.stopPropagation();
+                console.log("[contextMenuItemOnClick] clicked")
+            });
+        });
+
+        
+
         //have to include mouse up and down this is crazy event propagation
         contextMenuButton.addEventListener("mouseup", (e) => {
-            e.stopPropagation()
-        }) 
+            e.stopPropagation();
+        });
+
         contextMenuButton.addEventListener("mousedown", (e) => {
-            e.stopPropagation()
-        }) 
+            e.stopPropagation();
+        });
+
         //closes the context menu if they click outside
         document.addEventListener("click", (e) => {
             if (!contextMenuButton.contains(e.target)) {
-                contextMenuPopover.classList.remove("visible")
-                contextMenuButton.classList.remove("active")
+                contextMenuPopover.classList.remove("visible");
+                contextMenuButton.classList.remove("active");
             }
-        })
+        });
 
+        taskCard.addEventListener("contextmenu", (e) => {
+            e.preventDefault(); //stop the browser putting its own right click menu over the top
+            e.stopPropagation();
+        
+            //closes the rest of them first
+            let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+            contextMenus.forEach(menu => {
+                if (menu !== contextMenuPopover) {
+                    menu.classList.remove("visible");
+                    menu.parentElement.classList.remove("active");
+                }
+            });
+        
+            contextMenuPopover.classList.toggle("visible");
+            contextMenuButton.classList.toggle("active");
+        });
 
 
         taskCard.addEventListener("mousedown", (e) => {
@@ -876,6 +916,12 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.setAttribute("data-expectedManHours", expectedManHours);
     task.setAttribute("data-state", state);
 
+
+    //this is some genuinely insane code that avoids having to write a loop
+    let selectedState = ["", "", ""];
+    selectedState[state] = "disabled";
+
+
     //generating the html for the task
     //context menu button takes the majority of the html here
     task.innerHTML = `
@@ -894,6 +940,53 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                             Edit
                         </div>
                     </div>
+                    <div class="item state-selector">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                move_group
+                            </span>
+                        </div>
+                        <div class="text">
+                            Move to
+                        </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                arrow_forward_ios
+                            </span>
+                        </div>
+                        <div class="submenu">
+                            <div class="item not-started-state ${selectedState[0]}">
+                                <div class="icon">
+                                    <span class="material-symbols-rounded">
+                                        push_pin
+                                    </span>
+                                </div>
+                                <div class="text">
+                                    Not Started
+                                </div>
+                            </div>
+                            <div class="item in-progress-state ${selectedState[1]}">
+                                <div class="icon">
+                                    <span class="material-symbols-rounded">
+                                        timeline
+                                    </span>
+                                </div>
+                                <div class="text">
+                                    In Progress
+                                </div>
+                            </div>
+                            <div class="item finished-state ${selectedState[2]}">
+                                <div class="icon">
+                                    <span class="material-symbols-rounded">
+                                        check_circle
+                                    </span>
+                                </div>
+                                <div class="text">
+                                    Finished
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="item">
                         <div class="icon">
                             <span class="material-symbols-rounded">
@@ -908,17 +1001,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     <div class="item">
                         <div class="icon">
                             <span class="material-symbols-rounded">
-                                share
-                            </span>
-                        </div>
-                        <div class="text">
-                            Open in new tab
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="icon">
-                            <span class="material-symbols-rounded">
-                                visibility
+                                link
                             </span>
                         </div>
                         <div class="text">
@@ -928,11 +1011,21 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     <div class="item">
                         <div class="icon">
                             <span class="material-symbols-rounded">
-                                file_download
+                                open_in_new
                             </span>
                         </div>
                         <div class="text">
-                            Download
+                            Open in new tab
+                        </div>
+                    </div>
+                    <div class="item disabled">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                export_notes
+                            </span>
+                        </div>
+                        <div class="text">
+                            Export
                         </div>
                     </div>
                 </div>
