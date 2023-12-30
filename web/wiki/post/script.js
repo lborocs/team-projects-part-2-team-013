@@ -20,6 +20,15 @@ async function getPostData(postID){
 
     const post = data.data;
 
+    post.images.forEach((image) => {
+
+        post.content = post.content.replace(
+            `\{\{img${image.index}\}\}`,
+            `<img src="${global.assetToUrl(global.ASSET_TYPE_POST, post.postID, image.asset.assetID, image.asset.contentType)}" class="post-image">`
+            );
+    });
+
+
     let postElement = document.querySelector(".post")
 
     document.querySelector(".title").innerText = post.title

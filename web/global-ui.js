@@ -30,6 +30,9 @@ console.log("[import] loaded global-ui.js")
 export const BACK_BUTTON = 3;
 export const FORWARD_BUTTON = 4;
 
+export const ASSET_TYPE_EMPLOYEE = "employees";
+export const ASSET_TYPE_POST = "posts";
+export const ASSET_TYPE_PROJECT = "projects";
 
 caches.open("employees");
 
@@ -377,10 +380,15 @@ function nameToAvatar(name) {
 
 export function employeeAvatarOrFallback(employee) {
     if (employee.avatar) {
-        return `https://usercontent.013.team/employees/${employee.empID}/${employee.avatar.assetID}.${employee.avatar.contentType.split("/")[1]}`;
+        return assetToUrl(ASSET_TYPE_EMPLOYEE, employee.empID, employee.avatar.assetID, employee.avatar.contentType);
     } else {
         return nameToAvatar(bothNamesToString(employee.firstName, employee.lastName));
     }
+}
+
+export function assetToUrl(type, bucketID, assetID, contentType) {
+
+    return `https://usercontent.013.team/${type}/${bucketID}/${assetID}.${contentType.split("/")[1]}`;
 }
 
 /**

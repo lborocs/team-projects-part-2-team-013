@@ -83,8 +83,8 @@ function respond_ok(Array $data) {
     respond(true, $data, 200);
 };
 
-function respond_not_implemented() {
-    respond_error("Requested functionality not implemented", ERROR_NOT_YET_IMPLEMENTED, 501);
+function respond_not_implemented(string $message = "Requested functionality not implemented") {
+    respond_error($message, ERROR_NOT_YET_IMPLEMENTED, 501);
 }
 
 function respond_illegal_implementation(string $message) {

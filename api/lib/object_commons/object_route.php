@@ -39,7 +39,7 @@ const OBJECT_GENERIC_DELETE_FUNCS = [
 ];
 
 
-function object_manipulation_generic(array $method_checks, Table $model, RequestContext $ctx, string $args) {
+function object_manipulation_generic(array $method_checks, Table $model, RequestContext $ctx, string $args, array $allowed_fields = []) {
     // generically verify and manipulate an object, then call its non generic function
 
     // only support a single resource
@@ -62,7 +62,7 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
 
     // ensure the every body field corresponds to a valid model field
     if ($ctx->method_allows_body()) {
-        _ensure_body_validity($model, $ctx);
+        _ensure_body_validity($model, $ctx, $allowed_fields);
     }
 
     foreach ($method_checks[$ctx->request_method] as $check) {
@@ -137,7 +137,7 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
 
 }
 
-function _ensure_body_validity(Table $model, RequestContext $ctx) {
+function _ensure_body_validity(Table $model, RequestContext $ctx, array $allowed_fields=[]) {
     $ctx->request_body = prepend_col_prefixes($model, $ctx->request_body);
     $body = $ctx->request_body;
 
@@ -148,6 +148,11 @@ function _ensure_body_validity(Table $model, RequestContext $ctx) {
 
 
     foreach ($body as $user_field => $user_value) {
+
+        if (in_array($user_field, $allowed_fields)) {
+            continue;
+        }
+
         $column = $model->get_column($user_field);
 
         // if user sent unexpected column

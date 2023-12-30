@@ -121,7 +121,7 @@ class Asset {
         ]);
     }
 
-    public static function from_multiple_bytes(Array $files, int $type) {
+    public static function from_multiple_bytes(Array $files, int $type, string $bucket_id) {
 
         $types = [];
 
@@ -133,7 +133,7 @@ class Asset {
 
         try {
             foreach ($files as $index => $file) {
-                array_push($assets, Asset::create($file, $type, $types[$index]));
+                array_push($assets, Asset::create($file, $type, $bucket_id, $types[$index]));
             }
         } catch (AssetException $e) {
             foreach ($assets as $asset) {
