@@ -47,11 +47,11 @@ function image_validation_and_mime($bytestream, int $type) {
 
     [$width, $height] = $dimensions;
     
-    if ($width > 4096 || $height > 4096) {
+    if ($width >ASSET_MAX_DIMENSIONS || $height >ASSET_MAX_DIMENSIONS) {
         respond_bad_request("Image dimensions too large", ERROR_ASSET_DIMENSIONS_TOO_LARGE);
     }
 
-    if ($width < 16 || $height < 16) {
+    if ($width < ASSET_MIN_DIMENSIONS || $height < ASSET_MIN_DIMENSIONS) {
         respond_bad_request("Image dimensions too small", ERROR_ASSET_DIMENSIONS_TOO_SMALL);
     }
 
