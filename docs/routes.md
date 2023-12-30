@@ -247,7 +247,7 @@ Written/designed by aidan F223129
     ```
   - [x] PATCH (modify post)
   - [ ] DELETE (delete post)
-  - [x] POST (new post) {"title":string, "isTechnical":int(0/1), "content":string}
+  - [x] POST (new post) {"title":string, "isTechnical":int(0/1), "content":string (images represented as {{img1}} for index 1), images:{index:base64imagedata}}
 
 - [x] **/wiki/post.php/meta/:POST_ID:**
   - [x] GET (get post feedback and subscription)

@@ -363,6 +363,24 @@ const TABLE_POSTS = new Table(
     "post"
 );
 
+const TABLE_POST_ASSET = new Table(
+    "`POST_ASSET`",
+    [],
+    [
+        new Column(
+            "assetID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_ASSETS, _ASSETID)]
+        ),
+        new Column(
+            "postID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
+            constraints:[new ForeignKeyConstraint(TABLE_POSTS, _POSTID, "db_post_fetch")]
+        ),  
+        new Column("postAssetIndex", is_primary_key:true, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
+    ],
+    "asset",
+    "postAsset"
+);
+
 
 const _TAGID = new Column(
     "tagID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,

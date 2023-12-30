@@ -1,6 +1,7 @@
 <?php
 require("lib/context.php");
 require_once("lib/object_commons/object_route.php");
+require_once("lib/assets/asset.php");
 
 const POST_METHOD_CHECKS = [
     "DELETE"=>[
@@ -95,7 +96,7 @@ function r_post_post(RequestContext $ctx, string $args) {
                 );
         }
     } else {
-        object_manipulation_generic(POST_METHOD_CHECKS, TABLE_POSTS, $ctx, $args);
+        object_manipulation_generic(POST_METHOD_CHECKS, TABLE_POSTS, $ctx, $args, ["images"]);
     }
 
 }
@@ -137,7 +138,7 @@ function r_post_post_meta(RequestContext $ctx, string $args) {
 
         
 
-        _ensure_body_validity(TABLE_EMPLOYEE_POST_META, $ctx);
+        _ensure_body_validity(TABLE_EMPLOYEE_POST_META, $ctx, []);
 
         if (count($ctx->request_body) != 2) {
             respond_bad_request("PUT endpoints require all fields to be set (expected subscribed and feedback)", ERROR_BODY_MISSING_REQUIRED_FIELD);
@@ -231,6 +232,98 @@ register_route(new Route(
 
 // common obj functions
 
+function post_body_get_image_indexes(string $content) {
+    $out = [];
+
+    $num_matches = preg_match_all(
+        '/{{img(\d+)}}/i',
+        $content,
+        $out
+    );
+
+
+    $indexes = [];
+
+    foreach ($out[1] as $index) {
+        $indexes[] = intval($index);
+    }
+
+    return array_unique($indexes);
+}
+
+
+function create_post_assets(array $body, $bucket_id) {
+
+    // having to pass a ptr of an array to fill is crazy
+    // this is not c
+    // ????? just return it
+    // especially when arrays are HEAP ALLOCATED
+    $indexes = post_body_get_image_indexes($body["postContent"]);
+
+    $uploads = $body["images"] ?? [];
+
+    if (count($indexes) != count($uploads)) {
+        respond_bad_request("Expected the number of images to match the number of {{img}} tags", ERROR_BODY_INVALID);
+    }
+
+    foreach ($indexes as $index) {
+        if (!array_key_exists($index, $uploads)) {
+            respond_bad_request(
+                "Expected a key for image '$index' in the images map",
+                ERROR_BODY_MISSING_REQUIRED_FIELD
+            );
+        }
+
+        // dont allow indexes over 11
+        // this also adds a limit to the number of images
+        // that can be uploaded per post (12 cause 0 is a valid index)
+        if ($index >= 11) {
+            respond_bad_request(
+                "Expected image index to be 11 at most",
+                ERROR_BODY_FIELD_INVALID_DATA
+            );
+        }
+    }
+
+    // array_keys and array_values arent guaranteed to preserve order
+    // or even return the same order :)
+    $key_array = [];
+    $value_array = [];
+
+
+    // so here we create 2 arrays
+    // of keys and values
+    // $key_array   = [index1, index2, index3]
+    // $value_array = [image1, image2, image3]
+
+    foreach ($indexes as $index) {
+        $key_array[] = $index;
+        $decoded = base64_decode($uploads[$index]);
+        if ($decoded === false) {
+            respond_bad_request(
+                "Expected image to be base64 encoded (offender: $index)",
+                ERROR_BODY_FIELD_INVALID_TYPE
+            );
+        }
+        $value_array[] = $decoded;
+    }
+
+
+    $asset_array = Asset::from_multiple_bytes($value_array, ASSET_TYPE::POST_MEDIA, $bucket_id);
+
+
+    $parsed = [];
+
+    foreach ($key_array as $key => $index) {
+        $parsed[$key] = array("asset"=>$asset_array[$key]->asset_id, "index"=>$index);
+    }
+
+    return $parsed;
+
+
+}
+
+
 // POSTS
 
 function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
@@ -238,7 +331,14 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
 
     ensure_html_is_clean($body["postContent"]);
 
+
     $postID = generate_uuid();
+
+    $hex_id = bin2hex($postID);
+
+
+    $assets = create_post_assets($body, $hex_id);
+
     $title = $body["postTitle"];
     $content = $body["postContent"];
     $createdBy = hex2bin($author_id);
@@ -262,6 +362,11 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
         $body["postAuthor"] = $createdBy;
         $body["postCreatedAt"] = $createdAt;
 
+        if (!db_post_bind_assets($hex_id, $assets)) {
+            error_log("Failed to bind assets to post $hex_id");
+        }
+
+
         respond_ok(parse_database_row($body, TABLE_POSTS));
     } else {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
@@ -270,9 +375,33 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
 
 function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
     if (array_key_exists("postContent", $body)) {
-        ensure_html_is_clean($body["postContent"]);
+
+        $before_content = $ctx->post["content"];
+        $after_content = $body["postContent"];
+
+        
+        ensure_html_is_clean($after_content);
+
+
+        // asset management on edit should follow
+        // to delete = (before_tags - after_tags) UNION provided_tags
+        // to add = (after_tags - before_tags) UNION provided_tags
+
+
+        if (
+            array_key_exists("images", $body)
+            || post_body_get_image_indexes($before_content) != post_body_get_image_indexes($after_content)
+        ) {
+            respond_not_implemented("Editing images is not yet supported");
+        }
+
+        if (strcmp($before_content, $after_content) == 0) {
+            respond_bad_request("Expected post content to be different", ERROR_BODY_FIELD_INVALID_DATA);
+        } else {
+            notification_post_edited($url_specifiers[0], $ctx->session->hex_associated_user_id);
+        }
     }
-        notification_post_edited($url_specifiers[0], $ctx->session->hex_associated_user_id);
+
     _use_common_edit(TABLE_POSTS, $body, $url_specifiers);
 }
 
@@ -282,6 +411,8 @@ function _delete_post(RequestContext $ctx, array $url_specifiers) {
 
 function _fetch_post(RequestContext $ctx, array $url_specifiers) {
     db_post_accesses_add($ctx->session->hex_associated_user_id, $ctx->post["postID"]);
+    $assets = db_post_fetch_assets($ctx->post["postID"]);
+    $ctx->post["images"] = $assets;
     respond_ok($ctx->post);
 }
 

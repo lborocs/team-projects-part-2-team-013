@@ -451,6 +451,35 @@ function db_post_meta_fetch(string $post_id, string $user_id) {
     return parse_database_row($res->fetch_assoc(), TABLE_EMPLOYEE_POST_META); // row 0
 }
 
+function db_post_bind_assets($post_id, $assets) {
+
+    global $db;
+
+    $bin_p_id = hex2bin($post_id);
+    $bin_values = array_map(
+        function ($asset) use ($bin_p_id) {
+            return [$bin_p_id, hex2bin($asset["asset"]), $asset["index"]];
+        },
+        $assets
+    );
+
+    $query = $db->prepare(
+        "INSERT INTO `POST_ASSET` VALUES " . create_chunked_array_binding(count($assets), 3)
+    );
+
+    $query->bind_param(
+        str_repeat("sss", count($assets)),
+        ...array_merge(...$bin_values)
+    );
+
+    $res = $query->execute();
+
+    return $res;
+
+}
+
+
+
 function db_post_set_tags(string $post_id, Array $tags) {
     global $db;
 
@@ -578,7 +607,44 @@ function db_post_fetch(string $hex_post_id, string $fetcher_id) {
     }
     $post = $res->fetch_assoc(); // row 0
 
-    return parse_database_row($post, TABLE_POSTS, ["tags"=>"a-binary", "subscribed"=>"integer", "feedback"=>"integer"]);
+    return parse_database_row(
+        $post,
+        TABLE_POSTS,
+        [
+            "tags"=>"a-binary",
+            "subscribed"=>"integer",
+            "feedback"=>"integer",
+        ]
+    );
+}
+
+
+function db_post_fetch_assets($post_id) {
+    global $db;
+
+    $bin_p_id = hex2bin($post_id);
+
+    $query = $db->prepare(
+        "SELECT
+            `ASSETS`.assetID, `POST_ASSET`.postAssetIndex, `ASSETS`.contentType
+        FROM `POST_ASSET`, `ASSETS`
+        WHERE postID = ? AND `POST_ASSET`.assetID = `ASSETS`.assetID"
+    );
+    $query->bind_param("s", $bin_p_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    $res = $query->get_result();
+    
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_POST_ASSET);
+        array_push($data, $encoded);
+    }
+    return $data;
 }
 
 
