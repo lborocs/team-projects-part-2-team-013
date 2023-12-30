@@ -58,16 +58,16 @@
 }
 
 .task-context-menu-button {
-    color: transparent;
-}
-
-/* make the task-context-menu-button be the normal colour when the task is hovered */
-.task:hover .small-icon {
-    transition: color 0.1s ease-out;
+    opacity: 0;
     color: #777777;
     & span {
         color: #777777;
     }
+}
+
+.task:hover .small-icon {
+    transition: opacity 0.1s ease-out;
+    opacity: 1;
 }
 
 

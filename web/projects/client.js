@@ -319,9 +319,43 @@ function setUpTaskEventListeners() {
     taskCards = document.querySelectorAll(".task");
     taskCards.forEach((taskCard) => {
 
+        let contextMenuButton = taskCard.querySelector(".context-menu");
+        let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
+        contextMenuButton.addEventListener("click", (e) => {
+            e.stopPropagation()
+
+            //closes the rest of them first
+            let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+            contextMenus.forEach(menu => {
+                if (menu !== contextMenuPopover) {
+                    menu.classList.remove("visible");
+                    menu.parentElement.classList.remove("active")
+                }
+            });
+
+            contextMenuPopover.classList.toggle("visible")
+            contextMenuButton.classList.toggle("active")
+        })
+        //have to include mouse up and down this is crazy event propagation
+        contextMenuButton.addEventListener("mouseup", (e) => {
+            e.stopPropagation()
+        }) 
+        contextMenuButton.addEventListener("mousedown", (e) => {
+            e.stopPropagation()
+        }) 
+        //closes the context menu if they click outside
+        document.addEventListener("click", (e) => {
+            if (!contextMenuButton.contains(e.target)) {
+                contextMenuPopover.classList.remove("visible")
+                contextMenuButton.classList.remove("active")
+            }
+        })
+
+
+
         taskCard.addEventListener("mousedown", (e) => {
-            //does nothing if the context menu button is clicked
-            if (e.target.classList.contains("task-context-menu-button")) {
+            //if the target is the context menu button, dont show the explainer
+            if (e.target.classList.contains("context-menu")) {
                 return
             }
             //show explainer
@@ -334,7 +368,12 @@ function setUpTaskEventListeners() {
             })
             taskCard.classList.add("task-focussed")
         });
-        taskCard.addEventListener("mouseup", () => {
+        taskCard.addEventListener("mouseup", (e) => {
+            //if the target is the context menu button, dont show the explainer
+            if (e.target.classList.contains("context-menu")) {
+                return
+            }
+
             showTaskInExplainer(taskCard);
             
         });
@@ -459,6 +498,7 @@ async function renderTasks(tasks) {
     renderAssignments(globalAssignments);
 }
 
+
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
     console.log("[taskObjectRenderAll] rendering task object "+task.title)
     let date = task.dueDate ? global.formatDate(new Date(task.dueDate)) : "Due date not set";
@@ -468,6 +508,7 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     let state = task.state
     let taskID = task.taskID || "Unknown";
     let expectedManHours = task.expectedManHours; //no safety here because not null i think
+
 
     console.log(task)
 
@@ -806,7 +847,7 @@ function sortByState(tasks, ascending) {
     return tasks;
 }
 
-
+//TODO: render the context menu
 async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours) {
     //check for null values and set default values (null doesnt count as undefined)
     state = state === null ? 0 : state;
@@ -835,24 +876,70 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.setAttribute("data-expectedManHours", expectedManHours);
     task.setAttribute("data-state", state);
 
-    //generate the html for the task
+    //generating the html for the task
+    //context menu button takes the majority of the html here
     task.innerHTML = `
         <div class="title">
             ${title}
-            <div class="small-icon task-context-menu-button">
+            <div class="small-icon task-context-menu-button context-menu">
                 <span class="material-symbols-rounded">more_horiz</span>
+                <div class="context-menu-popover">
+                    <div class="item">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                edit
+                            </span>
+                        </div>
+                        <div class="text">
+                            Edit
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                delete
+                            </span>
+                        </div>
+                        <div class="text">
+                            Delete
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="item">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                share
+                            </span>
+                        </div>
+                        <div class="text">
+                            Open in new tab
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                visibility
+                            </span>
+                        </div>
+                        <div class="text">
+                            Copy link
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                file_download
+                            </span>
+                        </div>
+                        <div class="text">
+                            Download
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     `
-    // Testing if its better not to render descriptions until you click in
-    // There would be an icon conveying that there is a description though
-    // if (desc !== "") {
-    //     task.innerHTML += `
-    //     <div class="description">
-    //         ${desc}
-    //     </div>
-    // `;
-    // }
+    
 
     let statusIcon;
     let dateTooltip;
