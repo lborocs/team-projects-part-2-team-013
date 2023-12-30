@@ -888,6 +888,12 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.setAttribute("data-expectedManHours", expectedManHours);
     task.setAttribute("data-state", state);
 
+
+    //this is some genuinely insane code that avoids having to write a loop
+    let selectedState = ["", "", ""];
+    selectedState[state] = "disabled";
+
+
     //generating the html for the task
     //context menu button takes the majority of the html here
     task.innerHTML = `
@@ -915,31 +921,36 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                         <div class="text">
                             Move to
                         </div>
+                        <div class="arrow">
+                            <span class="material-symbols-rounded">
+                                arrow_forward_ios
+                            </span>
+                        </div>
                         <div class="submenu">
-                            <div class="item">
+                            <div class="item not-started-state ${selectedState[0]}">
                                 <div class="icon">
                                     <span class="material-symbols-rounded">
-                                        move_group
+                                        push_pin
                                     </span>
                                 </div>
                                 <div class="text">
                                     Not Started
                                 </div>
                             </div>
-                            <div class="item">
+                            <div class="item in-progress-state ${selectedState[1]}">
                                 <div class="icon">
                                     <span class="material-symbols-rounded">
-                                        move_group
+                                        timeline
                                     </span>
                                 </div>
                                 <div class="text">
                                     In Progress
                                 </div>
                             </div>
-                            <div class="item">
+                            <div class="item finished-state ${selectedState[2]}">
                                 <div class="icon">
                                     <span class="material-symbols-rounded">
-                                        move_group
+                                        check_circle
                                     </span>
                                 </div>
                                 <div class="text">
