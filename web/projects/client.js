@@ -925,6 +925,17 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                             Copy link
                         </div>
                     </div>
+                    <div class="item disabled">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                export_notes
+                            </span>
+                        </div>
+                        <div class="text">
+                            Export
+                        </div>
+                    </div>
+
                     <div class="item">
                         <div class="icon">
                             <span class="material-symbols-rounded">
