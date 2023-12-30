@@ -262,10 +262,11 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
 
     $projID = generate_uuid();
     $projName = $body["projectName"];
-    $description = $body["projectDescription"];
+    $description = $body["projectDescription"] ?? null;
     $createdBy = hex2bin($author_id);
     $teamLeader = hex2bin($body["projectTeamLeader"]);
     $createdAt = timestamp();
+    $dueDate = $body["projectDueDate"] ?? null;
 
     if (db_generic_new(
         TABLE_PROJECTS ,
@@ -276,8 +277,9 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
             $createdBy,
             $teamLeader,
             $createdAt,
+            $dueDate
         ],
-        "ssssss"
+        "sssssss"
     )) {
 
         $body["projID"] = $projID;
