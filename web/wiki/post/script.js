@@ -22,7 +22,7 @@ async function getPostData(postID){
 
     post.images.forEach((image) => {
 
-        post.content = post.content.replace(
+        post.content = post.content.replaceAll(
             `\{\{img${image.index}\}\}`,
             `<img src="${global.assetToUrl(global.ASSET_TYPE_POST, post.postID, image.asset.assetID, image.asset.contentType)}" class="post-image">`
             );
