@@ -118,7 +118,7 @@ Written/designed by aidan F223129
         "data": {
           "email": "employee email",
           "empID": "employee id",
-          // timestamps in seconds
+          // timestamps in microseconds
           "passwordLastChanged": 1703029106,
           "createdAt": 1698417895
         },
@@ -153,7 +153,7 @@ Written/designed by aidan F223129
       }
       ```
 
-- [ ] **/project/task.php/task/:PROJECT_ID:/:TASK_ID**
+- [x] **/project/task.php/task/:PROJECT_ID:/:TASK_ID**
   - [x] GET (get task by id)
     ```jsonc
     {
@@ -257,6 +257,6 @@ Written/designed by aidan F223129
   - [x] POST (create a new tag)
   - [x] DELETE (delete a tag)
 
-- [x] **/wiki/post.php/tags:**
+- [x] **/wiki/post.php/tags**
   - GET (get all tags)
  
