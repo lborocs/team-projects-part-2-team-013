@@ -1,5 +1,6 @@
 <?php
 require_once("lib/database.php");
+require_once("lib/response.php");
 
 function _check_arg_count(array $resource_ids, int $count) {
     if (count($resource_ids) != $count) {
