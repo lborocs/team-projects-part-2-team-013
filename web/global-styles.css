@@ -13,6 +13,7 @@
     --white: rgb(255,255,255);
     --team-leader-text-clr: rgb(47,47,47);
     --overdue-red: rgb(192,70,70);
+    --overdue-red-bg: rgb(255,235,235);
     --add-task-border: rgb(211,211,211);
 
     --not-started-status-cell: rgba(245,205,188,0.7);

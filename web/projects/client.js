@@ -899,7 +899,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     console.log("[renderTask] Task createdBy to " + createdBy)
 
 
-    let dateToday = (new Date()).getTime() / 1000;
+    let dateToday = (new Date()).getTime();
 
     let task = document.createElement("div");
     task.classList.add("task");
@@ -1035,10 +1035,12 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     
 
     let statusIcon;
+    let overdueContainerClass = "";
     let dateTooltip;
     if (timestamp < dateToday && state !== 2) {
         // tasks which are overdue
-        statusIcon = `<span class="material-symbols-rounded overdue">error</span>`;
+        statusIcon = `<span class="material-symbols-rounded">calendar_clock</span>`;
+        overdueContainerClass = "overdue";
         const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60));
         dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
     } else if (state !== 2){
@@ -1057,7 +1059,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         task.innerHTML += `
 
         <div class="date-and-users">
-            <div class="tooltip tooltip-under status-container">
+            <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
                 <p class="tooltiptext">${dateTooltip}</p>
                 ${statusIcon}
                 <div class="date" id="task-date">

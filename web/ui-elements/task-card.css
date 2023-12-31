@@ -43,8 +43,17 @@
         padding-bottom: 4px;
     }
     .overdue {
-        color: #c04646;
-        font-size: 18px;
+        color: var(--overdue-red);
+        background-color: var(--overdue-red-bg);
+
+        & span {
+            color: var(--overdue-red);
+        }
+
+        .date {
+            color: var(--overdue-red);
+            font-weight: 600;
+        }
 
     }
     .assignment {
@@ -109,8 +118,8 @@
 
     & span {
         color: #2f2f2f;
-        font-size: 0.9em;
-        padding-left: 0.1em;
+        font-size: 16px;
+        padding-left: 2px;
     }
 }
 
