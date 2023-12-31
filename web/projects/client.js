@@ -1041,17 +1041,17 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         // tasks which are overdue
         statusIcon = `<span class="material-symbols-rounded">calendar_clock</span>`;
         overdueContainerClass = "overdue";
-        const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60));
+        const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
     } else if (state !== 2){
         // tasks which are finished and have a due date in the past
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        const dueInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60));
+        const dueInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
         dateTooltip = `Due in ${dueInDays} day${dueInDays !== 1 ? 's' : ''}`;
     } else {
         // tasks which have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        const finishedDaysAgo = Math.floor((dateToday - timestamp) / (24 * 60 * 60));
+        const finishedDaysAgo = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Finished ${finishedDaysAgo} day${finishedDaysAgo !== 1 ? 's' : ''} ago`;
     }
 
