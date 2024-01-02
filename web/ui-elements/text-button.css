@@ -58,12 +58,35 @@
     transition: background-color 0.05s ease-out;
 }
 
+.text-button:active {
+    background-color: #c4c9d2;
+    transition: background-color 0.05s ease-out;
+}
+
+.text-button.blue {
+    background-color: #2d8aff;
+    color: white;
+}   
+
+.text-button.blue:hover {
+    background-color: #2477fb;
+    
+}
+
+.text-button.blue:active {
+    background-color: #1254a0;
+}
+
 .text-button.no-box {
     background-color: transparent;
 }
 
 .text-button.no-box:hover {
     background-color: #f1f2f4;
+}
+
+.text-button.no-box:active {
+    background-color: #dcdfe4;
 }
 
 

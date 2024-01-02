@@ -36,6 +36,11 @@
     transition: background-color 0.05s ease-out;
 }
 
+.icon-button:active {
+    background-color: #c4c9d2;
+    transition: background-color 0.05s ease-out;
+}
+
 .icon-button.no-box {
     background-color: transparent;
 }

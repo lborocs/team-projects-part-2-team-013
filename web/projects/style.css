@@ -47,16 +47,6 @@
         width: 10em;
     }
 
-    #new-project {
-        background-color: #3098ff;
-        color: white;
-        margin-left: auto;
-    }
-
-    #new-project:hover {
-        background-color: #2d8aff;
-    }
-
     .name-card {
         display: flex;
         flex-direction: row;
@@ -203,6 +193,10 @@
     border-radius: 4px;
 }
 
+#new-project {
+    margin-left: auto;
+}
+
 
 .project-bar {
     display: flex;
@@ -230,9 +224,6 @@
         font-size: 24px;
     }
 
-    #new-project {
-        margin-left: auto;
-    }
 }
 
 .projects {
@@ -301,18 +292,10 @@
     font-size: 0.7em;
 }
 
-#add-task-button {
+/* #add-task-button {
     background-color: #3098ff;
     color: white;
-}
-
-#add-task-button:hover {
-    background-color: #2d8aff;
-}
-
-.text-button:hover {
-    background-color: #dcdfe4;
-}
+} */
 
 .project-table-div{
     width: 100%;
