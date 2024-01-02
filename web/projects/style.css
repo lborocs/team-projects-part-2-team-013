@@ -1184,15 +1184,6 @@
     justify-content: flex-end;
     width: 100%;
     gap: 0.5em;
-
-    #create-button {
-        background-color: #3098ff;
-        color: white;
-    }
-
-    #create-button:hover {
-        background-color: #2d8aff;
-    }
 }
 
 

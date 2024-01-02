@@ -1262,7 +1262,7 @@ async function addTask(state) {
                         Discard
                     </div>  
                 </div>
-                <div class="text-button" id="create-button">
+                <div class="text-button blue" id="create-button">
                     <div class="button-text">
                         Create
                     </div>
