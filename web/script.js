@@ -11,7 +11,8 @@ function setLoginStatus(status) {
 async function login() {
     const statusElement = document.getElementById("status");
     statusElement.classList.remove("status-incorrect");
-    setLoginStatus("Logging in...")
+    statusElement.classList.add("hidden");
+    loginButton.querySelector(".button-text").textContent = "Signing in...";
     var username = document.getElementById("email").value
     var password = passwordInput.value
     var loginData = {
@@ -38,7 +39,9 @@ async function login() {
         });
     } else {
         statusElement.classList.add("status-incorrect");
-        setLoginStatus(`Error: ${res.error.message} (${res.error.code})`);
+        statusElement.classList.remove("hidden");
+        setLoginStatus(`${res.error.message} (${res.error.code})`);
+        loginButton.querySelector(".button-text").textContent = "Sign in";
     }
 }
 
@@ -62,12 +65,10 @@ document.getElementById('togglePassword').addEventListener('click', function () 
     const passwordInput = document.getElementById('password');
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        document.getElementById("togglePassword").classList.remove("fa-eye-slash")
-        document.getElementById("togglePassword").classList.add("fa-eye")
+        document.getElementById("togglePassword").textContent = "visibility";
     } else {
         passwordInput.type = 'password';
-        document.getElementById("togglePassword").classList.remove("fa-eye")
-        document.getElementById("togglePassword").classList.add("fa-eye-slash")
+        document.getElementById("togglePassword").textContent = "visibility_off";
         
     }
 });

@@ -20,25 +20,38 @@
 </head>
 <body>
     <div class="fullscreen">
-        <div class="box">
+        <div class="box login-box">
             <h1>Sign in</h1>
             <img src="https://cdn.013.team/assets/logo-large.png" alt="logo" class="logo">
             <div class="login-container">
-                <label for="email">Email</label>
-                <input type="text" placeholder="example@email.com" id="email" class="textfield">
-                <label for="password">Password</label>
-                <input type="password" placeholder="" id="password" class="textfield">
-                <i class="fa-solid fa-eye-slash" id="togglePassword"></i>
-            </div>
-            <br>
-            <div id="login" class="text-button blue">
-                <div class="button-text">
-                    Sign in
+                <div class="input-container">
+                    <label for="email">Email</label>
+                    <div class="textfield-container">
+                        <input type="text" placeholder="example@email.com" id="email" class="textfield">
+                    </div>
+                </div>
+                <div class="input-container">
+                    <label for="password">Password</label>
+                    <div class="textfield-container">
+                        <input type="password" placeholder="" id="password" class="textfield">
+                        <span class="material-symbols-rounded" id="togglePassword">
+                            visibility_off
+                        </span>
+                    </div>
+                </div>
+                <div id="login" class="text-button blue">
+                    <div class="button-text">
+                        Sign in
+                    </div>
                 </div>
             </div>
-            <p class="register-prompt">Don't have an account? <a href="/register/">Register</a></p>
-            <div id="status"></div>
+            
+            <div class="register-prompt">Don't have an account? <a href="/register/">Register</a></div>
+            
             <div class="forgot-password">Forgot password? Click here to reset.</div>
+        </div>
+        <div id="status" class="box hidden">
+
         </div>
     </div>
 </body>
