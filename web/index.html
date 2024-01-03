@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="global-styles.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
+    <link rel="stylesheet" href="/ui-elements/text-button.css">
     <script src="global-api.js"></script>
     <script src="global-ui.js" defer type="module"></script>
     <script defer src="script.js" type="module"></script>
@@ -30,7 +31,11 @@
                 <i class="fa-solid fa-eye-slash" id="togglePassword"></i>
             </div>
             <br>
-            <button id="login">Log in</button>
+            <div id="login" class="text-button blue">
+                <div class="button-text">
+                    Sign in
+                </div>
+            </div>
             <p class="register-prompt">Don't have an account? <a href="/register/">Register</a></p>
             <div id="status"></div>
             <div class="forgot-password">Forgot password? Click here to reset.</div>
