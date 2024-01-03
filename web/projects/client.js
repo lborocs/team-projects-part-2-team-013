@@ -616,13 +616,14 @@ async function teamLeaderEnableElementsIfTeamLeader() {
     if (projectRow == null) {
         return
     }
-    let teamLeader = JSON.parse(projectRow.getAttribute("data-team-leader"));
+
 
     let session = await global.getCurrentSession();
-    let isTeamLeader = session.employee.empID == teamLeader.empID;
+    let isTeamLeader = session.employee.empID == globalCurrentProject.teamLeader.empID;
 
+    // managers always have team leader perms
     if ((session.auth_level ?? 0) >= 2) {
-        return
+        isTeamLeader = true;
     }
     console.log("[teamLeaderEnableElementsIfTeamLeader] isteamleader: ", isTeamLeader)
 
