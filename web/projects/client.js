@@ -1827,17 +1827,16 @@ async function addProject() {
     createButton.addEventListener('click', async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        let projName = dialog.querySelector('.add-project-title-input').value;
+        let name = dialog.querySelector('.add-project-title-input').value;
         let description = quill.root.innerHTML;
         let dueDate = fp.selectedDates[0];
         let dueDateTimestamp = dueDate ? dueDate.getTime() : null;
-        let teamLeader;
         
         //post the project
         let res = await post_api(
             `/project/project.php/project`,
             {
-                projName: projName,
+                name: name,
                 description: description,
                 dueDate: dueDateTimestamp,
                 teamLeader: teamLeader,
