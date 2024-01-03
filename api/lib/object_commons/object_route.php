@@ -164,11 +164,15 @@ function _ensure_body_validity(Table $model, RequestContext $ctx, array $allowed
         }
 
         // if users sent null value for non nullable field
-        if (is_null($user_value) && !$column->is_nullable) {
-            respond_bad_request(
-                "Field $user_field is not nullable",
-                ERROR_BODY_MISSING_REQUIRED_FIELD
-            );
+        if (is_null($user_value)) {
+            if (!$column->is_nullable) {
+                respond_bad_request(
+                    "Field $user_field is not nullable",
+                    ERROR_BODY_MISSING_REQUIRED_FIELD
+                );
+            } else {
+                continue;
+            }
         }
 
         // if user sent invalid type (check for snowflake or bool or whatever)
