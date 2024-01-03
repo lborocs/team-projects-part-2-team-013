@@ -44,7 +44,9 @@ function object_check_user_is_post_admin(RequestContext $ctx, array $resource_id
 }
 
 function object_check_user_is_manager(RequestContext $ctx, array $resource_ids) {
-    return $ctx->session->auth_level >= 2;
+    if ($ctx->session->auth_level < 2) {
+        respond_insufficient_authorization();
+    }
 }
 
 
