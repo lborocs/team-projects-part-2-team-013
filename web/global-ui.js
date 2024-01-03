@@ -917,13 +917,15 @@ export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHas
 }
 
 
-fillCurrentUserInfo();
-managerElementsEnableIfManager();
-getEmployeeNotifications().then((items) => {
-    if (items.length > 0) {
-        console.log("[getEmployeeNotifications] notifications found and display badge");
-        console.log(items);
-        notifications = items
-        renderNotifications(items);
-    }
-})
+if (window.location.pathname !== '/') {
+    fillCurrentUserInfo();
+    managerElementsEnableIfManager();
+    getEmployeeNotifications().then((items) => {
+        if (items.length > 0) {
+            console.log("[getEmployeeNotifications] notifications found and display badge");
+            console.log(items);
+            notifications = items
+            renderNotifications(items);
+        }
+    });
+}
