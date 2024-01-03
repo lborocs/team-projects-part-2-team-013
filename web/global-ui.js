@@ -34,6 +34,50 @@ export const ASSET_TYPE_EMPLOYEE = "employees";
 export const ASSET_TYPE_POST = "posts";
 export const ASSET_TYPE_PROJECT = "projects";
 
+let settings = JSON.parse(localStorage.getItem('settings'));
+if (!settings) {
+    const settings = {
+        sidebarIsOpen: true, // true, false
+        taskView: "board", // board, list
+        taskSort: "none", // none, name, due, created, hours
+        taskOrder: "desc", // asc, desc
+        taskFilters: { // union of filters is applied
+            managerMine: false, // (manager) only tasks assigned to me
+            group: false, // only tasks assigned to more than one person
+            single: false, // only tasks assigned to one person
+            finished: false, // only finished tasks
+            inProgress: false, // only in progress tasks
+            notStarted: false, // only not started tasks
+            overdue: false, // only overdue task, if tasks have no due date they are not included
+            notOverdue: false, // only not overdue tasks or tasks with no due date
+        },
+        projectSort: "none", // none, name, due, created, accessed
+        projectOrder: "desc", // asc, desc
+        projectFilters: {
+            managerMine: false, // (manager) only projects I am in, or team leader of
+            teamLeader: false, // only projects I am team leader of
+            overdue: false, // only overdue projects, if projects have no due date they are not included
+            notOverdue: false, // only not overdue projects or projects with no due date
+        },
+    };
+}
+
+export function getSetting(key) {
+    return JSON.parse(localStorage.getItem('settings'))[key];
+}
+
+export function getSettings() {
+    return JSON.parse(localStorage.getItem('settings'));
+}
+
+export function setSetting(key, value) {
+    let settings = JSON.parse(localStorage.getItem('settings')) || {};
+    settings[key] = value;
+    localStorage.setItem('settings', JSON.stringify(settings));
+}
+
+
+
 caches.open("employees");
 
 
