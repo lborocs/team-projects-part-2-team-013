@@ -1136,14 +1136,14 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
 //     return project
 // }
-
+ 
 function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let project = document.createElement("tr")
     project.setAttribute("tabindex", "0")
     project.classList.add("project-row")
-    let icon = isTeamLeader ? `fas fa-user-gear` : `fas fa-users`;
+    let icon = isTeamLeader ? `folder_managed` : `folder`;
 
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
 
@@ -1153,7 +1153,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
         <td>
             <div class="project-card">
                 <div class="icon">
-                    <i class="${icon}"></i>
+                    <span class="material-symbols-rounded">${icon}</span>
                 </div>
                 <div class="name">
                     ${title}
