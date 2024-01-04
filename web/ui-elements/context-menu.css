@@ -90,6 +90,23 @@
         transition: background-color 0.05s ease-out;
     }
 
+    .item:active {
+        background-color: #dcdfe4;
+        transition: background-color 0.05s ease-out;
+    }
+
+    .item.action-delete:hover {
+        background-color: #ffefef;
+        .text {
+            color: #cd0000;
+        }
+        .icon {
+            & span {
+                color: #cd0000;
+            }
+        }
+    }
+
     .item:last-child {
         border-bottom: none;
     }

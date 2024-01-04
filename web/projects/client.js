@@ -353,9 +353,65 @@ function setUpTaskEventListeners() {
         //stops the context menu from closing when you click on the options
         let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
         contextMenuItems.forEach(item => {
+            let timeoutId;
             item.addEventListener("click", (e) => {
                 e.stopPropagation();
                 console.log("[contextMenuItemOnClick] clicked")
+
+                if (item.classList.contains("action-edit")) {
+                    console.log("[contextMenuItemOnClick] edit clicked")
+
+                    let taskID = taskCard.getAttribute("id");
+
+                    //edit task popup goes here
+
+                } else if (item.classList.contains("action-delete")) {
+                    console.log("[contextMenuItemOnClick] delete clicked")
+
+                    let taskID = taskCard.getAttribute("id");
+                    confirmDelete().then(() => {
+                        deleteTask(taskID)
+                        taskCard.remove()
+                        calculateTaskCount()
+                    }).catch((e) => {
+                        console.log('[DeletTaskButtonsClick] Deletion cancelled');
+                        console.log(e)
+                    });
+
+
+                } else if (item.classList.contains("action-copy")) {
+                    console.log("[contextMenuItemOnClick] copy clicked")
+
+                    if(timeoutId) {
+                        clearTimeout(timeoutId);
+                    }
+
+                    let taskID = taskCard.getAttribute("id");
+                    let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
+                    navigator.clipboard.writeText(link)
+
+                    item.querySelector(".text").innerHTML = "Copied!"
+                    timeoutId = setTimeout(() => {
+                        item.querySelector(".text").innerHTML = "Copy Link"
+                    }, 1000)
+
+
+                } else if (item.classList.contains("action-open")) {
+                    console.log("[contextMenuItemOnClick] open clicked")
+
+                    let taskID = taskCard.getAttribute("id");
+                    let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
+                    window.open(link, "_blank")
+
+                } else if (item.classList.contains("not-started-state") && !item.classList.contains("disabled")) {
+                    console.log("[contextMenuItemOnClick] not started clicked")
+                } else if (item.classList.contains("in-progress-state") && !item.classList.contains("disabled")) {
+                    console.log("[contextMenuItemOnClick] in progress clicked")
+                } else if (item.classList.contains("finished-state") && !item.classList.contains("disabled")) {
+                    console.log("[contextMenuItemOnClick] finished clicked")
+                } else {
+                    console.log("[contextMenuItemOnClick] no known action")
+                }
             });
         });
 
@@ -944,7 +1000,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
             <div class="small-icon task-context-menu-button context-menu">
                 <span class="material-symbols-rounded">more_horiz</span>
                 <div class="context-menu-popover">
-                    <div class="item">
+                    <div class="item action-edit">
                         <div class="icon">
                             <span class="material-symbols-rounded">
                                 edit
@@ -1001,7 +1057,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                             </div>
                         </div>
                     </div>
-                    <div class="item">
+                    <div class="item action-delete">
                         <div class="icon">
                             <span class="material-symbols-rounded">
                                 delete
@@ -1012,7 +1068,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                         </div>
                     </div>
                     <div class="divider"></div>
-                    <div class="item">
+                    <div class="item action-copy">
                         <div class="icon">
                             <span class="material-symbols-rounded">
                                 link
@@ -1022,7 +1078,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                             Copy link
                         </div>
                     </div>
-                    <div class="item">
+                    <div class="item action-open">
                         <div class="icon">
                             <span class="material-symbols-rounded">
                                 open_in_new
