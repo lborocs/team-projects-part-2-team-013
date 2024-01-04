@@ -1137,7 +1137,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 //     return project
 // }
  
-function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
+function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, lastAccessed) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let project = document.createElement("tr")
@@ -1149,6 +1149,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
 
     console.log(`[renderProject] using icon: ${icon}`)
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
+    let lastAccessedFormatted = lastAccessed ? global.howLongAgo(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -1171,9 +1172,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt) {
             </div>
         </td>
         <td>${date}</td>
-        <td>
-            Not implemented
-        </td>
+        <td>${lastAccessedFormatted}</td>
         <td>
             <div class="icon-button no-box">
                 <i class="fa-solid fa-ellipsis"></i>
@@ -1884,7 +1883,7 @@ async function projectObjectRenderAndListeners(project) {
 
 
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
-    let element = renderProject(project.projID, project.name, project.description, teamLeader, isTeamLeader, project.createdAt);
+    let element = renderProject(project.projID, project.name, project.description, teamLeader, isTeamLeader, project.createdAt, project.lastAccessed);
 
     setUpProjectRowEventListeners(element);
     calculateTaskCount();
