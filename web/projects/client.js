@@ -55,6 +55,9 @@ const dropdowns = document.querySelectorAll(".dropdown")
 const dragIndicators = document.querySelectorAll(".draggable")
 
 
+// dont set to null cause null is used in the case of no preceeding element
+var taskDragLastDrawnElement = 0;
+var taskDragLastDrawnColumn = 0;
 
 console.log("[import] loaded client.js")
 
@@ -464,6 +467,16 @@ taskColumns.forEach((taskColumn) => {
     taskColumn.addEventListener("dragover", (e) => {
         e.preventDefault()
         const afterElement = findNext(taskColumn, e.clientY)
+
+        // optimisation: redrawing is crazy expensive so we only
+        // want to redraw if the user has actually moved the task
+        if (afterElement == taskDragLastDrawnElement && taskColumn == taskDragLastDrawnColumn) {
+            return
+        } else {
+            taskDragLastDrawnElement = afterElement;
+            taskDragLastDrawnColumn = taskColumn;
+        }
+        console.log("[taskColumnDragover] inserting above", afterElement?.getAttribute("data-title"))
         const draggable = document.querySelector(".beingdragged")
         if (afterElement == null) {
             taskColumn.appendChild(draggable)
