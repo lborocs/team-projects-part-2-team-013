@@ -5,6 +5,36 @@ function getQueryParam() {
     return window.location.hash.substring(1);
 }
 
+async function getTagsData(){
+    const data = await get_api(`/wiki/post.php/tags`);
+    if (!data.success) {
+        console.error("[getPostData] error fetching post: ", data.data);
+        return;
+    }
+    const tagsList = data.data.innerText;
+    return tagsList
+}
+
+getTagsData().then((tagsList) => {
+    tagsList = tagsList.replace(/'/g, '"');
+    console.log('tags' + tagsList);
+});
+
+async function createTag(tag){
+    console.log(tag);
+    var data = {
+        "body": tag
+    }
+    const result = await post_api(`/wiki/post.php/tag`, data);
+    if (!result.success) {
+        console.error("[getPostData] error making tag: ", result.data);
+        return;
+    }
+    console.log(data.data);
+}
+
+
+
 async function getPostData(postID){
     const data = await get_api(`/wiki/post.php/post/${postID}`);
     if (!data.success) {
@@ -62,6 +92,7 @@ if (event.key === "Enter") {
     const tag = document.createElement("div");
     const tagContent = input.value.trim();
     if (tagContent !== "") {
+        createTag(tagContent);
     tag.className = "tag";
     tag.innerHTML = tagContent;
     tag.innerHTML += '<i class="fa-solid fa-x"></i>';
