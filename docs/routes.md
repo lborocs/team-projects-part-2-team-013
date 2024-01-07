@@ -93,6 +93,10 @@ Written/designed by aidan F223129
       }
     }
     ```
+
+- [x] **/employee/session.php/logoutall**
+  - POST (log out all active sessions)
+
 - [x] **/employee/session.php/session**
   - [x] DELETE (logout)
   - [x] GET (get session info)

@@ -195,7 +195,12 @@ function r_session_session(RequestContext $ctx, string $args) {
         respond_not_implemented();
     }
     
-    
+};
+
+
+function r_session_logout_all(RequestContext $ctx, string $args) {
+    auth_invalidate_account($ctx->session->hex_associated_user_id);
+    respond_no_content();
 };
 
 function r_session_account(RequestContext $ctx, string $args) {
@@ -253,8 +258,9 @@ register_route(new Route(["POST"], "/login", "r_session_login", 0, ["REQUIRES_BO
 register_route(new Route(["DELETE", "GET", "PUT"], "/session", "r_session_session", 1));
 register_route(new Route(["POST"], "/otp", "r_session_otp", 1, ["REQUIRES_BODY"]));
 register_route(new Route(["PATCH", "GET"], "/account", "r_session_account", 1, ["REQUIRES_BODY"]));
-register_route(new Route(["GET"], "/generate_204", "r_session_204", 0, []));
+register_route(new Route(["GET"], "/generate_204", "r_session_204", 0));
 register_route(new Route(["GET", "POST"], "/register", "r_session_register", 0, ["REQUIRES_BODY"]));
+register_route(new Route(["POST"], "/logoutall", "r_session_logout_all", 1));
 
 
 contextual_run();
