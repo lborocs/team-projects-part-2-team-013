@@ -75,11 +75,11 @@ impl ExpiringHashMap {
         }
     }
 
-    fn get(&mut self, id: u128) -> Option<i64> {
+    fn get(&mut self, id: u128) -> Option<i128> {
         let inserted =self.map.get(&id)?;
         let dur = OffsetDateTime::now_utc() - *inserted;
         match dur < self.min_lifetime {
-            true => Some(inserted.unix_timestamp()),
+            true => Some(inserted.unix_timestamp_nanos() / (1000 * 1000)),
             false => None,
         }
     }
@@ -164,7 +164,7 @@ async fn check(path: web::Path<(String, String)>, data: web::Data<Arc<Mutex<Stat
     // therefore we must treat all sessions before we started as invalid
     let startup_invalid = {
         if OffsetDateTime::now_utc() - state.startup < state.map.min_lifetime {
-            state.startup.unix_timestamp()
+            state.startup.unix_timestamp_nanos() /  (1000 * 1000)
         } else {
             0
         }
