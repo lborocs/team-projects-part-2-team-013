@@ -1,5 +1,6 @@
 <?php
 require_once("secrets.php");
+require_once("lib/http/client.php");
 
 
 class Session {
@@ -106,17 +107,14 @@ class Session {
 
         $before = microtime(true);
 
-        $req = curl_init(SESSION_VALIDATION_BASE . "check/" . $this->hex_id . "/" . $this->hex_associated_user_id);
-        curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+        $request = http_request("GET", SESSION_VALIDATION_BASE . "check/" . $this->hex_id . "/" . $this->hex_associated_user_id);
 
-        $res = curl_exec($req);
-
-        if ($res === false) {
-            respond_infrastructure_error("Session validation server is down : " . curl_error($req), ERROR_SESSION_VALIDATION_SERVER_DOWN);
+        if ($request->failed) {
+            respond_infrastructure_error("Session validation server is down : " . $request->error, ERROR_SESSION_VALIDATION_SERVER_DOWN);
         }
 
-        $status_code = curl_getinfo($req, CURLINFO_HTTP_CODE);
-
+        $body = $request->body;
+        $status_code = $request->status_code;
         // 204 means session has been yanked
         if ($status_code == 204) {
             respond_not_authenticated("Session has been revoked", ERROR_SESSION_REVOKED);
@@ -125,7 +123,7 @@ class Session {
         else if ($status_code == 200) {
 
             // if the session was issued before the yank then it is invalid
-            if ($this->issued <= ($res+0)) { // crude type conversion
+            if ($this->issued <= ($body+0)) { // crude type conversion
                 respond_not_authenticated("Session has been revoked", ERROR_SESSION_REVOKED);
             }
         }
@@ -144,38 +142,27 @@ class Session {
 };
 
 function auth_invalidate_session($session_id) {
-    $req = curl_init(SESSION_VALIDATION_BASE . "set/session/" . $session_id);
-    curl_setopt($req, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+    $req = http_request("POST", SESSION_VALIDATION_BASE . "set/session/" . $session_id);
 
-    $res = curl_exec($req);
 
-    if ($res === false) {
-        error_log("Session validation server is down : " . curl_error($req));
+    if ($req->failed) {
+        error_log("Session validation server is down : " . $req->error);
     }
 
-    $status_code = curl_getinfo($req, CURLINFO_HTTP_CODE);
-
-    if ($status_code != 200) {
-        error_log("Session validation server unhandled error during yank (". $status_code . ")");
+    if ($req->status_code != 200) {
+        error_log("Session validation server unhandled error during yank (". $req->status_code . ")");
     }
 }
 
 function auth_invalidate_account($account_id) {
-    $req = curl_init(SESSION_VALIDATION_BASE . "set/account/" . $account_id);
-    curl_setopt($req, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
+    $req = http_request("POST", SESSION_VALIDATION_BASE . "set/account/" . $account_id);
 
-    $res = curl_exec($req);
-
-    if ($res === false) {
-        error_log("Session validation server is down : " . curl_error($req));
+    if ($req->failed) {
+        error_log("Session validation server is down : " . $req->error);
     }
 
-    $status_code = curl_getinfo($req, CURLINFO_HTTP_CODE);
-
-    if ($status_code != 200) {
-        error_log("Session validation server unhandled error account invalidate (". $status_code . ")");
+    if ($req->status_code != 200) {
+        error_log("Session validation server unhandled error account invalidate (". $req->status_code . ")");
     }
 }
 
