@@ -3,10 +3,16 @@ require_once("const.php");
 require_once("secrets.php");
 require_once("lib/assets/asset.php");
 require_once("lib/object_commons/models.php");
+require_once("lib/response.php");
 
 // p: forces persistency
 // this decreases response times by over a second
-$db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+try {
+    $db = new mysqli("p:" . MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_DATABASE);
+} catch (Exception $e) {
+    respond_infrastructure_error("Failed to connect to database", ERROR_DATABASE_CONNECTION_FAILED);
+}
+
 
 // generic
 
