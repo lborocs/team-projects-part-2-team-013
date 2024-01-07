@@ -740,41 +740,31 @@ if (closeSidebar !== null) {
 
 if (homeButton !== null) {
     homeButton.addEventListener("click", () => {
-        setTimeout(() => {
-            window.location.href = "/projects/";
-        }, 150)
+        window.location.href = "/projects/";
     });
 }
 
 if (myListButton !== null) {
     myListButton.addEventListener("click", () => {
-        setTimeout(() => {
-            window.location.href = "/personal/";
-        }, 150)
+        window.location.href = "/personal/";
     });
 }
 
 if (wikiButton !== null) {
     wikiButton.addEventListener("click", () => {
-        setTimeout(() => {
-            window.location.href = "/wiki/";
-        }, 150)
+        window.location.href = "/wiki/";
     });
 }
 
 if (workloadButton !== null) {
     workloadButton.addEventListener("click", () => {
-        setTimeout(() => {
-            window.location.href = "/workload/";
-        }, 150)
+        window.location.href = "/workload/";
     });
 }
 
 if (trainingButton !== null) {
     trainingButton.addEventListener("click", () => {
-        setTimeout(() => {
-            window.location.href = "/dashboard/";
-        }, 150)
+        window.location.href = "/dashboard/";
     });
 }
 
@@ -974,6 +964,13 @@ export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHas
 
 
 if (window.location.pathname !== '/') {
+
+    setTimeout(() => {
+        if (sidebar !== null) {
+            sidebar.classList.add('transition');
+        }
+    }, 200);
+
     ensureSettings()
 
     if(getSetting("sidebarIsOpen") === true) {
@@ -1002,4 +999,6 @@ if (window.location.pathname !== '/') {
             renderNotifications(items);
         }
     });
+
+
 }
