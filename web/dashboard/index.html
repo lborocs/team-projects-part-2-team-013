@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css" integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workload</title>
     <link rel="stylesheet" href="/global-styles.css">
@@ -16,6 +15,9 @@
     <link rel="stylesheet" href="/ui-elements/small-icon.css">
     <link rel="stylesheet" href="/ui-elements/popover.css">
     <link rel="stylesheet" href="/ui-elements/notification-popover.css">
+    <link rel="stylesheet" href="/ui-elements/number-picker.css">
+    <link rel="stylesheet" href="/ui-elements/date-picker.css">
+    <link rel="stylesheet" href="/ui-elements/context-menu.css">
 
 
     
@@ -40,16 +42,22 @@
                 <div class="breadcrumb">
                 </div>
             </div>
+
             <div class="center">
                 <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="fullLogo">
             </div> 
             <div class="right">
-                <div class="user-both">
-                    <div class="item" id="user-name"></div>
-                    <div class="item" id="user-icon">
-                    <i class="fa-solid fa-user"></i>
+
+                <div class="search white" id="global-search">
+                    <input id="global-search" class="search-input" type="text" autocomplete="off" placeholder="Search"></input>
+                    <div class="search-icon">
+                        <span class="material-symbols-rounded">search</span>
+                    </div>
+                    <div class="search-icon clear-icon">
+                        <span class="material-symbols-rounded" id="delete-search">close</span>
                     </div>
                 </div>
+
                 <div class="notification-popover item" id="inbox-icon" tabindex="0">
                     <div class="icon-button no-box">
                         <div class="button-icon">
@@ -66,7 +74,8 @@
                                 </span>
                             </div>
                             Activity
-                            <div class="small-icon" id="read-all" tabindex="0">
+                            <div class="small-icon tooltip tooltip-left" id="read-all" tabindex="0">
+                                <p class="tooltiptext">Read all</p>
                                 <span class="material-symbols-rounded">
                                     done_all
                                 </span>
@@ -79,6 +88,9 @@
                     </div>
                 </div>
                 
+                <div class="item" id="user-icon-container">
+                </div>
+
             </div>
 
         </header>
@@ -119,44 +131,119 @@
                         </span>
                        <span>Mobile App Development</span>
                     </div>
-                    <div class="option" id="workload">
+                    <div class="icon-button no-box option" id="view-dashboard">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                space_dashboard
+                            </span>
+                        </div> 
+                    </div>
+                    <div class="option" id="view-module">
                         <span class="material-symbols-rounded">
-                            space_dashboard
+                            view_module
                         </span>
                     </div>
-                    <div class="option selected" id="training">
+                    <div class="option" id="view-stream">
                         <span class="material-symbols-rounded">
-                            grid_view
+                            view_stream
                         </span>
                     </div>
-                    <div class="option" id="wiki">
+                    <div class="option selected" id="grid-reset">
                         <span class="material-symbols-rounded">
-                            grid_3x3
+                            fit_screen
                         </span>
                     </div>
-                    <div class="option" id="mylist">
+                    
+                    <div class="option" id="grid-shrink">
                         <span class="material-symbols-rounded">
-                            grid_3x3_off
+                            zoom_out_map
+                        </span>
+                    </div>
+                    <div class="option" id="grid-expand">
+                        <span class="material-symbols-rounded">
+                            zoom_in_map
                         </span>
                     </div>
 
                 </div>
                 <div class="dashboard-container">
                     <div class="metric-card">
-                        your mum
+                        <div class="metric-title">
+                            Completion
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="completionChart"></canvas>
+                        </div>
+                        <div class="options">
+                            <div class="option selected">
+                                <span class="material-symbols-rounded">
+                                    pie_chart
+                                </span>
+                            </div>
+                            <div class="option">
+                                <span class="material-symbols-rounded">
+                                    bar_chart
+                                </span>
+                            </div>
+                            <div class="option">
+                                <span class="material-symbols-rounded">
+                                    show_chart
+                                </span>
+                            </div>
+                        </div>                        
                     </div>
                     <div class="metric-card">
-                        your mum
-                    </div>  
-                    <div class="metric-card">
-                        your mum
+                        <div class="metric-title">
+                            Employee Utilization
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="utilizationChart"></canvas>
+                        </div>
+                        <div class="options">
+                            <div class="option selected">
+                                <span class="material-symbols-rounded">
+                                    pie_chart
+                                </span>
+                            </div>
+                            <div class="option">
+                                <span class="material-symbols-rounded">
+                                    bar_chart
+                                </span>
+                            </div>
+                            <div class="option">
+                                <span class="material-symbols-rounded">
+                                    show_chart
+                                </span>
+                            </div>
+                        </div>  
                     </div>
                     <div class="metric-card">
-                        your mum
-                    </div> 
-                    <div class="metric-card">
-                        your mum 
+                        <div class="chart-box">
+                            <canvas id="manHoursChart"></canvas>
+                        </div>
                     </div>
+                    <div class="metric-card">
+                        <div class="chart-box">
+                            <canvas id="workloadChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="chart-box">
+                            <canvas id="taskProgressChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="chart-box">
+                            <canvas id="timeBudgetChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="chart-box">
+                            <canvas id="manHoursProjectsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    
                     <div class="metric-card add-metric">
                         <span class="material-symbols-rounded">
                             add
