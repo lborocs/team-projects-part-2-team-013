@@ -1,4 +1,4 @@
-@media (max-width: 855px) {
+@media (max-width: 600px) {
     .fullscreen {
         height: max(auto, (100% - 3em));
     }
@@ -56,6 +56,10 @@
 
         .left {
             overflow: clip;
+        }
+
+        #global-search {
+            display: none;
         }
     }
 
@@ -115,11 +119,7 @@
         font-weight: 600;
         padding-left: 0;
     }
-
-    .main {
-        overflow-y: scroll;
-    }
-
+    
     .topics {
         display: none;
     }

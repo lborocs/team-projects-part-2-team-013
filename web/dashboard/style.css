@@ -13,10 +13,8 @@
 }
 
 .dashboard-container.fit-screen {
-    /* the grid must fill up the rest of main without scrolling or overflowing */
     overflow: hidden;
     .metric-card {
-        /* the cards must fill up the grid without scrolling or overflowing */
         width: 100%;
         height: 100%;
         max-height: 100%;
@@ -77,7 +75,12 @@
     align-items: center;
     justify-content: center;
     user-select: none;
-    transition: transform 0.1s ease, background-color 0.1s ease
+    transition: transform 0.1s ease, background-color 0.1s ease;
+
+    & span {
+        font-size: 2.5rem;
+        color: var(--text-off-black, #0f0f0f);
+    }
 }
 
 .metric-card.add-metric:active {
@@ -147,6 +150,9 @@
     }
 
 }
+
+
+
 
 #add-metric-small {
     margin-right: 5px;
@@ -353,6 +359,53 @@
         margin-left: auto;
     }
 }
+
+
+
+.automatic, #view-scroll,
+.manual, #view-fit {
+    padding-right: 0;
+    padding-left: 5px;
+    justify-content: flex-end;
+    overflow-x: clip;
+    transition: width 0.1s ease-out;
+    width: 32px;
+
+    .button-text {
+        opacity: 0;
+        transition: opacity 0.1s ease-out;
+    }
+}
+.manual, #view-fit {
+    color: #ae5e30;
+    background-color:#ffddb0;
+    & span {
+        color: #ae5e30;
+    }
+}
+.automatic, #view-scroll {
+    color: #1a7431;
+    background-color: #b7efc5;
+    & span {
+        color: #1a7431;
+    }
+}
+.manual:hover, #view-fit:hover, 
+.automatic:hover, #view-scroll:hover {
+    transition: width 0.1s ease-out;
+    .button-text {
+        opacity: 1;
+        transition: opacity 0.1s ease-out;
+    }
+}
+.manual:hover, #view-fit:hover {
+    width: 102px;
+}
+.automatic:hover, #view-scroll:hover {
+    width: 80px;
+}
+
+
 
 /* @media (max-width: 1300px) {
     .metric-card {

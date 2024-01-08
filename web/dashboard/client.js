@@ -49,6 +49,10 @@ class Dashboard {
                     if (isTooSmall) {
                         this.decreaseColumns()
                     }
+                    //if column width is > 900px, add a new column
+                    if (this.cellWidth > 900) {
+                        this.increaseColumns()
+                    }
                 }
             }
         })
@@ -56,21 +60,28 @@ class Dashboard {
     }
 
     changeColumns(n) {
+        let items = dashboardContainer.children.length;
+        let rows = Math.ceil(items / n);
         if (dashboardContainer.classList.contains('fit-screen')) {
             dashboardContainer.style.gridTemplateColumns = `repeat(${n}, 1fr)`
-            dashboardContainer.style.gridTemplateRows = `repeat(${n}, 1fr)`
+            dashboardContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`
         } else {
             dashboardContainer.style.gridTemplateColumns = `repeat(${n}, 1fr)`
+            dashboardContainer.style.gridTemplateRows = `repeat(${rows}, ${this.cellWidth}px)`
         }
     }
 
     detectWontFit(n) {
-        this.cellWidth = dashboardContainer.clientWidth / n
-        if (this.cellWidth < this.minCellWidth) {
-            console.log(`Warning: ${n} columns will not fit in the dashboard-container.`)
-            return true
+        if (dashboardContainer.classList.contains('fit-screen')) {
+            return false;
         }
-        return false
+
+        this.cellWidth = dashboardContainer.clientWidth / n;
+        if (this.cellWidth < this.minCellWidth) {
+            console.log(`Warning: ${n} columns will not fit in the dashboard-container.`);
+            return true;
+        }
+        return false;
     }
 
     increaseColumns() {
@@ -116,6 +127,10 @@ Chart.defaults.plugins.tooltip.animation.duration = 100;
 Chart.defaults.responsive = true;
 Chart.defaults.maintainAspectRatio = false;
 Chart.defaults.animation.duration = 0;
+Chart.defaults.animations.x = false;
+Chart.defaults.animations.y = false;
+Chart.defaults.animations = false;
+
 
 
 let charts = [];
@@ -123,10 +138,10 @@ let charts = [];
 charts.push(new Chart(document.getElementById("completionChart"), {
     type: 'pie',
     data: {
-        labels: ["Completed", "Remaining"],
+        labels: ["To-do", "In-Progress", "Finished"],
         datasets: [{
-            backgroundColor: ["#3e95cd", "#8e5ea2"],
-            data: [60, 10]
+            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f"],
+            data: [16, 11, 43]
         }]
     },
     options: {
@@ -139,35 +154,40 @@ charts.push(new Chart(document.getElementById("completionChart"), {
 }));
 
 
+
 charts.push(new Chart(document.getElementById("manHoursChart"), {
-    type: 'bar',
+    type: 'line',
     data: {
-        labels: ["Task 1", "Task 2", "Task 3"],
-        datasets: [
-            {
-                label: "Expected",
-                backgroundColor: "#3e95cd",
-                data: [12, 19, 3]
-            }, {
-                label: "Actual",
-                backgroundColor: "#8e5ea2",
-                data: [10, 17, 5]
-            }
-        ]
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'],
+        datasets: [{
+            label: 'Expected Man Hours',
+            data: [40, 50, 45, 60, 55, 54, 60],
+            fill: false,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.15
+        }, {
+            label: 'Actual Man Hours',
+            data: [36, 48, 46, 65, 53, 60, 73],
+            fill: false,
+            borderColor: 'rgb(255, 99, 132)',
+            tension: 0.15
+        }]
     },
     options: {
-        plugins: {
-            title: {
-                display: false,
-            }
-        },
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: false
+            }
+        },
+        plugins: {
+            legend: {
+                display: true,
+                position: 'bottom'
             }
         }
     }
 }));
+
 
 
 charts.push(new Chart(document.getElementById("utilizationChart"), {
@@ -249,22 +269,31 @@ charts.push(new Chart(document.getElementById("workloadChart"), {
             {
                 label: 'Task A',
                 data: [5, 2, 0],
-                backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
+
             },
             {
                 label: 'Task B',
                 data: [0, 3, 2],
-                backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
             },
             {
                 label: 'Task C',
                 data: [3, 0, 4],
-                backgroundColor: 'rgba(255, 206, 86, 0.5)'
+                backgroundColor: 'rgba(255, 206, 86, 0.5)',
+                borderColor: 'rgba(255, 206, 86, 1)',
+                borderWidth: 1
             },
             {
                 label: 'Task D',
                 data: [2, 2, 1],
-                backgroundColor: 'rgba(75, 192, 192, 0.5)'
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
             }
         ]
     },

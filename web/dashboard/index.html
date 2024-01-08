@@ -132,21 +132,21 @@
                        <span>Mobile App Development</span>
                     </div>
 
-                    <div class="icon-button no-box option disabled" id="grid-undo" tabindex="0">
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                undo
-                            </span>
-                        </div> 
-                    </div>
-                    <div class="icon-button no-box option norender" id="view-scroll" tabindex="0">
+                    
+                    <div class="text-button option automatic" id="view-scroll" tabindex="0">
+                        <div class="button-text">
+                            AUTO
+                        </div>
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
                                 flex_direction
                             </span>
                         </div> 
                     </div>
-                    <div class="icon-button no-box option" id="view-fit" tabindex="0">
+                    <div class="text-button option manual norender" id="view-fit" tabindex="0">
+                        <div class="button-text">
+                            MANUAL
+                        </div>
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
                                 fit_screen
@@ -157,7 +157,7 @@
                     <div class="icon-button no-box option" id="grid-shrink" tabindex="0">
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
-                                zoom_out_map
+                                pan_zoom
                             </span>
                         </div> 
                     </div>
@@ -168,9 +168,16 @@
                             </span>
                         </div> 
                     </div>
+                    <div class="icon-button no-box option disabled" id="grid-undo" tabindex="0">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                undo
+                            </span>
+                        </div> 
+                    </div>
 
                     <div class="divider"></div>
-                    
+
                     <div class="icon-button no-box option" id="add-metric-small" tabindex="0">
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
@@ -195,24 +202,7 @@
                         </div>
                         <div class="chart-box">
                             <canvas id="completionChart"></canvas>
-                        </div>
-                        <div class="options">
-                            <div class="option selected">
-                                <span class="material-symbols-rounded">
-                                    pie_chart
-                                </span>
-                            </div>
-                            <div class="option">
-                                <span class="material-symbols-rounded">
-                                    bar_chart
-                                </span>
-                            </div>
-                            <div class="option">
-                                <span class="material-symbols-rounded">
-                                    show_chart
-                                </span>
-                            </div>
-                        </div>             
+                        </div>    
                     </div>
                     <div class="metric-card">
                         <div class="metric-title">
@@ -229,23 +219,6 @@
                         </div>
                         <div class="chart-box">
                             <canvas id="utilizationChart"></canvas>
-                        </div>
-                        <div class="options">
-                            <div class="option selected">
-                                <span class="material-symbols-rounded">
-                                    pie_chart
-                                </span>
-                            </div>
-                            <div class="option">
-                                <span class="material-symbols-rounded">
-                                    bar_chart
-                                </span>
-                            </div>
-                            <div class="option">
-                                <span class="material-symbols-rounded">
-                                    show_chart
-                                </span>
-                            </div>
                         </div>
                     </div>
                     <div class="metric-card">
@@ -337,7 +310,7 @@
                     
                     <div class="metric-card add-metric">
                         <span class="material-symbols-rounded">
-                            add
+                            add_chart
                         </span>
                     </div> 
                 </div>
