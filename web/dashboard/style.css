@@ -283,7 +283,7 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
-                align-items: flex-end;
+                align-items: center;
                 gap: 0.5rem;
                 width: 100%;
                 min-height: 250px;
@@ -291,7 +291,8 @@
                 
                 .metric-title {
                     font-size: 16px;
-                    font-weight: 600;
+                    font-weight: 700;
+                    margin-top: 0.25rem;
                 }
 
                 .metric-preview-chart {

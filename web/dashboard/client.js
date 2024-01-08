@@ -507,6 +507,12 @@ async function addMetric() {
                 y: {
                     beginAtZero: false
                 }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                }
             }
         }
     });
