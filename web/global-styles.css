@@ -130,7 +130,7 @@ input {
 }
 
 .tooltip.tooltip-under .tooltiptext {
-    top: 80%;
+    top: 125%;
     left: 50%;
     transform: translate(-50%);
 }
