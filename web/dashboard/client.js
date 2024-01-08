@@ -69,6 +69,9 @@ class Dashboard {
             dashboardContainer.style.gridTemplateColumns = `repeat(${n}, 1fr)`
             dashboardContainer.style.gridTemplateRows = `repeat(${rows}, ${this.cellWidth}px)`
         }
+        Array.from(dashboardContainer.children).forEach((child, index) => {
+            child.querySelector("canvas")?.style.setProperty("width", "100%")
+        })
     }
 
     detectWontFit(n) {
