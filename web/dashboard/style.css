@@ -8,7 +8,8 @@
     margin: 0;
     background-color: var(--light-gray-bg, #f1f1f1);
     grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: 1fr;
+    grid-auto-rows: minmax(400px, 400px);
+    transition-duration: 0s;
 }
 .metric-card {
     position: relative;
@@ -21,6 +22,7 @@
     justify-content: flex-start;
     align-items: center;
     flex-wrap: nowrap;
+    transition-duration: 0s;
 
     .metric-title {
         font-size: 1.2rem;
@@ -43,7 +45,7 @@
     align-items: center;
     justify-content: center;
     user-select: none;
-    transition: transform 0.3s ease, background-color 0.1s ease
+    transition: transform 0.1s ease, background-color 0.1s ease
 }
 
 .metric-card.add-metric:active {
@@ -59,7 +61,15 @@
 
 .chart-box {
     flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+    overflow: hidden;
 }
+
+
 
 .dashboard-options {
     display: flex;

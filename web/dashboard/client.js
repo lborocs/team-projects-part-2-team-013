@@ -9,32 +9,76 @@ const gridShrink = document.querySelector("#grid-shrink")
 const gridReset = document.querySelector("#grid-reset")
 
 class Dashboard {
-    constructor(n = 2) {
+    constructor() {
+        //maps screen width to default column count
+        this.defaultNs = {
+            0: 1,
+            1600: 2,
+            2000: 3,
+            2500: 4,
+            3200: 5
+        }
+
+        let screenWidth = window.innerWidth
+        let n = this.defaultNs[0]
+        for (let key in this.defaultNs) {
+            if (screenWidth >= key) {
+                n = this.defaultNs[key]
+            }
+        }
+
         this.n = n
+        this.changeColumns(n)
+
         this.minCellWidth = 400
+        this.cellWidth = dashboardContainer.clientWidth / n
+        //turns out you cant use .resize() on anything other than the window
+        //this looks like java.
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {      
+                if (entry.contentBoxSize) {
+                    let isTooSmall = this.detectWontFit(this.n)
+                    if (isTooSmall) {
+                        this.decreaseColumns()
+                    }
+                }
+            }
+        })
+        resizeObserver.observe(dashboardContainer)
     }
 
     changeColumns(n) {
         dashboardContainer.style.gridTemplateColumns = `repeat(${n}, 1fr)`
     }
 
-    detectSmallCells(n) {
-        const cellWidth = dashboardContainer.clientWidth / n
-        if (cellWidth < this.minCellWidth) {
-            console.log(`Warning: Increasing n to ${n} will make the cells too small`)
+    detectWontFit(n) {
+        this.cellWidth = dashboardContainer.clientWidth / n
+        if (this.cellWidth < this.minCellWidth) {
+            console.log(`Warning: ${n} columns will not fit in the dashboard-container.`)
             return true
         }
         return false
     }
 
     increaseColumns() {
-        this.detectSmallCells(this.n + 1)
-        this.changeColumns(++this.n)
+        let newN = this.n + 1
+        if (this.detectWontFit(newN)) {
+            console.log("Cannot increase columns any further.")
+            return
+        } else {
+            this.n = newN
+            this.changeColumns(newN)
+        }
     }
 
     decreaseColumns() {
-        if (this.n > 1) {
-            this.changeColumns(--this.n)
+        let newN = this.n - 1
+        if (newN < 1) {
+            console.log("Cannot decrease columns any further.")
+            return
+        } else {
+            this.n = newN
+            this.changeColumns(newN)
         }
     }
 
@@ -50,6 +94,10 @@ Chart.defaults.font.style = 'normal';
 Chart.defaults.font.weight = 'normal';
 Chart.defaults.color = '#666';
 Chart.defaults.plugins.tooltip.animation.duration = 100;
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+Chart.defaults.animation.duration = 0;
+
 
 let charts = [];
 
@@ -303,3 +351,14 @@ gridReset.addEventListener("click", () => {
     dashboard.resetColumns()
 })
 
+// for (let chart of charts) {
+//     chart.options.animation.duration = 0
+//     chart.update()
+//     console.log(chart.options.animation)
+// }
+// setTimeout(() => {
+//     for (let chart of charts) {
+//         chart.options.animation.duration = 100
+//         chart.update()
+//     }
+// }, 1000)
