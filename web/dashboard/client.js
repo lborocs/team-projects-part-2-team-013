@@ -14,6 +14,8 @@ const addMetricButtonSmall = document.querySelector("#add-metric-small")
 
 let gridActionsQueue = []
 
+global.setBreadcrumb(["Manager's Dashboard", "Mobile App Development"], [window.location.pathname, window.location.pathname]);
+
 class Dashboard {
     constructor() {
         //maps screen width to default column count
@@ -98,11 +100,18 @@ class Dashboard {
     }
 }
 
+
+
+
+
+
+//chartjs styling
 Chart.defaults.font.family = 'Open Sans, sans-serif';
 Chart.defaults.font.size = 14;
 Chart.defaults.font.style = 'normal';
 Chart.defaults.font.weight = 'normal';
 Chart.defaults.color = '#666';
+Chart.defaults.plugins.legend.position = 'bottom';
 Chart.defaults.plugins.tooltip.animation.duration = 100;
 Chart.defaults.responsive = true;
 Chart.defaults.maintainAspectRatio = false;
