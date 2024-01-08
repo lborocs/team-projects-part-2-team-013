@@ -132,5 +132,8 @@
         padding-bottom: 20px;
     }
 
+    .header-td {
+        user-select: none;
+    }
     
 }
