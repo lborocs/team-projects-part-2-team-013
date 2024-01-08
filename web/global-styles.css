@@ -661,3 +661,10 @@ button:hover {
     outline: 1px solid #77b2eb;
     box-shadow: 0 0 0px 2px #a0bfff;
 }
+
+
+@media (max-width: 800px) {
+    #global-search {
+        display: none;
+    }
+}
