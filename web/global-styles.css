@@ -667,8 +667,7 @@ button:hover {
     #global-search {
         display: none;
     }
-
-    /* make the notification popover be pinned to the top right of the screen */
+    
     .notification-popover > .popover-content {
         position: fixed;
         right: 0;
@@ -681,4 +680,5 @@ button:hover {
             max-height: 90dvh;
         }
     }
+
 }
