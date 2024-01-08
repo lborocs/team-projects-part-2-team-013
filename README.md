@@ -84,3 +84,6 @@ The site should now function like normal on your local machine.
 
 ### compiling jumpscare
 ![lets use a compiled language guys](https://cdn.013.team/development/jumpscare.png)
+
+### octavian
+![pj party](https://cdn.013.team/development/Screenshot%202024-01-08%20082014.png)
