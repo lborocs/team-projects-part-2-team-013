@@ -11,6 +11,21 @@
     grid-auto-rows: minmax(400px, 400px);
     transition-duration: 0s;
 }
+
+.dashboard-container.fit-screen {
+    /* the grid must fill up the rest of main without scrolling or overflowing */
+    overflow: hidden;
+    .metric-card {
+        /* the cards must fill up the grid without scrolling or overflowing */
+        width: 100%;
+        height: 100%;
+        max-height: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+
+}
+
 .metric-card {
     position: relative;
     padding: 10px;
@@ -96,18 +111,45 @@
     gap: 10px;
     padding: 5px;
     background-color: white;
+    z-index: 2;
+    box-shadow: 0px 0px 12px 0px #0000003d;
+
+    .option {
+        color: var(--text-off-black, #0f0f0f);
+    }
 
     .option.disabled {
         opacity: 0.5;
         pointer-events: none;
     }
 
+
     .title {
         font-size: 1.2rem;
         font-weight: 700;
         margin-right: auto;
+        color: var(--text-off-black, #0f0f0f);
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
     }
 
+    .divider {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 2px;
+        border-radius: 2px;
+        height: 32px;
+        background-color: #aaa;
+    }
+
+}
+
+#add-metric-small {
+    margin-right: 5px;
 }
 
 .fullscreen {

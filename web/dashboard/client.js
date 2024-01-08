@@ -10,6 +10,7 @@ const gridUndo = document.querySelector("#grid-undo")
 const viewScroll = document.querySelector("#view-scroll")
 const viewFit = document.querySelector("#view-fit")
 const addMetricButton = document.querySelector(".metric-card.add-metric")
+const addMetricButtonSmall = document.querySelector("#add-metric-small")
 
 let gridActionsQueue = []
 
@@ -53,7 +54,12 @@ class Dashboard {
     }
 
     changeColumns(n) {
-        dashboardContainer.style.gridTemplateColumns = `repeat(${n}, 1fr)`
+        if (dashboardContainer.classList.contains('fit-screen')) {
+            dashboardContainer.style.gridTemplateColumns = `repeat(${n}, 1fr)`
+            dashboardContainer.style.gridTemplateRows = `repeat(${n}, 1fr)`
+        } else {
+            dashboardContainer.style.gridTemplateColumns = `repeat(${n}, 1fr)`
+        }
     }
 
     detectWontFit(n) {
@@ -90,7 +96,6 @@ class Dashboard {
     resetColumns() {
         this.changeColumns(this.n = 2)
     }
-
 }
 
 Chart.defaults.font.family = 'Open Sans, sans-serif';
@@ -585,17 +590,23 @@ gridUndo.addEventListener("click", () => {
 viewScroll.addEventListener("click", () => {
     viewFit.classList.toggle("norender")
     viewScroll.classList.toggle("norender")
-    dashboardContainer.classList.toggle("scroll")
+    dashboardContainer.classList.toggle("fit-screen")
+    dashboard.changeColumns(dashboard.n)
     gridUndo.classList.remove("disabled")
 })
 
 viewFit.addEventListener("click", () => {
     viewFit.classList.toggle("norender")
     viewScroll.classList.toggle("norender")
-    dashboardContainer.classList.toggle("scroll")
+    dashboardContainer.classList.toggle("fit-screen")
+    dashboard.changeColumns(dashboard.n)
     gridUndo.classList.remove("disabled")
 })
 
 addMetricButton.addEventListener("click", () => {
+    addMetric()
+})
+
+addMetricButtonSmall.addEventListener("click", () => {
     addMetric()
 })
