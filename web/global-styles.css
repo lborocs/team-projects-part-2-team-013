@@ -662,12 +662,22 @@ button:hover {
     box-shadow: 0 0 0px 2px #a0bfff;
 }
 
+#global-search {
+    width: 205px;
+    transition: width 0.1s ease-in-out;
+}
+
+#global-search:focus-within {
+    width: 280px;
+    transition: width 0.1s ease-in-out;
+}
+
 
 @media (max-width: 800px) {
     #global-search {
         display: none;
     }
-    
+
     .notification-popover > .popover-content {
         position: fixed;
         right: 0;
