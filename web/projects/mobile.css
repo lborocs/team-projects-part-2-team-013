@@ -245,4 +245,19 @@
         color: black;
         font-weight: 500;
     }
+
+    .selection-screen {
+        padding: 1rem;
+        .search-row {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            .search {
+                width: 100%;
+            }
+        }
+
+        #projects-table thead th {
+            z-index: 1;
+        }
+    }
 }
