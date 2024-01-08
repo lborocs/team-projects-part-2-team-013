@@ -25,9 +25,24 @@
     transition-duration: 0s;
 
     .metric-title {
-        font-size: 1.2rem;
-        font-weight: 700;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-left: 0.5rem;
+
         margin-bottom: 10px;
+
+        .title-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+            
+        }
+
+        .context-menu {
+            color: var(--text-off-black, #0f0f0f);
+        }
     }
 
     .options {
@@ -37,6 +52,8 @@
         align-items: center;
         gap: 5px;
     }
+
+    
 }
 
 .metric-card.add-metric {
@@ -78,20 +95,7 @@
     align-items: center;
     gap: 10px;
     padding: 5px;
-    .option {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        gap: 5px;
-        padding: 5px;
-        border-radius: 5px;
-        transition: background-color 0.1s ease;
-        &:hover {
-            background-color: var(--light-gray-bg-hover, #e1e1e1);
-            cursor: pointer;
-        }
-    }
+    background-color: white;
 
     .option.disabled {
         opacity: 0.5;
@@ -104,6 +108,207 @@
         margin-right: auto;
     }
 
+}
+
+.fullscreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: filter 0.1s ease-out;
+}
+
+.popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+
+.popupDialog {
+    top: 8%;
+    display: flex;
+    opacity: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items:flex-start;
+    width: fit-content;
+    max-height: 800px;
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));
+    padding: 2em;
+    width: 510px;
+
+    transform: translateY(-1%);
+    transition: opacity 0.15s ease-out, transform 0.1s ease-out;
+
+    .popup-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--text-off-black, #0f0f0f);
+        width: 100%;
+        .small-icon {
+            margin-left: auto;
+        }
+    }
+
+    .confirm-buttons-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        width: 100%;
+        gap: 0.5em;
+    }
+
+    
+}
+
+#add-metric-window  {
+    gap: 0.5rem;
+    padding: 18px;
+    padding-top: 14px;
+    max-width: 840px;
+    width: calc(100% - 2.5em);
+    
+    .metric-picker {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 0.5rem;
+        width: 100%;
+
+        .categories {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            flex-wrap: wrap;
+            padding: 0.25rem;
+            border-radius: 5px;
+            background-color: #fdf8e1;
+
+            .divider {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 2px;
+                border-radius: 2px;
+                height: 32px;
+                background-color: #aaa;
+
+            }
+
+            .category {
+                background-color: #fcefb4;
+                color: #0f0f0f;
+            }
+
+            .category:hover {
+                background-color: #fae588;
+                cursor: pointer;
+            }
+
+            .category.selected {
+                background-color: #f9dc5c;
+            }
+
+        }
+
+        .split-area {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 0.5rem;
+            width: 100%;
+            flex-wrap: nowrap;
+
+            .metrics-container {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-start;
+                gap: 0.5rem;
+                width: 100%;
+                height: 100%;
+                flex-wrap: nowrap;
+    
+                .metric {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: flex-start;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.25rem;
+                    padding-right: 0.5rem;
+                    border-radius: 3px;
+
+                    user-select: none;
+                    
+                    transition: background-color 0.1s ease-out;
+    
+                    .title {
+                        font-size: 14px;
+                        font-weight: 600;
+                    }
+    
+                    
+                }
+    
+                .metric.selected {
+                    background-color: #e9ecef;
+                    transition: background-color 0s;
+                }
+    
+                .metric:hover {
+                    cursor: pointer;
+                    background-color: #f1f2f4;
+                    transition: background-color 0.05s ease-out;
+                }
+
+                .metric:active {
+                    background-color: #dee2e6;
+                }
+            }
+
+            .metric-preview {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: flex-end;
+                gap: 0.5rem;
+                width: 100%;
+                min-height: 250px;
+                flex-wrap: nowrap;
+                
+                .metric-title {
+                    font-size: 16px;
+                    font-weight: 600;
+                }
+
+                .metric-preview-chart {
+                    flex-grow: 1;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    width: calc(100% - 1rem);
+                }
+            }
+
+        }
+        
+    }
+    #add-button {
+        margin-left: auto;
+    }
 }
 
 /* @media (max-width: 1300px) {

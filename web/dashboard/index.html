@@ -131,42 +131,37 @@
                         </span>
                        <span>Mobile App Development</span>
                     </div>
-                    <div class="icon-button no-box option" id="view-dashboard">
+
+                    <div class="icon-button no-box option disabled" id="grid-undo" tabindex="0">
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
-                                space_dashboard
+                                undo
                             </span>
                         </div> 
                     </div>
-                    <div class="icon-button no-box option" id="view-module">
+                    <div class="icon-button no-box option norender" id="view-scroll" tabindex="0">
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
-                                view_module
+                                flex_direction
                             </span>
                         </div> 
                     </div>
-                    <div class="icon-button no-box option" id="view-stream">
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                view_stream
-                            </span>
-                        </div> 
-                    </div>
-                    <div class="icon-button no-box option" id="grid-reset">
+                    <div class="icon-button no-box option" id="view-fit" tabindex="0">
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
                                 fit_screen
                             </span>
                         </div> 
                     </div>
-                    <div class="icon-button no-box option" id="grid-shrink">
+                    
+                    <div class="icon-button no-box option" id="grid-shrink" tabindex="0">
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
                                 zoom_out_map
                             </span>
                         </div> 
                     </div>
-                    <div class="icon-button no-box option" id="grid-expand">
+                    <div class="icon-button no-box option" id="grid-expand" tabindex="0">
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
                                 zoom_in_map
@@ -177,7 +172,16 @@
                 <div class="dashboard-container">
                     <div class="metric-card">
                         <div class="metric-title">
-                            Completion
+                            <div class="title-text">
+                                Project Completion
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="completionChart"></canvas>
@@ -198,11 +202,20 @@
                                     show_chart
                                 </span>
                             </div>
-                        </div>                        
+                        </div>             
                     </div>
                     <div class="metric-card">
                         <div class="metric-title">
-                            Employee Utilization
+                            <div class="title-text">
+                                Employee Utilization
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="utilizationChart"></canvas>
@@ -223,11 +236,20 @@
                                     show_chart
                                 </span>
                             </div>
-                        </div>  
+                        </div>
                     </div>
                     <div class="metric-card">
                         <div class="metric-title">
-                            Man Hours: Expected vs Actual
+                            <div class="title-text">
+                                Man Hours: Expected vs Actual
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="manHoursChart"></canvas>
@@ -235,7 +257,16 @@
                     </div>
                     <div class="metric-card">
                         <div class="metric-title">
-                            Employee Workload Distribution
+                            <div class="title-text">
+                                Employee Workload Distribution
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="workloadChart"></canvas>
@@ -243,7 +274,16 @@
                     </div>
                     <div class="metric-card">
                         <div class="metric-title">
-                            Task Progress
+                            <div class="title-text">
+                                Task Progress
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="taskProgressChart"></canvas>
@@ -251,7 +291,16 @@
                     </div>
                     <div class="metric-card">
                         <div class="metric-title">
-                            Projects is due in 40 days
+                            <div class="title-text">
+                                Project is due in 40 days
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="timeBudgetChart"></canvas>
@@ -259,7 +308,16 @@
                     </div>
                     <div class="metric-card">
                         <div class="metric-title">
-                            Man Hours per Project
+                            <div class="title-text">
+                                Man Hours per Project
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="manHoursProjectsChart"></canvas>
@@ -275,6 +333,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="popup">
+        <!-- popup content added in js -->
     </div>
 </body>
 </html>
