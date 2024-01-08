@@ -146,7 +146,7 @@ input {
 .tooltip.tooltip-right .tooltiptext {
     top: 50%;
     left: 100%;
-    transform: translate(0, -100%);
+    transform: translate(0, -50%);
 }
 
 .tooltip.tooltip-right .tooltiptext::after{
@@ -160,7 +160,7 @@ input {
 .tooltip.tooltip-left .tooltiptext {
     top: 50%;
     right: 125%;
-    transform: translate(0, -100%);
+    transform: translate(0, -50%);
 }
 
 .tooltip.tooltip-left .tooltiptext::after{
