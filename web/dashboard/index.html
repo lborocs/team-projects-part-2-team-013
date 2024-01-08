@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js" integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.css" integrity="sha512-/zs32ZEJh+/EO2N1b0PEdoA10JkdC3zJ8L5FTiQu82LR9S/rOQNfQN7U59U9BC12swNeRAz3HSzIL2vpp4fv3w==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workload</title>
     <link rel="stylesheet" href="/global-styles.css">
@@ -16,6 +15,9 @@
     <link rel="stylesheet" href="/ui-elements/small-icon.css">
     <link rel="stylesheet" href="/ui-elements/popover.css">
     <link rel="stylesheet" href="/ui-elements/notification-popover.css">
+    <link rel="stylesheet" href="/ui-elements/number-picker.css">
+    <link rel="stylesheet" href="/ui-elements/date-picker.css">
+    <link rel="stylesheet" href="/ui-elements/context-menu.css">
 
 
     
@@ -40,16 +42,22 @@
                 <div class="breadcrumb">
                 </div>
             </div>
+
             <div class="center">
                 <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="fullLogo">
             </div> 
             <div class="right">
-                <div class="user-both">
-                    <div class="item" id="user-name"></div>
-                    <div class="item" id="user-icon">
-                    <i class="fa-solid fa-user"></i>
+
+                <div class="search white" id="global-search">
+                    <input id="global-search" class="search-input" type="text" autocomplete="off" placeholder="Search"></input>
+                    <div class="search-icon">
+                        <span class="material-symbols-rounded">search</span>
+                    </div>
+                    <div class="search-icon clear-icon">
+                        <span class="material-symbols-rounded" id="delete-search">close</span>
                     </div>
                 </div>
+
                 <div class="notification-popover item" id="inbox-icon" tabindex="0">
                     <div class="icon-button no-box">
                         <div class="button-icon">
@@ -66,7 +74,8 @@
                                 </span>
                             </div>
                             Activity
-                            <div class="small-icon" id="read-all" tabindex="0">
+                            <div class="small-icon tooltip tooltip-left" id="read-all" tabindex="0">
+                                <p class="tooltiptext">Read all</p>
                                 <span class="material-symbols-rounded">
                                     done_all
                                 </span>
@@ -79,6 +88,9 @@
                     </div>
                 </div>
                 
+                <div class="item" id="user-icon-container">
+                </div>
+
             </div>
 
         </header>
@@ -119,52 +131,585 @@
                         </span>
                        <span>Mobile App Development</span>
                     </div>
-                    <div class="option" id="workload">
-                        <span class="material-symbols-rounded">
-                            space_dashboard
-                        </span>
+
+                    
+                    <div class="text-button option automatic" id="view-scroll" tabindex="0">
+                        <div class="button-text">
+                            AUTO
+                        </div>
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                flex_direction
+                            </span>
+                        </div> 
                     </div>
-                    <div class="option selected" id="training">
-                        <span class="material-symbols-rounded">
-                            grid_view
-                        </span>
+                    <div class="text-button option manual norender" id="view-fit" tabindex="0">
+                        <div class="button-text">
+                            MANUAL
+                        </div>
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                fit_screen
+                            </span>
+                        </div> 
                     </div>
-                    <div class="option" id="wiki">
-                        <span class="material-symbols-rounded">
-                            grid_3x3
-                        </span>
+                    
+                    <div class="icon-button no-box option" id="grid-shrink" tabindex="0">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                pan_zoom
+                            </span>
+                        </div> 
                     </div>
-                    <div class="option" id="mylist">
-                        <span class="material-symbols-rounded">
-                            grid_3x3_off
-                        </span>
+                    <div class="icon-button no-box option" id="grid-expand" tabindex="0">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                zoom_in_map
+                            </span>
+                        </div> 
+                    </div>
+                    <div class="icon-button no-box option disabled" id="grid-undo" tabindex="0">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                undo
+                            </span>
+                        </div> 
                     </div>
 
+                    <div class="divider"></div>
+
+                    <div class="icon-button no-box option" id="add-metric-small" tabindex="0">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                add_chart
+                            </span>
+                        </div> 
+                    </div>
                 </div>
                 <div class="dashboard-container">
                     <div class="metric-card">
-                        your mum
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Project Completion
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="completionChart"></canvas>
+                        </div>    
                     </div>
                     <div class="metric-card">
-                        your mum
-                    </div>  
-                    <div class="metric-card">
-                        your mum
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Employee Utilization
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="utilizationChart"></canvas>
+                        </div>
                     </div>
                     <div class="metric-card">
-                        your mum
-                    </div> 
-                    <div class="metric-card">
-                        your mum 
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Man Hours: Expected vs Actual
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="manHoursChart"></canvas>
+                        </div>
                     </div>
+                    <div class="metric-card">
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Employee Workload Distribution
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="workloadChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Task Progress
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="taskProgressChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Project is due in 40 days
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="timeBudgetChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Man Hours per Project
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="manHoursProjectsChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="metric-card non-canvas">
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Task List
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="task-list">
+                            <table id="tasks-table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <div class="header-td">
+                                                <div class="name">
+                                                    Name
+                                                </div>
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        arrow_drop_down
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th>
+                                            <div class="header-td">
+                                                <div class="name">
+                                                    Assignees
+                                                </div>
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        arrow_drop_down
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th class="status-column">
+                                            <div class="header-td">
+                                                <div class="name">
+                                                    Status
+                                                </div>
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        arrow_drop_down
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr class="task-row">
+                                        <td>
+                                            <span class="task-name">Create UI</span>
+                                        </td>
+                                        <td>
+                                            <div class="task-assignees">
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                                <div class="assignment">
+                                                    <img class="avatar" src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogI2ZmZjsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWkiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LXNpemU9IjExNSIgZm9udC13ZWlnaHQ9IjYwMCIgZHk9Ii4xZW0iIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiMwMDAiIHg9IjUwJSIgeT0iNTAlIj5KUzwvdGV4dD4KICAgIDwvc3ZnPg==" alt="avatar">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="not-started">
+                                            <div class="status-cell">
+                                                <div class="icon">
+                                                    <span class="material-symbols-rounded">
+                                                        push_pin
+                                                    </span>
+                                                </div>
+                                                <div class="text">
+                                                    Not Started
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    
                     <div class="metric-card add-metric">
                         <span class="material-symbols-rounded">
-                            add
+                            add_chart
                         </span>
                     </div> 
                 </div>
             </div>
         </div>
+    </div>
+    <div class="popup">
+        <!-- popup content added in js -->
     </div>
 </body>
 </html>
