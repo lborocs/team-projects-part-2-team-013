@@ -80,12 +80,10 @@ document.getElementById('togglePassword').addEventListener('click', function () 
     const passwordInput = document.getElementById('password');
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        document.getElementById("togglePassword").classList.remove("fa-eye-slash")
-        document.getElementById("togglePassword").classList.add("fa-eye")
+        document.getElementById("togglePassword").textContent = "visibility";
     } else {
         passwordInput.type = 'password';
-        document.getElementById("togglePassword").classList.remove("fa-eye")
-        document.getElementById("togglePassword").classList.add("fa-eye-slash")
+        document.getElementById("togglePassword").textContent = "visibility_off";
         
     }
 });
