@@ -11,6 +11,10 @@ const viewScroll = document.querySelector("#view-scroll")
 const viewFit = document.querySelector("#view-fit")
 const addMetricButton = document.querySelector(".metric-card.add-metric")
 const addMetricButtonSmall = document.querySelector("#add-metric-small")
+const dashboardTimePeriod = document.querySelector("#dashboard-time-period")
+const viewWeek = document.querySelector("#view-week")
+const viewMonth = document.querySelector("#view-month")
+const viewAll = document.querySelector("#view-all")
 
 let gridActionsQueue = []
 
@@ -634,4 +638,25 @@ addMetricButton.addEventListener("click", () => {
 
 addMetricButtonSmall.addEventListener("click", () => {
     addMetric()
+})
+
+
+dashboardTimePeriod.addEventListener("click", () => {
+    dashboardTimePeriod.classList.toggle("open")
+})
+
+document.addEventListener("click", (e) => {
+    if (!dashboardTimePeriod.contains(e.target)) {
+        dashboardTimePeriod.classList.remove("open")
+    }
+});
+
+viewWeek.addEventListener("click", () => {
+    dashboardTimePeriod.querySelector(".dropdown-text").innerText = "Last 7 Days";
+})
+viewMonth.addEventListener("click", () => {
+    dashboardTimePeriod.querySelector(".dropdown-text").innerText = "Last 30 Days";
+})
+viewAll.addEventListener("click", () => {
+    dashboardTimePeriod.querySelector(".dropdown-text").innerText = "All Time";
 })

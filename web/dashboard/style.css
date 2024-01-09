@@ -143,6 +143,16 @@
         gap: 0.5rem;
     }
 
+    .time-selection {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.5rem;
+
+
+    }
+
     .divider {
         display: flex;
         justify-content: center;
@@ -153,6 +163,10 @@
         background-color: #aaa;
     }
 
+}
+
+#dashboard-time-period {
+    margin-left: 0.5rem;
 }
 
 
