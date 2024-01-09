@@ -6,9 +6,6 @@ var selectedTags = document.querySelectorAll('.tag.selected');
 var posts = document.querySelectorAll('.post');
 var selectedCategory = document.querySelector('input[name="category"]:checked');
 var selectedValue = selectedCategory.value;
-var nonTechnicalTags = ["Printer", "Stationary", "Meeting Rooms", "Office Supplies", "Filing", "Cleaning", "Mail", "Reception"]
-var technicalTags = ["HTML", "CSS", "JavaScript", "Python", "Java", "C++", "Ruby", "PHP", "Swift", "Kotlin", "TypeScript", "Go"]
-console.log(selectedTags);
 
 var postsMap = new Map();
 
@@ -34,8 +31,22 @@ async function fetchPosts() {
     }
 }
 
-//I removed the tag assigning code here because we will be getting tags from the database
-//tag rendering code should live in the renderPost
+async function fetchTags() {
+    const data = await get_api("/wiki/post.php/tags");
+    console.log(data);
+    if (data.success == true) {
+        console.log("Tags have been fetched")
+        data.data.tags.forEach(tag => {
+            document.querySelector('.tag-selection').innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`
+        });
+    } else {
+        console.log("Tags failed to be fetched")
+    }
+}
+
+fetchTags();
+    
+
 fetchPosts().then(() => {
     posts.forEach((post) => {
         selectedCategory = document.querySelector('input[name="category"]:checked')
@@ -131,6 +142,7 @@ function renderPost(postID, title, author, isTechnical, tags) {
 }
 
 function updatePosts() {
+    console.log("updating posts")
     selectedCategory = document.querySelector('input[name="category"]:checked');
     selectedValue = selectedCategory.value;
     selectedTags = [];
@@ -181,19 +193,6 @@ function updatePosts() {
     }
 }
 
-function updateTags() {
-    selectedCategory = document.querySelector('input[name="category"]:checked');
-    selectedValue = selectedCategory.value;
-    let tagSelection = document.querySelector('.tag-selection');
-    let tags = tagSelection.querySelectorAll('.tag');
-    tags.forEach((tag) => {
-        if (tag.getAttribute("is-technical") === selectedValue || tag.getAttribute("is-technical") === "2") {
-            tag.classList.remove("norender");
-        } else {
-            tag.classList.add("norender");
-        }
-    })
-}
 
 addEventListener("keydown", filterFromSearch)
 
@@ -218,21 +217,20 @@ function filterFromSearch() {
     
     }
 }
-
-document.querySelectorAll('.tag').forEach((tag) => {
-    tag.addEventListener('click', () => {
-        tag.classList.toggle('selected');
-        updatePosts();
-    })
+document.addEventListener('DOMContentLoaded', (event) => {
+    document.querySelectorAll('.tag').forEach((tag) => {
+        console.log("adding event listener")
+        tag.addEventListener('click', () => {
+            tag.classList.toggle('.selected');
+            console.log("clicked")
+            updatePosts();
+        })
+    });
 });
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
     radio.addEventListener('change', () => {
-        document.querySelectorAll('.tag').forEach((tag) => {
-            tag.classList.remove('selected');
-        });
         updatePosts();
-        updateTags();
     })
 });
 
