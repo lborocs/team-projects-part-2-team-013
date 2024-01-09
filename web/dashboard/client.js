@@ -143,7 +143,8 @@ charts.push(new Chart(document.getElementById("completionChart"), {
     data: {
         labels: ["To-do", "In-Progress", "Finished"],
         datasets: [{
-            backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f"],
+            backgroundColor: ["rgba(245,205,188,0.7)", "rgba(188,219,245,0.7)", "rgba(188,245,188,0.7)"],
+            borderColor: ["rgba(245,205,188,1)", "rgba(188,219,245,1)", "rgba(188,245,188,1)"],
             data: [16, 11, 43]
         }]
     },
@@ -193,14 +194,16 @@ charts.push(new Chart(document.getElementById("manHoursChart"), {
 
 
 
-charts.push(new Chart(document.getElementById("utilizationChart"), {
+charts.push(new Chart(document.getElementById("tasksPerEmployeeChart"), {
     type: 'bar',
     data: {
-        labels: ["Employee 1", "Employee 2", "Employee 3"],
+        labels: ["Firat", "Octavian", "Usman", "Danial", "Aidan", "Oliver", "Terry", "Dave", "Jamie"],
         datasets: [{
-            label: "Utilization Rate (%)",
-            backgroundColor: ["#3cba9f", "#e8c3b9", "#c45850"],
-            data: [75, 50, 60]
+            label: "Tasks Per Employee",
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 2,
+            data: [26, 25, 20, 19, 15, 13, 9, 9, 8]
         }]
     },
     options: {
@@ -212,29 +215,35 @@ charts.push(new Chart(document.getElementById("utilizationChart"), {
         scales: {
             y: {
                 beginAtZero: true,
-                suggestedMax: 100
+                suggestedMax: 30
             }
         }
     }
 }));
 
-
-
+let startData = Array.from({length: 20}, (_, i) => i + Math.floor(Math.random() * 3) - 1);
+let durationData = Array.from({length: 20}, () => Math.floor(Math.random() * 10) + 1);
+let overdueData = Array.from({length: 20}, () => Math.floor(Math.random() * 5));
 
 charts.push(new Chart(document.getElementById("taskProgressChart"), {
     type: 'bar',
     data: {
-        labels: ['Task A', 'Task B', 'Task C', 'Task D'],
+        labels: ['Task A', 'Task B', 'Task C', 'Task D', 'Task E', 'Task F', 'Task G', 'Task H', 'Task I', 'Task J', 'Task K', 'Task L', 'Task M', 'Task N', 'Task O', 'Task P', 'Task Q', 'Task R', 'Task S', 'Task T'],
         datasets: [
             {
                 label: 'Start',
-                data: [0, 1, 3, 4],
-                backgroundColor: 'rgba(255, 99, 132, 0.5)'
+                data: startData,
+                backgroundColor: 'transparent'
             },
             {
                 label: 'Duration',
-                data: [1, 2, 3, 4],
+                data: durationData,
                 backgroundColor: 'rgba(54, 162, 235, 0.5)'
+            },
+            {
+                label: 'Overdue',
+                data: overdueData,
+                backgroundColor: 'rgba(255, 0, 0, 0.5)'
             }
         ]
     },
@@ -243,7 +252,13 @@ charts.push(new Chart(document.getElementById("taskProgressChart"), {
         scales: {
             x: {
                 stacked: true,
-            }
+            },
+            y: {
+                stacked: true,
+                ticks: {
+                    display: false
+                }
+            }   
         },
         plugins: {
             tooltip: {
@@ -251,11 +266,14 @@ charts.push(new Chart(document.getElementById("taskProgressChart"), {
                     label: function(context) {
                         if (context.dataset.label === 'Duration') {
                             return `Duration: ${context.raw} days`;
+                        } else if (context.dataset.label === 'Overdue') {
+                            return `Overdue: ${context.raw} days`;
                         } else {
                             return `Start: Day ${context.raw}`;
                         }
                     }
-                }
+                },
+                position: 'average',
             },
             title: {
                 display: false,
@@ -267,11 +285,11 @@ charts.push(new Chart(document.getElementById("taskProgressChart"), {
 charts.push(new Chart(document.getElementById("workloadChart"), {
     type: 'bar',
     data: {
-        labels: ['Member A', 'Member B', 'Member C'],
+        labels: ["Firat", "Octavian", "Usman", "Danial", "Aidan", "Oliver", "Terry", "Dave", "Jamie"],
         datasets: [
             {
                 label: 'Task A',
-                data: [5, 2, 0],
+                data: [10, 5, 0, 0, 0, 0, 0, 0, 0],
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1
@@ -279,21 +297,21 @@ charts.push(new Chart(document.getElementById("workloadChart"), {
             },
             {
                 label: 'Task B',
-                data: [0, 3, 2],
+                data: [0, 0, 0, 0, 1, 3, 3, 3, 0],
                 backgroundColor: 'rgba(54, 162, 235, 0.5)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             },
             {
                 label: 'Task C',
-                data: [3, 0, 4],
+                data: [0, 1, 0, 2, 0, 0, 2, 0, 5],
                 backgroundColor: 'rgba(255, 206, 86, 0.5)',
                 borderColor: 'rgba(255, 206, 86, 1)',
                 borderWidth: 1
             },
             {
                 label: 'Task D',
-                data: [2, 2, 1],
+                data: [0, 0, 2, 0, 4, 7, 0, 3, 0],
                 backgroundColor: 'rgba(75, 192, 192, 0.5)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
@@ -311,43 +329,9 @@ charts.push(new Chart(document.getElementById("workloadChart"), {
                 stacked: true
             },
             y: {
-                stacked: true
-            }
-        }
-    }
-}));
-
-charts.push(new Chart(document.getElementById("manHoursProjectsChart"), {
-    type: 'bar',
-    data: {
-        labels: ['Project 1', 'Project 2', 'Project 3', 'Project 4'],
-        datasets: [{
-            label: 'Total Man Hours',
-            data: [120, 200, 150, 220],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    plugins: {
-        title: {
-            display: false,
-        }
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
+                stacked: true,
+                beginAtZero: true,
+                suggestedMax: 12
             }
         }
     }
