@@ -56,7 +56,7 @@ The site should now function like normal on your local machine.
 ## setting up local api
 1. change the php include path to include the api folder include_path = ".;C:\..\githubrepo\api\"
 2. enable the openssl, curl, mysqli, mbstring, fileinfo extensions
-3. download the GTSRootR1 certificate from the iternet
+3. download the GTSRootR1 and Digicert GlobalRoot G2 certificate from the iternet
 4. add the `curl.cainfo="path/to/certificate"` entry to the config under the `[curl]` heading
 5. install composer
 6. install the composer packages: google/cloud-storage in the api folder
