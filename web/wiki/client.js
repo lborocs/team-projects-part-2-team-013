@@ -243,12 +243,12 @@ function confirmDelete() {
         popupDiv.innerHTML = `
             <dialog open class='popup-dialog'>
                 <div class="popup-title">
-                Delete Post
-                <div class="small-icon close-button">
-                    <span class="material-symbols-rounded">
-                        close
-                    </span>
-                </div>
+                    Delete Post
+                    <div class="small-icon close-button">
+                        <span class="material-symbols-rounded">
+                            close
+                        </span>
+                    </div>
                 </div>
                 <div class="popup-text">Are you sure you want to delete this post?</div>
                 <div class="popup-text">This action cannot be undone?</div>
