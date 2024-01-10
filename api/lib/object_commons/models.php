@@ -457,7 +457,7 @@ const TABLE_PROJECTS = new Table(
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
         new Column(
-            "projectTeamLeader", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:false,
+            "projectTeamLeader", is_primary_key:false, type:"binary", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
         new Column("projectCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
