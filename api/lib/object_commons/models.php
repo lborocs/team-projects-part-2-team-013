@@ -27,7 +27,7 @@ enum TASK_UPDATE_TYPE {
 }
 
 
-function prepend_col_prefixes(Table $table, Array $body) {
+function prepend_col_prefixes(Table $table, Array $body): Array{
     $prefix = $table->column_prefix;
 
     if ($prefix === null) {

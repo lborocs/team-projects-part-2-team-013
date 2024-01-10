@@ -1,9 +1,5 @@
 <?php
 
-// workaround for json SOMETIMES!!! not supporting apostrophes
-const JSON_ENCODE_FLAGS = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE;
-
-
 require_once("lib/const.php");
 require_once("lib/auth.php");
 require_once("lib/database.php");
@@ -121,7 +117,107 @@ class RequestContext extends stdClass {
             
         }
     }
+}
 
+enum SortDirection {
+    case ASC;
+    case DESC;
+}
+
+class SearchParams {
+    public Table $table;
+    public int $limit=SEARCH_FETCH_DEFAULT;
+    public int $page=1;
+    public ?string $query=null;
+    public ?Column $sort=null;
+    public SortDirection $sort_direction;
+
+    function __construct(
+        Table $table,
+        int $limit,
+        int $page,
+        ?string $query,
+        ?Column $sort,
+        ?SortDirection $sort_direction,
+    ) {
+        $this->table = $table;
+        $this->limit = $limit;
+        $this->page = $page;
+        $this->query = $query;
+        $this->sort = $sort;
+
+        if (is_null($sort_direction)) {
+            $sort_direction = SortDirection::ASC;
+        }
+        $this->sort_direction = $sort_direction;
+    }
+
+    static function from_query_params(Table $table, Array $p=null) {
+
+        if (is_null($p)) {
+            $p = $_GET;
+        }
+
+        $limit = $p["limit"] ?? SEARCH_FETCH_DEFAULT;
+        if (!is_numeric($limit) || $limit < SEARCH_FETCH_FLOOR || $limit > SEARCH_FETCH_CEILING) {
+            respond_bad_request(
+                "Limit must be a positive integer at least " . SEARCH_FETCH_FLOOR . " and at most " . SEARCH_FETCH_CEILING,
+                ERROR_QUERY_PARAMS_INVALID
+            );
+        }
+
+
+        $page = $p["page"] ?? 1;
+        if (!is_numeric($page) || $page < 1) {
+            respond_bad_request("Page must be a positive integer greater than 0", ERROR_QUERY_PARAMS_INVALID);
+        }
+
+        $query = $p["q"] ?? null;
+        $query = "%$query%";
+        $sort = $p["sort_by"] ?? null;
+        
+        if (!is_null($sort)) {
+            $prefixed = array_keys(prepend_col_prefixes($table, [$sort=>null]));
+            $sort = $prefixed[0] ?? respond_bad_request("Sort column does not exist (array)", ERROR_QUERY_PARAMS_INVALID);
+            $sort = $table->get_column($sort) ?? respond_bad_request("Sort column does not exist", ERROR_QUERY_PARAMS_INVALID);
+
+        }
+
+        $sort_direction = match ($p["sort_direction"] ?? null) {
+            "asc" => SortDirection::ASC,
+            "desc" => SortDirection::DESC,
+            null => null,
+            default => respond_bad_request("Sort direction must be either 'asc' or 'desc'", ERROR_QUERY_PARAMS_INVALID),
+        };
+
+        return new SearchParams(
+            $table,
+            $limit,
+            $page,
+            $query,
+            $sort,
+            $sort_direction,
+        );
+    }
+
+    function to_sql() {
+        // we dont deal with the where cause thats up to the db
+        // as it may want to search multiple columns
+        $sql = "";
+
+        if (!is_null($this->sort)) {
+            $sql .= "ORDER BY " . $this->table->name . "." . $this->sort->name;
+            $sql .= match ($this->sort_direction) {
+                SortDirection::ASC => " ASC",
+                SortDirection::DESC => " DESC",
+            };
+        }
+
+        $sql .= " LIMIT " . $this->limit . " OFFSET " . (($this->page - 1) * $this->limit);
+
+        return $sql;
+
+    }
 }
 
 
