@@ -113,7 +113,7 @@ async function projectSwitchToOnClick(projectRow) {
     global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
     projectTitle.innerText = project.name;
     explainerTitle.innerText = project.name;
-    explainerDescription.innerText = project.description;
+    explainerDescription.innerHTML = project.description;
     explainerTeamLeaderName.innerText = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
