@@ -1,6 +1,10 @@
 <?php
 require_once("lib/const.php");
 
+// workaround for json SOMETIMES!!! not supporting apostrophes
+const JSON_ENCODE_FLAGS = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_INVALID_UTF8_SUBSTITUTE;
+
+
 function get_system_load() {
     if (function_exists("sys_getloadavg")) {
         return sys_getloadavg();

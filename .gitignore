@@ -4,5 +4,5 @@
 api/secrets.php
 api/composer.lock
 api/vendor/
-api/GTSRootR1.pem
+api/Roots.pem
 .DS_Store
