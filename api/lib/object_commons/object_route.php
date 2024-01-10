@@ -212,6 +212,10 @@ function _ensure_body_validity(Table $model, RequestContext $ctx, array $allowed
             );
         }
 
+        if ($column_type == "string") {
+            ensure_html_is_clean($user_value);
+        }
+
         foreach ($column->constraints as $constraint) {
             $constraint->validate($user_field, $user_value);
         }
