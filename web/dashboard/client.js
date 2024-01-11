@@ -46,21 +46,21 @@ class Dashboard {
         this.cellWidth = dashboardContainer.clientWidth / n
         //turns out you cant use .resize() on anything other than the window
         //this looks like java.
-        const resizeObserver = new ResizeObserver(entries => {
-            for (let entry of entries) {      
-                if (entry.contentBoxSize) {
-                    let isTooSmall = this.detectWontFit(this.n)
-                    if (isTooSmall) {
-                        this.decreaseColumns()
-                    }
-                    //if column width is > 900px, add a new column
-                    if (this.cellWidth > 900) {
-                        this.increaseColumns()
-                    }
-                }
-            }
-        })
-        resizeObserver.observe(dashboardContainer)
+        // const resizeObserver = new ResizeObserver(entries => {
+        //     for (let entry of entries) {      
+        //         if (entry.contentBoxSize) {
+        //             let isTooSmall = this.detectWontFit(this.n)
+        //             if (isTooSmall) {
+        //                 this.decreaseColumns()
+        //             }
+        //             //if column width is > 900px, add a new column
+        //             if (this.cellWidth > 900) {
+        //                 this.increaseColumns()
+        //             }
+        //         }
+        //     }
+        // })
+        // resizeObserver.observe(dashboardContainer)
     }
 
     changeColumns(n) {
