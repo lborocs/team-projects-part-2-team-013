@@ -364,7 +364,7 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
         WHERE LOWER(`POSTS`.postTitle) LIKE ? " . $tag_term . "
         GROUP BY `POSTS`.postID
         ORDER BY views DESC
-        LIMIT " . SEARCH_FETCH_LIMIT
+        LIMIT " . SEARCH_FETCH_DEFAULT
     );
 
     $query->bind_param(
@@ -917,7 +917,7 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
             OR `PROJECTS`.projectTeamLeader = ?
         )
         ORDER BY lastAccessed DESC
-        LIMIT " . SEARCH_FETCH_LIMIT
+        LIMIT " . SEARCH_FETCH_DEFAULT
     );
     $query->bind_param(
         "ssss",
@@ -1122,7 +1122,7 @@ function db_project_fetchall(string $search_term, string $emp_id) {
             AND `PROJECT_ACCESSED`.empID = ?
         WHERE LOWER(`PROJECTS`.projectName) LIKE ?
         ORDER BY lastAccessed DESC
-        LIMIT ". SEARCH_FETCH_LIMIT
+        LIMIT ". SEARCH_FETCH_DEFAULT
     );
     $query->bind_param(
         "ss",
