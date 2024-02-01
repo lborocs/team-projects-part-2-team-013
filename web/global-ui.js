@@ -976,7 +976,7 @@ if (window.location.pathname !== '/') {
                 const clickSidebar = sidebar.contains(e.target);
                 const clickHamburger = hamburger.contains(e.target);
                 
-                if (sidebarVisible && !clickSidebar && !clickHamburger) {
+                if (window.innerWidth < 600 && sidebarVisible && !clickSidebar && !clickHamburger) {
                     sidebar.classList.toggle('visible');
                     container.classList.toggle('sidebar-open');
                     sidebarItems.forEach((paragraph) => {
