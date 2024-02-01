@@ -968,6 +968,22 @@ if (window.location.pathname !== '/') {
     setTimeout(() => {
         if (sidebar !== null) {
             sidebar.classList.add('transition');
+            //no dom queries are inside of the event listener to make global event listener ok
+            const sidebarItems = document.querySelectorAll('.sidebar-item p');
+
+            document.addEventListener('click', (e) => {
+                const sidebarVisible = sidebar.classList.contains('visible');
+                const clickSidebar = sidebar.contains(e.target);
+                const clickHamburger = hamburger.contains(e.target);
+                
+                if (sidebarVisible && !clickSidebar && !clickHamburger) {
+                    sidebar.classList.toggle('visible');
+                    container.classList.toggle('sidebar-open');
+                    sidebarItems.forEach((paragraph) => {
+                        paragraph.classList.toggle('norender');
+                    });
+                }
+            });
         }
     }, 200);
 
@@ -999,6 +1015,10 @@ if (window.location.pathname !== '/') {
             renderNotifications(items);
         }
     });
+
+    
+    
+
 
 
 }
