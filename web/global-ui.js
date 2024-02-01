@@ -973,7 +973,7 @@ if (window.location.pathname !== '/') {
 
     ensureSettings()
 
-    if(getSetting("sidebarIsOpen") === true) {
+    if(window.innerWidth > 600 && getSetting("sidebarIsOpen") === true) {
         console.log("[init] setting sidebar to open")
         sidebar.classList.add("visible")
         container.classList.add("sidebar-open")
