@@ -678,7 +678,7 @@
         color: var(--not-started-title-clr, rgb(73, 41, 14));
     };
     .add-task:hover {
-        background-color: var(--add-task-hover, #fadec977);
+        background-color: var(--add-task-hover, #9d9d9d77);
     }
 }
 
