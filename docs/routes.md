@@ -128,7 +128,7 @@ Written/designed by aidan F223129
         },
       }
       ```
-    - [x] PATCH {"password":string, "newPassword":string} (requires otp)
+    - [x] PATCH {"password":string, "newPassword":string}
 
 - [x] **/employee/session.php/register**
     - POST (register account) {firstName:?string, lastName:string, password:string, email:string, token:string}
