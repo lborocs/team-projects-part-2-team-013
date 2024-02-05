@@ -1,6 +1,5 @@
-import * as global from "../global-ui.js"
-import { animate } from "../global-ui.js"
-import { getEmployeesById } from '../global-ui.js';
+import * as global from "../global-ui.js";
+import { animate, getEmployeesById } from "../global-ui.js";
 
 const RENDER_COLUMN = 1;
 const RENDER_LIST = 2;
@@ -1140,7 +1139,8 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 </div>
             </div>
             
-            <div class="users-assigned">
+            <div class="expected-man-hours">
+                ${expectedManHours}
             </div>
         </div>
     `;
