@@ -37,6 +37,10 @@
     --finished-title-clr: rgb(28,56,41);
     --finished-add-task-hover: rgba(219,237,219,0.47);
 
+    --error-border: solid 1px #ff4f4f6b;
+    --error-background: #ff4f4f24;
+    --error-text: #920000;
+
 }
 
 body {

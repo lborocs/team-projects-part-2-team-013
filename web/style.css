@@ -7,9 +7,9 @@
 }
 
 .status-incorrect {
-    color: #920000;
-    background-color: #ff4f4f24;
-    border: solid 1px #ff4f4f6b;
+    color: var(--error-text);
+    background-color: var(--error-background);
+    border: var(--error-background);
 }
 
 body {
