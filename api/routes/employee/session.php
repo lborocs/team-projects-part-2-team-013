@@ -9,13 +9,14 @@ function hash_pass(string $password) {
     );
 }
 
-function auth_session_issue_new($account) {
+function auth_session_issue_new($account, $num_renews = 0) {
     // id must be 32bits for serialisation
     $new_session = new Session(
         bin2hex(generate_uuid()),
         $account["empID"],
         $account["isManager"] + 1,
-        timestamp()
+        timestamp(),
+        $num_renews
     );
     return $new_session;
 }
@@ -174,14 +175,31 @@ function r_session_session(RequestContext $ctx, string $args) {
             "expires"=>$ctx->session->issued + SESSION_INACTIVITY_EPOCH,
             "id"=>$ctx->session->hex_id,
             "auth_level"=>$ctx->session->auth_level,
-            "employee" => db_employee_fetch($ctx->session->hex_associated_user_id)
+            "employee" => db_employee_fetch($ctx->session->hex_associated_user_id),
+            "generation"=>$ctx->session->generation,
         ));   
     } else if ($ctx->request_method == "PUT") {
         $ctx->session->yank();
 
+        if ($ctx->session->generation >= SESSION_RENEW_LIMIT) {
+            respond_not_authenticated(
+                "Session has been renewed too many times",
+                ERROR_SESSION_EXPIRED
+            );
+        }
+
         $account = db_account_fetch_by_id($ctx->session->hex_associated_user_id);
 
-        $session = auth_session_issue_new($account);
+        if ($account == false) {
+            respond_not_authenticated(
+                "Account does not exist",
+                ERROR_RESOURCE_NOT_FOUND
+            );
+        }
+
+
+
+        $session = auth_session_issue_new($account, $ctx->session->generation + 1);
 
         respond_ok(array(
             "session_token"=>$session->encrypt(),

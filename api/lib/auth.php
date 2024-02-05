@@ -8,15 +8,23 @@ class Session {
     public string $hex_associated_user_id;
     public int $issued;
     public int $auth_level;
+    public int $generation;
 
     function to_unencrypted_bytes() {
-        return pack("a16a16Qc", hex2bin($this->hex_id), hex2bin($this->hex_associated_user_id), $this->issued, $this->auth_level);
+        return pack(
+            "a16a16Qcc",
+            hex2bin($this->hex_id),
+            hex2bin($this->hex_associated_user_id),
+            $this->issued,
+            $this->auth_level,
+            $this->generation,
+        );
     }
 
 
     static function from_unencrypted_bytes(string $bytearray) {
 
-        $data = @unpack("a16s_id/a16u_id/Qissued/cauth", $bytearray);
+        $data = @unpack("a16s_id/a16u_id/Qissued/cauth/cgeneration", $bytearray);
 
         if ($data == false) {
             respond_internal_error(ERROR_SESSION_CANT_UNPACK);
@@ -26,7 +34,8 @@ class Session {
             bin2hex($data["s_id"]),
             bin2hex($data["u_id"]),
             $data["auth"],
-            $data["issued"]
+            $data["issued"],
+            $data["generation"]
         );
     }
 
@@ -93,11 +102,12 @@ class Session {
         return $session;
     }
 
-    function __construct(string $hex_id, string $hex_associated_user_id, int $auth_level, int $issued) {
+    function __construct(string $hex_id, string $hex_associated_user_id, int $auth_level, int $issued, int $generation) {
         $this->hex_id = $hex_id;
         $this->hex_associated_user_id = $hex_associated_user_id;
         $this->auth_level = $auth_level;
         $this->issued = $issued;
+        $this->generation = $generation;
     }
 
     function ensure_still_valid() {
