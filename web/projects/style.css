@@ -882,6 +882,7 @@
     font-size: 0.9rem;
     font-weight: 500;
     border-collapse: separate;
+    transition: 0.05s ease-out;
 }
 
 .taskRow:hover {
@@ -890,7 +891,7 @@
     z-index: 100;
     background-color: #daebffaa;
     box-shadow: 0 0 2px 0 rgba(94, 137, 255, 1);
-    transition: 0.1s ease-out;  
+    transition: 0.05s ease-out;  
 }
 
 .task.new {

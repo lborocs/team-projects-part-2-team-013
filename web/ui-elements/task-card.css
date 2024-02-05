@@ -13,7 +13,7 @@
     padding: 0.55em;
     padding-top: 0.35em;
     cursor: pointer;
-    transition: transform 0.1s ease-in-out !important;
+    transition: transform 0.05s ease-in-out !important; /* allowing this important, task cards have a very different click animation */
     transition: color 0.1s ease-out;
     .title {
         font-size: 1em;

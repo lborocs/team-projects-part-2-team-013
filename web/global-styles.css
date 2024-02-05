@@ -595,6 +595,13 @@ button:hover {
     }
 }
 
+
+.clicked {
+    transform: scale(0.98);
+    transition-duration: 0.05s;
+}
+
+
 .click {
     animation: click 0.3s ease-out;
 }

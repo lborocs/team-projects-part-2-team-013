@@ -428,11 +428,11 @@ function setUpTaskEventListeners() {
         
 
         //have to include mouse up and down this is crazy event propagation
-        contextMenuButton.addEventListener("mouseup", (e) => {
+        contextMenuButton.addEventListener("pointerup", (e) => {
             e.stopPropagation();
         });
 
-        contextMenuButton.addEventListener("mousedown", (e) => {
+        contextMenuButton.addEventListener("pointerdown", (e) => {
             e.stopPropagation();
         });
 
@@ -462,7 +462,7 @@ function setUpTaskEventListeners() {
         });
 
 
-        taskCard.addEventListener("mousedown", (e) => {
+        taskCard.addEventListener("pointerdown", (e) => {
             //if the target is the context menu button, dont show the explainer
             if (e.target.classList.contains("context-menu")) {
                 return
@@ -471,27 +471,32 @@ function setUpTaskEventListeners() {
             // console.log(explainer)
             explainer.classList.remove("hidden")
             overlay.classList.remove("norender")
-            animate(taskCard, "click-small")
+
+            
+
             taskCards.forEach((card) => {
+                card.classList.remove("clicked")
                 card.classList.remove("task-focussed")
             })
+            taskCard.classList.add("clicked")
             taskCard.classList.add("task-focussed")
         });
-        taskCard.addEventListener("mouseup", (e) => {
-            //if the target is the context menu button, dont show the explainer
+        taskCard.addEventListener("pointerup", (e) => {
+
             if (e.target.classList.contains("context-menu")) {
                 return
             }
 
+            if (taskCard.classList.contains("beingdragged")) {
+                return
+            }
+            
+            taskCards.forEach((card) => {
+                card.classList.remove("clicked")
+            })
+
             showTaskInExplainer(taskCard);
             
-        });
-
-        taskCard.addEventListener("touchstart", () => {
-            //show explainer
-            console.log("[taskCardOnTouch] clicked")
-            animate(taskCard, "click-small")
-            showTaskInExplainer(taskCard);
         });
 
         taskCard.addEventListener("dragstart", () => {
@@ -500,7 +505,7 @@ function setUpTaskEventListeners() {
 
         taskCard.addEventListener("dragend", () => {
             taskCard.classList.remove("beingdragged");
-            showTaskInExplainer(taskCard);
+            taskCard.classList.remove("clicked");
             updateTaskState(taskCard);
             calculateTaskCount()
         });
@@ -509,18 +514,17 @@ function setUpTaskEventListeners() {
     //list view
     taskRows = document.querySelectorAll(".taskRow");
     taskRows.forEach((taskRow) => {
-        taskRow.addEventListener("mousedown", () => {
-            //show explainer
+        taskRow.addEventListener("pointerdown", () => {
             console.log("[taskRowOnMouseDown] clicked")
-            animate(taskRow, "click-small")
+            //taskRow.classList.add("clicked")
         });
-        taskRow.addEventListener("mouseup", () => {
-            showTaskInExplainer(taskRow);
-        });
-        taskRow.addEventListener("touchstart", () => {
+
+        taskRow.addEventListener("pointerup", () => {
             //show explainer
             console.log("[taskRowOnTouchStart] clicked")
-            animate(taskRow, "click-small")
+            // taskRows.forEach((row) => {
+            //     row.classList.remove("clicked")
+            // })
             showTaskInExplainer(taskRow);
         });
     });
