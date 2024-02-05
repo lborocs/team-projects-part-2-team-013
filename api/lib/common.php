@@ -68,7 +68,7 @@ class RequestContext extends stdClass {
             $this->auth_level = $session->auth_level;
 
         } else {
-            $this->auth_level = 0;
+            $this->auth_level = AUTH_LEVEL_UNAUTHENTICATED;
         }
         
 
