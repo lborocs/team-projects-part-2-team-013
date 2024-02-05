@@ -369,10 +369,11 @@ function hsvToHex(h,s, v) {
 }
 
 export function generateAvatarSvg(text, colour) {
+    const fontSize = text.length === 1 ? 130 : 115;
     return `
     <svg xmlns="http://www.w3.org/2000/svg" width="256px" height="256px" viewBox="0 0 256 256" version="1.1">
         <circle fill="#${colour}" cx="128" width="256" height="256" cy="128" r="128"/>
-        <text xmlns="http://www.w3.org/2000/svg" style="color: #fff; line-height: 1; font-family: system-ui" alignment-baseline="middle" text-anchor="middle" font-size="115" font-weight="600" dy=".1em" dominant-baseline="middle" fill="#000" x="50%" y="50%">${text}</text>
+        <text xmlns="http://www.w3.org/2000/svg" style="color: #fff; line-height: 1; font-family: system-ui" alignment-baseline="middle" text-anchor="middle" font-size="${fontSize}" font-weight="600" dy=".1em" dominant-baseline="middle" fill="#000" x="50%" y="50%">${text}</text>
     </svg>`
 }
 
@@ -968,12 +969,28 @@ if (window.location.pathname !== '/') {
     setTimeout(() => {
         if (sidebar !== null) {
             sidebar.classList.add('transition');
+            //no dom queries are inside of the event listener to make global event listener ok
+            const sidebarItems = document.querySelectorAll('.sidebar-item p');
+
+            document.addEventListener('click', (e) => {
+                const sidebarVisible = sidebar.classList.contains('visible');
+                const clickSidebar = sidebar.contains(e.target);
+                const clickHamburger = hamburger.contains(e.target);
+                
+                if (window.innerWidth < 600 && sidebarVisible && !clickSidebar && !clickHamburger) {
+                    sidebar.classList.toggle('visible');
+                    container.classList.toggle('sidebar-open');
+                    sidebarItems.forEach((paragraph) => {
+                        paragraph.classList.toggle('norender');
+                    });
+                }
+            });
         }
     }, 200);
 
     ensureSettings()
 
-    if(getSetting("sidebarIsOpen") === true) {
+    if(window.innerWidth > 600 && getSetting("sidebarIsOpen") === true) {
         console.log("[init] setting sidebar to open")
         sidebar.classList.add("visible")
         container.classList.add("sidebar-open")
@@ -999,6 +1016,10 @@ if (window.location.pathname !== '/') {
             renderNotifications(items);
         }
     });
+
+    
+    
+
 
 
 }

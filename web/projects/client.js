@@ -1199,7 +1199,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
     let project = document.createElement("tr")
     project.setAttribute("tabindex", "0")
     project.classList.add("project-row")
-    let icon = isTeamLeader ? `folder_managed` : `folder`;
+    let icon = isTeamLeader ? `bookmark_manager` : `folder`;
 
     let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
 
@@ -1230,8 +1230,10 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         <td>${date}</td>
         <td>${lastAccessedFormatted}</td>
         <td>
-            <div class="icon-button no-box">
-                <i class="fa-solid fa-ellipsis"></i>
+            <div class="icon-button no-box project-actions">
+                <span class="material-symbols-rounded">
+                    more_horiz
+                </span>
             </div>
         </td>
     `
