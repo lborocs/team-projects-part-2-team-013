@@ -199,3 +199,13 @@
     transform: translateY(0%);
 }
 
+.context-menu-popover.above {
+    top: auto;
+    bottom: calc(100% + 5px);
+    transform: translateY(2%);
+}
+
+.context-menu-popover.above.visible {
+    transform: translateY(0%);
+}
+

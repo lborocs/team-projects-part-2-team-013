@@ -586,6 +586,9 @@
     margin-left: 1em;
     margin-right: 1em;
     justify-content: flex-start;
+    overflow-y: auto;
+    overflow-x: clip;
+    
 
 }
 
