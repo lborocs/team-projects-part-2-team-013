@@ -535,7 +535,7 @@
         color: var(--text-off-black, #0f0f0f);
     }
     .date {
-        font-size: 1em;
+        font-size: 0.85em;
         font-weight: 400;
         color: var(--text-off-black, #0f0f0f);
     }
