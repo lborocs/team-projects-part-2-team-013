@@ -487,6 +487,7 @@ input {
         align-items: center;
         white-space: nowrap;
         gap: 0.1rem;
+        overflow: clip;
     }
 
     .breadcrumb {
