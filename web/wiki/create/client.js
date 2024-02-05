@@ -74,7 +74,7 @@ if (postID != "") {
         else {
             document.querySelector("#placeholderTag").classList.add("norender")
             for (let i = 0; i < post.tags.length; i++) {
-                document.querySelector(".tags").innerHTML += `<div class="tag"><i class="fa-solid fa-tag"></i>${post.tags[i]}<i class="fa-solid fa-x"></i></div>`
+                document.querySelector("#listOfTags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${post.tags[i]}<i class="fa-solid fa-x"></i></div>`
             }
         }
     });
@@ -92,14 +92,13 @@ if (event.key === "Enter") {
     event.preventDefault();
     const tag = document.createElement("div");
     tagContent = input.value.trim();
-    tagContent = '<i class="fa-solid fa-tag"></i>' + tagContent;
+    console.log(tagContent);
     if (tagContent !== "") {
-        createTag(tagContent);
-        document.querySelector("#placeholderTag").classList.add("norender")
+        //createTag(tagContent);
+    document.querySelector("#placeholderTag").classList.add("norender")
     tag.className = "tag";
-    tag.innerHTML = tagContent;
-    tag.innerHTML += '<i class="fa-solid fa-x"></i>';
-    tags.appendChild(tag);
+    tag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + tagContent + '<i class="fa-solid fa-x"></i>';
+    document.querySelector("#listOfTags").appendChild(tag);
     input.value = "";
     }
 }
