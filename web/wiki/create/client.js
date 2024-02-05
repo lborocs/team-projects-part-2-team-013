@@ -69,11 +69,12 @@ if (postID != "") {
             document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[1].checked = true;
         }
         if (post.tags == null || post.tags.length == 0) {
-            document.querySelector(".tags").innerHTML += `<div class="tag">No Tags</div>`
+            //document.querySelector(".tags").innerHTML += `<div class="tag"><i class="fa-solid fa-tag"></i>No Tags</div>`
         }
         else {
+            document.querySelector("#placeholderTag").classList.add("norender")
             for (let i = 0; i < post.tags.length; i++) {
-                document.querySelector(".tags").innerHTML += `<div class="tag"><i class="fa-solid fa-tag"></i>${post.tags[i]}</div>`
+                document.querySelector(".tags").innerHTML += `<div class="tag"><i class="fa-solid fa-tag"></i>${post.tags[i]}<i class="fa-solid fa-x"></i></div>`
             }
         }
     });
@@ -90,9 +91,11 @@ input.addEventListener("keydown", function(event) {
 if (event.key === "Enter") {
     event.preventDefault();
     const tag = document.createElement("div");
-    const tagContent = input.value.trim();
+    tagContent = input.value.trim();
+    tagContent = '<i class="fa-solid fa-tag"></i>' + tagContent;
     if (tagContent !== "") {
         createTag(tagContent);
+        document.querySelector("#placeholderTag").classList.add("norender")
     tag.className = "tag";
     tag.innerHTML = tagContent;
     tag.innerHTML += '<i class="fa-solid fa-x"></i>';
@@ -105,6 +108,8 @@ if (event.key === "Enter") {
 tags.addEventListener("click", function(event) {
 if (event.target.classList.contains("fa-x")) {
     event.target.parentNode.remove();
+    if (tags.children.length == 0){
+    document.querySelector("#placeholderTag").classList.remove("norender")}
 }
 });
 
