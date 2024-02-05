@@ -664,8 +664,10 @@ async function renderAssignments(assignments) {
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
         <img src="${emp_icon}" class="avatar">`
 
-        // add child element
-        usersAssigned.appendChild(assignmentElem);
+        // add child element if usersAssigned exists
+        if (usersAssigned) {
+            usersAssigned.appendChild(assignmentElem);
+        }
     });
 }
 
@@ -991,6 +993,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     selectedState[state] = "disabled";
 
 
+
     //generating the html for the task
     //context menu button takes the majority of the html here
     task.innerHTML = `
@@ -1142,7 +1145,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 <span class="material-symbols-rounded">
                 hourglass_empty
                 </span>
-                <div class="expected-man-hours">
+                <div class="manhours">
                     ${expectedManHours} Hours
                 </div>
             </div>
@@ -1169,6 +1172,22 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     notStartedColumn.appendChild(notStartedAddButton);
 
     calculateTaskCount();
+    correctContextMenus()
+}
+
+function correctContextMenus() {
+    let tasks = document.querySelectorAll(".task");
+    tasks.forEach((task) => {
+        let contextMenu = task.querySelector(".context-menu-popover");
+        let isLast = task.nextElementSibling == null || task.nextElementSibling.classList.contains('add-task');
+        if (isLast) {
+            contextMenu.classList.add("above");
+            console.log(`[correctContextMenus] adding above`)
+        } else {
+            contextMenu.classList.remove("above");
+            console.log(`[correctContextMenus] removing above`)
+        }
+    });
 }
 
 
@@ -1200,7 +1219,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 //     return project
 // }
  
-function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, lastAccessed) {
+function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, lastAccessed, dueDate) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let project = document.createElement("tr")
@@ -1213,6 +1232,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
     console.log(`[renderProject] using icon: ${icon}`)
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
     let lastAccessedFormatted = lastAccessed ? global.howLongAgo(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
+    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : "No due date";
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -1236,6 +1256,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         </td>
         <td>${date}</td>
         <td>${lastAccessedFormatted}</td>
+        <td>${dueDateFormatted}</td>
         <td>
             <div class="icon-button no-box project-actions">
                 <span class="material-symbols-rounded">
