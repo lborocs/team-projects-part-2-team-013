@@ -33,6 +33,27 @@ const PERSONALS_METHOD_CHECKS = [
 ];
 
 
+function r_employee_me(RequestContext $ctx, string $args) {
+
+
+
+
+    if ($ctx->request_method == "GET") {
+        $employee = db_employee_fetch($ctx->session->hex_associated_user_id);
+        respond_ok(
+            array(
+                "employee"=>$employee
+            )
+        );
+    } elseif ($ctx->request_method == "PATCH") {
+        // avatar
+        // name
+        // 
+    }
+}
+
+
+
 function r_employee_personals(RequestContext $ctx, string $args) {
     $method = $ctx->request_method;
     $author = $ctx->session->hex_associated_user_id;
@@ -106,6 +127,8 @@ function r_employee_bulk(RequestContext $ctx, string $args) {
     );
 }
 
+
+register_route(new Route(["GET"], "/employee", "r_employee_manage", 1, ["REQUIRES_BODY", "URL_PATH_ARGS_LEGAL", "URL_PATH_ARGS_REQUIRED"]));
 register_route(new Route(["GET"], "/bulk", "r_employee_bulk", 1, []));
 register_route(new Route(["GET"], "/personals", "r_employee_personals", 1, []));
 register_route(new Route(
