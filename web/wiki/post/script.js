@@ -48,7 +48,7 @@ if (postData.tags == null || postData.tags.length == 0) {
 }
 else {
 for (let i = 0; i < postData.tags.length; i++) {
-    document.querySelector(".tags").innerHTML += `<div class="tag"><i class="fa-solid fa-tag"></i>${postData.tags[i]}</div>`
+    document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${postData.tags[i]}</div>`
 }
 }
  console.log(postData.author.userID);
