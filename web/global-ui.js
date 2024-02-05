@@ -1039,7 +1039,7 @@ if (window.location.pathname !== '/') {
 
 // session timeout
 setInterval(async () => {
-    let session = await getCurrentSession(false);
+    let session = await getCurrentSession(true);
     if (!session) {
         return;
     }
