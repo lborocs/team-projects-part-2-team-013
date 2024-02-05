@@ -43,6 +43,7 @@ const listAddButton = document.querySelector("#list-add")
 const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
 const taskSearchInput = document.querySelector("#task-search")
+const explainerTaskManhours = document.querySelector(".manhours-container")
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -289,6 +290,16 @@ function showTaskInExplainer(task) {
     let taskTitle = task.getAttribute("data-title");
     explainerTaskTitle.innerHTML = taskTitle;
     explainerTaskTitle.classList.remove("norender");
+    
+    let manHours = task.getAttribute("data-expectedManHours");
+    explainerTaskManhours.innerHTML = `
+    <span class="material-symbols-rounded">
+        hourglass_empty
+    </span>
+    <div class="manhours">
+        ${manHours} Manhours Set
+    </div>
+    `;
 
     let descElement = task.getAttribute("data-desc");
     explainerTaskDescription.innerHTML = descElement ? descElement : "<i>No description...</i>";
