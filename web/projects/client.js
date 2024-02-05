@@ -114,7 +114,7 @@ async function projectSwitchToOnClick(projectRow) {
     projectTitle.innerText = project.name;
     explainerTitle.innerText = project.name;
     explainerDescription.innerHTML = project.description;
-    explainerTeamLeaderName.innerText = global.employeeToName(teamLeader.firstName);
+    explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
     teamLeaderEnableElementsIfTeamLeader()
