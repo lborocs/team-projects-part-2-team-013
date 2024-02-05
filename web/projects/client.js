@@ -141,7 +141,7 @@ function setActivePane(newPane) {
 function setUpAllProjectRowEventListeners() {
     projectRows = document.querySelectorAll(".project-row")
     projectRows.forEach((projectRow, i) => {
-        projectRow.addEventListener("click", () => {
+        projectRow.addEventListener("pointerup", () => {
             projectSwitchToOnClick(projectRow);
 
         })
@@ -149,7 +149,7 @@ function setUpAllProjectRowEventListeners() {
 }
 
 function setUpProjectRowEventListeners(projectRow) {
-    projectRow.addEventListener("click", () => {
+    projectRow.addEventListener("pointerup", () => {
         projectSwitchToOnClick(projectRow);
 
     })
@@ -157,7 +157,7 @@ function setUpProjectRowEventListeners(projectRow) {
 
 views.forEach((view, i) => {
     
-    view.addEventListener("click", () => {
+    view.addEventListener("pointerup", () => {
         if (!view.classList.contains("selected")) {
             
             view.classList.add("selected")
@@ -192,12 +192,12 @@ views.forEach((view, i) => {
 
 })
 
-projectBackButton.addEventListener("click", () => {
+projectBackButton.addEventListener("pointerup", () => {
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
     renderFromBreadcrumb([null, null]);
 })
 
-explainerShowHide.addEventListener("click", () => {
+explainerShowHide.addEventListener("pointerup", () => {
     explainer.classList.toggle("hidden")
 
     if (explainer.classList.contains("hidden")) {
@@ -335,7 +335,7 @@ function setUpTaskEventListeners() {
         let contextMenuButton = taskCard.querySelector(".context-menu");
         let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
 
-        contextMenuButton.addEventListener("click", (e) => {
+        contextMenuButton.addEventListener("pointerup", (e) => {
             e.stopPropagation();
             //closes the rest of them first
             let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
@@ -353,7 +353,7 @@ function setUpTaskEventListeners() {
         let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
         contextMenuItems.forEach(item => {
             let timeoutId;
-            item.addEventListener("click", (e) => {
+            item.addEventListener("pointerup", (e) => {
                 e.stopPropagation();
                 console.log("[contextMenuItemOnClick] clicked")
 
@@ -426,7 +426,7 @@ function setUpTaskEventListeners() {
         });
 
         //closes the context menu if they click outside
-        document.addEventListener("click", (e) => {
+        document.addEventListener("pointerup", (e) => {
             if (!contextMenuButton.contains(e.target)) {
                 contextMenuPopover.classList.remove("visible");
                 contextMenuButton.classList.remove("active");
@@ -876,7 +876,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 
 
 sortArray.forEach((sortObject) => {
-    sortObject.addEventListener("click", () => {
+    sortObject.addEventListener("pointerup", () => {
         //sort out what criteria to sort by
         if (sortObject.classList.contains("selected")) {
             if(sortObject.classList.contains("asc")) {
@@ -1443,7 +1443,7 @@ async function addTask() {
     // add event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
-        option.addEventListener("click", () => {
+        option.addEventListener("pointerup", () => {
             let empID = option.getAttribute("data-id");
             assignedEmployees.add(empID);
             updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap)
@@ -1560,7 +1560,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
 const addButtonArray = [notStartedAddButton];
 
 addButtonArray.forEach((button) => {
-    button.addEventListener("click", async () => {
+    button.addEventListener("pointerup", async () => {
         if (button.id == "notstarted-add") {
             await addTask();
         } else {
@@ -1571,12 +1571,12 @@ addButtonArray.forEach((button) => {
 });
 
 let listAddTaskButton = document.getElementById("list-add");
-listAddTaskButton.addEventListener("click", async () => {
+listAddTaskButton.addEventListener("pointerup", async () => {
     await addTask();
 });
 
 let boardAddTaskButton = document.getElementById("add-task-button");
-boardAddTaskButton.addEventListener("click", async () => {
+boardAddTaskButton.addEventListener("pointerup", async () => {
     await addTask();
 });
 
@@ -1696,7 +1696,7 @@ function confirmDelete() {
 window.onload = function() {
     let deleteTaskButtons = document.querySelectorAll(".delete-button");
     deleteTaskButtons.forEach((button) => {
-        button.addEventListener("click", (event) => {
+        button.addEventListener("pointerup", (event) => {
             event.stopPropagation();
             console.log("[DeletTaskButtonsClick] delete button clicked")
             confirmDelete().then(() => {
@@ -1869,7 +1869,7 @@ async function addProject() {
     // add event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
-        option.addEventListener("click", () => {
+        option.addEventListener("pointerup", () => {
             let empID = option.getAttribute("data-id");
             teamLeader = empID;
             teamLeaderDiv.innerHTML = `
@@ -1978,7 +1978,7 @@ async function projectObjectRenderAndListeners(project) {
 }
 
 let createProjectButton = document.querySelector("#new-project");
-createProjectButton.addEventListener("click", async () => {
+createProjectButton.addEventListener("pointerup", async () => {
         console.log("[addProjectButtonClick] add project button clicked")
         await addProject();
 
@@ -2104,7 +2104,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
 }
 
 
-document.querySelector(".edit-button").addEventListener("click", async () => {
+document.querySelector(".edit-button").addEventListener("pointerup", async () => {
     let taskID = explainerTask.getAttribute("task-id");
     let taskElem = document.getElementById(taskID);
     if (taskElem == null) {
@@ -2136,12 +2136,12 @@ document.getElementById("task-search").addEventListener("keydown", (e) => {
 })
 
 
-document.getElementById("delete-project-search").addEventListener("click", () => {
+document.getElementById("delete-project-search").addEventListener("pointerup", () => {
     projectSearchInput.value = "";
     searchAndRenderProjects()
 })
 
-document.getElementById("delete-task-search").addEventListener("click", () => {
+document.getElementById("delete-task-search").addEventListener("pointerup", () => {
     taskSearchInput.value = "";
     searchAndRenderTasks()
 })
