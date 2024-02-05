@@ -16,12 +16,12 @@
     --overdue-red-bg: rgb(255,235,235);
     --add-task-border: rgb(211,211,211);
 
-    --not-started-status-cell: rgba(221, 221, 221, 0.7);
-    --not-started-status-cell-hover: rgba(221, 221, 221, 1);
-    --not-started-bg: rgba(221, 221, 221, 0.7);
-    --not-started-title-bg: rgb(191, 191, 191);
+    --not-started-status-cell: rgba(240, 240, 240 , 0.7);
+    --not-started-status-cell-hover: rgba(240, 240, 240, 1);
+    --not-started-bg: rgba(240, 240, 240, 0.7);
+    --not-started-title-bg: rgb(222, 222 ,222);
     --not-started-title-clr: rgb(33, 29, 26);
-    --not-started-add-task-hover: rgba(0, 0, 0, 0.47);
+    --not-started-add-task-hover: rgba(0, 0, 0, 0.1);
 
     --in-progress-status-cell: rgba(188,219,245,0.7);
     --in-progress-status-cell-hover: rgba(188,219,245,1);

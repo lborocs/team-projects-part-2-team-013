@@ -1,6 +1,5 @@
-import * as global from "../global-ui.js"
-import { animate } from "../global-ui.js"
-import { getEmployeesById } from '../global-ui.js';
+import * as global from "../global-ui.js";
+import { animate, getEmployeesById } from "../global-ui.js";
 
 const RENDER_COLUMN = 1;
 const RENDER_LIST = 2;
@@ -665,8 +664,10 @@ async function renderAssignments(assignments) {
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
         <img src="${emp_icon}" class="avatar">`
 
-        // add child element
-        usersAssigned.appendChild(assignmentElem);
+        // add child element if usersAssigned exists
+        if (usersAssigned) {
+            usersAssigned.appendChild(assignmentElem);
+        }
     });
 }
 
@@ -992,6 +993,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     selectedState[state] = "disabled";
 
 
+
     //generating the html for the task
     //context menu button takes the majority of the html here
     task.innerHTML = `
@@ -1131,7 +1133,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     if (date !== "") {
         task.innerHTML += `
 
-        <div class="date-and-users">
+        <div class="task-info">
             <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
                 <p class="tooltiptext">${dateTooltip}</p>
                 ${statusIcon}
@@ -1139,8 +1141,13 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     ${date}
                 </div>
             </div>
-            
-            <div class="users-assigned">
+            <div class="manhours-container status-container">
+                <span class="material-symbols-rounded">
+                hourglass_empty
+                </span>
+                <div class="expected-man-hours">
+                    ${expectedManHours} Hours
+                </div>
             </div>
         </div>
     `;
@@ -1165,6 +1172,22 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     notStartedColumn.appendChild(notStartedAddButton);
 
     calculateTaskCount();
+    correctContextMenus()
+}
+
+function correctContextMenus() {
+    let tasks = document.querySelectorAll(".task");
+    tasks.forEach((task) => {
+        let contextMenu = task.querySelector(".context-menu-popover");
+        let isLast = task.nextElementSibling == null || task.nextElementSibling.classList.contains('add-task');
+        if (isLast) {
+            contextMenu.classList.add("above");
+            console.log(`[correctContextMenus] adding above`)
+        } else {
+            contextMenu.classList.remove("above");
+            console.log(`[correctContextMenus] removing above`)
+        }
+    });
 }
 
 
