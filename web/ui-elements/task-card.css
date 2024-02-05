@@ -215,7 +215,7 @@
     outline: solid 2px #388bffaa;
 }
 
-.expected-man-hours {
+.manhours {
     font-size: 0.85em;
     text-wrap: nowrap;
     font-weight: 600;
