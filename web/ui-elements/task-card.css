@@ -101,7 +101,7 @@
     flex-direction: row;
     justify-content: flex-start;
     gap: 0.5em;
-
+    
     & span {
         color: #2f2f2f;
     }

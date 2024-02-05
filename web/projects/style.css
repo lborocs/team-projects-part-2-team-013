@@ -424,8 +424,7 @@
     box-shadow: 0 4px 4px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
     width: 100%;
     height: calc(100% - 2em);
-    overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
     flex: 0 0 330px;
     position: sticky;
     top: 16px;
@@ -434,11 +433,13 @@
         font-size: 1.5em;
         font-weight: 700;
         color: var(--text-off-black, #0f0f0f);
+        overflow-wrap: anywhere;
     }
     .description {
         font-size: 1em;
         font-weight: 500;
         color: var(--text-off-black, #0f0f0f);
+        overflow-wrap: anywhere;
     }
     .team-leader {
         font-size: 1em;
@@ -449,7 +450,7 @@
         flex-direction: row;
         gap: 0.5em;
         align-items: center;
-        
+        overflow-wrap: anywhere;
     }
     .divider {
         width: 100%;
@@ -458,6 +459,10 @@
         margin-bottom: 0em;
         background-color: var(--text-off-black, #0f0f0f);
         opacity: 0.2;
+    }
+
+    #project-description {
+        overflow-wrap: anywhere;
     }
 }
 
