@@ -1145,7 +1145,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 <span class="material-symbols-rounded">
                 hourglass_empty
                 </span>
-                <div class="expected-man-hours">
+                <div class="manhours">
                     ${expectedManHours} Hours
                 </div>
             </div>
