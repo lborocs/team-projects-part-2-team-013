@@ -1064,7 +1064,7 @@ setInterval(async () => {
             if (diff < 0) {
                 console.log("[sessionTimeout] session has expired, redirecting to login");
                 let after_login = window.location.pathname + window.location.hash
-                window.location.href = `/#${after_login}?message=sessionexpired`;
+                window.location.href = `/#${after_login}&sessionexpired`;
             }
 
         }
