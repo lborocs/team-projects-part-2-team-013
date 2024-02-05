@@ -98,7 +98,7 @@ function contextual_run() {
 
     // authentication checks
     if ($ctx->auth_level < $route->required_auth_level) {
-        if ($ctx->auth_level == 0) {
+        if ($ctx->auth_level == AUTH_LEVEL_UNAUTHENTICATED) {
             // 401 Unauthorized for missing auth
             respond_not_authenticated();
         } else {
