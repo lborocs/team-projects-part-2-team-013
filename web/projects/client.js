@@ -1107,7 +1107,10 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let statusIcon;
     let overdueContainerClass = "";
     let dateTooltip;
-    if (timestamp < dateToday && state !== 2) {
+    if (timestamp === null) {
+        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
+        dateTooltip = `No due date set`;
+    } else if (timestamp < dateToday && state !== 2) {
         // tasks which are overdue
         statusIcon = `<span class="material-symbols-rounded">calendar_clock</span>`;
         overdueContainerClass = "overdue";
