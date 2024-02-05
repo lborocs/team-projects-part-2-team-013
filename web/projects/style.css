@@ -1413,3 +1413,11 @@
     outline: 1px solid #77b2eb;
     box-shadow: 0 0 0px 2px #a0bfff;
 }
+
+.expected-man-hours {
+    font-size: 0.85em;
+    text-wrap: nowrap;
+    font-weight: 500;
+    color: #0f0f0faa;
+    line-height: 24px;
+    }
