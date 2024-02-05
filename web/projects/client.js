@@ -1130,7 +1130,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     if (date !== "") {
         task.innerHTML += `
 
-        <div class="date-and-manhours">
+        <div class="task-info">
             <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
                 <p class="tooltiptext">${dateTooltip}</p>
                 ${statusIcon}
@@ -1138,11 +1138,11 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     ${date}
                 </div>
             </div>
-            <div.manhours-container>
+            <div class="manhours-container status-container">
                 <span class="material-symbols-rounded">
                 hourglass_empty
                 </span>
-                <div class="expected-man-hours status-container">
+                <div class="expected-man-hours">
                     ${expectedManHours}
                 </div>
             </div>
