@@ -1196,7 +1196,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 //     return project
 // }
  
-function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, lastAccessed) {
+function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, lastAccessed, dueDate) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let project = document.createElement("tr")
@@ -1209,6 +1209,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
     console.log(`[renderProject] using icon: ${icon}`)
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
     let lastAccessedFormatted = lastAccessed ? global.howLongAgo(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
+    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : "No due date";
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -1232,6 +1233,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         </td>
         <td>${date}</td>
         <td>${lastAccessedFormatted}</td>
+        <td>${dueDateFormatted}</td>
         <td>
             <div class="icon-button no-box project-actions">
                 <span class="material-symbols-rounded">
