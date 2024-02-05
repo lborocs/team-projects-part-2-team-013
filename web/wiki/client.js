@@ -105,7 +105,7 @@ function renderPost(postID, title, author, isTechnical, tags) {
             <div class="title">${title}</div>
             <div class="author">
                 <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
-                ${global.bothNamesToString(author.firstName, author.lastName)}
+                ${global.employeeToName(author)}
             </div>
             <div class="tags">
                 <div class="tag" name="${tag1}"><span class="material-symbols-rounded">sell</span>

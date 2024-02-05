@@ -114,7 +114,7 @@ async function projectSwitchToOnClick(projectRow) {
     projectTitle.innerText = project.name;
     explainerTitle.innerText = project.name;
     explainerDescription.innerHTML = project.description;
-    explainerTeamLeaderName.innerText = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
+    explainerTeamLeaderName.innerText = global.employeeToName(teamLeader.firstName);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
     teamLeaderEnableElementsIfTeamLeader()
@@ -645,7 +645,7 @@ async function renderAssignments(assignments) {
     assignments.forEach((assignment) => {
         // emp first
         let emp = employees.get(assignment.employee.empID);
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
 
         // find task html element
@@ -1201,7 +1201,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
     project.classList.add("project-row")
     let icon = isTeamLeader ? `bookmark_manager` : `folder`;
 
-    let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
+    let teamLeaderName = global.employeeToName(teamLeader);
 
     console.log(`[renderProject] using icon: ${icon}`)
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
@@ -1391,7 +1391,7 @@ async function addTask() {
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let avatar = global.employeeAvatarOrFallback(emp);
         let option = document.createElement("div");
         option.classList.add("name-card");
@@ -1517,7 +1517,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
 
     assignedSet.forEach((empID) => {
         let emp = employeeMap.get(empID);
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
         let listItem = document.createElement("div");
         listItem.classList.add("employee-list-item");
@@ -1817,7 +1817,7 @@ async function addProject() {
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let avatar = global.employeeAvatarOrFallback(emp);
         let option = document.createElement("div");
         option.classList.add("name-card");
@@ -1847,7 +1847,7 @@ async function addProject() {
             teamLeaderDiv.innerHTML = `
                 <div class="name-card">
                     <img src="${global.employeeAvatarOrFallback(employeeMap.get(empID))}" class="avatar">
-                    <span>${global.bothNamesToString(employeeMap.get(empID).firstName, employeeMap.get(empID).lastName)}</span>
+                    <span>${global.employeeToName(employeeMap.get(empID))}</span>
                 </div>
             `;
         })
@@ -1940,7 +1940,7 @@ async function projectObjectRenderAndListeners(project) {
     let teamLeader = emps.get(project.teamLeader.empID);
 
 
-    let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
+    let teamLeaderName = global.employeeToName(teamLeader);
     let element = renderProject(project.projID, project.name, project.description, teamLeader, isTeamLeader, project.createdAt, project.lastAccessed);
 
     setUpProjectRowEventListeners(element);
@@ -2017,7 +2017,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
         employeeMap.set(emp.empID, emp);
     });
     employeeList.forEach((emp) => {
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let option = document.createElement("option");
         option.value = emp.empID;
         option.innerText = emp_name;
@@ -2068,7 +2068,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
     addButton.addEventListener('click', (event) => {
         teamLeader = empList.value;
         let emp = employeeMap.get(teamLeader);
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
         //teamLeaderElem.innerHTML = `<img src="${emp_icon}" class="avatar">${emp_name}`
     });

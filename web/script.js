@@ -28,7 +28,7 @@ async function login() {
 
             let emp = session.employee;
 
-            console.log(`[login] logged in successfully as ${emp.id} (${global.bothNamesToString(emp.firstName, emp.lastName)}) ${session.id} - redirecting`);
+            console.log(`[login] logged in successfully as ${emp.id} (${global.employeeToName(emp)}) ${session.id} - redirecting`);
     
             if (window.location.hash !== "") {
                 window.location.href = window.location.hash.substring(1);

@@ -398,10 +398,13 @@ function nameToAvatar(name) {
 
 
 export function employeeAvatarOrFallback(employee) {
-    if (employee.avatar) {
+
+    if (employee.deleted) {
+        return nameToAvatar("Deleted User");
+    } else if (employee.avatar) {
         return assetToUrl(ASSET_TYPE_EMPLOYEE, employee.empID, employee.avatar.assetID, employee.avatar.contentType);
     } else {
-        return nameToAvatar(bothNamesToString(employee.firstName, employee.lastName));
+        return nameToAvatar(employeeToName(employee.firstName, employee.lastName));
     }
 }
 
@@ -409,6 +412,20 @@ export function assetToUrl(type, bucketID, assetID, contentType) {
 
     return `https://usercontent.013.team/${type}/${bucketID}/${assetID}.${contentType.split("/")[1]}`;
 }
+
+
+export function employeeToName(employee) {
+    if (employee.deleted) {
+        return "Deleted User";
+    }
+
+    if (!employee) {
+        return "Unknown User";
+    }
+
+    return bothNamesToString(employee.firstName, employee.lastName);
+}
+
 
 /**
  * Combines the first name and the last name into a single string.
@@ -418,7 +435,7 @@ export function assetToUrl(type, bucketID, assetID, contentType) {
  * @param {string} sname - The last name.
  * @returns {string} The combined string of the first name and the last name.
  */
-export function bothNamesToString(fname, sname) {
+function bothNamesToString(fname, sname) {
     if (fname == undefined) {
         return sname
     } else {
@@ -587,7 +604,7 @@ export async function renderNotifications(notifications) {
 
         //notification author
         let empID = notification.author.empID;
-        let name = bothNamesToString(employees.get(empID).firstName, employees.get(empID).lastName);
+        let name = employeeToName(employees.get(empID));
         let avatar = employeeAvatarOrFallback(employees.get(empID));
 
         //notification card
@@ -864,7 +881,7 @@ function fillCurrentUserInfo() {
         let employee = session.employee;
 
         let emp_icon = employeeAvatarOrFallback(employee);
-        let emp_name = bothNamesToString(employee.firstName, employee.lastName);
+        let emp_name = employeeToName(employee);
 
         let icon = document.createElement("img");
         icon.src=emp_icon;
