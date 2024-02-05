@@ -20,6 +20,7 @@ export const topbarItems = document.querySelectorAll(".item")
 
 //global variables
 export var notifications = []
+export var GLOBAL_LAST_ACTIVE = new Date();
 
 //sidebar state is either "open" or "closed", default is open
 export var sidebarState = localStorage.getItem("sidebarState") || "open";
@@ -404,7 +405,7 @@ export function employeeAvatarOrFallback(employee) {
     } else if (employee.avatar) {
         return assetToUrl(ASSET_TYPE_EMPLOYEE, employee.empID, employee.avatar.assetID, employee.avatar.contentType);
     } else {
-        return nameToAvatar(employeeToName(employee.firstName, employee.lastName));
+        return nameToAvatar(employeeToName(employee));
     }
 }
 
@@ -1033,10 +1034,41 @@ if (window.location.pathname !== '/') {
             renderNotifications(items);
         }
     });
-
-    
-    
-
-
-
 }
+
+
+// session timeout
+setInterval(async () => {
+    let session = await getCurrentSession(false);
+    if (!session) {
+        return;
+    }
+
+    let expires = new Date(session.expires);
+    let now = new Date((new Date()).toUTCString());
+
+    let diff = expires - now;
+    let lastActive = now - new Date(GLOBAL_LAST_ACTIVE.toUTCString());
+    console.log(`[sessionTimeout] ${diff}ms remaining on session`);
+    console.log(`[sessionTimeout] user last active ${lastActive}ms ago`);
+
+    if (diff < 10 * 60 * 1000) {
+
+        if (lastActive < 15 * 60 * 1000) {
+
+            console.log("[sessionTimeout] session expires in under 10 minutes, renewing");
+            await renewCurrentSession();
+        } else {
+            console.log("[sessionTimeout] user has not been active in the last 15 minutes, wont renew session");
+        }
+    }
+}, 60 * 1000);
+
+// set last active time
+document.addEventListener("mousemove", () => {
+    GLOBAL_LAST_ACTIVE = new Date();
+});
+document.addEventListener("keydown", () => {
+    GLOBAL_LAST_ACTIVE = new Date();
+});
+
