@@ -3,6 +3,18 @@ Written/designed by aidan F223129
 
 ## employee.php
 
+- [ ] **/employee/employee.php/employee/:EMP_ID:** (replace emp_id with @me for self)
+  - [x] GET (get employee)
+  - [ ] PATCH (edit employee)
+    ```jsonc
+      {
+        "firstname":"new fname",
+        "lastName": "new lname",
+        "avatar":"base64 avatar bytes",
+        "isManager":0, // manager only
+      }
+
+
 - [x] **/employee/employee.php/bulk?ids=id1,id2** (no query params defaults to the logged in user)
   - GET (get all employees)
     
