@@ -485,7 +485,6 @@ function setUpTaskEventListeners() {
             }
 
             if (taskCard.classList.contains("beingdragged")) {
-                taskCard.classList.remove("task-focussed")
                 return
             }
 
@@ -509,6 +508,11 @@ function setUpTaskEventListeners() {
         taskCard.addEventListener("dragend", () => {
             taskCard.classList.remove("beingdragged");
             taskCard.classList.remove("clicked");
+
+            if (taskCard.getAttribute("id") !== explainerTask.getAttribute("task-id")) {
+                taskCard.classList.remove("task-focussed");
+            }
+            
             updateTaskState(taskCard);
             calculateTaskCount()
         });
