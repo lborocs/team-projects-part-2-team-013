@@ -1414,4 +1414,13 @@
     box-shadow: 0 0 0px 2px #a0bfff;
 }
 
+.manhours-row{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 0.2em;
 
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text-off-black, #0f0f0f);
+}
