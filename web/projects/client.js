@@ -1444,7 +1444,7 @@ async function addTask() {
                 <div class="text-button" id="discard-button">
                     <div class="button-text">
                         Discard
-                    </div>  
+                    </div>
                 </div>
                 <div class="text-button blue" id="create-button">
                     <div class="button-text">
@@ -2255,11 +2255,12 @@ async function searchAndRenderProjects(search) {
 }
 
 
-async function searchTasks(search) {
+async function searchTasks(query) {
     let tasks = globalTasksList;
     let filteredTasks = [];
+    let search = query.toLowerCase();
     tasks.forEach((task) => {
-        let title = task.title;
+        let title = task.title.toLowerCase();
         let desc = task.description;
         let dueDate = task.dueDate;
         dueDate = dueDate ? global.formatDateFull(new Date(dueDate)) : null; //gets it into searchable format
