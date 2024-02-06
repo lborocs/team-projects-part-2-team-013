@@ -512,7 +512,7 @@ function setUpTaskEventListeners() {
             if (taskCard.getAttribute("id") !== explainerTask.getAttribute("task-id")) {
                 taskCard.classList.remove("task-focussed");
             }
-            
+
             updateTaskState(taskCard);
             calculateTaskCount()
         });
@@ -1209,10 +1209,14 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
 function correctContextMenus() {
     let tasks = document.querySelectorAll(".task");
+    let taskGrid = document.querySelector(".taskgrid");
+    let taskGridRect = taskGrid.getBoundingClientRect();
+
     tasks.forEach((task) => {
         let contextMenu = task.querySelector(".context-menu-popover");
-        let isLast = task.nextElementSibling == null || task.nextElementSibling.classList.contains('add-task');
-        if (isLast) {
+        let rect = contextMenu.getBoundingClientRect();
+        let availableSpace = taskGridRect.bottom - rect.top;
+        if (rect.height > availableSpace) {
             contextMenu.classList.add("above");
             console.log(`[correctContextMenus] adding above`)
         } else {
