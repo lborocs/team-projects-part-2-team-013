@@ -627,7 +627,7 @@ async function renderTasks(tasks) {
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
     console.log("[taskObjectRenderAll] rendering task object "+task.title)
-    let date = task.dueDate ? global.formatDate(new Date(task.dueDate)) : "Due date not set";
+    let date = task.dueDate ? global.formatDate(new Date(task.dueDate)) : "";
     let desc = task.description
     let title = task.title || "No Title";
     let createdBy = task.createdBy || "Unknown";
@@ -1128,6 +1128,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let overdueContainerClass = "";
     let dateTooltip;
     if (timestamp === null) {
+
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         dateTooltip = `No due date set`;
     } else if (timestamp < dateToday && state !== 2) {
@@ -1156,18 +1157,27 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     } else {
         manHoursTooltip = `${expectedManHours} expected hours`;
     }
-
+    let taskInfo = document.createElement("div");
+    taskInfo.classList.add("task-info");
+    task.appendChild(taskInfo);
+    
     if (date !== "") {
-        task.innerHTML += `
+        taskInfo.innerHTML += `
 
-        <div class="task-info">
-            <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
-                <p class="tooltiptext">${dateTooltip}</p>
-                ${statusIcon}
-                <div class="date" id="task-date">
-                    ${date}
+                <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
+                    <p class="tooltiptext">${dateTooltip}</p>
+                    ${statusIcon}
+                    <div class="date" id="task-date">
+                        ${date}
+                    </div>
                 </div>
-            </div>
+        `;
+    };
+
+    if (expectedManHours !== 0) {
+        
+        taskInfo.innerHTML += `
+
             <div class="tooltip tooltip-under manhours-container status-container">
                 <p class="tooltiptext">${manHoursTooltip}</p>
                 <span class="material-symbols-rounded">
@@ -1177,12 +1187,10 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     ${expectedManHours} Hours
                 </div>
             </div>
-        </div>
-    `;
-    }
+        `;
+    };
 
 
-    
     
     //check if state is 0,1,2 and do separate things for each. otherwise, error
     if (state == 0) {
