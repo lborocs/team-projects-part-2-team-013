@@ -290,7 +290,8 @@ const TABLE_ASSETS = new Table(
     [], // no url specifiers
     [
         _ASSETID,
-        new Column("ownerID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("assetID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("bucketID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("assetType", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("contentType", is_primary_key:false, type:"string", is_nullable:false, is_editable:false, is_server_generated:true),
     ],

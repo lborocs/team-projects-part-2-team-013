@@ -71,7 +71,7 @@ class Asset {
             $row["assetType"],
             $row["bucketID"],
             $row["assetID"],
-            $row["content_type"],
+            $row["contentType"],
         );
     }
 
