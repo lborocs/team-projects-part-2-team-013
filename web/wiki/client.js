@@ -91,31 +91,27 @@ function setUpPostsEventListeners() {
  * @param {Array} tags 
  */
 function renderPost(postID, title, author, isTechnical, tags) {
-    if (tags == null) {
-        tags = ["Tag 1", "Tag 2"];
-    }
-
-    let tag1 = tags[0];
-    let tag2 = tags[1];
     
     let post = document.createElement("div")
     post.classList.add("post")
-    post.innerHTML = `
-        <div class="post-info">
-            <div class="title">${title}</div>
-            <div class="author">
-                <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
-                ${global.employeeToName(author)}
-            </div>
-            <div class="tags">
-                <div class="tag" name="${tag1}"><span class="material-symbols-rounded">sell</span>
-                    ${tag1}
-                </div>
-                <div class="tag" name="${tag2}"><span class="material-symbols-rounded">sell</span>
-                    ${tag2}
-                </div>
-                
-            </div>
+    let postHTML = `
+    <div class="post-info">
+        <div class="title">${title}</div>
+        <div class="author">
+            <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
+            ${global.employeeToName(author)}
+        </div>
+        <div class="tags">`;
+
+    if (tags != null) {
+        tags.forEach((tag) => {
+            postHTML += `<div class="tag" name="${tag}"><span class="material-symbols-rounded">sell</span>${tag}</div>`;
+        });
+    } else {
+        postHTML += `<div class="tag" name="NoTags">No Tags</div>`;
+    }
+
+    postHTML += `</div>
         </div>
         <div class="post-icons manager-only">
             <div class="icon-button no-box" id="edit">
@@ -135,11 +131,13 @@ function renderPost(postID, title, author, isTechnical, tags) {
         </div>
     `;
 
-    post.setAttribute("data-postID", postID)
-    post.setAttribute("data-isTechnical", isTechnical)
+    post.innerHTML = postHTML;
 
-    postsContainer.appendChild(post)
-}
+        post.setAttribute("data-postID", postID)
+        post.setAttribute("data-isTechnical", isTechnical)
+
+        postsContainer.appendChild(post)
+    }
 
 function updatePosts() {
     console.log("updating posts")
