@@ -2214,7 +2214,7 @@ projectSearchInput.addEventListener("keydown", (e) => {
     })
 })
 
-document.getElementById("task-search").addEventListener("keydown", (e) => {
+document.getElementById("task-search").addEventListener("input", (e) => {
     sleep(10).then(() => {
         searchAndRenderTasks()
     })
