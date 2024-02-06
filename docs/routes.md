@@ -5,7 +5,7 @@ Written/designed by aidan F223129
 
 - [ ] **/employee/employee.php/employee/:EMP_ID:** (replace emp_id with @me for self)
   - [x] GET (get employee)
-  - [ ] PATCH (edit employee)
+  - [x] PATCH (edit employee)
     ```jsonc
       {
         "firstname":"new fname",
