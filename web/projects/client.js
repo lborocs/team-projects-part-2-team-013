@@ -1285,7 +1285,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         <td>${date}</td>
         <td>
             <div class="tooltip tooltip-under">
-                <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT' })}</p>
+                <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
                 ${lastAccessedFormatted}
             </div>
         </td>
@@ -1336,7 +1336,7 @@ function formatLastAccessed(date) {
     } else if (minutes > 0) {
         return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     } else {
-        return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
+        return `Now`;
     }
 }
 async function addTask() {
