@@ -1348,22 +1348,28 @@ async function addTask() {
                 
                 </div>
             </div>
-            
-            <div class="number-picker" id="expected-man-hours">
-                <div class = "stepper decrement" tabindex="0">
-                    <span class="material-symbols-rounded">
-                        remove
-                    </span>
+            <div class="manhours-row">
+                <div class="manhours-label">
+                    Expected Manhours:
                 </div>
 
-                <input type="number" class="number-input" value="1" min="0" tabindex="0">
+                <div class="number-picker" id="expected-man-hours">
+                    <div class = "stepper decrement" tabindex="0">
+                        <span class="material-symbols-rounded">
+                            remove
+                        </span>
+                    </div>
 
-                <div class="stepper increment" tabindex="0">
-                    <span class="material-symbols-rounded">
-                        add
-                    </span>
+                    <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+                    <div class="stepper increment" tabindex="0">
+                        <span class="material-symbols-rounded">
+                            add
+                        </span>
+                    </div>
                 </div>
             </div>
+            
             <div class="date-picker" id="due-date">
                 <div class="date-picker-icon">
                     <span class="material-symbols-rounded">event</span>
