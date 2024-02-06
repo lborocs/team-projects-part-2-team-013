@@ -1145,6 +1145,15 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         dateTooltip = `Finished ${finishedDaysAgo} day${finishedDaysAgo !== 1 ? 's' : ''} ago`;
     }
 
+    let manHoursTooltip;
+    if (expectedManHours === null || expectedManHours === 0) {
+        manHoursTooltip = "No man hours set";
+    } else if (expectedManHours === 1) {
+        manHoursTooltip = "1 expected hour";
+    } else {
+        manHoursTooltip = `${expectedManHours} expected hours`;
+    }
+
     if (date !== "") {
         task.innerHTML += `
 
@@ -1156,7 +1165,8 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     ${date}
                 </div>
             </div>
-            <div class="manhours-container status-container">
+            <div class="tooltip tooltip-under manhours-container status-container">
+                <p class="tooltiptext">${manHoursTooltip}</p>
                 <span class="material-symbols-rounded">
                 hourglass_empty
                 </span>
