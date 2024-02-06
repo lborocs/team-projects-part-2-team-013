@@ -690,7 +690,7 @@ function db_employee_new(
     $bin_e_id = generate_uuid();
 
     $query = $db->prepare(
-        "INSERT INTO `EMPLOYEES` VALUES (?, ?, ?, '0', NULL)"
+        "INSERT INTO `EMPLOYEES` VALUES (?, ?, ?, '0', NULL, '0')"
     );
 
     $query->bind_param(

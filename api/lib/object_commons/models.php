@@ -317,6 +317,7 @@ CONST TABLE_EMPLOYEES = new Table(
             "avatar", is_primary_key:false, type:"binary", is_nullable:true, is_editable:true, is_server_generated:false,
             constraints:[new ForeignKeyConstraint(TABLE_ASSETS, _ASSETID)]
         ),
+        new Column("employeeDeleted", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
     "employee",
     null
