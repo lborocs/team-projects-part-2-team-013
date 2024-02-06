@@ -467,10 +467,7 @@ function setUpTaskEventListeners() {
             if (e.target.classList.contains("context-menu")) {
                 return
             }
-            //show explainer
-            // console.log(explainer)
-            explainer.classList.remove("hidden")
-            overlay.classList.remove("norender")
+            
 
             
 
@@ -490,6 +487,11 @@ function setUpTaskEventListeners() {
             if (taskCard.classList.contains("beingdragged")) {
                 return
             }
+
+            //show explainer
+            // console.log(explainer)
+            explainer.classList.remove("hidden")
+            overlay.classList.remove("norender")
             
             taskCards.forEach((card) => {
                 card.classList.remove("clicked")
