@@ -80,8 +80,18 @@ global.renewCurrentSession().then((session) => {
     }
 });
 
-if (window.location.hash.split("&")[1] === "sessionexpired") {
-    setLoginStatus("Your session expired and you have been logged out");
-    document.getElementById("status").classList.remove("hidden");
-    document.getElementById("status").classList.add("status-incorrect");
+
+const schema = window.location.hash.substring(1).split("&")[1];
+if (schema) {
+    const msg = {
+        "sessionexpired": "Your session expired and you have been logged out",
+        "authrequired": "You must be logged in to access that page"
+    }[schema]
+
+    if (msg) {
+        setLoginStatus(msg);
+        document.getElementById("status").classList.remove("hidden");
+        document.getElementById("status").classList.add("status-incorrect");  
+    }
+
 }
