@@ -485,6 +485,7 @@ function setUpTaskEventListeners() {
             }
 
             if (taskCard.classList.contains("beingdragged")) {
+                taskCard.classList.remove("active")
                 return
             }
 
