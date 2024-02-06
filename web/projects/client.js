@@ -485,7 +485,7 @@ function setUpTaskEventListeners() {
             }
 
             if (taskCard.classList.contains("beingdragged")) {
-                taskCard.classList.remove("active")
+                taskCard.classList.remove("task-focussed")
                 return
             }
 
