@@ -1382,7 +1382,7 @@ async function addTask() {
                     </div>
                 </div>
             </div>
-            
+
             <div class="date-picker" id="due-date">
                 <div class="date-picker-icon">
                     <span class="material-symbols-rounded">event</span>
