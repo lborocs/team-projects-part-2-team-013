@@ -58,9 +58,9 @@ Written/designed by aidan F223129
     }
     ```
 
-- [ ] **/employee/employee.php/personal/:employee_id:/:personal_id:**
+- [x] **/employee/employee.php/personal/:employee_id:/:personal_id:**
   - [x] GET (Get individual todo list item info)
-  - [ ] POST (Create new todo list item)
+  - [x] POST (Create new todo list item)
   - [x] PATCH (Edit users todolist item)
   - [x] DELETE (Delete from todolist)
 

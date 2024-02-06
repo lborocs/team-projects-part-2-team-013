@@ -20,6 +20,7 @@ const OBJECT_GENERIC_FETCH_FUNCS = [
     "`TASKS`"=>"_fetch_task",
     "`POSTS`"=>"_fetch_post",
     "`PROJECTS`"=>"_fetch_project",
+    "`EMPLOYEE_PERSONALS`"=>"_fetch_personal",
 ];
 
 const OBJECT_GENERIC_EDIT_FUNCS = [
@@ -311,49 +312,6 @@ function _fetch_project(RequestContext $ctx, array $url_specifiers) {
     respond_ok($ctx->project);
 }
 
-// personals
 
-function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) {
-    $author_id = $ctx->session->hex_associated_user_id;
-
-    $itemID = generate_uuid();
-    $assignedTo = hex2bin($author_id);
-    $state = $body["personalState"];
-    $dueDate = $body["personalDueDate"] ?? null;
-    $title = $body["personalTitle"];
-    $content = $body["personalContent"] ?? null;
-
-    if (db_generic_new(
-        TABLE_PERSONALS ,
-        [
-            $itemID,
-            $assignedTo,
-            $state,
-            $dueDate,
-            $title,
-            $content
-        ],
-        "ssiiss"
-    )) {
-
-        $body["itemID"] = $itemID;
-        $body["personalAssignedTo"] = $assignedTo;
-
-        respond_ok(parse_database_row($body, TABLE_PERSONALS));
-    } else {
-        respond_internal_error(ERROR_DB_INSERTION_FAILED);
-    }
-}
-
-
-function _delete_personal(RequestContext $ctx, array $url_specifiers) {
-    db_personal_delete($url_specifiers[1]);
-    respond_no_content();
-}
-
-function _fetch_personal(RequestContext $ctx, array $url_specifiers) {
-
-    respond_ok($ctx->personal);
-}
 
 ?>
