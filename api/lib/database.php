@@ -238,7 +238,7 @@ function db_generic_edit(Table $table, array $values, array $keys) {
 
         $col = $table->get_column($u_field);
 
-        if ($col->type == "binary") {
+        if ($col->type == "binary" && $u_value !== null) {
             $u_value = hex2bin($u_value);
         }
         
@@ -324,6 +324,31 @@ function db_asset_new(
 
     return $res;
 }
+
+function db_asset_fetch(string $asset_id) {
+    global $db;
+
+    $bin_a_id = hex2bin($asset_id);
+
+    $query = $db->prepare(
+        "SELECT * FROM `ASSETS` WHERE assetID = ?"
+    );
+    $query->bind_param("s", $bin_a_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    
+    if ($res->num_rows == 0) {
+        return false;
+    }
+
+    $row = $res->fetch_assoc();
+    return parse_database_row($row, TABLE_ASSETS);
+}
+
 
 // posts
 
