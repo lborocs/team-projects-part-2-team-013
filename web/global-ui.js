@@ -275,7 +275,7 @@ export function formatDateFull(date) {
         ordinal = "rd";
     }
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",  "November", "December"];
-    let formattedDate = `${day}<sup>${ordinal}</sup> ${months[month]} ${year}`;
+    let formattedDate = `${day}<sup>${ordinal} </sup> ${months[month]} ${year}`;
     return formattedDate;
 }
 
