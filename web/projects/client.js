@@ -1184,29 +1184,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         `;
     };
 
-    function formatDateWithOrdinals(date) {
-        const day = parseInt(date.split(" ")[0]);
-        const ordinal = getOrdinalSuffix(day);
-        const monthYear = date.split(" ")[1];
-        return `${day}<sup>${ordinal}</sup> ${monthYear}`;
-    }
-
-    function getOrdinalSuffix(day) {
-        if (day >= 11 && day <= 13) {
-            return "th";
-        }
-        switch (day % 10) {
-            case 1:
-                return "st";
-            case 2:
-                return "nd";
-            case 3:
-                return "rd";
-            default:
-                return "th";
-        }
-    }
-
     if (expectedManHours !== 0) {
         
         taskInfo.innerHTML += `
@@ -1255,6 +1232,29 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
     calculateTaskCount();
     correctContextMenus()
+}
+
+function formatDateWithOrdinals(date) {
+    const day = parseInt(date.split(" ")[0]);
+    const ordinal = getOrdinalSuffix(day);
+    const monthYear = date.split(" ")[1];
+    return `${day}<sup>${ordinal}</sup> ${monthYear}`;
+}
+
+function getOrdinalSuffix(day) {
+    if (day >= 11 && day <= 13) {
+        return "th";
+    }
+    switch (day % 10) {
+        case 1:
+            return "st";
+        case 2:
+            return "nd";
+        case 3:
+            return "rd";
+        default:
+            return "th";
+    }
 }
 
 function correctContextMenus() {
