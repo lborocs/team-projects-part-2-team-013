@@ -790,9 +790,6 @@
         font-size: 22px;
         color: var(--icon-clr, #777777);
         transition: 0.2s ease-out;
-        padding: 0.5em;
-        padding-top: 0.3em;
-        padding-bottom: 0.3em;
         margin-left: 0.25em;
         margin-right: 0.25em;
         text-align: center;
@@ -958,6 +955,7 @@
 }
 
 .header-cell {
+    display: flex;
     height: 100%;
     padding: 0.5em;
     border-radius: 4px;
