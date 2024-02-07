@@ -1423,10 +1423,18 @@
     color: var(--text-off-black, #0f0f0f);
 }
 
-.description-container{
+.description-icon-container{
     display: flex;
     flex-direction: column;
     align-items: left;
     gap: 0.2em;
+    height: 100%;
+}
+
+.explainer-description-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
     height: 100%;
 }

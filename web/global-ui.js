@@ -889,14 +889,6 @@ function fillCurrentUserInfo() {
         icon.classList.add("avatar");
         icon.id = "user-icon";
 
-        userAvatar.classList.add("tooltip");
-        userAvatar.classList.add("tooltip-left");
-
-        let tooltip = document.createElement("div");
-        tooltip.classList.add("tooltiptext");
-        tooltip.innerText = `Logged in as ${emp_name}`;
-
-        userAvatar.appendChild(tooltip);
         userAvatar.appendChild(icon);
     });
 }
@@ -1006,34 +998,39 @@ if (window.location.pathname !== '/') {
         }
     }, 200);
 
-    ensureSettings()
+    ensureSettings();
 
-    if(window.innerWidth > 600 && getSetting("sidebarIsOpen") === true) {
-        console.log("[init] setting sidebar to open")
-        sidebar.classList.add("visible")
-        container.classList.add("sidebar-open")
-        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-            paragraph.classList.remove("norender")
-        })
-    } else {
-        console.log("[init] setting sidebar to closed")
-        sidebar.classList.remove("visible")
-        container.classList.remove("sidebar-open")
-        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-            paragraph.classList.add("norender")
-        })
+    if (sidebar !== null) {
+        if(window.innerWidth > 600 && getSetting("sidebarIsOpen") === true) {
+            console.log("[init] setting sidebar to open")
+            sidebar.classList.add("visible")
+            container.classList.add("sidebar-open")
+            document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+                paragraph.classList.remove("norender")
+            })
+        } else {
+            console.log("[init] setting sidebar to closed")
+            sidebar.classList.remove("visible")
+            container.classList.remove("sidebar-open")
+            document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+                paragraph.classList.add("norender")
+            })
+        }
     }
 
     fillCurrentUserInfo();
     managerElementsEnableIfManager();
-    getEmployeeNotifications().then((items) => {
-        if (items.length > 0) {
-            console.log("[getEmployeeNotifications] notifications found and display badge");
-            console.log(items);
-            notifications = items
-            renderNotifications(items);
-        }
-    });
+
+    if (notificationsButton !== null) {
+        getEmployeeNotifications().then((items) => {
+            if (items.length > 0) {
+                console.log("[getEmployeeNotifications] notifications found and display badge");
+                console.log(items);
+                notifications = items
+                renderNotifications(items);
+            }
+        });
+    }
 }
 
 
