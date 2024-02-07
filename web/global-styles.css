@@ -571,9 +571,23 @@ button:hover {
     aspect-ratio: 1;
 }
 
-#user-icon:hover {
-    background-color: rgba(0,0,0,0);
+#user-icon-container {
+    border-radius: 50%;
+    transition: 0.05s ease-out;
 }
+
+#user-icon-container:hover {
+    border: none;
+    transition: 0.05s ease-out;
+    box-shadow: 0 0 0 2px #177fffcc;
+}
+
+#user-icon-container:hover #user-icon {
+    border: none;
+}
+
+
+
 
 
 .edit-and-save {

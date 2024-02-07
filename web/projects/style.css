@@ -511,6 +511,7 @@
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 50%;
+    aspect-ratio: 1;
     border: solid 1px var(--white, white);
     transition: 0.1s ease-out;
     z-index: 0;
