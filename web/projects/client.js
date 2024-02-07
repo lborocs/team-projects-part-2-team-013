@@ -539,6 +539,8 @@ function setUpTaskEventListeners() {
 
 
 
+
+
 taskColumns.forEach((taskColumn) => {
     
     taskColumn.addEventListener("dragover", (e) => {
@@ -2335,3 +2337,9 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
+
+let userIcon = document.querySelector("#user-icon-container");
+userIcon.addEventListener("click", () => {
+    window.location.href = "/preferences";
+    console.log("[User Icon Redirect] Redirecting to profile page")
+});
