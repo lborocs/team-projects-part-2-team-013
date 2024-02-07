@@ -2248,10 +2248,26 @@ document.querySelector(".edit-button").addEventListener("pointerup", async () =>
     );
 });
 
-projectSearchInput.addEventListener("keydown", (e) => {
-    sleep(10).then(() => {
-        searchAndRenderProjects(projectSearchInput.value)
-    })
+
+var projectSearchTimeout;
+function startOrRollProjectSearchTimeout() {
+    if (!projectSearchTimeout || projectSearchTimeout.dirty) {
+        console.log("[RollingProjectSearch] creating new timeout");
+        projectSearchTimeout = new global.RollingTimeout(() => {
+            let search = projectSearchInput.value;
+            console.log("[RollingProjectSearch] starting search for", search);
+            searchAndRenderProjects(search);
+        }, 150);
+        projectSearchTimeout.roll();
+    } else {
+        console.log("[RollingProjectSearch] rolling timeout");
+        projectSearchTimeout.roll();
+    }
+}
+
+
+projectSearchInput.addEventListener("input", (e) => {
+    startOrRollProjectSearchTimeout();
 })
 
 document.getElementById("task-search").addEventListener("input", (e) => {
