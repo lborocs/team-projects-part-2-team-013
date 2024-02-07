@@ -709,6 +709,7 @@
     background-color: var(--finished-bg, rgba(244, 248, 243, 0.7));
     border: solid 1px var(--task-column-border, rgba(0,0,0,0.15));
     .columntitle {
+        display: flex;
         background: var(--finished-title-bg, rgb(219, 237, 219));
         color: var(--finished-title-clr, rgb(28, 56, 41));
         font-weight:700;
