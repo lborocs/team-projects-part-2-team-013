@@ -971,8 +971,6 @@ function userIconContextMenu() {
             }
         });
     });
-
-    
 }
 
 export function setBreadcrumb(breadcrumbPaths, hrefs) {
