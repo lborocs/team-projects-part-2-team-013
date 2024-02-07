@@ -704,3 +704,7 @@ button:hover {
     }
 
 }
+
+sup {
+    line-height: 0;
+}
