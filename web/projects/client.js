@@ -1199,8 +1199,21 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         `;
     };
 
-    if (expectedManHours !== 0) {
+    if (expectedManHours !== 0 && expectedManHours === 1) {
         
+        taskInfo.innerHTML += `
+
+            <div class="tooltip tooltip-under manhours-container status-container">
+                <p class="tooltiptext">${manHoursTooltip}</p>
+                <span class="material-symbols-rounded">
+                hourglass_empty
+                </span>
+                <div class="manhours">
+                    ${expectedManHours} Hour
+                </div>
+            </div>
+        `;
+    } else if (expectedManHours !== 0) {
         taskInfo.innerHTML += `
 
             <div class="tooltip tooltip-under manhours-container status-container">
@@ -1213,7 +1226,8 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 </div>
             </div>
         `;
-    };
+    }
+        
 
     if (desc !== "<p><br></p>" && desc !== null) {
         taskInfo.innerHTML += `
