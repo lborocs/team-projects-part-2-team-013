@@ -10,8 +10,42 @@ let postID = getQueryParam();
 
 console.log("query param : " + postID);
 
+function findTag(tagID) {
+    return function(tag) {
+        return tag.tagID === tagID;
+    }
+}
 
-async function getPostData(postID){
+async function fetchTags() {
+    const data = await get_api("/wiki/post.php/tags");
+    console.log(data);
+    if (data.success == true) {
+        console.log("Tags have been fetched")
+        return data.data.tags;
+    } else {
+        console.log("Tags failed to be fetched")
+    }
+}
+
+let tagsList = fetchTags();
+tagsList.then((tagsList) => {
+    getPostData(postID, tagsList).then((postData) => {
+        if (postData.tags == null || postData.tags.length == 0) {
+            document.querySelector(".tags").innerHTML += `<div class="tag">No Tags</div>`
+        }
+        else {
+            for (let i = 0; i < postData.tags.length; i++) {
+                document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tagsList[i].name}</div>`
+            }
+        }
+        console.log(postData.author.userID);
+        let emp_icon = global.employeeAvatarOrFallback(postData.author);
+        document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
+    });
+});
+
+
+async function getPostData(postID, tagsList){
     const data = await get_api(`/wiki/post.php/post/${postID}`);
     if (!data.success) {
         console.error("[getPostData] error fetching post: ", data.data);
@@ -39,21 +73,20 @@ async function getPostData(postID){
     console.log(post)
 
     global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
+    if (post.tags != null) {
+        let newtags = [];
+        console.log(post.tags)
+        console.log("TAGS")
+        post.tags.forEach((tag) => {
+            newtags.push(tagsList.find(findTag(tag)).name)
+            console.log(tag)
+            console.log("REPLACING TAGS")
+        });
+    post.tagsNames = newtags;
+    }
     return post
 }
 
-const postData = await getPostData(postID)
-if (postData.tags == null || postData.tags.length == 0) {
-    document.querySelector(".tags").innerHTML += `<div class="tag">No Tags</div>`
-}
-else {
-for (let i = 0; i < postData.tags.length; i++) {
-    document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${postData.tags[i]}</div>`
-}
-}
- console.log(postData.author.userID);
-let emp_icon = global.employeeAvatarOrFallback(postData.author);
-document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
 
 let watchingButton = document.querySelector("#watching");
 watchingButton.addEventListener("click", function() {
