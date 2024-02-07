@@ -507,8 +507,8 @@
 }
 
 .avatar {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 50%;
     border: solid 1px var(--white, white);
     transition: 0.1s ease-out;
@@ -786,8 +786,8 @@
     
     }
     
-    & th i {
-        font-size: 1em;
+    & th span {
+        font-size: 22px;
         color: var(--icon-clr, #777777);
         transition: 0.2s ease-out;
         padding: 0.5em;
@@ -806,7 +806,7 @@
         }
     }
     
-    & th i:hover {
+    & th span:hover {
         color: var(--text-off-black, #0f0f0f);
         transition-duration: 0.08s;
         background-color: var(--light-grey-bg);

@@ -684,7 +684,7 @@ async function renderAssignments(assignments) {
         assignmentElem.classList.add("assignment");
         assignmentElem.classList.add("tooltip", "tooltip-under");
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
-        <img src="${emp_icon}" class="avatar">`
+        <img src="${emp_icon}" class="task-avatar">`
 
         // add child element if usersAssigned exists
         if (usersAssigned) {
@@ -1204,7 +1204,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         taskInfo.innerHTML += `
         <div class="tooltip tooltip-under description-container status-container">
             <span class="material-symbols-rounded">
-                description
+                subject
             </span>
         </div>
 
@@ -2248,10 +2248,26 @@ document.querySelector(".edit-button").addEventListener("pointerup", async () =>
     );
 });
 
-projectSearchInput.addEventListener("keydown", (e) => {
-    sleep(10).then(() => {
-        searchAndRenderProjects(projectSearchInput.value)
-    })
+
+var projectSearchTimeout;
+function startOrRollProjectSearchTimeout() {
+    if (!projectSearchTimeout || projectSearchTimeout.dirty) {
+        console.log("[RollingProjectSearch] creating new timeout");
+        projectSearchTimeout = new global.RollingTimeout(() => {
+            let search = projectSearchInput.value;
+            console.log("[RollingProjectSearch] starting search for", search);
+            searchAndRenderProjects(search);
+        }, 150);
+        projectSearchTimeout.roll();
+    } else {
+        console.log("[RollingProjectSearch] rolling timeout");
+        projectSearchTimeout.roll();
+    }
+}
+
+
+projectSearchInput.addEventListener("input", (e) => {
+    startOrRollProjectSearchTimeout();
 })
 
 document.getElementById("task-search").addEventListener("input", (e) => {
