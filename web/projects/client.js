@@ -1132,7 +1132,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let overdueContainerClass = "";
     let dateTooltip;
     if (timestamp === null) {
-
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         dateTooltip = `No due date set`;
     } else if (timestamp < dateToday && state !== 2) {
@@ -1141,13 +1140,18 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         overdueContainerClass = "overdue";
         const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+    } else if (state === 2 && timestamp > dateToday) {
+        // tasks which are finished but have a due date in the future
+        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
+        const daysUntilDue = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
+        dateTooltip = `Task finished but due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}`;
     } else if (state !== 2){
-        // tasks which are finished and have a due date in the past
+        // tasks which are not finished and have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         const dueInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
         dateTooltip = `Due in ${dueInDays} day${dueInDays !== 1 ? 's' : ''}`;
     } else {
-        // tasks which have a due date in the future
+        // tasks which are finished and have a due date in the past
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         const finishedDaysAgo = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Finished ${finishedDaysAgo} day${finishedDaysAgo !== 1 ? 's' : ''} ago`;
@@ -1168,17 +1172,40 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     }
     
     if (date !== "") {
+        const formattedDate = formatDateWithOrdinals(date);
         taskInfo.innerHTML += `
-
-                <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
-                    <p class="tooltiptext">${dateTooltip}</p>
-                    ${statusIcon}
-                    <div class="date" id="task-date">
-                        ${date}
-                    </div>
+            <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
+                <p class="tooltiptext">${dateTooltip}</p>
+                ${statusIcon}
+                <div class="date" id="task-date">
+                    ${formattedDate}
                 </div>
+            </div>
         `;
     };
+
+    function formatDateWithOrdinals(date) {
+        const day = parseInt(date.split(" ")[0]);
+        const ordinal = getOrdinalSuffix(day);
+        const monthYear = date.split(" ")[1];
+        return `${day}<sup>${ordinal}</sup> ${monthYear}`;
+    }
+
+    function getOrdinalSuffix(day) {
+        if (day >= 11 && day <= 13) {
+            return "th";
+        }
+        switch (day % 10) {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    }
 
     if (expectedManHours !== 0) {
         
