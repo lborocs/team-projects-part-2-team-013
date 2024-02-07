@@ -889,14 +889,6 @@ function fillCurrentUserInfo() {
         icon.classList.add("avatar");
         icon.id = "user-icon";
 
-        userAvatar.classList.add("tooltip");
-        userAvatar.classList.add("tooltip-left");
-
-        let tooltip = document.createElement("div");
-        tooltip.classList.add("tooltiptext");
-        tooltip.innerText = `Logged in as ${emp_name}`;
-
-        userAvatar.appendChild(tooltip);
         userAvatar.appendChild(icon);
     });
 }

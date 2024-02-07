@@ -2340,6 +2340,6 @@ async function searchAndRenderTasks() {
 
 let userIcon = document.querySelector("#user-icon-container");
 userIcon.addEventListener("click", () => {
-    window.location.href = "/preferences";
+    window.location.href = "/settings";
     console.log("[User Icon Redirect] Redirecting to profile page")
 });
