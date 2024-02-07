@@ -1204,7 +1204,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         taskInfo.innerHTML += `
         <div class="tooltip tooltip-under description-container status-container">
             <span class="material-symbols-rounded">
-                description
+                subject
             </span>
         </div>
 
