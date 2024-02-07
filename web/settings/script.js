@@ -1,0 +1,1 @@
+import * as global from "../../global-ui.js";
