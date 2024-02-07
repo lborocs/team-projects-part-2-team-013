@@ -1,5 +1,7 @@
 <?php
 require("lib/context.php");
+require_once("lib/auth.php");
+require_once("lib/mailer/client.php");
 
 function hash_pass(string $password) {
     return password_hash(
@@ -268,6 +270,32 @@ function r_session_account(RequestContext $ctx, string $args) {
     } 
 }
 
+
+function r_session_reset_password(RequestContext $ctx, string $args) {
+    $ctx->body_require_fields_as_types([
+        "email"=>"string",
+    ]);
+
+    $email = $ctx->request_body["email"];
+
+    $account = db_account_fetch($email);
+
+    if ($account == false) {
+        respond_not_authenticated(
+            "Account does not exist",
+            ERROR_RESOURCE_NOT_FOUND
+        );
+    }
+    $emp_id = $account["empID"];
+
+    $message = "Click here to reset your password: " . "https://013.team/resetpassword#token";
+
+    send_email($email, "Employee($emp_id)", "Password Reset", $message);
+
+
+    respond_no_content();
+}
+
 function r_session_204(RequestContext $ctx, string $args) {
     respond_no_content();
 }
@@ -278,6 +306,7 @@ register_route(new Route(["POST"], "/otp", "r_session_otp", 1, ["REQUIRES_BODY"]
 register_route(new Route(["PATCH", "GET"], "/account", "r_session_account", 1, ["REQUIRES_BODY"]));
 register_route(new Route(["GET"], "/generate_204", "r_session_204", 0));
 register_route(new Route(["GET", "POST"], "/register", "r_session_register", 0, ["REQUIRES_BODY"]));
+register_route(new Route(["POST"], "/resetpassword", "r_session_reset_password", 0, ["REQUIRES_BODY"]));
 register_route(new Route(["POST"], "/logoutall", "r_session_logout_all", 1));
 
 
