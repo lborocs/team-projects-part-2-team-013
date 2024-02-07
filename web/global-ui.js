@@ -1031,6 +1031,14 @@ if (window.location.pathname !== '/') {
             }
         });
     }
+
+    let userIcon = document.querySelector("#user-icon-container");
+    if (userIcon !== null) {
+        userIcon.addEventListener("click", () => {
+            window.location.href = "/settings";
+            console.log("[User Icon Redirect] Redirecting to profile page")
+        });
+    }
 }
 
 

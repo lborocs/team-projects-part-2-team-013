@@ -224,6 +224,7 @@
     justify-content: flex-start;
     align-items: center;
     gap: 0.5em;
+    height: 3em;
     width: 100%;
     padding-bottom: 0;
     padding: 10px 10px 0 10px;
@@ -586,10 +587,12 @@
     margin-left: 1em;
     margin-right: 1em;
     justify-content: flex-start;
-    overflow-y: auto;
-    overflow-x: clip;
-    
+}
 
+.taskgrid-wrapper {
+    overflow-y: auto;
+    width: 100%;
+    height: calc(100% - 8em);
 }
 
 .columntitle {
