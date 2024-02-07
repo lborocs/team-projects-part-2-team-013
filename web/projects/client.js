@@ -436,6 +436,19 @@ function setUpTaskEventListeners() {
             e.stopPropagation();
         });
 
+        let taskStatusContainers = taskCard.querySelectorAll(".status-container");
+        taskStatusContainers.forEach((icon) => {
+
+            icon.addEventListener("pointerdown", (e) => {
+                e.stopPropagation();
+            });
+
+            icon.addEventListener("pointerup", (e) => {
+                e.stopPropagation();
+            });
+        
+        })
+
         //closes the context menu if they click outside
         document.addEventListener("pointerup", (e) => {
             if (!contextMenuButton.contains(e.target)) {
