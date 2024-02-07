@@ -9,9 +9,8 @@ var selectedValue = selectedCategory.value;
 
 var postsMap = new Map();
 
-async function fetchPosts() {
+async function fetchPosts(tagsList) {
     global.setBreadcrumb(["Wiki"], ["./"]);
-
     const data = await get_api("/wiki/post.php/posts");
     console.log(data);
     if (data.success == true) {
@@ -19,8 +18,21 @@ async function fetchPosts() {
         data.data.posts.forEach(post => {
             console.log(post)
             console.log(post.tags)
+            if (post.tags != null) {
+                let newtags = [];
+                console.log(post.tags)
+                console.log("TAGS")
+                post.tags.forEach((tag) => {
+                    newtags.push(tagsList.find(findTag(tag)).name)
+                    console.log(tag)
+                    console.log("REPLACING TAGS")
+                });
+            post.tagsNames = newtags;
+            }
+            console.log(post.tags)
+            console.log(post.tagsNames) 
             console.log("Rendering post")
-            renderPost(post.postID, post.title, post.author, post.isTechnical, post.tags)
+            renderPost(post.postID, post.title, post.author, post.isTechnical, post.tagsNames)
             postsContainer = document.querySelector('.posts');
             // Store the post in the Map using postID as the key
             postsMap.set(post.postID, post);
@@ -48,26 +60,27 @@ async function fetchTags() {
     }
 }
 
-let tags = fetchTags();
-tags.then((tags) => {
+let tagsList = fetchTags();
+tagsList.then((tagsList) => {
     document.querySelectorAll('.tag').forEach((tag) => {
         tag.addEventListener('click', () => {
             tag.classList.toggle('selected');
             updatePosts();
         })
     });
-});
 
-fetchPosts().then(() => {
-    posts.forEach((post) => {
-        selectedCategory = document.querySelector('input[name="category"]:checked')
-        selectedValue = selectedCategory.value
-        if (post.getAttribute("data-isTechnical") != selectedValue) {
-            post.classList.add("norender");
-        } else {
-            post.classList.remove("norender"); 
-        }
-    })
+    // Move the fetchPosts call inside the then block
+    fetchPosts(tagsList).then(() => {
+        posts.forEach((post) => {
+            selectedCategory = document.querySelector('input[name="category"]:checked')
+            selectedValue = selectedCategory.value
+            if (post.getAttribute("data-isTechnical") != selectedValue) {
+                post.classList.add("norender");
+            } else {
+                post.classList.remove("norender"); 
+            }
+        })
+    });
 });
 
 
@@ -97,6 +110,11 @@ function setUpPostsEventListeners() {
     })
 }
 
+function findTag(tagID) {
+    return function(tag) {
+        return tag.tagID === tagID;
+    }
+}
 
 /**
  * @param {Array} tags 
@@ -116,7 +134,7 @@ function renderPost(postID, title, author, isTechnical, tags) {
 
     if (tags != null) {
         tags.forEach((tag) => {
-            postHTML += `<div class="tag" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag}</div>`;
+            postHTML += `<div class="tag" name="${tag}"><span class="material-symbols-rounded">sell</span>${tag}</div>`;
         });
     } else {
         postHTML += `<div class="tag" name="NoTags">No Tags</div>`;

@@ -686,7 +686,7 @@ async function renderAssignments(assignments) {
         assignmentElem.classList.add("assignment");
         assignmentElem.classList.add("tooltip", "tooltip-under");
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
-        <img src="${emp_icon}" class="avatar">`
+        <img src="${emp_icon}" class="task-avatar">`
 
         // add child element if usersAssigned exists
         if (usersAssigned) {
@@ -1206,7 +1206,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         taskInfo.innerHTML += `
         <div class="tooltip tooltip-under description-container status-container">
             <span class="material-symbols-rounded">
-                description
+                subject
             </span>
         </div>
 
