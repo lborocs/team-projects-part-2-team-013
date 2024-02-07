@@ -1217,7 +1217,8 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
     if (desc !== "<p><br></p>" && desc !== null) {
         taskInfo.innerHTML += `
-        <div class="tooltip tooltip-under description-container status-container">
+        <div class="tooltip tooltip-under description-icon-container status-container">
+            <p class="tooltiptext">This task contains a description</p>
             <span class="material-symbols-rounded">
                 subject
             </span>
