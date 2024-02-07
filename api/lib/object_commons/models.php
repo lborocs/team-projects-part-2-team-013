@@ -320,7 +320,7 @@ CONST TABLE_EMPLOYEES = new Table(
         new Column("employeeDeleted", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
     "employee",
-    null
+    "employee"
 );
 
 const TABLE_ACCOUNTS = new Table(
