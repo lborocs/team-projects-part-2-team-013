@@ -2339,7 +2339,7 @@ async function searchAndRenderTasks() {
     renderTasks(tasks);
 }
 
-let userIcon = document.querySelector("#user-icon");
+let userIcon = document.querySelector("#user-icon-container");
 userIcon.addEventListener("click", () => {
     window.location.href = "/settings";
     console.log("[User Icon Redirect] Redirecting to profile page")
