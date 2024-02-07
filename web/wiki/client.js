@@ -17,6 +17,9 @@ async function fetchPosts() {
     if (data.success == true) {
         console.log("Posts have been fetched")
         data.data.posts.forEach(post => {
+            console.log(post)
+            console.log(post.tags)
+            console.log("Rendering post")
             renderPost(post.postID, post.title, post.author, post.isTechnical, post.tags)
             postsContainer = document.querySelector('.posts');
             // Store the post in the Map using postID as the key
@@ -39,13 +42,21 @@ async function fetchTags() {
         data.data.tags.forEach(tag => {
             document.querySelector('.tag-selection').innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`
         });
+        return data.data.tags;
     } else {
         console.log("Tags failed to be fetched")
     }
 }
 
-fetchTags();
-    
+let tags = fetchTags();
+tags.then((tags) => {
+    document.querySelectorAll('.tag').forEach((tag) => {
+        tag.addEventListener('click', () => {
+            tag.classList.toggle('selected');
+            updatePosts();
+        })
+    });
+});
 
 fetchPosts().then(() => {
     posts.forEach((post) => {
@@ -105,7 +116,7 @@ function renderPost(postID, title, author, isTechnical, tags) {
 
     if (tags != null) {
         tags.forEach((tag) => {
-            postHTML += `<div class="tag" name="${tag}"><span class="material-symbols-rounded">sell</span>${tag}</div>`;
+            postHTML += `<div class="tag" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag}</div>`;
         });
     } else {
         postHTML += `<div class="tag" name="NoTags">No Tags</div>`;
@@ -215,16 +226,6 @@ function filterFromSearch() {
     
     }
 }
-document.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelectorAll('.tag').forEach((tag) => {
-        console.log("adding event listener")
-        tag.addEventListener('click', () => {
-            tag.classList.toggle('.selected');
-            console.log("clicked")
-            updatePosts();
-        })
-    });
-});
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
     radio.addEventListener('change', () => {
