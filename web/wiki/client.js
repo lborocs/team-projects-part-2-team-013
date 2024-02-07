@@ -52,7 +52,7 @@ async function fetchTags() {
     if (data.success == true) {
         console.log("Tags have been fetched")
         data.data.tags.forEach(tag => {
-            document.querySelector('.tag-selection').innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`
+            document.querySelector('.tag-selection').innerHTML += `<div class="tag" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`
         });
         return data.data.tags;
     } else {
@@ -174,6 +174,7 @@ function updatePosts() {
     selectedValue = selectedCategory.value;
     selectedTags = [];
     document.querySelectorAll('.tag.selected').forEach((tagElement) => {
+        console.log("TAG SELECTED")
         selectedTags.push(tagElement.getAttribute("name"));
     });
     console.log(selectedTags);
@@ -199,10 +200,14 @@ function updatePosts() {
                 postTagNames.push(tag.getAttribute("name"));
             })
             console.log(postTagNames)
+            console.log(selectedTags)
             let containsTag = false;
             selectedTags.forEach((tag) => {
+                console.log(tag)
+                console.log("does not contain tag")
                 if (postTagNames.includes(tag)) {
                     console.log(tag)
+                    console.log("Post contains tag")
                     containsTag = true;
                 }
                 console.log(containsTag)
