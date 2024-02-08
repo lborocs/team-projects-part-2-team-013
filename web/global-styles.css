@@ -592,7 +592,7 @@ button:hover {
 #user-icon-container:hover {
     border: none;
     transition: 0.05s ease-out;
-    box-shadow: 0 0 0 2px #177fffcc;
+    box-shadow: 0 0 0 2px #388bffaa;
 }
 
 #user-icon-container:hover #user-icon {

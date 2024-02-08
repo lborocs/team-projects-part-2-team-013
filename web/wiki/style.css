@@ -91,8 +91,17 @@ body {
 .filters {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
     width: 100%;
+    gap: 0.5em;
+
+    .title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d2e30;
+
+    }
 }
 
 
@@ -145,9 +154,9 @@ body {
         cursor: pointer;
     }
 
-    .selected{
-        color: #ffffff !important;
-        background-color: #00a2ff !important;
+    .selected {
+        transition: background-color 0.05s ease-out;
+        background-color: #fcefb4;
     }
 }
 
@@ -191,7 +200,7 @@ body {
             font-size: 0.85em;
             font-weight: 500;
             color: #2d2e30;
-            margin-bottom: 1em;
+            margin-top: 1em;
         }
     }
 
@@ -210,14 +219,16 @@ body {
     flex-direction: row;
     align-items: center;
     padding: 0.25em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
     border-radius: 1em;
     background-color: #ebedef;
     color: #2d2e30;
     font-size: 14px;
     font-weight: 600;
-    gap: 0.25em;
+    gap: 0.4em;
+
+    transition: background-color 0.05s ease-out;
 
     user-select: none;
 
@@ -308,10 +319,10 @@ input[type="text"] {
 .divider {
     width: 100%;
         height: 2px;
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
+        margin-top: 0.25em;
+        margin-bottom: 0.25em;
         background-color: #0f0f0f;
-        opacity: 0.5;
+        opacity: 0.2;
 }
 
 input[type="text"] {

@@ -126,10 +126,6 @@ function renderPost(postID, title, author, isTechnical, tags) {
     let postHTML = `
     <div class="post-info">
         <div class="title">${title}</div>
-        <div class="author">
-            <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
-            ${global.employeeToName(author)}
-        </div>
         <div class="tags">`;
 
     if (tags != null) {
@@ -141,6 +137,13 @@ function renderPost(postID, title, author, isTechnical, tags) {
     }
 
     postHTML += `</div>
+        <div class="author">
+            <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
+            ${global.employeeToName(author)}
+        </div>
+    `
+
+    postHTML += `
         </div>
         <div class="post-icons manager-only">
             <div class="icon-button no-box" id="edit">
