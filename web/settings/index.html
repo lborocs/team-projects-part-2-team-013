@@ -1,28 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="title">Create Post</title>
+    <title>Settings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.snow.min.css"
         integrity="sha512-/FHUK/LsH78K9XTqsR9hbzr21J8B8RwHR/r8Jv9fzry6NVAOVIGFKQCNINsbhK7a1xubVu2r5QZcz2T9cKpubw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
         integrity="sha512-P2W2rr8ikUPfa31PLBo5bcBQrsa+TNj8jiKadtaIrHQGMo6hQM6RdPjQYxlNguwHz8AwSQ28VkBK6kHBLgd/8g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script defer src="client.js"></script>
     <link rel="stylesheet" href="/global-styles.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="mobile.css">
+    <link rel="stylesheet" href="/settings/style.css">
     <link rel="stylesheet" href="/ui-elements/search-bar.css">
     <link rel="stylesheet" href="/ui-elements/dropdown.css">
     <link rel="stylesheet" href="/ui-elements/text-button.css">
@@ -30,12 +19,37 @@
     <link rel="stylesheet" href="/ui-elements/task-card.css">
     <link rel="stylesheet" href="/ui-elements/small-icon.css">
     <link rel="stylesheet" href="/ui-elements/popover.css">
-    <link rel="stylesheet" href="/ui-elements/context-menu.css">
     <link rel="stylesheet" href="/ui-elements/notification-popover.css">
+    <link rel="stylesheet" href="/ui-elements/number-picker.css">
+    <link rel="stylesheet" href="/ui-elements/date-picker.css">
+    <link rel="stylesheet" href="/ui-elements/context-menu.css">
+
+    <!-- flatpickr.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" 
+    integrity="sha512-MQXduO8IQnJVq1qmySpN87QQkiR1bZHtorbJBD0tzy7/0U9+YIC93QWHeGTEoojMVHWWNkoCp8V6OzVSYrX0oQ==" 
+    crossorigin="anonymous" 
+    referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/themes/confetti.min.css" 
+    integrity="sha512-8jhXB3DrPNvbKByNPK8o+RgTDjtFEsjxIUgFTsGtD2Rf13GIu7WJDOjos8WTIoOmRp4irOWyMvPsOnGlwl2nKA==" 
+    crossorigin="anonymous" 
+    referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js" 
+    integrity="sha512-K/oyQtMXpxI4+K0W7H25UopjM8pzq0yrVdFdG21Fh5dBe91I40pDd9A4lzNlHPHBIP2cwZuoxaUSX0GJSObvGA==" 
+    crossorigin="anonymous" 
+    referrerpolicy="no-referrer"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script src="client.js" type="module"></script>
+    <script defer src="/ui-elements/number-picker.js"></script>
     <script src="/global-ui.js" type="module"></script>
     <script src="/global-api.js"></script>
+    <!--import mobile css-->
+    <link rel="stylesheet" href="mobile.css">
+    <!-- import medium.css -->
+    <link rel="stylesheet" href="medium.css">
 </head>
-
 <body>
     <div class="fullscreen">
         <header class="topbar">
@@ -48,9 +62,10 @@
                 <div class="breadcrumb">
                 </div>
             </div>
+
             <div class="center">
                 <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="fullLogo">
-            </div>
+            </div> 
             <div class="right">
 
                 <div class="search white" id="global-search">
@@ -99,6 +114,7 @@
             </div>
 
         </header>
+        
         <div class="sidebar-container sidebar-open">
             <div class="sidebar visible">
                 <div class="mobile-sidebar-header">
@@ -107,75 +123,46 @@
                         <span class="material-symbols-rounded">close</span>
                     </div>
                 </div>
-
-                <div class="sidebar-item" id="home">
-                    <span class="material-symbols-rounded">home</span>
-                    <p class="">Projects</p>
+            
+                <div class="sidebar-item selected" id="home">
+                    <span class="material-symbols-rounded">home</span> <p class="">Projects</p>
                 </div>
                 <div class="sidebar-item" id="mylist">
-                    <span class="material-symbols-rounded">checklist</span>
-                    <p class="">My List</p>
+                    <span class="material-symbols-rounded">checklist</span> <p class="">My List</p>
                 </div>
-                <div class="sidebar-item selected" id="wiki">
-                    <span class="material-symbols-rounded">menu_book</span>
-                    <p class="">Wiki</p>
+                <div class="sidebar-item" id="wiki">
+                    <span class="material-symbols-rounded">menu_book</span> <p class="">Wiki</p>
                 </div>
                 <div class="sidebar-item manager-only norender" id="workload">
-                    <span class="material-symbols-rounded">speed</span>
-                    <p class="">Workload</p>
+                    <span class="material-symbols-rounded">speed</span> <p class="">Workload</p>
                 </div>
                 <div class="sidebar-item manager-only norender" id="training">
-                    <span class="material-symbols-rounded">school</span>
-                    <p class="">Training</p>
+                    <span class="material-symbols-rounded">school</span> <p class="">Training</p>
                 </div>
                 <div class="sidebar-item" id="logout">
-                    <span class="material-symbols-rounded">logout</span>
-                    <p class="">Logout</p>
+                    <span class="material-symbols-rounded">logout</span> <p class="">Logout</p>
                 </div>
 
             </div>
 
             <div class="main">
-                <div class="post-title">
-                    <input type="text" placeholder="Post title ...">
+                <div class="tab-selector">
+                    <div class="Profile">Profile</div>
+                    <div class="settings">Settings</div>
+                    <div class="preferences">Preferences</div>
                 </div>
-
-                <div id="editor">
-
+                <div class="content">
+                    <div class="title"></div>
+                    <div class="options"></div>
                 </div>
-                <div class="post-title" id="listOfTags">
-                    <span class="material-symbols-rounded" id="placeholderTag">sell</span>
-                </div>
-                <div class="options">
-                    <div class="tag-input">
-                        <ul>
-                            <li>
-                                <input type="text" id="input-tag" placeholder="Tags ..." />
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="items">
-                        <div class="type-of-post">
-                            <div class="category">
-                                <input type="radio" name="category" id="technical" value="technical" class="norender">
-                                <label for="technical">Technical</label>
-                            </div>
-                            <div class="category">
-                                <input type="radio" name="category" id="non-technical" value="non-technical"
-                                    class="norender" checked>
-                                <label for="non-technical">Non-Technical</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button class="buttons" id="submitPostButton" onclick="submitPost()">
-                    Post it &nbsp <i class="fa-solid fa-check"></i>
-                </button>
             </div>
+            
         </div>
-
+    </div>  
     </div>
+
+    <div class="popup">
+        <!-- popup added in js on delete -->
     </div>
 </body>
-
 </html>

@@ -17,6 +17,7 @@ let sortArray = [titleButton, dateButton, statusButton];
 
 //single things
 const taskGrid = document.querySelector(".taskgrid")
+const taskGridWrapper = document.querySelector(".taskgrid-wrapper")
 const taskList = document.querySelector(".tasklist")
 const taskTable = document.querySelector(".tasktable")
 const taskTableBody = document.querySelector(".tasktable-body")
@@ -169,10 +170,10 @@ views.forEach((view, i) => {
             })
             console.log("[viewOnClick] selected")
 
-            taskGrid.classList.toggle("fade")
+            taskGridWrapper.classList.toggle("fade")
             taskList.classList.toggle("fade")
             setTimeout(() => {
-                taskGrid.classList.toggle("norender")
+                taskGridWrapper.classList.toggle("norender")
                 taskList.classList.toggle("norender")
             }, 50)
         } 
@@ -183,8 +184,8 @@ views.forEach((view, i) => {
         if (session.auth_level >= 2) {
 
             view.classList.toggle("selected");
-            taskGrid.classList.add("fade");
-            taskGrid.classList.add("norender");
+            taskGridWrapper.classList.add("fade");
+            taskGridWrapper.classList.add("norender");
             taskList.classList.remove("fade");
             taskList.classList.remove("norender");
             
@@ -436,6 +437,19 @@ function setUpTaskEventListeners() {
             e.stopPropagation();
         });
 
+        let taskStatusContainers = taskCard.querySelectorAll(".status-container");
+        taskStatusContainers.forEach((icon) => {
+
+            icon.addEventListener("pointerdown", (e) => {
+                e.stopPropagation();
+            });
+
+            icon.addEventListener("pointerup", (e) => {
+                e.stopPropagation();
+            });
+        
+        })
+
         //closes the context menu if they click outside
         document.addEventListener("pointerup", (e) => {
             if (!contextMenuButton.contains(e.target)) {
@@ -536,6 +550,8 @@ function setUpTaskEventListeners() {
         });
     });
 }
+
+
 
 
 
@@ -684,7 +700,7 @@ async function renderAssignments(assignments) {
         assignmentElem.classList.add("assignment");
         assignmentElem.classList.add("tooltip", "tooltip-under");
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
-        <img src="${emp_icon}" class="avatar">`
+        <img src="${emp_icon}" class="task-avatar">`
 
         // add child element if usersAssigned exists
         if (usersAssigned) {
@@ -1132,7 +1148,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let overdueContainerClass = "";
     let dateTooltip;
     if (timestamp === null) {
-
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         dateTooltip = `No due date set`;
     } else if (timestamp < dateToday && state !== 2) {
@@ -1141,13 +1156,18 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         overdueContainerClass = "overdue";
         const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+    } else if (state === 2 && timestamp > dateToday) {
+        // tasks which are finished but have a due date in the future
+        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
+        const daysUntilDue = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
+        dateTooltip = `Task finished but due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}`;
     } else if (state !== 2){
-        // tasks which are finished and have a due date in the past
+        // tasks which are not finished and have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         const dueInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
         dateTooltip = `Due in ${dueInDays} day${dueInDays !== 1 ? 's' : ''}`;
     } else {
-        // tasks which have a due date in the future
+        // tasks which are finished and have a due date in the past
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         const finishedDaysAgo = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Finished ${finishedDaysAgo} day${finishedDaysAgo !== 1 ? 's' : ''} ago`;
@@ -1168,20 +1188,33 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     }
     
     if (date !== "") {
+        const formattedDate = formatDateWithOrdinals(date);
         taskInfo.innerHTML += `
-
-                <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
-                    <p class="tooltiptext">${dateTooltip}</p>
-                    ${statusIcon}
-                    <div class="date" id="task-date">
-                        ${date}
-                    </div>
+            <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
+                <p class="tooltiptext">${dateTooltip}</p>
+                ${statusIcon}
+                <div class="date" id="task-date">
+                    ${formattedDate}
                 </div>
+            </div>
         `;
     };
 
-    if (expectedManHours !== 0) {
+    if (expectedManHours !== 0 && expectedManHours === 1) {
         
+        taskInfo.innerHTML += `
+
+            <div class="tooltip tooltip-under manhours-container status-container">
+                <p class="tooltiptext">${manHoursTooltip}</p>
+                <span class="material-symbols-rounded">
+                hourglass_empty
+                </span>
+                <div class="manhours">
+                    ${expectedManHours} Hour
+                </div>
+            </div>
+        `;
+    } else if (expectedManHours !== 0) {
         taskInfo.innerHTML += `
 
             <div class="tooltip tooltip-under manhours-container status-container">
@@ -1194,7 +1227,22 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 </div>
             </div>
         `;
-    };
+    }
+        
+
+    if (desc !== "<p><br></p>" && desc !== null) {
+        taskInfo.innerHTML += `
+        <div class="tooltip tooltip-under description-icon-container status-container">
+            <p class="tooltiptext">This task contains a description</p>
+            <span class="material-symbols-rounded">
+                subject
+            </span>
+        </div>
+
+        `;
+    }
+
+    
 
 
     
@@ -1215,6 +1263,29 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
     calculateTaskCount();
     correctContextMenus()
+}
+
+function formatDateWithOrdinals(date) {
+    const day = parseInt(date.split(" ")[0]);
+    const ordinal = getOrdinalSuffix(day);
+    const monthYear = date.split(" ")[1];
+    return `${day}<sup>${ordinal} </sup> ${monthYear}`;
+}
+
+function getOrdinalSuffix(day) {
+    if (day >= 11 && day <= 13) {
+        return "th";
+    }
+    switch (day % 10) {
+        case 1:
+            return "st";
+        case 2:
+            return "nd";
+        case 3:
+            return "rd";
+        default:
+            return "th";
+    }
 }
 
 function correctContextMenus() {
@@ -1278,7 +1349,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
     console.log(`[renderProject] using icon: ${icon}`);
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
     let lastAccessedFormatted = lastAccessed ? formatLastAccessed(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
-    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : "No due date";
+    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : `<span class="disabled">Not set</span>`;
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -1302,7 +1373,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         </td>
         <td>${date}</td>
         <td>
-            <div class="tooltip tooltip-under">
+            <div class="tooltip tooltip-above">
                 <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
                 ${lastAccessedFormatted}
             </div>
@@ -1346,15 +1417,15 @@ function formatLastAccessed(date) {
     } else if (months > 0) {
         return `${months} month${months > 1 ? 's' : ''} ago`;
     } else if (weeks > 0) {
-        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+        return weeks === 1 ? 'Last week' : `${weeks} weeks ago`;
     } else if (days > 0) {
-        return `${days} day${days > 1 ? 's' : ''} ago`;
+        return days === 1 ? 'Yesterday' : `${days} days ago`;
     } else if (hours > 0) {
-        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        return hours === 1 ? 'An hour ago' : `${hours} hour${hours > 1 ? 's' : ''} ago`;
     } else if (minutes > 0) {
-        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
     } else {
-        return `Now`;
+        return `Just now`;
     }
 }
 async function addTask() {
@@ -2208,10 +2279,26 @@ document.querySelector(".edit-button").addEventListener("pointerup", async () =>
     );
 });
 
-projectSearchInput.addEventListener("keydown", (e) => {
-    sleep(10).then(() => {
-        searchAndRenderProjects(projectSearchInput.value)
-    })
+
+var projectSearchTimeout;
+function startOrRollProjectSearchTimeout() {
+    if (!projectSearchTimeout || projectSearchTimeout.dirty) {
+        console.log("[RollingProjectSearch] creating new timeout");
+        projectSearchTimeout = new global.RollingTimeout(() => {
+            let search = projectSearchInput.value;
+            console.log("[RollingProjectSearch] starting search for", search);
+            searchAndRenderProjects(search);
+        }, 150);
+        projectSearchTimeout.roll();
+    } else {
+        console.log("[RollingProjectSearch] rolling timeout");
+        projectSearchTimeout.roll();
+    }
+}
+
+
+projectSearchInput.addEventListener("input", (e) => {
+    startOrRollProjectSearchTimeout();
 })
 
 document.getElementById("task-search").addEventListener("input", (e) => {
@@ -2224,6 +2311,8 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
     projectSearchInput.value = "";
     searchAndRenderProjects()
+    startOrRollProjectSearchTimeout();
+
 })
 
 document.getElementById("delete-task-search").addEventListener("pointerup", () => {
@@ -2279,3 +2368,4 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
+

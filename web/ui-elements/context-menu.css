@@ -147,6 +147,10 @@
             transition: opacity 0.1s ease-out, transform 0.1s ease-out;
         }
 
+        .left{
+            left: -87%;
+        }
+
         .not-started-state {
             background-color: var(--not-started-status-cell);
             padding: 2px;
@@ -208,4 +212,6 @@
 .context-menu-popover.above.visible {
     transform: translateY(0%);
 }
+
+
 

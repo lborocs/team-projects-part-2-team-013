@@ -224,6 +224,7 @@
     justify-content: flex-start;
     align-items: center;
     gap: 0.5em;
+    height: 3em;
     width: 100%;
     padding-bottom: 0;
     padding: 10px 10px 0 10px;
@@ -507,9 +508,10 @@
 }
 
 .avatar {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 50%;
+    aspect-ratio: 1;
     border: solid 1px var(--white, white);
     transition: 0.1s ease-out;
     z-index: 0;
@@ -576,6 +578,7 @@
 
 .taskgrid {
     width: calc(100% - 2em);
+    min-height: 100%;
     display: flex;
     align-self: flex-start;
     flex-wrap: wrap;
@@ -586,13 +589,16 @@
     margin-left: 1em;
     margin-right: 1em;
     justify-content: flex-start;
-    overflow-y: auto;
-    overflow-x: clip;
-    
+}
 
+.taskgrid-wrapper {
+    overflow-y: auto;
+    width: 100%;
+    height: calc(100% - 8em);
 }
 
 .columntitle {
+    display: flex;
     font-weight: 500;
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -603,6 +609,13 @@
     margin-left: 0;
     text-align: center;
     border-radius: 2em;
+    align-items: center;
+    gap: 0.25em;
+
+
+    & span {
+        font-size: 20px;
+    }
 }
 
 .add-task {
@@ -640,7 +653,7 @@
     align-items: center;
     padding-bottom: 0.75em;
     gap: 0.85em;
-    width: 22em;
+    width: clamp(22em, 32%, 34em);
     transition: 0.08s ease-out;
 }
 
@@ -786,13 +799,10 @@
     
     }
     
-    & th i {
-        font-size: 1em;
+    & th span {
+        font-size: 22px;
         color: var(--icon-clr, #777777);
         transition: 0.2s ease-out;
-        padding: 0.5em;
-        padding-top: 0.3em;
-        padding-bottom: 0.3em;
         margin-left: 0.25em;
         margin-right: 0.25em;
         text-align: center;
@@ -806,7 +816,7 @@
         }
     }
     
-    & th i:hover {
+    & th span:hover {
         color: var(--text-off-black, #0f0f0f);
         transition-duration: 0.08s;
         background-color: var(--light-grey-bg);
@@ -814,6 +824,7 @@
 }
 
 #list-add {
+    display: flex;
     background-color: rgba(255,255,255,0);
     border: none;
     color: var(--icon-clr, #777777);
@@ -958,6 +969,7 @@
 }
 
 .header-cell {
+    display: flex;
     height: 100%;
     padding: 0.5em;
     border-radius: 4px;
@@ -1423,4 +1435,20 @@
     font-weight: 600;
     font-size: 15px;
     color: var(--text-off-black, #0f0f0f);
+}
+
+.description-icon-container{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 0.2em;
+    height: 100%;
+}
+
+.explainer-description-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    height: 100%;
 }

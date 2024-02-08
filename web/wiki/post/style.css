@@ -112,22 +112,13 @@
     margin-left: 0;
     
     .author {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 0.5em;
+        line-height: 2.4rem;
         font-size: 0.9em;
         color: #2d2e30;
-
     }
 
     .date {
-         display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center; 
-
-        gap: 0.5em;
+        line-height: 2.4rem;
         font-size: 0.9em;
         color: #2d2e30;
     }
@@ -156,7 +147,7 @@
         padding: 0.25em;
         padding-left: 0.5em;
         padding-right: 0.5em;
-        border-radius: 1em;
+        border-radius: 1rem;
         background-color: #ebedef;
         color: #2d2e30;
         font-size: 13px;
@@ -190,6 +181,13 @@
     border-radius: 10px;
     border: 1px solid #e0e0e0;
     box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.1);
-  }
+}
+
+.avatar {
+    width: 1.75em;
+    height: 1.75em;
+    border-radius: 50%;
+    aspect-ratio: 1;
+}
 
 

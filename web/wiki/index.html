@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="/ui-elements/task-card.css">
     <link rel="stylesheet" href="/ui-elements/small-icon.css">
     <link rel="stylesheet" href="/ui-elements/popover.css">
+    <link rel="stylesheet" href="/ui-elements/context-menu.css">
     <link rel="stylesheet" href="/ui-elements/notification-popover.css">
     <script src="/global-ui.js" type="module"></script>
     <script src="client.js" type="module"></script>
@@ -40,12 +41,17 @@
                 <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="fullLogo">
             </div> 
             <div class="right">
-                <div class="user-both">
-                    <div class="item" id="user-name"></div>
-                    <div class="item" id="user-icon">
-                    <i class="fa-solid fa-user"></i>
+
+                <div class="search white" id="global-search">
+                    <input id="search" class="search-input" type="text" autocomplete="off" placeholder="Search"></input>
+                    <div class="search-icon">
+                        <span class="material-symbols-rounded">search</span>
+                    </div>
+                    <div class="search-icon clear-icon">
+                        <span class="material-symbols-rounded" id="delete-search">close</span>
                     </div>
                 </div>
+
                 <div class="notification-popover item" id="inbox-icon" tabindex="0">
                     <div class="icon-button no-box">
                         <div class="button-icon">
@@ -62,7 +68,8 @@
                                 </span>
                             </div>
                             Activity
-                            <div class="small-icon" id="read-all" tabindex="0">
+                            <div class="small-icon tooltip tooltip-left" id="read-all" tabindex="0">
+                                <p class="tooltiptext">Read all</p>
                                 <span class="material-symbols-rounded">
                                     done_all
                                 </span>
@@ -75,6 +82,9 @@
                     </div>
                 </div>
                 
+                <div class="item" id="user-icon-container">
+                </div>
+
             </div>
 
         </header>

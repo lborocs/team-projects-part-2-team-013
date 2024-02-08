@@ -1,0 +1,14 @@
+
+
+.tab-selector{
+    display: flex;
+    flex-direction: row;
+    font-size: 4em;
+}
+
+.sidebar-container{
+    .content{
+        display: flex;
+        align-items: center;
+    }
+}
