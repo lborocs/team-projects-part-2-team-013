@@ -972,7 +972,7 @@ function db_account_fetch(string $email) {
     global $db;
 
     $query = $db->prepare(
-        "SELECT `ACCOUNTS`.*, `EMPLOYEES`.isManager 
+        "SELECT `ACCOUNTS`.*, `EMPLOYEES`*
         FROM `ACCOUNTS`, `EMPLOYEES`
         WHERE `ACCOUNTS`.email = ?
         AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
@@ -998,7 +998,7 @@ function db_account_fetch_by_id(string $hex_id) {
     $bin_id = hex2bin($hex_id);
 
     $query = $db->prepare(
-        "SELECT ACCOUNTS.*, `EMPLOYEES`.isManager 
+        "SELECT ACCOUNTS.*, `EMPLOYEES`.*
         FROM `ACCOUNTS`, `EMPLOYEES` 
         WHERE `ACCOUNTS`.empID = ? AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
     );
