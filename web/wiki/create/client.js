@@ -46,7 +46,8 @@ tagsList.then((tagsList) => {
             else {
                 document.querySelector("#placeholderTag").classList.add("norender")
                 post.tags.forEach((tag) => {
-                    document.querySelector("#listOfTags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<i class="fa-solid fa-x"></i></div>`
+                    document.querySelector("#listOfTags").innerHTML += `<div class="tag" id="${tag}"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<i class="fa-solid fa-x"></i></div>`
+                    addDeleteListener(document.getElementById(tag));
                 });
             }
         });
@@ -89,11 +90,8 @@ var quill = new Quill('#editor', {
     theme: 'snow'
 });
 
-input.addEventListener("keydown", function(event) {
-if (event.key === "Enter") {
-    event.preventDefault();
+function createVisualTag(tagName){
     const tag = document.createElement("div");
-    tagContent = input.value.trim();
     console.log(tagContent);
     if (tagContent !== "") {
         //createTag(tagContent);
@@ -101,22 +99,31 @@ if (event.key === "Enter") {
     tag.className = "tag";
     tag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + tagContent + '<i class="fa-solid fa-x"></i>';
     document.querySelector("#listOfTags").appendChild(tag);
-    input.value = "";
+    addDeleteListener(tag);
     }
 }
-});
-tagsList.then((tagsList) => {
-document.getElementById("tags").addEventListener("click", function(event) {
-if (event.target.classList.contains("fa-x")) {
-    event.target.parentNode.remove();
-    if (tags.children.length == 0){
-    document.querySelector("#placeholderTag").classList.remove("norender")}
-}
-});
+input.addEventListener("keydown", function(event) {
+if (event.key === "Enter") {
+    event.preventDefault();
+    tagContent = input.value.trim();
+    createVisualTag(tagContent);
+    input.value = "";
+    }
 });
 
+function addDeleteListener(thisTag, tags){
+    thisTag.addEventListener("click", function(event) {
+    if (event.target.classList.contains("fa-x")) {
+        event.target.parentNode.remove();
+        var tags = document.querySelectorAll(".tag");
+        if (tags.length == 0){
+        document.querySelector("#placeholderTag").classList.remove("norender")}
+        }
+    });
+}
+
 function getTagList() {
-    const tags = document.getElementById("tags");
+    const tags = document.querySelectorAll(".tag");
     const tagList = [];
     for (let i = 0; i < tags.children.length; i++) {
     const tagText = tags.children[i].childNodes[0].nodeValue.trim();
