@@ -24,6 +24,7 @@ enum TASK_UPDATE_TYPE {
     const EDITED = 1;
     const ASSIGNED = 2;
     const UNASSIGNED = 3;
+    const COMPLETED_CHANGE = 4;
 }
 
 

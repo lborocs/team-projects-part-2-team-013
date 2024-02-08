@@ -37,6 +37,10 @@ function notification_task_edit(string $task_id, string $edited_by) {
     return _create_notification(NOTIFICATION_TYPE::TASK_UPDATE, $edited_by, $task_id, null, TASK_UPDATE_TYPE::EDITED);
 }
 
+function notification_task_completed_change(string $task_id, string $completed_by) {
+    return _create_notification(NOTIFICATION_TYPE::TASK_UPDATE, $completed_by, $task_id, null, TASK_UPDATE_TYPE::COMPLETED_CHANGE);
+}
+
 function notification_task_assigned_bulk(string $task_id, string $assigned_by, Array $assignees) {
 
     $fields = array_map(function($assignee_id) use ($task_id) {

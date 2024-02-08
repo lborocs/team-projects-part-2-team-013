@@ -40,6 +40,19 @@ const OBJECT_GENERIC_DELETE_FUNCS = [
 ];
 
 
+function ensure_no_unchanged_fields(Array $old, Array $new) {
+    foreach ($old as $key => $value) {
+        if (array_key_exists($key, $new) && $new[$key] == $value) {
+            respond_bad_request(
+                "Field $key is unchanged and should not be provided",
+                ERROR_BODY_INVALID
+            );
+        }
+    }
+}
+
+
+
 function object_manipulation_generic(array $method_checks, Table $model, RequestContext $ctx, string $args, array $allowed_fields = []) {
     // generically verify and manipulate an object, then call its non generic function
 
