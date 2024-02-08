@@ -953,6 +953,7 @@ sortArray.forEach((sortObject) => {
             console.error("invalid sort criteria");
         }
         //remove all tasks from the table
+        taskRows = document.querySelectorAll(".taskRow");
         taskRows.forEach((task) => {
             task.remove();
         });
