@@ -1,7 +1,8 @@
 :root {
     --border-clr: #e0e0e0;
     --icon-clr: #5f6368;
-    --light-grey-bg: rgb(244,244,244);
+    /* --light-grey-bg: rgb(244,244,244); */
+    --light-grey-bg: #f6f8fa;
     --task-column-border: rgba(0,0,0,0.15);
     --box-shadow-clr: rgba(0,0,0,0.15);
     --box-shadow-softer-clr: rgba(0,0,0,0.1);
