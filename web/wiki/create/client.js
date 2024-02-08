@@ -46,7 +46,8 @@ tagsList.then((tagsList) => {
             else {
                 document.querySelector("#placeholderTag").classList.add("norender")
                 post.tags.forEach((tag) => {
-                    document.querySelector("#listOfTags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<i class="fa-solid fa-x"></i></div>`
+                    document.querySelector("#listOfTags").innerHTML += `<div class="tag" id="${tag}"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<i class="fa-solid fa-x"></i></div>`
+                    addDeleteListener(document.getElementById(tag));
                 });
             }
         });
@@ -101,19 +102,21 @@ if (event.key === "Enter") {
     tag.className = "tag";
     tag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + tagContent + '<i class="fa-solid fa-x"></i>';
     document.querySelector("#listOfTags").appendChild(tag);
+    addDeleteListener(tag);
     input.value = "";
     }
 }
 });
-tagsList.then((tagsList) => {
-document.getElementById("tags").addEventListener("click", function(event) {
-if (event.target.classList.contains("fa-x")) {
-    event.target.parentNode.remove();
-    if (tags.children.length == 0){
-    document.querySelector("#placeholderTag").classList.remove("norender")}
+function addDeleteListener(thisTag, tags){
+    thisTag.addEventListener("click", function(event) {
+    if (event.target.classList.contains("fa-x")) {
+        event.target.parentNode.remove();
+        var tags = document.getElementById("tags");
+        if (tags == null || tags.children.length == 0){
+        document.querySelector("#placeholderTag").classList.remove("norender")}
+        }
+    });
 }
-});
-});
 
 function getTagList() {
     const tags = document.getElementById("tags");
