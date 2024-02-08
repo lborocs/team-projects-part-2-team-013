@@ -103,7 +103,7 @@ input {
     width: fit-content;
     opacity: 0;
     transition: opacity 0.3s 0.6s;
-    background-color: #2f2f2fee;
+    background-color: #2f2f2f;
     box-shadow: 0 0 6px rgba(0,0,0,0.15);
     color: #ffffff;
     text-align: center;
@@ -188,6 +188,18 @@ input {
     border-style: solid;
     border-color: #2f2f2fcc transparent transparent transparent;
 }
+
+
+.avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    border: solid 1px var(--white, white);
+    transition: 0.1s ease-out;
+    z-index: 0;
+}
+
 
 .sidebar-container {
     display: flex;
@@ -571,9 +583,23 @@ button:hover {
     aspect-ratio: 1;
 }
 
-#user-icon:hover {
-    background-color: rgba(0,0,0,0);
+#user-icon-container {
+    border-radius: 50%;
+    transition: 0.05s ease-out;
 }
+
+#user-icon-container:hover {
+    border: none;
+    transition: 0.05s ease-out;
+    box-shadow: 0 0 0 2px #177fffcc;
+}
+
+#user-icon-container:hover #user-icon {
+    border: none;
+}
+
+
+
 
 
 .edit-and-save {

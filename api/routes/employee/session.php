@@ -272,28 +272,65 @@ function r_session_account(RequestContext $ctx, string $args) {
 
 
 function r_session_reset_password(RequestContext $ctx, string $args) {
-    $ctx->body_require_fields_as_types([
-        "email"=>"string",
-    ]);
 
-    $email = $ctx->request_body["email"];
+    if ($ctx->request_method == "POST") {
+        $ctx->body_require_fields_as_types([
+            "email"=>"string",
+        ]);
 
-    $account = db_account_fetch($email);
+        $email = $ctx->request_body["email"];
 
-    if ($account == false) {
-        respond_not_authenticated(
-            "Account does not exist",
-            ERROR_RESOURCE_NOT_FOUND
-        );
+        $account = db_account_fetch($email);
+
+        if ($account == false) {
+            // bad way to prevent timing attacks
+            // probably not a very good mitigation
+            http_request("HEAD", "https://api.mailjet.com/v3/REST/account");
+            respond_no_content();
+        }
+        $emp_id = $account["empID"];
+
+        $token = auth_password_reset_create_token($email, $emp_id);
+
+        $message = "Click here to reset your password: " . "https://013.team/resetpassword#$token";
+
+        send_email($email, "$email ($emp_id)", "Password Reset", $message);
+
+        respond_no_content();
+    } elseif ($ctx->request_method == "PATCH") {
+        $ctx->body_require_fields_as_types([
+            "token"=>"string",
+            "newPassword"=>"string",
+        ]);
+        $new_password = $ctx->request_body["newPassword"];
+
+        validate_password_constraints($new_password, PASSWORD_BANNED_PHRASES);
+
+        
+        $token = $ctx->request_body["token"];
+        $data = auth_password_burn_token($token);
+        $emp_id = $data["emp_id"];
+
+        db_account_password_change($emp_id, hash_pass($new_password));
+
+        respond_no_content();
+
+    } elseif ($ctx->request_method == "PUT") {
+        // this should really be a GET but
+        // GET doesnt accept a body
+        // and putting the token in the uri is a bad idea
+
+        $ctx->body_require_fields_as_types([
+            "token"=>"string",
+        ]);
+        $data = auth_password_validate_token($ctx->request_body["token"]);
+
+        $employee = db_employee_fetch($data["emp_id"]);
+
+        respond_ok(Array(
+            "employee"=>$employee,
+        ));
     }
-    $emp_id = $account["empID"];
-
-    $message = "Click here to reset your password: " . "https://013.team/resetpassword#token";
-
-    send_email($email, "Employee($emp_id)", "Password Reset", $message);
-
-
-    respond_no_content();
 }
 
 function r_session_204(RequestContext $ctx, string $args) {
@@ -306,7 +343,7 @@ register_route(new Route(["POST"], "/otp", "r_session_otp", 1, ["REQUIRES_BODY"]
 register_route(new Route(["PATCH", "GET"], "/account", "r_session_account", 1, ["REQUIRES_BODY"]));
 register_route(new Route(["GET"], "/generate_204", "r_session_204", 0));
 register_route(new Route(["GET", "POST"], "/register", "r_session_register", 0, ["REQUIRES_BODY"]));
-register_route(new Route(["POST"], "/resetpassword", "r_session_reset_password", 0, ["REQUIRES_BODY"]));
+register_route(new Route(["POST", "PATCH", "PUT"], "/resetpassword", "r_session_reset_password", 0, ["REQUIRES_BODY"]));
 register_route(new Route(["POST"], "/logoutall", "r_session_logout_all", 1));
 
 

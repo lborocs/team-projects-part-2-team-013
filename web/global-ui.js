@@ -9,7 +9,8 @@ export const wikiButton = document.querySelector("#wiki")
 export const workloadButton = document.querySelector("#workload")
 export const settingsButton = document.querySelector("#settings")
 export const trainingButton = document.querySelector("#training")
-export const logoutButton = document.querySelector("#logout")
+export const navLogoutButton = document.querySelector("#logout")
+
 
 export const userAvatar = document.getElementById("user-icon-container")
 export const notificationsButton = document.getElementById("inbox-icon")
@@ -275,7 +276,7 @@ export function formatDateFull(date) {
         ordinal = "rd";
     }
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",  "November", "December"];
-    let formattedDate = `${day}<sup>${ordinal}</sup> ${months[month]} ${year}`;
+    let formattedDate = `${day}<sup>${ordinal} </sup> ${months[month]} ${year}`;
     return formattedDate;
 }
 
@@ -293,7 +294,7 @@ export function howLongAgo(timestamp) {
     let days = Math.floor(hours / 24);
 
     if (seconds < 60) {
-        return "Now";
+        return "Just now";
     }
 
     if (minutes < 60) {
@@ -788,8 +789,8 @@ if (trainingButton !== null) {
 }
 
 
-if (logoutButton !== null) {
-    logoutButton.addEventListener("click", () => {
+if (navLogoutButton !== null) {
+    navLogoutButton.addEventListener("click", () => {
         delete_api("/employee/session.php/session").then(async () => {
             await clearStorages();
             window.location.href = "/";
@@ -890,6 +891,85 @@ function fillCurrentUserInfo() {
         icon.id = "user-icon";
 
         userAvatar.appendChild(icon);
+    });
+}
+
+function userIconContextMenu() {
+    if (userAvatar === null) {
+        return;
+    }
+
+    userAvatar.classList.add('context-menu')
+    let contextMenu = document.createElement('div')
+    contextMenu.classList.add('context-menu-popover')
+    contextMenu.innerHTML = `
+        <div class="item action-settings">
+            <div class="icon">
+                <span class="material-symbols-rounded">
+                    settings
+                </span>
+            </div>
+            <div class="text">
+                Settings
+            </div>
+        </div>
+        <div class="item action-invite">
+            <div class="icon">
+                <span class="material-symbols-rounded">
+                    mail
+                </span>
+            </div>
+            <div class="text">
+                Invite
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="item action-logout">
+            <div class="icon">
+                <span class="material-symbols-rounded">
+                    logout
+                </span>
+            </div>
+            <div class="text">
+                Log out
+            </div>
+        </div>
+    `
+    userAvatar.appendChild(contextMenu)
+
+    userAvatar.addEventListener('pointerup', (e) => {
+        e.stopPropagation()
+        userAvatar.querySelector('.context-menu-popover').classList.toggle('visible')
+    })
+
+    document.addEventListener('pointerdown', (e) => {
+        if (!userAvatar.contains(e.target)) {
+            userAvatar.querySelector('.context-menu-popover').classList.remove('visible')
+        }
+
+    })
+
+    //context menu items
+    let contextMenuItems = contextMenu.querySelectorAll(".item");
+    contextMenuItems.forEach(item => {
+        item.addEventListener("pointerup", (e) => {
+            e.stopPropagation();
+            if (item.classList.contains("action-settings")) {
+                console.log("[User Icon Redirect] Redirecting to profile page")
+                window.location.href = "/settings";
+            } else if (item.classList.contains("action-invite")) {
+                console.log("[User Icon Redirect] Redirecting to invite page")
+                window.location.href = "/invite";
+            } else if (item.classList.contains("action-logout")) {
+                console.log("[User Icon Redirect] Logging out")
+                delete_api("/employee/session.php/session").then(async () => {
+                    await clearStorages();
+                    window.location.href = "/";
+                });
+            } else {
+                console.error("[User Icon Redirect] unknown action")
+            }
+        });
     });
 }
 
@@ -1019,6 +1099,7 @@ if (window.location.pathname !== '/') {
     }
 
     fillCurrentUserInfo();
+    userIconContextMenu();
     managerElementsEnableIfManager();
 
     if (notificationsButton !== null) {
@@ -1031,6 +1112,7 @@ if (window.location.pathname !== '/') {
             }
         });
     }
+
 }
 
 

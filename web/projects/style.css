@@ -224,6 +224,7 @@
     justify-content: flex-start;
     align-items: center;
     gap: 0.5em;
+    height: 3em;
     width: 100%;
     padding-bottom: 0;
     padding: 10px 10px 0 10px;
@@ -510,6 +511,7 @@
     width: 1.75rem;
     height: 1.75rem;
     border-radius: 50%;
+    aspect-ratio: 1;
     border: solid 1px var(--white, white);
     transition: 0.1s ease-out;
     z-index: 0;
@@ -576,6 +578,7 @@
 
 .taskgrid {
     width: calc(100% - 2em);
+    min-height: 100%;
     display: flex;
     align-self: flex-start;
     flex-wrap: wrap;
@@ -585,14 +588,18 @@
     margin-top: 0;
     margin-left: 1em;
     margin-right: 1em;
-    justify-content: flex-start;
-    overflow-y: auto;
-    overflow-x: clip;
-    
+    justify-content: center;
+}
 
+.taskgrid-wrapper {
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    height: calc(100% - 8em);
 }
 
 .columntitle {
+    display: flex;
     font-weight: 500;
     padding-left: 0.5em;
     padding-right: 0.5em;
@@ -603,6 +610,13 @@
     margin-left: 0;
     text-align: center;
     border-radius: 2em;
+    align-items: center;
+    gap: 0.25em;
+
+
+    & span {
+        font-size: 20px;
+    }
 }
 
 .add-task {
@@ -640,7 +654,7 @@
     align-items: center;
     padding-bottom: 0.75em;
     gap: 0.85em;
-    width: 22em;
+    width: clamp(22em, 32%, 34em);
     transition: 0.08s ease-out;
 }
 
@@ -709,7 +723,6 @@
     background-color: var(--finished-bg, rgba(244, 248, 243, 0.7));
     border: solid 1px var(--task-column-border, rgba(0,0,0,0.15));
     .columntitle {
-        display: flex;
         background: var(--finished-title-bg, rgb(219, 237, 219));
         color: var(--finished-title-clr, rgb(28, 56, 41));
         font-weight:700;
@@ -809,9 +822,15 @@
         transition-duration: 0.08s;
         background-color: var(--light-grey-bg);
     }
+
+    .disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
 }
 
 #list-add {
+    display: flex;
     background-color: rgba(255,255,255,0);
     border: none;
     color: var(--icon-clr, #777777);

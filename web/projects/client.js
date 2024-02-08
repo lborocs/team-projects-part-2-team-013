@@ -17,6 +17,7 @@ let sortArray = [titleButton, dateButton, statusButton];
 
 //single things
 const taskGrid = document.querySelector(".taskgrid")
+const taskGridWrapper = document.querySelector(".taskgrid-wrapper")
 const taskList = document.querySelector(".tasklist")
 const taskTable = document.querySelector(".tasktable")
 const taskTableBody = document.querySelector(".tasktable-body")
@@ -169,10 +170,10 @@ views.forEach((view, i) => {
             })
             console.log("[viewOnClick] selected")
 
-            taskGrid.classList.toggle("fade")
+            taskGridWrapper.classList.toggle("fade")
             taskList.classList.toggle("fade")
             setTimeout(() => {
-                taskGrid.classList.toggle("norender")
+                taskGridWrapper.classList.toggle("norender")
                 taskList.classList.toggle("norender")
             }, 50)
         } 
@@ -183,8 +184,8 @@ views.forEach((view, i) => {
         if (session.auth_level >= 2) {
 
             view.classList.toggle("selected");
-            taskGrid.classList.add("fade");
-            taskGrid.classList.add("norender");
+            taskGridWrapper.classList.add("fade");
+            taskGridWrapper.classList.add("norender");
             taskList.classList.remove("fade");
             taskList.classList.remove("norender");
             
@@ -847,6 +848,7 @@ function calculateTaskCount() {
 
 function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours) {
     console.log("[renderTaskInList] renering task in list")
+    
 
     let taskRow = document.createElement("tr");
     taskRow.classList.add("taskRow");
@@ -855,10 +857,24 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         <td class="title">
             ${title}
         </td>
-        <td class="date">
-            ${dueDate}
-        </td>
-    `;
+    `; 
+
+    if (dueDate === "") {
+        taskRow.innerHTML += `
+            <td class="date disabled">
+                Not set
+            </td>
+        `;
+    } else {
+        taskRow.innerHTML += `
+            <td class="date">
+                ${dueDate}
+            </td>
+        `;
+    }
+
+
+    
     
     //set id to the task id
     taskRow.setAttribute("id", ID);
@@ -1192,8 +1208,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         `;
     };
 
-    if (expectedManHours !== 0 && expectedManHours === 1) {
-        
+    if (expectedManHours !== 0) {
         taskInfo.innerHTML += `
 
             <div class="tooltip tooltip-under manhours-container status-container">
@@ -1202,20 +1217,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 hourglass_empty
                 </span>
                 <div class="manhours">
-                    ${expectedManHours} Hour
-                </div>
-            </div>
-        `;
-    } else if (expectedManHours !== 0) {
-        taskInfo.innerHTML += `
-
-            <div class="tooltip tooltip-under manhours-container status-container">
-                <p class="tooltiptext">${manHoursTooltip}</p>
-                <span class="material-symbols-rounded">
-                hourglass_empty
-                </span>
-                <div class="manhours">
-                    ${expectedManHours} Hours
+                    ${expectedManHours} Hour${expectedManHours !== 1 ? 's' : ''}
                 </div>
             </div>
         `;
@@ -1275,7 +1277,7 @@ function formatDateWithOrdinals(date) {
     const day = parseInt(date.split(" ")[0]);
     const ordinal = getOrdinalSuffix(day);
     const monthYear = date.split(" ")[1];
-    return `${day}<sup>${ordinal}</sup> ${monthYear}`;
+    return `${day}<sup>${ordinal} </sup> ${monthYear}`;
 }
 
 function getOrdinalSuffix(day) {
@@ -1355,7 +1357,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
     console.log(`[renderProject] using icon: ${icon}`);
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
     let lastAccessedFormatted = lastAccessed ? formatLastAccessed(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
-    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : "No due date";
+    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : `<span class="disabled">Not set</span>`;
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -1379,7 +1381,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         </td>
         <td>${date}</td>
         <td>
-            <div class="tooltip tooltip-under">
+            <div class="tooltip tooltip-above">
                 <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
                 ${lastAccessedFormatted}
             </div>
@@ -1423,15 +1425,15 @@ function formatLastAccessed(date) {
     } else if (months > 0) {
         return `${months} month${months > 1 ? 's' : ''} ago`;
     } else if (weeks > 0) {
-        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+        return weeks === 1 ? 'Last week' : `${weeks} weeks ago`;
     } else if (days > 0) {
-        return `${days} day${days > 1 ? 's' : ''} ago`;
+        return days === 1 ? 'Yesterday' : `${days} days ago`;
     } else if (hours > 0) {
-        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        return hours === 1 ? 'An hour ago' : `${hours} hour${hours > 1 ? 's' : ''} ago`;
     } else if (minutes > 0) {
-        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+        return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
     } else {
-        return `Now`;
+        return `Just now`;
     }
 }
 async function addTask() {
@@ -2317,6 +2319,8 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
     projectSearchInput.value = "";
     searchAndRenderProjects()
+    startOrRollProjectSearchTimeout();
+
 })
 
 document.getElementById("delete-task-search").addEventListener("pointerup", () => {
@@ -2373,8 +2377,3 @@ async function searchAndRenderTasks() {
     renderTasks(tasks);
 }
 
-let userIcon = document.querySelector("#user-icon-container");
-userIcon.addEventListener("click", () => {
-    window.location.href = "/settings";
-    console.log("[User Icon Redirect] Redirecting to profile page")
-});

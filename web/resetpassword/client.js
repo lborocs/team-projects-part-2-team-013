@@ -1,111 +1,62 @@
 import * as global from "../global-ui.js"
 
-const changeButton = document.getElementById("login")
-const newPasswordInput = document.getElementById("newPassword")
-const confirmNewPasswordInput = document.getElementById("confirmNewPassword")
-const toggleNewPassword = document.getElementById("toggleNewPassword")
-const toggleConfirmNewPassword = document.getElementById("toggleConfirmNewPassword")
+const accountDisplay = document.getElementById("account-display");
+const avatarContainer = document.getElementById("avatar-container");
+const passwordInput = document.getElementById("newPassword");
+const confirmPasswordInput = document.getElementById("newPasswordConfirm");
+const changeButton = document.getElementById("change");
 
-function setLoginStatus(status) {
-    document.getElementById("status").innerText = status;
-}
+var validatedToken;
 
-async function login() {
-    const statusElement = document.getElementById("status");
-    statusElement.classList.remove("status-incorrect");
-    statusElement.classList.add("hidden");
-    loginButton.querySelector(".button-text").textContent = "Signing in...";
-    var username = document.getElementById("email").value
-    var password = passwordInput.value
-    var loginData = {
-        username: username,
-        password: password
-    }
+async function validateToken() {
+    const token = document.location.hash.substring(1);
 
-    const res = await post_api("/employee/session.php/login", loginData, {use_auth: false, redirect_on_error: false});
+    if (token.length == 0) { return; }
 
-    if (res.success) {
-        localStorage.setItem("token", res.data.session_token);
-        global.getCurrentSession().then((session) => {
+    const res = await put_api("/employee/session.php/resetpassword", {token:token});
+    if (res.status != 200) { return; }
 
-            let emp = session.employee;
-
-            console.log(`[login] logged in successfully as ${emp.id} (${global.employeeToName(emp)}) ${session.id} - redirecting`);
-    
-            if (window.location.hash !== "") {
-                window.location.href = window.location.hash.substring(1).split("&")[0];
-            } else {
-                window.location.href = "/projects/";
-            }
-
-        });
-    } else {
-        statusElement.classList.add("status-incorrect");
-        statusElement.classList.remove("hidden");
-        setLoginStatus(`${res.error.message} (${res.error.code})`);
-        loginButton.querySelector(".button-text").textContent = "Sign in";
-    }
-}
-
-loginButton.addEventListener("click", login)
-
-passwordInput.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        login();
-    }
-});
-
-emailInput.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        login();
-    }
-});
-
-
-
-document.getElementById('toggleNewPassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('password');
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        document.getElementById("toggleNewPassword").textContent = "visibility";
-    } else {
-        passwordInput.type = 'password';
-        document.getElementById("toggleNewPassword").textContent = "visibility_off";
-        
-    }
-});
-
-document.getElementById('toggleConfirmNewPassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('password');
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        document.getElementById("toggleConfirmNewPassword").textContent = "visibility";
-    } else {
-        passwordInput.type = 'password';
-        document.getElementById("toggleConfirmNewPassword").textContent = "visibility_off";
-        
-    }
-});
-
-// redirect to projects if we are logged in
-global.renewCurrentSession().then((session) => {
-    if (session) {
-        window.location.href = "/projects/";
-    }
-});
-
-
-const schema = window.location.hash.substring(1).split("&")[1];
-if (schema) {
-    const msg = {
-        "sessionexpired": "Your session expired and you have been logged out",
-        "authrequired": "You must be logged in to access that page"
-    }[schema]
-
-    if (msg) {
-        setLoginStatus(msg);
-        document.getElementById("status").classList.remove("hidden");
-        document.getElementById("status").classList.add("status-incorrect");  
-    }
+    accountDisplay.innerText = global.employeeToName(res.data.employee);
+    avatarContainer.innerHTML = `<img src="${global.employeeAvatarOrFallback(res.data.employee)}" class="avatar" alt="avatar">`;
+    validatedToken = token;
 
 }
+
+validateToken();
+
+
+async function changePassword(newPassword) {
+
+    if (!validatedToken) {
+        return
+    }
+
+    const res = await patch_api("/employee/session.php/resetpassword", {token:validatedToken, newPassword:newPassword});
+
+    if (!res.success) {
+        alert(res.error.message);
+        return false;
+    }
+    return true;
+
+}
+
+changeButton.addEventListener("click", async function() {
+
+    if (!validatedToken) {
+        return
+    }
+
+    const password = passwordInput.value;
+    const confirmPassword = confirmPasswordInput.value;
+
+    if (password != confirmPassword) {
+        alert("Passwords do not match");
+        return;
+    }
+
+    if (await changePassword(confirmPassword)) {
+        alert("Password changed successfully");
+        window.location.href = "/";
+    }
+});
