@@ -19,6 +19,7 @@
     cursor: pointer;
     user-select: none;
     transition: background-color 0.1s ease-out;
+    transition: opacity 0.15s ease-out;
 
     .button-text {
         margin: 0 2px;
@@ -94,6 +95,12 @@
         background-color: #dcdfe4;
     }
 
+}
+
+.text-button.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.15s ease-out;
 }
 
 

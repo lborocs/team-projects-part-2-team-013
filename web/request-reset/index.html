@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make It All - Log In</title>
+    <title>Forgot Password</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link rel="stylesheet" href="global-styles.css">
+    <link rel="stylesheet" href="/global-styles.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
     <link rel="stylesheet" href="/ui-elements/text-button.css">
-    <script src="global-api.js"></script>
-    <script src="global-ui.js" defer type="module"></script>
-    <script defer src="script.js" type="module"></script>
+    <script src="/global-api.js"></script>
+    <script src="/global-ui.js" defer type="module"></script>
+    <script defer src="client.js" type="module"></script>
 
 </head>
 <body>
@@ -22,31 +22,19 @@
         <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="logo">
         <form>
             <div class="box login-box">
-                <h1>Sign in</h1>
+                <h1>Reset password</h1>
+                <div class="text">Enter the email address you use to log in and we will send you a password reset link.</div>
                 <div class="login-container">
                     <div class="input-container">
                         <label for="email">Email</label>
                         <div class="textfield-container">
-                            <input type="email" placeholder="example@email.com" id="email" class="textfield" autocomplete="email" required>
-                        </div>
-                    </div>
-                    <div class="input-container">
-                        <div class="left-right-labels">
-                            <label for="password">Password</label>
-                            <a href="/request-reset/" class="forgot-password">Forgot password?</a>
-                        </div>
-                        <div class="textfield-container">
-                            <input type="password" placeholder="" id="password" class="textfield" autocomplete="current-password" required>
-                            <span class="material-symbols-rounded" id="togglePassword">
-                                visibility_off
-                            </span>
+                            <input type="email" id="email" class="textfield" autocomplete="email" placeholder="someone@example.com" required autofocus>
                         </div>
                     </div>
                 </div>
-                <div class="register-prompt">Don't have an account? <a href="/register/">Register</a></div>
-                <div id="login" class="text-button blue">
+                <div id="send" class="text-button blue disabled">
                     <div class="button-text">
-                        Sign in
+                        Send Link
                     </div>
                 </div>
             </div>
