@@ -647,7 +647,7 @@ async function renderTasks(tasks) {
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
     console.log("[taskObjectRenderAll] rendering task object "+task.title)
-    let date = task.dueDate ? global.formatDate(new Date(task.dueDate)) : "Not set";
+    let date = task.dueDate ? global.formatDate(new Date(task.dueDate)) : "";
     let desc = task.description
     let title = task.title || "No Title";
     let createdBy = task.createdBy || "Unknown";
