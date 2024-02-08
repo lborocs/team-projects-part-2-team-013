@@ -14,7 +14,7 @@ body {
     display: flex;
     flex-direction: row;
     height: 100%;
-    background-color: #f4f4f4;
+    background-color: var(--light-grey-bg);
 }
 
 .type-of-post {
@@ -64,12 +64,13 @@ body {
 .category {
     font-size: 0.9em;
     font-weight: 600;
-    color: #2d2e30;
+    color: #0f0f0f;
     width: 50%;
     height: 3em;
     padding-left: 0.5em;
     padding-right: 0.5em;
     text-align: center;
+    
     
 }
 
@@ -114,13 +115,6 @@ body {
     color: #4e5057;
 }
 
-.avatar {
-    width: 1.5em;
-    height: 1.5em;
-    border-radius: 50%;
-    background-color: rgba(0,0,0,0);
-}
-
 
 .posts {
     display: flex;
@@ -130,7 +124,7 @@ body {
     gap: 1em;
     padding: 1em;
     overflow-y: scroll;
-    background-color: #f4f4f4;
+    background-color: var(--light-grey-bg);
     height: 100%;
     width: 100%;
 }
@@ -350,7 +344,7 @@ input[type="text"] {
     height: 3.5em;
     align-items: center;
     color: #555555;
-    background-color: #eeeeee;
+    background-color: var(--light-grey-bg);
     border-radius: 8px;
     border: solid 1px #e0e0e0;
     transition: 0.1s ease-out;
@@ -374,13 +368,14 @@ label {
     align-items: center;
     cursor: pointer;
     transition: 0.1s ease-out;
+    background-color: var(--light-grey-bg);
 }
 
 
 input[type="radio"]:checked + label {
     display: flex;
     justify-content: center;
-    background-color: #fff;
+    background-color: #fcefb4;
     color: #2d2e30;
     width: 100%;
 
@@ -391,6 +386,14 @@ input[type="radio"] + label {
     width: 100%;
 
 }
+
+input[type="radio"]:not(:checked) + label:hover {
+    background-color: rgb(219, 219, 219);
+    color: #2d2e30;
+    transition-duration: 0.1s;
+}
+
+
 
 .sidebar {
     z-index: 1;
