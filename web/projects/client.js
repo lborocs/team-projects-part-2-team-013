@@ -1199,8 +1199,21 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         `;
     };
 
-    if (expectedManHours !== 0) {
+    if (expectedManHours !== 0 && expectedManHours === 1) {
         
+        taskInfo.innerHTML += `
+
+            <div class="tooltip tooltip-under manhours-container status-container">
+                <p class="tooltiptext">${manHoursTooltip}</p>
+                <span class="material-symbols-rounded">
+                hourglass_empty
+                </span>
+                <div class="manhours">
+                    ${expectedManHours} Hour
+                </div>
+            </div>
+        `;
+    } else if (expectedManHours !== 0) {
         taskInfo.innerHTML += `
 
             <div class="tooltip tooltip-under manhours-container status-container">
@@ -1213,11 +1226,13 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 </div>
             </div>
         `;
-    };
+    }
+        
 
     if (desc !== "<p><br></p>" && desc !== null) {
         taskInfo.innerHTML += `
-        <div class="tooltip tooltip-under description-container status-container">
+        <div class="tooltip tooltip-under description-icon-container status-container">
+            <p class="tooltiptext">This task contains a description</p>
             <span class="material-symbols-rounded">
                 subject
             </span>
@@ -1253,7 +1268,7 @@ function formatDateWithOrdinals(date) {
     const day = parseInt(date.split(" ")[0]);
     const ordinal = getOrdinalSuffix(day);
     const monthYear = date.split(" ")[1];
-    return `${day}<sup>${ordinal}</sup> ${monthYear}`;
+    return `${day}<sup>${ordinal} </sup> ${monthYear}`;
 }
 
 function getOrdinalSuffix(day) {
@@ -1333,7 +1348,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
     console.log(`[renderProject] using icon: ${icon}`);
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
     let lastAccessedFormatted = lastAccessed ? formatLastAccessed(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
-    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : "No due date";
+    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : `<span class="disabled">Not set</span>`;
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -1357,7 +1372,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         </td>
         <td>${date}</td>
         <td>
-            <div class="tooltip tooltip-under">
+            <div class="tooltip tooltip-above">
                 <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
                 ${lastAccessedFormatted}
             </div>
@@ -1401,15 +1416,15 @@ function formatLastAccessed(date) {
     } else if (months > 0) {
         return `${months} month${months > 1 ? 's' : ''} ago`;
     } else if (weeks > 0) {
-        return `${weeks} week${weeks > 1 ? 's' : ''} ago`;
+        return weeks === 1 ? 'Last week' : `${weeks} weeks ago`;
     } else if (days > 0) {
-        return `${days} day${days > 1 ? 's' : ''} ago`;
+        return days === 1 ? 'Yesterday' : `${days} days ago`;
     } else if (hours > 0) {
-        return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+        return hours === 1 ? 'An hour ago' : `${hours} hour${hours > 1 ? 's' : ''} ago`;
     } else if (minutes > 0) {
         return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
     } else {
-        return `Now`;
+        return `A few seconds ago`;
     }
 }
 async function addTask() {
@@ -2295,6 +2310,8 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
     projectSearchInput.value = "";
     searchAndRenderProjects()
+    startOrRollProjectSearchTimeout();
+
 })
 
 document.getElementById("delete-task-search").addEventListener("pointerup", () => {
@@ -2351,8 +2368,3 @@ async function searchAndRenderTasks() {
     renderTasks(tasks);
 }
 
-let userIcon = document.querySelector("#user-icon-container");
-userIcon.addEventListener("click", () => {
-    window.location.href = "/settings";
-    console.log("[User Icon Redirect] Redirecting to profile page")
-});
