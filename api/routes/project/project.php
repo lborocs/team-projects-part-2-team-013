@@ -58,6 +58,60 @@ function r_project_project(RequestContext $ctx, string $args) {
     object_manipulation_generic(PROJECT_MODEL_CHECKS, TABLE_PROJECTS, $ctx, $args);
 }
 
+
+function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
+    $author_id = $ctx->session->hex_associated_user_id;
+
+    $projID = generate_uuid();
+    $projName = $body["projectName"];
+    $description = $body["projectDescription"] ?? null;
+    $createdBy = hex2bin($author_id);
+    $teamLeader = hex2bin($body["projectTeamLeader"]);
+    $createdAt = timestamp();
+    $dueDate = $body["projectDueDate"] ?? null;
+
+    if (db_generic_new(
+        TABLE_PROJECTS ,
+        [
+            $projID,
+            $projName,
+            $description,
+            $createdBy,
+            $teamLeader,
+            $createdAt,
+            $dueDate
+        ],
+        "sssssss"
+    )) {
+
+        $body["projID"] = $projID;
+        $body["projectCreatedBy"] = $createdBy;
+        $body["projectTeamLeader"] = $teamLeader;
+        $body["projectCreatedAt"] = $createdAt;
+
+        respond_ok(parse_database_row($body, TABLE_PROJECTS));
+    } else {
+        respond_internal_error(ERROR_DB_INSERTION_FAILED);
+    }
+}
+
+
+function _delete_project(RequestContext $ctx, array $url_specifiers) {
+    respond_not_implemented();
+}
+
+function _edit_project(RequestContext $ctx, array $body, array $url_specifiers) {
+
+
+    _use_common_edit(TABLE_PROJECTS, $body, $url_specifiers);
+}
+
+function _fetch_project(RequestContext $ctx, array $url_specifiers) {
+    db_project_accesses_set($ctx->project["projID"], $ctx->session->hex_associated_user_id);
+    respond_ok($ctx->project);
+}
+
+
 register_route(new Route(
     ["GET"],
     "/projects",
