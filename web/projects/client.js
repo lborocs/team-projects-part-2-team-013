@@ -1424,7 +1424,7 @@ function formatLastAccessed(date) {
     } else if (minutes > 0) {
         return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
     } else {
-        return `Now`;
+        return `Just now`;
     }
 }
 async function addTask() {

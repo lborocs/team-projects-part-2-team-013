@@ -294,7 +294,7 @@ export function howLongAgo(timestamp) {
     let days = Math.floor(hours / 24);
 
     if (seconds < 60) {
-        return "Now";
+        return "Just now";
     }
 
     if (minutes < 60) {
