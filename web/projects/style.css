@@ -578,6 +578,7 @@
 
 .taskgrid {
     width: calc(100% - 2em);
+    min-height: 100%;
     display: flex;
     align-self: flex-start;
     flex-wrap: wrap;
@@ -652,7 +653,7 @@
     align-items: center;
     padding-bottom: 0.75em;
     gap: 0.85em;
-    width: 22em;
+    width: clamp(22em, 32%, 34em);
     transition: 0.08s ease-out;
 }
 
