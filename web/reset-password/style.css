@@ -198,3 +198,22 @@ label {
     font-weight: 600;
     font-size: 14px;
 }
+
+.avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    border: solid 1px var(--white, white);
+    transition: 0.1s ease-out;
+
+}
+
+.profile-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: calc(100% - 2rem);
+    align-items: center;
+    justify-content: flex-start;
+}
