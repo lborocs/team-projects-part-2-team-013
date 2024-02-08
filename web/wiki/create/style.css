@@ -8,6 +8,9 @@ input[type="text"] {
     -moz-appearance: none;
     appearance: none;
 }
+
+
+
 .ql-snow * {
     box-sizing: border-box;
     max-height: 26em
@@ -138,24 +141,23 @@ input[type="radio"] + label {
     margin-left: 0.5em;
 }
 
-.buttons {
+.submitButton{
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    width: 6em;
-    padding: 0.5em;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    border-radius: 10px;
+    width: 9em;
     border: 1px solid #e0e0e0;
     background-color: #3098ff;
-    color: #2d2e30;;
+    color: #2d2e30;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     color: #ffffff;
+    white-space: nowrap;
+    height: 100%;
+    font-size: 0.9em;
+    font-weight: 600;
+    border-radius: 10px;
 }
-
-
 
 
 input[type="text"] {
@@ -202,6 +204,7 @@ input[type="text"] {
     cursor: pointer;
 }
 
+
 .tag-input {
     display: inline-block;
     position: relative;
@@ -209,7 +212,7 @@ input[type="text"] {
     border-radius: 10px;
     padding: 5px;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
-    width: 12em;
+    width: 25.5em;
     height: 4em;
 }
 
