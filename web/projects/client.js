@@ -852,6 +852,7 @@ function calculateTaskCount() {
 
 function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours) {
     console.log("[renderTaskInList] renering task in list")
+    
 
     let taskRow = document.createElement("tr");
     taskRow.classList.add("taskRow");
@@ -860,10 +861,23 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         <td class="title">
             ${title}
         </td>
-        <td class="date">
+    `; 
+
+    if (dueDate === "") {
+        taskRow.innerHTML += `
+            <td class="date disabled">
+                Not set
+            </td>
+        `;
+    } else {
+        taskRow.innerHTML += `
+            <td class="date">
                 ${dueDate}
             </td>
-    `; 
+        `;
+    }
+
+
     
     
     //set id to the task id

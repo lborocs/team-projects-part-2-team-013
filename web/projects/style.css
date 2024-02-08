@@ -822,6 +822,11 @@
         transition-duration: 0.08s;
         background-color: var(--light-grey-bg);
     }
+
+    .disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
 }
 
 #list-add {
