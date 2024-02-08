@@ -192,12 +192,6 @@ body {
             font-weight: 500;
             color: #2d2e30;
             margin-bottom: 1em;
-            .avatar {
-                width: 1.5em;
-                height: 1.5em;
-                border-radius: 50%;
-                background-color: #f0f0f0;
-            }
         }
     }
 
