@@ -292,11 +292,11 @@ function auth_password_validate_token(string $token) {
     $issued = $data["issued"];
 
     if ($issued + PASSWORD_RESET_TIMEOUT <= timestamp()) {
-        respond_not_authenticated("Password reset token has expired", ERROR_SESSION_EXPIRED);
+        respond_not_authenticated("Password reset token has expired", ERROR_INSUFFICIENT_AUTHORIZATION);
     }
 
     if (!auth_session_account_check($token_id, $emp_id, $issued)) {
-        respond_not_authenticated("Password reset token has been revoked", ERROR_SESSION_REVOKED);
+        respond_not_authenticated("Password reset token has been revoked", ERROR_INSUFFICIENT_AUTHORIZATION);
     }
 
     return [
