@@ -671,6 +671,12 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
 }
 
 async function renderAssignments(assignments) {
+
+    if (assignments.length == 0) {
+        console.log("[renderAssignments] assignments is empty")
+        return
+    }
+
     let unique_users = new Set();
 
     assignments.forEach((assignment) => {
@@ -891,7 +897,9 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         taskRow.innerHTML += `
             <td class="not-started">
                 <div class="status-cell">
-                    <i class="fa-solid fa-thumbtack"></i> Not Started
+                    <span class="material-symbols-rounded">
+                        push_pin
+                    </span> Not Started
                 </div>
             </td>
         `;
@@ -899,7 +907,9 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         taskRow.innerHTML += `
             <td class="in-progress">
                 <div class="status-cell">
-                    <i class="fa-solid fa-chart-line"></i> In Progress
+                    <span class="material-symbols-rounded">
+                        timeline
+                    </span> In Progress
                 </div>
             </td>
         `;
@@ -907,7 +917,9 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         taskRow.innerHTML += `
             <td class="finished">
                 <div class="status-cell">
-                    <i class="fa-regular fa-circle-check"></i> Finished
+                    <span class="material-symbols-rounded">
+                        check_circle
+                    </span> Finished
                 </div>
             </td>
         `;
