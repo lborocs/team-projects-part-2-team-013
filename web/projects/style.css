@@ -333,6 +333,7 @@
     height: 3em;
     width: calc(100% - 2em);
     align-items: center;
+    gap: 1em;
     position: sticky;
     top: 0;
     color: #555555;
@@ -346,6 +347,14 @@
         box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
         transition: 0.15s ease-out;
     };
+
+    .divider {
+        width: 2px;
+        height: 28px;
+        margin: 0;
+        background-color: #3b3b3b;
+        opacity: 0.2;
+    }
 }
 
 .views > :last-child {
@@ -356,10 +365,9 @@
     box-sizing: border-box;
     display: flex;
     align-items: center;
-    margin-left: 1em;
     padding-left: 0.25em;
     padding-right: 0.5em;
-    background-color: var(--view-selected-bg, rgb(246,246,245));
+    height: 28px;
     font-weight: 700;
     gap: 0.25em;
     border-radius: 4px;
@@ -883,12 +891,22 @@
 }
 
 .status-cell {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.25em;
+
     height: 100%;
     width: 100%;
     padding: 0.25em;
     margin-left: 0.25em;
     margin-right: 0.25em;
     border-radius: 4px;
+
+    & span {
+        font-size: 18px;
+    }
 }
 
 .taskRow {
