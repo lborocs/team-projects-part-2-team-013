@@ -157,6 +157,8 @@ Written/designed by aidan F223129
 - [x] **/employee/meta.php/notifications**
   - GET get all notifications (defined in notifications.md)
 
+- [ ] **/employee/meta.php/preferences**
+  - GET get preferences
 
 # project
 
