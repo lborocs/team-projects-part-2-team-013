@@ -1184,10 +1184,10 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let manHoursTooltip;
     if (expectedManHours === null || expectedManHours === 0) {
         manHoursTooltip = "No man hours set";
-    } else if (expectedManHours === 1) {
+    } else if (expectedManHours === 3600) {
         manHoursTooltip = "1 expected hour";
     } else {
-        manHoursTooltip = `${expectedManHours} expected hours`;
+        manHoursTooltip = `${expectedManHours/3600} expected hours`;
     }
     let taskInfo = document.createElement("div");
     taskInfo.classList.add("task-info");
@@ -1217,7 +1217,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 hourglass_empty
                 </span>
                 <div class="manhours">
-                    ${expectedManHours} Hour${expectedManHours !== 1 ? 's' : ''}
+                    ${expectedManHours/3600} Hour${expectedManHours !==  3600? 's' : ''}
                 </div>
             </div>
         `;

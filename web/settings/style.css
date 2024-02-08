@@ -1,14 +1,30 @@
+.main{
+    align-items: center;
+}
 
+.content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
 
 .tab-selector{
     display: flex;
     flex-direction: row;
     font-size: 4em;
+    align-items: start;
+    width:100%;
 }
 
 .sidebar-container{
+    display: flex;
+    flex-direction: row;
     .content{
         display: flex;
         align-items: center;
     }
 }
+
