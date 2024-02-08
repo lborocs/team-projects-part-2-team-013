@@ -835,10 +835,7 @@ async function renderFromBreadcrumb(locations) {
     }
 
     return true;
-
-
 }
-
 
 function calculateTaskCount() {
     let notStartedCount = notStartedColumn.querySelectorAll(".task").length || 0
@@ -848,7 +845,6 @@ function calculateTaskCount() {
     document.querySelector("#inprogress-count").innerHTML = inProgressCount
     document.querySelector("#finished-count").innerHTML = finishedCount
 }
-
 
 function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours) {
     console.log("[renderTaskInList] renering task in list")
@@ -923,9 +919,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     taskTableBody.appendChild(listAddButtonRow);
     calculateTaskCount();
 }
-
-
-
 
 sortArray.forEach((sortObject) => {
     sortObject.addEventListener("pointerup", () => {
@@ -1011,7 +1004,7 @@ function sortByState(tasks, ascending) {
 }
 
 //TODO: render the context menu
-async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours) {
+async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours, assignedUsers = []) {
     //check for null values and set default values (null doesnt count as undefined)
     state = state === null ? 0 : state;
     ID = ID === null ? "" : ID;
@@ -1019,6 +1012,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     createdBy = createdBy === null ? "" : createdBy;
     date = date === null ? "" : date;
     expectedManHours = expectedManHours === null ? "" : expectedManHours;
+    assignedUsers = assignedUsers === null ? [] : assignedUsers;
     console.log("[renderTask] Task createdBy to " + createdBy)
 
 
@@ -1197,7 +1191,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     }
     let taskInfo = document.createElement("div");
     taskInfo.classList.add("task-info");
-    if (date !== ""   || expectedManHours !== 0) {
+    if (date !== "" || expectedManHours !== 0 || desc !== "<p><br></p>") {
     task.appendChild(taskInfo);
     }
     
@@ -1242,9 +1236,23 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         `;
     }
 
+    console.log(assignedUsers); // Check the assignedUsers array
+
+    if (assignedUsers.length > 0) {
+        assignedUsers.forEach(user => {
+            console.log("user:" + user); // Check each user object
+        });
     
-
-
+        taskInfo.innerHTML += `
+            <div class="assigned-users">
+                ${assignedUsers.map(user => `
+                    <div class="user-icon-container">
+                        <img src="${user.avatarUrl}" alt="${user.name}" class="user-icon">
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
     
     //check if state is 0,1,2 and do separate things for each. otherwise, error
     if (state == 0) {
