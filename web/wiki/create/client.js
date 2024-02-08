@@ -46,7 +46,7 @@ tagsList.then((tagsList) => {
             else {
                 document.querySelector("#placeholderTag").classList.add("norender")
                 post.tags.forEach((tag) => {
-                    document.querySelector("#listOfTags").innerHTML += `<div class="tag" id="${tag}"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<span class="material-symbols-rounded">close</span></div>`
+                    document.querySelector("#listOfTags").innerHTML += `<div class="tag" id="${tag}"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<span class="material-symbols-rounded" id="tagCloseButton">close</span></div>`
                     addDeleteListener(document.getElementById(tag));
                 });
             }
