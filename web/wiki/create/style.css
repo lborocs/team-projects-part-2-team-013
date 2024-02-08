@@ -10,7 +10,6 @@ input[type="text"] {
 }
 
 
-
 .ql-snow * {
     box-sizing: border-box;
     max-height: 26em
@@ -146,7 +145,7 @@ input[type="radio"] + label {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: 9em;
+    width: 9.5em;
     border: 1px solid #e0e0e0;
     background-color: #3098ff;
     color: #2d2e30;
@@ -203,7 +202,9 @@ input[type="text"] {
     margin-left: 5px;
     cursor: pointer;
 }
-
+#input-tag{
+    width: 25.1em;
+}
 
 .tag-input {
     display: inline-block;
@@ -212,7 +213,7 @@ input[type="text"] {
     border-radius: 10px;
     padding: 5px;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
-    width: 25.5em;
+    width: 25.1em;
     height: 4em;
 }
 
@@ -241,12 +242,18 @@ input[type="text"] {
     outline: none;
 }
 
-.tag-input .delete-button {
+#tagCloseButton {
     background-color: transparent;
     border: none;
     color: #999;
     cursor: pointer;
     margin-left: 5px;
+}
+
+#tagCloseButton:hover {
+    color: #666;
+    background-color: rgb(230, 230, 230);
+    border-radius: 50%;
 }
 
 .avatar {

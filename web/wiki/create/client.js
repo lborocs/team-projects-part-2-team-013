@@ -28,7 +28,7 @@ tagsList.then((tagsList) => {
     let editing = false;
     if (postID != "") {
         editing = true;
-        document.querySelector("#submitPostButton").innerHTML = 'Update post &nbsp <i class="fa-solid fa-check"></i>';
+        document.querySelector("#submitPostButton").innerHTML = 'Update post &nbsp <span class="material-symbols-rounded">done</span>';
         document.querySelector("#title").innerHTML = "Edit Post";
         getPostData(postID).then((post) => {
             console.log(post);
@@ -41,12 +41,12 @@ tagsList.then((tagsList) => {
                 document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[1].checked = true;
             }
             if (post.tags == null || post.tags.length == 0) {
-                //document.querySelector(".tags").innerHTML += `<div class="tag"><i class="fa-solid fa-tag"></i>No Tags</div>`
+                //if the post you're editing has no tags
             }
             else {
                 document.querySelector("#placeholderTag").classList.add("norender")
                 post.tags.forEach((tag) => {
-                    document.querySelector("#listOfTags").innerHTML += `<div class="tag" id="${tag}"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<i class="fa-solid fa-x"></i></div>`
+                    document.querySelector("#listOfTags").innerHTML += `<div class="tag" id="${tag}"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<span class="material-symbols-rounded">close</span></div>`
                     addDeleteListener(document.getElementById(tag));
                 });
             }
@@ -97,7 +97,7 @@ function createVisualTag(tagName){
         //createTag(tagContent);
     document.querySelector("#placeholderTag").classList.add("norender")
     tag.className = "tag";
-    tag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + tagContent + '<i class="fa-solid fa-x"></i>';
+    tag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + tagContent + '<span class="material-symbols-rounded" id="tagCloseButton">close</span>';
     document.querySelector("#listOfTags").appendChild(tag);
     addDeleteListener(tag);
     }
@@ -113,7 +113,7 @@ if (event.key === "Enter") {
 
 function addDeleteListener(thisTag, tags){
     thisTag.addEventListener("click", function(event) {
-    if (event.target.classList.contains("fa-x")) {
+    if (event.target.classList.contains("material-symbols-rounded")) {
         event.target.parentNode.remove();
         var tags = document.querySelectorAll(".tag");
         if (tags.length == 0){
