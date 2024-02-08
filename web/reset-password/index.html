@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Make It All - Log In</title>
+    <title>Reset Password</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link rel="stylesheet" href="global-styles.css">
+    <link rel="stylesheet" href="/global-styles.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
     <link rel="stylesheet" href="/ui-elements/text-button.css">
-    <script src="global-api.js"></script>
-    <script src="global-ui.js" defer type="module"></script>
-    <script defer src="script.js" type="module"></script>
+    <script src="/global-api.js"></script>
+    <script src="/global-ui.js" defer type="module"></script>
+    <script defer src="client.js" type="module"></script>
 
 </head>
 <body>
@@ -22,31 +22,38 @@
         <img src="https://cdn.013.team/assets/wordmark-large.png" alt="logo" class="logo">
         <form>
             <div class="box login-box">
-                <h1>Sign in</h1>
+                <h1>Reset Password</h1>
+                <div class="profile-container">
+                    <div id="avatar-container"></div>
+                    <div class="details-container">
+                        <div class="text" id="account-display"></div>
+                        <div class="text" id="email-display"></div>
+                    </div>
+                    
+                </div>
                 <div class="login-container">
                     <div class="input-container">
-                        <label for="email">Email</label>
+                        <label for="newPassword">New password</label>
                         <div class="textfield-container">
-                            <input type="email" placeholder="example@email.com" id="email" class="textfield" autocomplete="email" required>
+                            <input type="password" id="newPassword" class="textfield" autocomplete="new-password" required>
+                            <span class="material-symbols-rounded" id="toggleNewPassword">
+                                visibility_off
+                            </span>
                         </div>
                     </div>
                     <div class="input-container">
-                        <div class="left-right-labels">
-                            <label for="password">Password</label>
-                            <a href="/request-reset/" class="forgot-password">Forgot password?</a>
-                        </div>
+                        <label for="newPasswordConfirm">Confirm new password</label>
                         <div class="textfield-container">
-                            <input type="password" placeholder="" id="password" class="textfield" autocomplete="current-password" required>
-                            <span class="material-symbols-rounded" id="togglePassword">
+                            <input type="password" id="newPasswordConfirm" class="textfield" autocomplete="new-password" required>
+                            <span class="material-symbols-rounded" id="toggleNewPasswordConfirm">
                                 visibility_off
                             </span>
                         </div>
                     </div>
                 </div>
-                <div class="register-prompt">Don't have an account? <a href="/register/">Register</a></div>
-                <div id="login" class="text-button blue">
+                <div id="change" class="text-button blue">
                     <div class="button-text">
-                        Sign in
+                        Change password
                     </div>
                 </div>
             </div>
