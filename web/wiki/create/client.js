@@ -111,8 +111,8 @@ function addDeleteListener(thisTag, tags){
     thisTag.addEventListener("click", function(event) {
     if (event.target.classList.contains("fa-x")) {
         event.target.parentNode.remove();
-        var tags = document.getElementById("tags");
-        if (tags == null || tags.children.length == 0){
+        var tags = document.querySelectorAll(".tag");
+        if (tags.length == 0){
         document.querySelector("#placeholderTag").classList.remove("norender")}
         }
     });
