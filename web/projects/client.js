@@ -17,6 +17,7 @@ let sortArray = [titleButton, dateButton, statusButton];
 
 //single things
 const taskGrid = document.querySelector(".taskgrid")
+const taskGridWrapper = document.querySelector(".taskgrid-wrapper")
 const taskList = document.querySelector(".tasklist")
 const taskTable = document.querySelector(".tasktable")
 const taskTableBody = document.querySelector(".tasktable-body")
@@ -169,10 +170,10 @@ views.forEach((view, i) => {
             })
             console.log("[viewOnClick] selected")
 
-            taskGrid.classList.toggle("fade")
+            taskGridWrapper.classList.toggle("fade")
             taskList.classList.toggle("fade")
             setTimeout(() => {
-                taskGrid.classList.toggle("norender")
+                taskGridWrapper.classList.toggle("norender")
                 taskList.classList.toggle("norender")
             }, 50)
         } 
@@ -183,8 +184,8 @@ views.forEach((view, i) => {
         if (session.auth_level >= 2) {
 
             view.classList.toggle("selected");
-            taskGrid.classList.add("fade");
-            taskGrid.classList.add("norender");
+            taskGridWrapper.classList.add("fade");
+            taskGridWrapper.classList.add("norender");
             taskList.classList.remove("fade");
             taskList.classList.remove("norender");
             
