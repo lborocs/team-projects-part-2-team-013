@@ -588,11 +588,12 @@
     margin-top: 0;
     margin-left: 1em;
     margin-right: 1em;
-    justify-content: flex-start;
+    justify-content: center;
 }
 
 .taskgrid-wrapper {
     overflow-y: auto;
+    overflow-x: hidden;
     width: 100%;
     height: calc(100% - 8em);
 }
