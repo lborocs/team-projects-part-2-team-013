@@ -21,6 +21,7 @@ async function handleClick() {
     const email = emailInput.value;
     
     if (email.length === 0) {
+        console.log("empty email")
         return;
     }
 
@@ -48,7 +49,7 @@ sendButton.addEventListener("click", handleClick);
 
 emailInput.addEventListener('keypress', function (e) {
     if (e.key === 'Enter') {
-        handleClick();
         console.log("enter")
+        handleClick();
     }
 });
