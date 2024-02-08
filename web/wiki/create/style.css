@@ -34,7 +34,6 @@ input[type="text"] {
     display: flex;
     justify-content: flex-start;
     gap: 2em;
-    border: solid 1px #e0e0e0;
 }
 
 .items {
