@@ -1,6 +1,5 @@
 .main{
     align-items: center;
-    position: absolute;
 }
 
 .content{
@@ -16,9 +15,13 @@
     display: flex;
     flex-direction: row;
     font-size: 4em;
+    align-items: start;
+    width:100%;
 }
 
 .sidebar-container{
+    display: flex;
+    flex-direction: row;
     .content{
         display: flex;
         align-items: center;
