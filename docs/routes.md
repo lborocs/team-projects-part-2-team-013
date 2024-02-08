@@ -95,6 +95,13 @@ Written/designed by aidan F223129
     ``` 
 
 ## session.php
+
+- [x] **/employee/session.php/resetpassword**
+  - [x] PATCH {"newPassword":string, "token":string} (change password with token)
+  - [x] POST {"email":string} (send password reset email)
+  - [x] PUT {"token":string} (get employee object from token) 
+
+
 - [x] **/employee/session.php/login**
   - [x] POST (log in) {"username":string,"password":string}
     ```jsonc
