@@ -972,7 +972,7 @@ function db_account_fetch(string $email) {
     global $db;
 
     $query = $db->prepare(
-        "SELECT `ACCOUNTS`.*, `EMPLOYEES`*
+        "SELECT `ACCOUNTS`.*, `EMPLOYEES`.*
         FROM `ACCOUNTS`, `EMPLOYEES`
         WHERE `ACCOUNTS`.email = ?
         AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
