@@ -298,7 +298,7 @@ function showTaskInExplainer(task) {
         hourglass_empty
     </span>
     <div class="manhours">
-        ${manHours} Manhours Set
+        ${manHours/3600} Manhour${manHours !== 3600 ? 's' : ''}
     </div>
     `;
 
@@ -654,12 +654,12 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     let state = task.state
     let taskID = task.taskID || "Unknown";
     let expectedManHours = task.expectedManHours; //no safety here because not null i think
-
+    let assignments = task.assignments || [];
 
     console.log(task)
 
     if (update & RENDER_COLUMN) {
-        renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours);
+        renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours, assignments);
     }
     if (update & RENDER_LIST) {
         renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours);
@@ -1004,7 +1004,7 @@ function sortByState(tasks, ascending) {
 }
 
 //TODO: render the context menu
-async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours, assignedUsers = []) {
+async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours, assignments = []) {
     //check for null values and set default values (null doesnt count as undefined)
     state = state === null ? 0 : state;
     ID = ID === null ? "" : ID;
@@ -1012,7 +1012,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     createdBy = createdBy === null ? "" : createdBy;
     date = date === null ? "" : date;
     expectedManHours = expectedManHours === null ? "" : expectedManHours;
-    assignedUsers = assignedUsers === null ? [] : assignedUsers;
+    assignments = assignments === null ? [] : assignments;
     console.log("[renderTask] Task createdBy to " + createdBy)
 
 
@@ -1236,22 +1236,14 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         `;
     }
 
-    console.log(assignedUsers); // Check the assignedUsers array
+    if (assignments.length > 0) {
+        console.log("[Assigned user IDs]: " + assignments);
 
-    if (assignedUsers.length > 0) {
-        assignedUsers.forEach(user => {
-            console.log("user:" + user); // Check each user object
-        });
-    
         taskInfo.innerHTML += `
-            <div class="assigned-users">
-                ${assignedUsers.map(user => `
-                    <div class="user-icon-container">
-                        <img src="${user.avatarUrl}" alt="${user.name}" class="user-icon">
-                    </div>
-                `).join('')}
-            </div>
+            <div class="users-assigned"></div>
         `;
+
+        renderAssignments(assignments);
     }
     
     //check if state is 0,1,2 and do separate things for each. otherwise, error
