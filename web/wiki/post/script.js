@@ -17,33 +17,53 @@ function findTag(tagID) {
 }
 
 async function fetchTags() {
+
     const data = await get_api("/wiki/post.php/tags");
+
     console.log(data);
-    if (data.success == true) {
-        console.log("Tags have been fetched")
-        return data.data.tags;
-    } else {
+    if (data.success != true) {
         console.log("Tags failed to be fetched")
+        return false;
     }
+
+    console.log("Tags have been fetched")
+    return data.data.tags;
+
 }
 
 let tagsList = fetchTags();
+
+function handleTags(postData, tagsList) {
+
+    let tagsHTML = '';
+    if (postData.tags == null || postData.tags.length == 0) {
+
+        tagsHTML = `<div class="tag">No Tags</div>`;
+
+    } else {
+
+        for (let tag of postData.tags) {
+
+            tagsHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
+        }
+    }
+    document.querySelector(".tags").innerHTML += tagsHTML;
+}
+
+function handleAuthor(postData) {
+    let emp_icon = global.employeeAvatarOrFallback(postData.author);
+    document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`;
+}
+
 tagsList.then((tagsList) => {
     getPostData(postID, tagsList).then((postData) => {
-        if (postData.tags == null || postData.tags.length == 0) {
-            document.querySelector(".tags").innerHTML += `<div class="tag">No Tags</div>`
-        }
-        else {
-            for (let i = 0; i < postData.tags.length; i++) {
-                document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tagsList[i].name}</div>`
-            }
-        }
+
+        handleTags(postData, tagsList);
         console.log(postData.author.userID);
-        let emp_icon = global.employeeAvatarOrFallback(postData.author);
-        document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
+        handleAuthor(postData);
+        
     });
 });
-
 
 async function getPostData(postID, tagsList){
     const data = await get_api(`/wiki/post.php/post/${postID}`);
@@ -73,17 +93,17 @@ async function getPostData(postID, tagsList){
     console.log(post)
 
     global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
-    if (post.tags != null) {
-        let newtags = [];
-        console.log(post.tags)
-        console.log("TAGS")
-        post.tags.forEach((tag) => {
-            newtags.push(tagsList.find(findTag(tag)).name)
-            console.log(tag)
-            console.log("REPLACING TAGS")
-        });
-    post.tagsNames = newtags;
+
+    if (!post.tags) {
+        return post;
     }
+    let newtags = [];
+    
+    post.tags.forEach((tag) => {
+        newtags.push(tagsList.find(findTag(tag)).name)
+    });
+    post.tagsNames = newtags;
+
     return post
 }
 
