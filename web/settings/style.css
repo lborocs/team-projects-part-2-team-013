@@ -22,6 +22,7 @@
     margin-left: 0.6em;
     color: var(--text-off-black, #0f0f0f);
     font-weight: 600;
+    cursor: pointer;
 }
 
 .sidebar-container{

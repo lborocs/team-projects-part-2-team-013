@@ -13,51 +13,52 @@ async function fetchPosts(tagsList) {
     global.setBreadcrumb(["Wiki"], ["./"]);
     const data = await get_api("/wiki/post.php/posts");
     console.log(data);
-    if (data.success == true) {
-        console.log("Posts have been fetched")
-        data.data.posts.forEach(post => {
-            console.log(post)
-            console.log(post.tags)
-            if (post.tags != null) {
-                let newtags = [];
-                console.log(post.tags)
-                console.log("TAGS")
-                post.tags.forEach((tag) => {
-                    newtags.push(tagsList.find(findTag(tag)).name)
-                    console.log(tag)
-                    console.log("REPLACING TAGS")
-                });
-            post.tagsNames = newtags;
-            }
-            console.log(post.tags)
-            console.log(post.tagsNames) 
-            console.log("Rendering post")
-            renderPost(post.postID, post.title, post.author, post.isTechnical, post.tagsNames)
-            postsContainer = document.querySelector('.posts');
-            // Store the post in the Map using postID as the key
-            postsMap.set(post.postID, post);
-            console.log(post)
-        });
-        setUpPostsEventListeners();
-        posts = document.querySelectorAll('.post');
-        console.log(postsMap)
-    } else {
-        console.log("Posts failed to be fetched")
+
+    if (data.success !== true) {
+        console.log("Posts failed to be fetched");
+        return;
     }
+
+    console.log("Posts have been fetched");
+    data.data.posts.forEach(post => {
+        console.log(post);
+        console.log(post.tags);
+        if (post.tags != null) {
+            let newtags = [];
+            console.log(post.tags);
+            console.log("TAGS");
+            post.tags.forEach((tag) => {
+                newtags.push(tagsList.find(findTag(tag)).name);
+                console.log(tag);
+                console.log("REPLACING TAGS");
+            });
+            post.tagsNames = newtags;
+        }
+        console.log(post.tags);
+        console.log(post.tagsNames);
+        console.log("Rendering post");
+        renderPost(post.postID, post.title, post.author, post.isTechnical, post.tagsNames);
+        postsContainer = document.querySelector('.posts');
+        // Store the post in the Map using postID as the key
+        postsMap.set(post.postID, post);
+        console.log(post);
+    });
+    setUpPostsEventListeners();
+    posts = document.querySelectorAll('.post');
+    console.log(postsMap);
 }
 
 async function fetchTags() {
     const data = await get_api("/wiki/post.php/tags");
-    console.log(data);
     if (data.success == true) {
         console.log("Tags have been fetched")
         data.data.tags.forEach(tag => {
             document.querySelector('.tag-selection').innerHTML += `<div class="tag" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`
         });
         return data.data.tags;
-    } else {
-        console.log("Tags failed to be fetched")
     }
+
+    console.log("Tags failed to be fetched")
 }
 
 let tagsList = fetchTags();
@@ -171,8 +172,16 @@ function renderPost(postID, title, author, isTechnical, tags) {
         postsContainer.appendChild(post)
     }
 
+const sleep = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+};
+
 function updatePosts() {
+    sleep(10).then(() => {
     console.log("updating posts")
+    let search = document.getElementById("inputField");
     selectedCategory = document.querySelector('input[name="category"]:checked');
     selectedValue = selectedCategory.value;
     selectedTags = [];
@@ -182,15 +191,64 @@ function updatePosts() {
     });
     console.log(selectedTags);
     console.log(selectedTags.length)
+    var isTechnical = document.getElementById('technical').checked;
+    let searchValue = search.value.toUpperCase();
     if (selectedTags.length === 0) {
-        var isTechnical = document.getElementById('technical').checked;
-        posts.forEach((post) => {
-            if (post.dataset.istechnical === '0' && isTechnical === false) {
-                post.classList.remove("norender");
-            } else if (post.dataset.istechnical === '1' && isTechnical === true) {
+    posts.forEach((post) => {
+        if ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)) {
+            if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
                 post.classList.remove("norender");
             } else {
                 post.classList.add("norender");
+            }
+        }
+        else{
+            post.classList.add("norender");
+        }
+    })} else {
+    posts.forEach((post) => {
+        let postTags = post.querySelectorAll(".tag");
+        let postTagNames = [];
+        postTags.forEach((tag) => {
+            postTagNames.push(tag.getAttribute("name"));
+        })
+        let containsTag = false;
+        selectedTags.forEach((tag) => {
+            if (postTagNames.includes(tag)) {
+                containsTag = true;
+            }
+        })
+        if ((containsTag)&&((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true))) {
+            if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                post.classList.remove("norender");
+            } else {
+                post.classList.add("norender");
+            }
+        }
+        else{
+            post.classList.add("norender");
+        }
+    })
+}
+})
+}
+/*
+
+    if (selectedTags.length === 0) {
+        posts.forEach((post) => {
+            let searchValue = search.value.toUpperCase();
+            if ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)) {
+                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                    post.classList.remove("norender");
+                } else {
+                    post.classList.add("norender");
+                }
+            } else if (post.dataset.istechnical === '1' && isTechnical === true) {
+                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                    post.classList.remove("norender");
+                } else {
+                    post.classList.add("norender");
+                }
             }
         })
     } else {
@@ -217,40 +275,37 @@ function updatePosts() {
             })
             console.log(selectedValue)
             console.log(postCategory)
-            if (!containsTag || postCategory != selectedValue) {
+            if ((!containsTag || postCategory != selectedValue) && (((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)))) {
                 console.log("Post does not contain tag OR is not in selected category")
-                post.classList.add("norender");
-            } else {
+                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                    post.classList.remove("norender");
+                } else {
+                    post.classList.add("norender");
+                }
+            } else if (((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true))) {
                 console.log("Post contains tag")
-                post.classList.remove("norender"); 
+                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                    post.classList.remove("norender");
+                } else {
+                    post.classList.add("norender");
+                } 
+            }
+            else{
+                post.classList.add("norender");
             }
         })
     }
+})
 }
-
+*/
 
 addEventListener("keydown", filterFromSearch)
 
 function filterFromSearch() {
     console.log("searching")
     console.log(document.getElementById("inputField").value)
-    let search = document.getElementById("inputField");
     updatePosts()
-    if (search.length !== 0) {
-        let searchValue = search.value.toUpperCase();
-        let postTitles = document.querySelectorAll(".title");
-        postTitles.forEach((title) => {
-            let titleValue = title.innerText.toUpperCase();
-            if (!titleValue.includes(searchValue)) {
-                title.parentElement.classList.add("norender");
-            }
-        })
-    } else {
-        posts.forEach((post) => {
-            post.classList.remove("norender");
-        })
-    
-    }
+    animate(postsContainer, "flash")
 }
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
@@ -318,4 +373,4 @@ function confirmDelete() {
 
 document.getElementById("new-post").addEventListener("click", () => {
     window.location.href = "/wiki/create/";
-})
+});

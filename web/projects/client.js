@@ -879,8 +879,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         `;
     }
 
-
-    
     
     //set id to the task id
     taskRow.setAttribute("id", ID);
@@ -892,40 +890,37 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     taskRow.setAttribute("data-expectedManHours", expectedManHours);
     taskRow.setAttribute("data-state", state);
 
-    //check if state is 0,1,2 and do separate things for each. otherwise, error
+
+    var icon;
+    var statusText;
+    var stateClass;
     if (state == 0) {
-        taskRow.innerHTML += `
-            <td class="not-started">
-                <div class="status-cell">
-                    <span class="material-symbols-rounded">
-                        push_pin
-                    </span> Not Started
-                </div>
-            </td>
-        `;
+        stateClass = "not-started";
+        icon = "push_pin";
+        statusText = "Not Started";
     } else if (state == 1) {
-        taskRow.innerHTML += `
-            <td class="in-progress">
-                <div class="status-cell">
-                    <span class="material-symbols-rounded">
-                        timeline
-                    </span> In Progress
-                </div>
-            </td>
-        `;
+        stateClass = "in-progress";
+        icon = "timeline";
+        statusText = "In Progress";
     } else if (state == 2) {
-        taskRow.innerHTML += `
-            <td class="finished">
-                <div class="status-cell">
-                    <span class="material-symbols-rounded">
-                        check_circle
-                    </span> Finished
-                </div>
-            </td>
-        `;
+        stateClass = "finished";
+        icon = "check_circle";
+        statusText = "Finished";
     } else {
-        console.error("invalid state");
+        console.error(`[renderTaskInList] invalid state (${state}) for task ${title}`);
     }
+
+    taskRow.innerHTML += `
+        <td class="${stateClass}">
+            <div class="status-cell">
+                <span class="material-symbols-rounded">
+                    ${icon}
+                </span> ${statusText}
+            </div>
+        </td>
+    `;
+
+
     taskTableBody.appendChild(taskRow);
     //move the add task button to the bottom
     taskTableBody.appendChild(listAddButtonRow);
@@ -1168,20 +1163,27 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let statusIcon;
     let overdueContainerClass = "";
     let dateTooltip;
+
     if (timestamp === null) {
+
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         dateTooltip = `No due date set`;
+
     } else if (timestamp < dateToday && state !== 2) {
+
         // tasks which are overdue
         statusIcon = `<span class="material-symbols-rounded">calendar_clock</span>`;
         overdueContainerClass = "overdue";
         const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+
     } else if (state === 2 && timestamp > dateToday) {
+
         // tasks which are finished but have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         const daysUntilDue = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
         dateTooltip = `Task finished but due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}`;
+
     } else if (state !== 2){
         // tasks which are not finished and have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
@@ -2293,25 +2295,16 @@ document.querySelector(".edit-button").addEventListener("pointerup", async () =>
 });
 
 
-var projectSearchTimeout;
-function startOrRollProjectSearchTimeout() {
-    if (!projectSearchTimeout || projectSearchTimeout.dirty) {
-        console.log("[RollingProjectSearch] creating new timeout");
-        projectSearchTimeout = new global.RollingTimeout(() => {
-            let search = projectSearchInput.value;
-            console.log("[RollingProjectSearch] starting search for", search);
-            searchAndRenderProjects(search);
-        }, 150);
-        projectSearchTimeout.roll();
-    } else {
-        console.log("[RollingProjectSearch] rolling timeout");
-        projectSearchTimeout.roll();
-    }
-}
-
-
+const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
+    () => {
+        let search = projectSearchInput.value;
+        console.log("[RollingProjectSearch] starting search for", search);
+        searchAndRenderProjects(search);
+    },
+    150
+);
 projectSearchInput.addEventListener("input", (e) => {
-    startOrRollProjectSearchTimeout();
+    projectSearchRollingTimeout.roll();
 })
 
 document.getElementById("task-search").addEventListener("input", (e) => {

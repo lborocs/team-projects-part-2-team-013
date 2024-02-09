@@ -147,6 +147,7 @@
             vertical-align: middle;
             text-align: left;
             font-size: 14px;
+            border-bottom: solid 1px var(--border-clr);
         }
 
         & td:last-child {
@@ -154,8 +155,6 @@
             flex-direction: row;
             justify-content: flex-end;
             align-items: center;
-            opacity: 0.5;
-            transition: 0.1s ease-out;
         }
 
 
@@ -169,6 +168,9 @@
         
         & tr:last-child {
             border-bottom: solid 2px var(--border-clr, #e0e0e0);
+            & td {
+                border-bottom: solid 2px var(--border-clr, #e0e0e0);
+            }
         }
 
         & tbody tr:hover {
@@ -200,9 +202,16 @@
     }
 
     .project-actions {
+        opacity: 0.5;
+        transition: 0.05s ease-out;
         &span {
             font-size: 24px;
         }
+    }
+
+    .project-actions:hover {
+        opacity: 1;
+        transition: 0.1s ease-out;
     }
 }
 

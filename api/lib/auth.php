@@ -244,7 +244,7 @@ function auth_signup_create_token(string $email) {
     respond_not_implemented();
 }
 
-function auth_password_reset_create_token(string $email, string $emp_id) {
+function auth_password_reset_create_token(string $emp_id) {
 
     $token_id = random_bytes(UUID_LENGTH);
     $issued = timestamp();
