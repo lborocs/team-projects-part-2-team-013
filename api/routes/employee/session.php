@@ -325,10 +325,10 @@ function r_session_reset_password(RequestContext $ctx, string $args) {
         ]);
         $data = auth_password_validate_token($ctx->request_body["token"]);
 
-        $account = db_account_fetch_by_id($data["emp_id"]);
+        $employee = db_employee_fetch($data["emp_id"]);
 
         respond_ok(Array(
-            "employee"=>$account,
+            "employee"=>$employee,
         ));
     }
 }
