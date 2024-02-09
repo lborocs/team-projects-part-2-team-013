@@ -171,8 +171,16 @@ function renderPost(postID, title, author, isTechnical, tags) {
         postsContainer.appendChild(post)
     }
 
+const sleep = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+};
+
 function updatePosts() {
+    sleep(10).then(() => {
     console.log("updating posts")
+    let search = document.getElementById("inputField");
     selectedCategory = document.querySelector('input[name="category"]:checked');
     selectedValue = selectedCategory.value;
     selectedTags = [];
@@ -182,15 +190,64 @@ function updatePosts() {
     });
     console.log(selectedTags);
     console.log(selectedTags.length)
+    var isTechnical = document.getElementById('technical').checked;
+    let searchValue = search.value.toUpperCase();
     if (selectedTags.length === 0) {
-        var isTechnical = document.getElementById('technical').checked;
-        posts.forEach((post) => {
-            if (post.dataset.istechnical === '0' && isTechnical === false) {
-                post.classList.remove("norender");
-            } else if (post.dataset.istechnical === '1' && isTechnical === true) {
+    posts.forEach((post) => {
+        if ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)) {
+            if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
                 post.classList.remove("norender");
             } else {
                 post.classList.add("norender");
+            }
+        }
+        else{
+            post.classList.add("norender");
+        }
+    })} else {
+    posts.forEach((post) => {
+        let postTags = post.querySelectorAll(".tag");
+        let postTagNames = [];
+        postTags.forEach((tag) => {
+            postTagNames.push(tag.getAttribute("name"));
+        })
+        let containsTag = false;
+        selectedTags.forEach((tag) => {
+            if (postTagNames.includes(tag)) {
+                containsTag = true;
+            }
+        })
+        if ((containsTag)&&((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true))) {
+            if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                post.classList.remove("norender");
+            } else {
+                post.classList.add("norender");
+            }
+        }
+        else{
+            post.classList.add("norender");
+        }
+    })
+}
+})
+}
+/*
+
+    if (selectedTags.length === 0) {
+        posts.forEach((post) => {
+            let searchValue = search.value.toUpperCase();
+            if ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)) {
+                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                    post.classList.remove("norender");
+                } else {
+                    post.classList.add("norender");
+                }
+            } else if (post.dataset.istechnical === '1' && isTechnical === true) {
+                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                    post.classList.remove("norender");
+                } else {
+                    post.classList.add("norender");
+                }
             }
         })
     } else {
@@ -217,41 +274,37 @@ function updatePosts() {
             })
             console.log(selectedValue)
             console.log(postCategory)
-            if (!containsTag || postCategory != selectedValue) {
+            if ((!containsTag || postCategory != selectedValue) && (((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)))) {
                 console.log("Post does not contain tag OR is not in selected category")
-                post.classList.add("norender");
-            } else {
+                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                    post.classList.remove("norender");
+                } else {
+                    post.classList.add("norender");
+                }
+            } else if (((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true))) {
                 console.log("Post contains tag")
-                post.classList.remove("norender"); 
+                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
+                    post.classList.remove("norender");
+                } else {
+                    post.classList.add("norender");
+                } 
+            }
+            else{
+                post.classList.add("norender");
             }
         })
     }
+})
 }
-
+*/
 
 addEventListener("keydown", filterFromSearch)
 
 function filterFromSearch() {
     console.log("searching")
     console.log(document.getElementById("inputField").value)
-    let search = document.getElementById("inputField");
     updatePosts()
     animate(postsContainer, "flash")
-    if (search.length !== 0) {
-        let searchValue = search.value.toUpperCase();
-        let postTitles = document.querySelectorAll(".title");
-        postTitles.forEach((title) => {
-            let titleValue = title.innerText.toUpperCase();
-            if (!titleValue.includes(searchValue)) {
-                title.parentElement.classList.add("norender");
-            }
-        })
-    } else {
-        posts.forEach((post) => {
-            post.classList.remove("norender");
-        })
-    
-    }
 }
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
@@ -319,4 +372,4 @@ function confirmDelete() {
 
 document.getElementById("new-post").addEventListener("click", () => {
     window.location.href = "/wiki/create/";
-})
+});
