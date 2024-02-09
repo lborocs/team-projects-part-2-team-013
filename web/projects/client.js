@@ -2295,25 +2295,16 @@ document.querySelector(".edit-button").addEventListener("pointerup", async () =>
 });
 
 
-var projectSearchTimeout;
-function startOrRollProjectSearchTimeout() {
-    if (!projectSearchTimeout || projectSearchTimeout.dirty) {
-        console.log("[RollingProjectSearch] creating new timeout");
-        projectSearchTimeout = new global.RollingTimeout(() => {
-            let search = projectSearchInput.value;
-            console.log("[RollingProjectSearch] starting search for", search);
-            searchAndRenderProjects(search);
-        }, 150);
-        projectSearchTimeout.roll();
-    } else {
-        console.log("[RollingProjectSearch] rolling timeout");
-        projectSearchTimeout.roll();
-    }
-}
-
-
+const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
+    () => {
+        let search = projectSearchInput.value;
+        console.log("[RollingProjectSearch] starting search for", search);
+        searchAndRenderProjects(search);
+    },
+    150
+);
 projectSearchInput.addEventListener("input", (e) => {
-    startOrRollProjectSearchTimeout();
+    projectSearchRollingTimeout.roll();
 })
 
 document.getElementById("task-search").addEventListener("input", (e) => {
