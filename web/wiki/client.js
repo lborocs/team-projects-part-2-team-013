@@ -193,42 +193,33 @@ function updatePosts() {
         console.log(selectedTags.length)
         var isTechnical = document.getElementById('technical').checked;
         let searchValue = search.value.toUpperCase();
-        if (selectedTags.length === 0) {
-            posts.forEach((post) => {
-                if ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)) {
-                    if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                        post.classList.remove("norender");
-                    } else {
-                        post.classList.add("norender");
-                    }
-                } else {
-                    post.classList.add("norender");
-                }
-            })
-        } else {
-            posts.forEach((post) => {
+        posts.forEach((post) => {
+            if (post.dataset.istechnical !== '0' && isTechnical === false) {
+                post.classList.add("norender");
+                return;
+            }
+            if (post.dataset.istechnical !== '1' && isTechnical === true) {
+                post.classList.add("norender");
+                return;
+            }
+            if (!post.querySelector('.title').innerText.toUpperCase().includes(searchValue) && searchValue !== "") {
+                post.classList.add("norender");
+                return;
+            }
+            if (selectedTags.length > 0) {
                 let postTags = post.querySelectorAll(".tag");
                 let postTagNames = [];
                 postTags.forEach((tag) => {
                     postTagNames.push(tag.getAttribute("name"));
                 })
-                let containsTag = false;
-                selectedTags.forEach((tag) => {
-                    if (postTagNames.includes(tag)) {
-                        containsTag = true;
-                    }
-                })
-                if ((containsTag) && ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true))) {
-                    if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                        post.classList.remove("norender");
-                    } else {
-                        post.classList.add("norender");
-                    }
-                } else {
+                let containsTag = selectedTags.some(tag => postTagNames.includes(tag));
+                if (!containsTag) {
                     post.classList.add("norender");
+                    return;
                 }
-            })
-        }
+            }
+            post.classList.remove("norender");
+        });
     })
 }
 
