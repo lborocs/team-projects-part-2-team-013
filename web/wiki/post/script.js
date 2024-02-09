@@ -93,17 +93,17 @@ async function getPostData(postID, tagsList){
     console.log(post)
 
     global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
-    if (post.tags != null) {
-        let newtags = [];
-        console.log(post.tags)
-        console.log("TAGS")
-        post.tags.forEach((tag) => {
-            newtags.push(tagsList.find(findTag(tag)).name)
-            console.log(tag)
-            console.log("REPLACING TAGS")
-        });
-    post.tagsNames = newtags;
+
+    if (!post.tags) {
+        return post;
     }
+    let newtags = [];
+    
+    post.tags.forEach((tag) => {
+        newtags.push(tagsList.find(findTag(tag)).name)
+    });
+    post.tagsNames = newtags;
+
     return post
 }
 
