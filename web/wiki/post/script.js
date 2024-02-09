@@ -34,11 +34,16 @@ async function fetchTags() {
 let tagsList = fetchTags();
 
 function handleTags(postData, tagsList) {
+
     let tagsHTML = '';
     if (postData.tags == null || postData.tags.length == 0) {
+
         tagsHTML = `<div class="tag">No Tags</div>`;
+
     } else {
+
         for (let tag of postData.tags) {
+
             tagsHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
         }
     }
@@ -52,12 +57,13 @@ function handleAuthor(postData) {
 
 tagsList.then((tagsList) => {
     getPostData(postID, tagsList).then((postData) => {
+
         handleTags(postData, tagsList);
         console.log(postData.author.userID);
         handleAuthor(postData);
+        
     });
 });
-
 
 async function getPostData(postID, tagsList){
     const data = await get_api(`/wiki/post.php/post/${postID}`);
