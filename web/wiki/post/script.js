@@ -32,19 +32,29 @@ async function fetchTags() {
 }
 
 let tagsList = fetchTags();
+
+function handleTags(postData, tagsList) {
+    let tagsHTML = '';
+    if (postData.tags == null || postData.tags.length == 0) {
+        tagsHTML = `<div class="tag">No Tags</div>`;
+    } else {
+        for (let tag of postData.tags) {
+            tagsHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
+        }
+    }
+    document.querySelector(".tags").innerHTML += tagsHTML;
+}
+
+function handleAuthor(postData) {
+    let emp_icon = global.employeeAvatarOrFallback(postData.author);
+    document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`;
+}
+
 tagsList.then((tagsList) => {
     getPostData(postID, tagsList).then((postData) => {
-        if (postData.tags == null || postData.tags.length == 0) {
-            document.querySelector(".tags").innerHTML += `<div class="tag">No Tags</div>`
-        }
-        else {
-            for (let i = 0; i < postData.tags.length; i++) {
-                document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tagsList[i].name}</div>`
-            }
-        }
+        handleTags(postData, tagsList);
         console.log(postData.author.userID);
-        let emp_icon = global.employeeAvatarOrFallback(postData.author);
-        document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
+        handleAuthor(postData);
     });
 });
 
