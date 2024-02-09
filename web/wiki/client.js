@@ -180,132 +180,66 @@ const sleep = (ms) => {
 
 function updatePosts() {
     sleep(10).then(() => {
-    console.log("updating posts")
-    let search = document.getElementById("inputField");
-    selectedCategory = document.querySelector('input[name="category"]:checked');
-    selectedValue = selectedCategory.value;
-    selectedTags = [];
-    document.querySelectorAll('.tag.selected').forEach((tagElement) => {
-        console.log("TAG SELECTED")
-        selectedTags.push(tagElement.getAttribute("name"));
-    });
-    console.log(selectedTags);
-    console.log(selectedTags.length)
-    var isTechnical = document.getElementById('technical').checked;
-    let searchValue = search.value.toUpperCase();
-    if (selectedTags.length === 0) {
-    posts.forEach((post) => {
-        if ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)) {
-            if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                post.classList.remove("norender");
-            } else {
+        console.log("updating posts")
+        let search = document.getElementById("inputField");
+        selectedCategory = document.querySelector('input[name="category"]:checked');
+        selectedValue = selectedCategory.value;
+        selectedTags = [];
+        document.querySelectorAll('.tag.selected').forEach((tagElement) => {
+            console.log("TAG SELECTED")
+            selectedTags.push(tagElement.getAttribute("name"));
+        });
+        console.log(selectedTags);
+        console.log(selectedTags.length)
+        var isTechnical = document.getElementById('technical').checked;
+        let searchValue = search.value.toUpperCase();
+        posts.forEach((post) => {
+            if (post.dataset.istechnical !== '0' && isTechnical === false) {
                 post.classList.add("norender");
+                return;
             }
-        }
-        else{
-            post.classList.add("norender");
-        }
-    })} else {
-    posts.forEach((post) => {
-        let postTags = post.querySelectorAll(".tag");
-        let postTagNames = [];
-        postTags.forEach((tag) => {
-            postTagNames.push(tag.getAttribute("name"));
-        })
-        let containsTag = false;
-        selectedTags.forEach((tag) => {
-            if (postTagNames.includes(tag)) {
-                containsTag = true;
-            }
-        })
-        if ((containsTag)&&((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true))) {
-            if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                post.classList.remove("norender");
-            } else {
+            if (post.dataset.istechnical !== '1' && isTechnical === true) {
                 post.classList.add("norender");
+                return;
             }
-        }
-        else{
-            post.classList.add("norender");
-        }
+            if (!post.querySelector('.title').innerText.toUpperCase().includes(searchValue) && searchValue !== "") {
+                post.classList.add("norender");
+                return;
+            }
+            if (selectedTags.length > 0) {
+                let postTags = post.querySelectorAll(".tag");
+                let postTagNames = [];
+                postTags.forEach((tag) => {
+                    postTagNames.push(tag.getAttribute("name"));
+                })
+                let containsTag = selectedTags.some(tag => postTagNames.includes(tag));
+                if (!containsTag) {
+                    post.classList.add("norender");
+                    return;
+                }
+            }
+            post.classList.remove("norender");
+        });
     })
 }
-})
-}
-/*
 
-    if (selectedTags.length === 0) {
-        posts.forEach((post) => {
-            let searchValue = search.value.toUpperCase();
-            if ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)) {
-                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                    post.classList.remove("norender");
-                } else {
-                    post.classList.add("norender");
-                }
-            } else if (post.dataset.istechnical === '1' && isTechnical === true) {
-                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                    post.classList.remove("norender");
-                } else {
-                    post.classList.add("norender");
-                }
-            }
+const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
+    () => {
+        console.log("searching")
+        let justPosts = document.querySelectorAll('.post')
+        console.log(document.getElementById("inputField").value)
+        updatePosts()
+        justPosts.forEach((post) => {
+            animate(post, "flash")
         })
-    } else {
-        console.log(`posts length ${posts.length}`)
-        posts.forEach((post) => {
-            let postTags = post.querySelectorAll(".tag");
-            let postTagNames = [];
-            let postCategory = post.getAttribute("data-isTechnical");
-            postTags.forEach((tag) => {
-                postTagNames.push(tag.getAttribute("name"));
-            })
-            console.log(postTagNames)
-            console.log(selectedTags)
-            let containsTag = false;
-            selectedTags.forEach((tag) => {
-                console.log(tag)
-                console.log("does not contain tag")
-                if (postTagNames.includes(tag)) {
-                    console.log(tag)
-                    console.log("Post contains tag")
-                    containsTag = true;
-                }
-                console.log(containsTag)
-            })
-            console.log(selectedValue)
-            console.log(postCategory)
-            if ((!containsTag || postCategory != selectedValue) && (((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)))) {
-                console.log("Post does not contain tag OR is not in selected category")
-                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                    post.classList.remove("norender");
-                } else {
-                    post.classList.add("norender");
-                }
-            } else if (((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true))) {
-                console.log("Post contains tag")
-                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                    post.classList.remove("norender");
-                } else {
-                    post.classList.add("norender");
-                } 
-            }
-            else{
-                post.classList.add("norender");
-            }
-        })
-    }
-})
-}
-*/
+    },
+    300
+);
 
 addEventListener("keydown", filterFromSearch)
 
 function filterFromSearch() {
-    console.log("searching")
-    console.log(document.getElementById("inputField").value)
-    updatePosts()
-    animate(postsContainer, "flash")
+    projectSearchRollingTimeout.roll();
 }
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
