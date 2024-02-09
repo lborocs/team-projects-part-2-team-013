@@ -1,27 +1,15 @@
-//single things
-export const hamburger = document.querySelector("#hamburger")
-export const closeSidebar = document.querySelector("#close-sidebar")
-export const sidebar = document.querySelector(".sidebar")
-export const container = document.querySelector(".sidebar-container")
-export const homeButton = document.querySelector("#home")
-export const myListButton = document.querySelector("#mylist")
-export const wikiButton = document.querySelector("#wiki")
-export const workloadButton = document.querySelector("#workload")
-export const settingsButton = document.querySelector("#settings")
-export const trainingButton = document.querySelector("#training")
-export const navLogoutButton = document.querySelector("#logout")
+//scripts to inject the side and top bar if required
+import * as sidebar from "./global-sidebar.js";
+import * as topbar from "./global-topbar.js";
 
 
-export const userAvatar = document.getElementById("user-icon-container")
-export const notificationsButton = document.getElementById("inbox-icon")
-
-//groups of things
-export const sidebarItems = document.querySelectorAll(".sidebar-item")
-export const topbarItems = document.querySelectorAll(".item")
 
 //global variables
 export var notifications = []
 export var GLOBAL_LAST_ACTIVE = new Date();
+
+export const sidebarContainer = document.querySelector('.sidebar-container');
+export const topbarContainer = document.querySelector('.topbar-container');
 
 //sidebar state is either "open" or "closed", default is open
 export var sidebarState = localStorage.getItem("sidebarState") || "open";
@@ -595,7 +583,7 @@ export async function getEmployeeNotifications() {
  */
 
 export async function renderNotifications(notifications) {
-    let content = notificationsButton.querySelector('.content');
+    let content = topbar.notificationPopover.querySelector('.content');
     content.innerHTML = "";
 
     //gets any employee ids in the notifications so their details can be fetched
@@ -756,84 +744,29 @@ export async function renderNotifications(notifications) {
 
 //event listeners and ui functions
 
-if (hamburger !== null) {
-    hamburger.addEventListener("click", () => {
-        sidebar.classList.toggle("visible")
-        container.classList.toggle("sidebar-open")
+if (topbar.hamburger !== null) {
+    topbar.hamburger.addEventListener("click", () => {
+        sidebar.sidebar.classList.toggle("visible")
+        sidebarContainer.classList.toggle("sidebar-open")
         document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
             paragraph.classList.toggle("norender")
         })
 
         // update settings
-        setSetting("sidebarIsOpen", container.classList.contains("sidebar-open"));
-        console.log("[hamburger] sidebarIsOpen set to " + container.classList.contains("sidebar-open"));
+        setSetting("sidebarIsOpen", sidebarContainer.classList.contains("sidebar-open"));
+        console.log("[hamburger] sidebarIsOpen set to " + sidebarContainer.classList.contains("sidebar-open"));
     })
 }
 
-if (closeSidebar !== null) {
-    closeSidebar.addEventListener("click", () => {
-        sidebar.classList.toggle("visible")
-        container.classList.toggle("sidebar-open")
-        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-            paragraph.classList.toggle("norender")
-        })
-    })
-}
+if (sidebar.logout !== null) {
+    sidebar.logout.addEventListener("click", () => {
 
-if (homeButton !== null) {
-    homeButton.addEventListener("click", () => {
-        window.location.href = "/projects/";
-    });
-}
-
-if (myListButton !== null) {
-    myListButton.addEventListener("click", () => {
-        window.location.href = "/personal/";
-    });
-}
-
-if (wikiButton !== null) {
-    wikiButton.addEventListener("click", () => {
-        window.location.href = "/wiki/";
-    });
-}
-
-if (workloadButton !== null) {
-    workloadButton.addEventListener("click", () => {
-        window.location.href = "/workload/";
-    });
-}
-
-if (trainingButton !== null) {
-    trainingButton.addEventListener("click", () => {
-        window.location.href = "/dashboard/";
-    });
-}
-
-
-if (navLogoutButton !== null) {
-    navLogoutButton.addEventListener("click", () => {
         delete_api("/employee/session.php/session").then(async () => {
             await clearStorages();
             window.location.href = "/";
         });
+        
     });
-}
-
-if (sidebarItems !== null) {
-    sidebarItems.forEach((sidebarItem, i) => {
-        sidebarItem.addEventListener("click", () => {
-            if (!sidebarItem.classList.contains("selected")) {
-                sidebarItem.classList.add("selected")
-                sidebarItems.forEach((item, j) => {
-                    if (j !== i) {
-                        item.classList.remove("selected")
-                    }
-                })
-                console.log("[sideBarItem] selected")
-            } 
-        })
-    })
 }
 
 export function managerElementsEnableIfManager() {
@@ -891,13 +824,16 @@ function ensureSettings() {
 
 function fillCurrentUserInfo() {
 
-    if (userAvatar === null) {
+    if (topbar.userAvatar === null) {
+        console.error("[fillCurrentUserInfo] topbar.userAvatar is null")
         return;
     }
+    console.log("[fillCurrentUserInfo] filling user info")
 
     getCurrentSession(true).then((session) => {
 
         if (!session) {
+            console.error("[fillCurrentUserInfo] session is null")
             return
         }
 
@@ -912,16 +848,17 @@ function fillCurrentUserInfo() {
         icon.classList.add("avatar");
         icon.id = "user-icon";
 
-        userAvatar.appendChild(icon);
+        topbar.userAvatar.appendChild(icon);
+        console.log("[fillCurrentUserInfo] user icon added")
     });
 }
 
 function userIconContextMenu() {
-    if (userAvatar === null) {
+    if (topbar.userAvatar === null) {
         return;
     }
 
-    userAvatar.classList.add('context-menu')
+    topbar.userAvatar.classList.add('context-menu')
     let contextMenu = document.createElement('div')
     contextMenu.classList.add('context-menu-popover')
     contextMenu.innerHTML = `
@@ -957,16 +894,16 @@ function userIconContextMenu() {
             </div>
         </div>
     `
-    userAvatar.appendChild(contextMenu)
+    topbar.userAvatar.appendChild(contextMenu)
 
-    userAvatar.addEventListener('pointerup', (e) => {
+    topbar.userAvatar.addEventListener('pointerup', (e) => {
         e.stopPropagation()
-        userAvatar.querySelector('.context-menu-popover').classList.toggle('visible')
+        topbar.userAvatar.querySelector('.context-menu-popover').classList.toggle('visible')
     })
 
     document.addEventListener('pointerdown', (e) => {
-        if (!userAvatar.contains(e.target)) {
-            userAvatar.querySelector('.context-menu-popover').classList.remove('visible')
+        if (!topbar.userAvatar.contains(e.target)) {
+            topbar.userAvatar.querySelector('.context-menu-popover').classList.remove('visible')
         }
 
     })
@@ -1079,20 +1016,18 @@ export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHas
 if (window.location.pathname !== '/') {
 
     setTimeout(() => {
-        if (sidebar !== null) {
-            sidebar.classList.add('transition');
-            //no dom queries are inside of the event listener to make global event listener ok
-            const sidebarItems = document.querySelectorAll('.sidebar-item p');
+        if (sidebarContainer !== null) {
+            sidebar.sidebar.classList.add('transition');
 
             document.addEventListener('click', (e) => {
-                const sidebarVisible = sidebar.classList.contains('visible');
-                const clickSidebar = sidebar.contains(e.target);
-                const clickHamburger = hamburger.contains(e.target);
+                const sidebarVisible = sidebar.sidebar.classList.contains('visible');
+                const clickSidebar = sidebar.sidebar.contains(e.target);
+                const clickHamburger = topbar.hamburger.contains(e.target);
                 
                 if (window.innerWidth < 600 && sidebarVisible && !clickSidebar && !clickHamburger) {
-                    sidebar.classList.toggle('visible');
-                    container.classList.toggle('sidebar-open');
-                    sidebarItems.forEach((paragraph) => {
+                    sidebar.sidebar.classList.toggle('visible');
+                    sidebarContainer.classList.toggle('sidebar-open');
+                    sidebar.items.forEach((paragraph) => {
                         paragraph.classList.toggle('norender');
                     });
                 }
@@ -1102,18 +1037,18 @@ if (window.location.pathname !== '/') {
 
     ensureSettings();
 
-    if (sidebar !== null) {
+    if (sidebarContainer !== null) {
         if(window.innerWidth > 600 && getSetting("sidebarIsOpen") === true) {
             console.log("[init] setting sidebar to open")
-            sidebar.classList.add("visible")
-            container.classList.add("sidebar-open")
+            sidebar.sidebar.classList.add("visible")
+            sidebarContainer.classList.add("sidebar-open")
             document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
                 paragraph.classList.remove("norender")
             })
         } else {
             console.log("[init] setting sidebar to closed")
-            sidebar.classList.remove("visible")
-            container.classList.remove("sidebar-open")
+            sidebar.sidebar.classList.remove("visible")
+            sidebarContainer.classList.remove("sidebar-open")
             document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
                 paragraph.classList.add("norender")
             })
@@ -1124,7 +1059,7 @@ if (window.location.pathname !== '/') {
     userIconContextMenu();
     managerElementsEnableIfManager();
 
-    if (notificationsButton !== null) {
+    if (topbar.notificationPopover !== null) {
         getEmployeeNotifications().then((items) => {
             if (items.length > 0) {
                 console.log("[getEmployeeNotifications] notifications found and display badge");

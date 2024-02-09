@@ -224,9 +224,9 @@ input {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    width: 54px;
-    flex: 0 0 54px;
+    align-items: flex-start;
+    width: 56px;
+    flex: 0 0 56px;
 
 
     border-right: solid 2px rgba(0,0,0,0.1);
@@ -294,8 +294,8 @@ input {
     align-items: center;
     padding: 0.5rem;
     margin: 0.5rem;
-    margin-left: 0.25rem;
-    margin-right: 0.25rem;
+    margin-left: 0.4rem;
+    margin-right: 0.4rem;
     text-align: center;
     border-radius: 3px;
     transition: 0.1s ease-out;
@@ -384,8 +384,8 @@ input {
     .sidebar-item {
         height: 40px;
         margin: 0;
-        margin-left: 0.25em;
-        margin-right: 0.5rem;
+        margin-left: 0.4rem;
+        margin-right: 0.4rem;
         padding-right: 1.25em;
         font-weight: 500;
         border-radius: 3px;
@@ -436,7 +436,15 @@ input {
     margin: 0;
     padding: 0;
     transition: 0.05s ease-out;
+    z-index: 1;
     overflow: hidden;
+}
+
+.topbar-container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
 }
 
 .fullscreen {
