@@ -4,7 +4,6 @@ require_once("secrets.php");
 
 require 'vendor/autoload.php';
 use \Mailjet\Resources;
-use \Mailjet\Client;
 
 function send_email(
     string $recipient_addr,
