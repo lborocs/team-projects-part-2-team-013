@@ -231,80 +231,17 @@ function updatePosts() {
 }
 })
 }
-/*
-
-    if (selectedTags.length === 0) {
-        posts.forEach((post) => {
-            let searchValue = search.value.toUpperCase();
-            if ((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)) {
-                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                    post.classList.remove("norender");
-                } else {
-                    post.classList.add("norender");
-                }
-            } else if (post.dataset.istechnical === '1' && isTechnical === true) {
-                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                    post.classList.remove("norender");
-                } else {
-                    post.classList.add("norender");
-                }
-            }
-        })
-    } else {
-        console.log(`posts length ${posts.length}`)
-        posts.forEach((post) => {
-            let postTags = post.querySelectorAll(".tag");
-            let postTagNames = [];
-            let postCategory = post.getAttribute("data-isTechnical");
-            postTags.forEach((tag) => {
-                postTagNames.push(tag.getAttribute("name"));
-            })
-            console.log(postTagNames)
-            console.log(selectedTags)
-            let containsTag = false;
-            selectedTags.forEach((tag) => {
-                console.log(tag)
-                console.log("does not contain tag")
-                if (postTagNames.includes(tag)) {
-                    console.log(tag)
-                    console.log("Post contains tag")
-                    containsTag = true;
-                }
-                console.log(containsTag)
-            })
-            console.log(selectedValue)
-            console.log(postCategory)
-            if ((!containsTag || postCategory != selectedValue) && (((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true)))) {
-                console.log("Post does not contain tag OR is not in selected category")
-                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                    post.classList.remove("norender");
-                } else {
-                    post.classList.add("norender");
-                }
-            } else if (((post.dataset.istechnical === '0' && isTechnical === false) || (post.dataset.istechnical === '1' && isTechnical === true))) {
-                console.log("Post contains tag")
-                if (post.querySelector('.title').innerText.toUpperCase().includes(searchValue) || searchValue === "") {
-                    post.classList.remove("norender");
-                } else {
-                    post.classList.add("norender");
-                } 
-            }
-            else{
-                post.classList.add("norender");
-            }
-        })
-    }
-})
-}
-*/
 
 addEventListener("keydown", filterFromSearch)
 
 function filterFromSearch() {
     console.log("searching")
+    let justPosts = document.querySelectorAll('.post')
     console.log(document.getElementById("inputField").value)
     updatePosts()
-    animate(postsContainer, "flash")
+    justPosts.forEach((post) => {
+        animate(post, "flash")
+    })
 }
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
