@@ -13,37 +13,39 @@ async function fetchPosts(tagsList) {
     global.setBreadcrumb(["Wiki"], ["./"]);
     const data = await get_api("/wiki/post.php/posts");
     console.log(data);
-    if (data.success == true) {
-        console.log("Posts have been fetched")
-        data.data.posts.forEach(post => {
-            console.log(post)
-            console.log(post.tags)
-            if (post.tags != null) {
-                let newtags = [];
-                console.log(post.tags)
-                console.log("TAGS")
-                post.tags.forEach((tag) => {
-                    newtags.push(tagsList.find(findTag(tag)).name)
-                    console.log(tag)
-                    console.log("REPLACING TAGS")
-                });
-            post.tagsNames = newtags;
-            }
-            console.log(post.tags)
-            console.log(post.tagsNames) 
-            console.log("Rendering post")
-            renderPost(post.postID, post.title, post.author, post.isTechnical, post.tagsNames)
-            postsContainer = document.querySelector('.posts');
-            // Store the post in the Map using postID as the key
-            postsMap.set(post.postID, post);
-            console.log(post)
-        });
-        setUpPostsEventListeners();
-        posts = document.querySelectorAll('.post');
-        console.log(postsMap)
-    } else {
-        console.log("Posts failed to be fetched")
+
+    if (data.success !== true) {
+        console.log("Posts failed to be fetched");
+        return;
     }
+
+    console.log("Posts have been fetched");
+    data.data.posts.forEach(post => {
+        console.log(post);
+        console.log(post.tags);
+        if (post.tags != null) {
+            let newtags = [];
+            console.log(post.tags);
+            console.log("TAGS");
+            post.tags.forEach((tag) => {
+                newtags.push(tagsList.find(findTag(tag)).name);
+                console.log(tag);
+                console.log("REPLACING TAGS");
+            });
+            post.tagsNames = newtags;
+        }
+        console.log(post.tags);
+        console.log(post.tagsNames);
+        console.log("Rendering post");
+        renderPost(post.postID, post.title, post.author, post.isTechnical, post.tagsNames);
+        postsContainer = document.querySelector('.posts');
+        // Store the post in the Map using postID as the key
+        postsMap.set(post.postID, post);
+        console.log(post);
+    });
+    setUpPostsEventListeners();
+    posts = document.querySelectorAll('.post');
+    console.log(postsMap);
 }
 
 async function fetchTags() {
@@ -55,7 +57,7 @@ async function fetchTags() {
         });
         return data.data.tags;
     }
-    
+
     console.log("Tags failed to be fetched")
 }
 
