@@ -290,7 +290,7 @@ function r_session_reset_password(RequestContext $ctx, string $args) {
         }
         $emp_id = $account["empID"];
 
-        $token = auth_password_reset_create_token($email, $emp_id);
+        $token = auth_password_reset_create_token($emp_id);
 
         $message = "Click here to reset your password: " . "https://013.team/reset-password#$token";
 
@@ -325,7 +325,7 @@ function r_session_reset_password(RequestContext $ctx, string $args) {
         ]);
         $data = auth_password_validate_token($ctx->request_body["token"]);
 
-        $account = db_account_fetch($data["emp_id"]);
+        $account = db_account_fetch_by_id($data["emp_id"]);
 
         respond_ok(Array(
             "employee"=>$account,
