@@ -17,17 +17,22 @@ function findTag(tagID) {
 }
 
 async function fetchTags() {
+
     const data = await get_api("/wiki/post.php/tags");
+
     console.log(data);
-    if (data.success == true) {
-        console.log("Tags have been fetched")
-        return data.data.tags;
-    } else {
+    if (data.success != true) {
         console.log("Tags failed to be fetched")
+        return false;
     }
+
+    console.log("Tags have been fetched")
+    return data.data.tags;
+
 }
 
 let tagsList = fetchTags();
+
 tagsList.then((tagsList) => {
     getPostData(postID, tagsList).then((postData) => {
         if (postData.tags == null || postData.tags.length == 0) {
@@ -73,17 +78,17 @@ async function getPostData(postID, tagsList){
     console.log(post)
 
     global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
-    if (post.tags != null) {
-        let newtags = [];
-        console.log(post.tags)
-        console.log("TAGS")
-        post.tags.forEach((tag) => {
-            newtags.push(tagsList.find(findTag(tag)).name)
-            console.log(tag)
-            console.log("REPLACING TAGS")
-        });
-    post.tagsNames = newtags;
+
+    if (!post.tags) {
+        return post;
     }
+    let newtags = [];
+    
+    post.tags.forEach((tag) => {
+        newtags.push(tagsList.find(findTag(tag)).name)
+    });
+    post.tagsNames = newtags;
+
     return post
 }
 

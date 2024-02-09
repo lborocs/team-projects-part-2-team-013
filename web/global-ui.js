@@ -57,6 +57,28 @@ export function setSetting(key, value) {
 caches.open("employees");
 
 
+export class ReusableRollingTimeout {
+    
+    inner;
+    callback;
+    duration;
+
+    constructor(callback, duration) {
+        this.callback = callback;
+        this.duration = duration;
+        this.inner = new RollingTimeout(callback, duration);
+    }
+
+    roll() {
+        if (!this.inner || this.inner.dirty) {
+            this.inner = new RollingTimeout(this.callback, this.duration);
+        }
+        this.inner.roll();
+    }
+
+}
+
+
 export class RollingTimeout {
 
     duration;
