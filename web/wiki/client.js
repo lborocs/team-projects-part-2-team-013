@@ -233,16 +233,23 @@ function updatePosts() {
 })
 }
 
+const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
+    () => {
+        console.log("searching")
+        let justPosts = document.querySelectorAll('.post')
+        console.log(document.getElementById("inputField").value)
+        updatePosts()
+        justPosts.forEach((post) => {
+            animate(post, "flash")
+        })
+    },
+    300
+);
+
 addEventListener("keydown", filterFromSearch)
 
 function filterFromSearch() {
-    console.log("searching")
-    let justPosts = document.querySelectorAll('.post')
-    console.log(document.getElementById("inputField").value)
-    updatePosts()
-    justPosts.forEach((post) => {
-        animate(post, "flash")
-    })
+    projectSearchRollingTimeout.roll();
 }
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
