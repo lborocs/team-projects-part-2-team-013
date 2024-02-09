@@ -236,6 +236,7 @@ function filterFromSearch() {
     console.log(document.getElementById("inputField").value)
     let search = document.getElementById("inputField");
     updatePosts()
+    animate(postsContainer, "flash")
     if (search.length !== 0) {
         let searchValue = search.value.toUpperCase();
         let postTitles = document.querySelectorAll(".title");
