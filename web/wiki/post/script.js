@@ -17,14 +17,18 @@ function findTag(tagID) {
 }
 
 async function fetchTags() {
+
     const data = await get_api("/wiki/post.php/tags");
+
     console.log(data);
-    if (data.success == true) {
-        console.log("Tags have been fetched")
-        return data.data.tags;
-    } else {
+    if (data.success != true) {
         console.log("Tags failed to be fetched")
+        return false;
     }
+
+    console.log("Tags have been fetched")
+    return data.data.tags;
+
 }
 
 let tagsList = fetchTags();
