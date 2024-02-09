@@ -9,7 +9,8 @@ export const wikiButton = document.querySelector("#wiki")
 export const workloadButton = document.querySelector("#workload")
 export const settingsButton = document.querySelector("#settings")
 export const trainingButton = document.querySelector("#training")
-export const logoutButton = document.querySelector("#logout")
+export const navLogoutButton = document.querySelector("#logout")
+
 
 export const userAvatar = document.getElementById("user-icon-container")
 export const notificationsButton = document.getElementById("inbox-icon")
@@ -20,6 +21,7 @@ export const topbarItems = document.querySelectorAll(".item")
 
 //global variables
 export var notifications = []
+export var GLOBAL_LAST_ACTIVE = new Date();
 
 //sidebar state is either "open" or "closed", default is open
 export var sidebarState = localStorage.getItem("sidebarState") || "open";
@@ -274,7 +276,7 @@ export function formatDateFull(date) {
         ordinal = "rd";
     }
     let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",  "November", "December"];
-    let formattedDate = `${day}${ordinal} ${months[month]} ${year}`;
+    let formattedDate = `${day}<sup>${ordinal} </sup> ${months[month]} ${year}`;
     return formattedDate;
 }
 
@@ -292,7 +294,7 @@ export function howLongAgo(timestamp) {
     let days = Math.floor(hours / 24);
 
     if (seconds < 60) {
-        return "Now";
+        return "Just now";
     }
 
     if (minutes < 60) {
@@ -369,10 +371,11 @@ function hsvToHex(h,s, v) {
 }
 
 export function generateAvatarSvg(text, colour) {
+    const fontSize = text.length === 1 ? 130 : 115;
     return `
     <svg xmlns="http://www.w3.org/2000/svg" width="256px" height="256px" viewBox="0 0 256 256" version="1.1">
         <circle fill="#${colour}" cx="128" width="256" height="256" cy="128" r="128"/>
-        <text xmlns="http://www.w3.org/2000/svg" style="color: #fff; line-height: 1; font-family: system-ui" alignment-baseline="middle" text-anchor="middle" font-size="115" font-weight="600" dy=".1em" dominant-baseline="middle" fill="#000" x="50%" y="50%">${text}</text>
+        <text xmlns="http://www.w3.org/2000/svg" style="color: #fff; line-height: 1; font-family: system-ui" alignment-baseline="middle" text-anchor="middle" font-size="${fontSize}" font-weight="600" dy=".1em" dominant-baseline="middle" fill="#000" x="50%" y="50%">${text}</text>
     </svg>`
 }
 
@@ -397,10 +400,13 @@ function nameToAvatar(name) {
 
 
 export function employeeAvatarOrFallback(employee) {
-    if (employee.avatar) {
+
+    if (employee.deleted) {
+        return nameToAvatar("Deleted User");
+    } else if (employee.avatar) {
         return assetToUrl(ASSET_TYPE_EMPLOYEE, employee.empID, employee.avatar.assetID, employee.avatar.contentType);
     } else {
-        return nameToAvatar(bothNamesToString(employee.firstName, employee.lastName));
+        return nameToAvatar(employeeToName(employee));
     }
 }
 
@@ -408,6 +414,20 @@ export function assetToUrl(type, bucketID, assetID, contentType) {
 
     return `https://usercontent.013.team/${type}/${bucketID}/${assetID}.${contentType.split("/")[1]}`;
 }
+
+
+export function employeeToName(employee) {
+    if (employee.deleted) {
+        return "Deleted User";
+    }
+
+    if (!employee) {
+        return "Unknown User";
+    }
+
+    return bothNamesToString(employee.firstName, employee.lastName);
+}
+
 
 /**
  * Combines the first name and the last name into a single string.
@@ -417,7 +437,7 @@ export function assetToUrl(type, bucketID, assetID, contentType) {
  * @param {string} sname - The last name.
  * @returns {string} The combined string of the first name and the last name.
  */
-export function bothNamesToString(fname, sname) {
+function bothNamesToString(fname, sname) {
     if (fname == undefined) {
         return sname
     } else {
@@ -586,7 +606,7 @@ export async function renderNotifications(notifications) {
 
         //notification author
         let empID = notification.author.empID;
-        let name = bothNamesToString(employees.get(empID).firstName, employees.get(empID).lastName);
+        let name = employeeToName(employees.get(empID));
         let avatar = employeeAvatarOrFallback(employees.get(empID));
 
         //notification card
@@ -769,8 +789,8 @@ if (trainingButton !== null) {
 }
 
 
-if (logoutButton !== null) {
-    logoutButton.addEventListener("click", () => {
+if (navLogoutButton !== null) {
+    navLogoutButton.addEventListener("click", () => {
         delete_api("/employee/session.php/session").then(async () => {
             await clearStorages();
             window.location.href = "/";
@@ -863,22 +883,93 @@ function fillCurrentUserInfo() {
         let employee = session.employee;
 
         let emp_icon = employeeAvatarOrFallback(employee);
-        let emp_name = bothNamesToString(employee.firstName, employee.lastName);
+        let emp_name = employeeToName(employee);
 
         let icon = document.createElement("img");
         icon.src=emp_icon;
         icon.classList.add("avatar");
         icon.id = "user-icon";
 
-        userAvatar.classList.add("tooltip");
-        userAvatar.classList.add("tooltip-left");
-
-        let tooltip = document.createElement("div");
-        tooltip.classList.add("tooltiptext");
-        tooltip.innerText = `Logged in as ${emp_name}`;
-
-        userAvatar.appendChild(tooltip);
         userAvatar.appendChild(icon);
+    });
+}
+
+function userIconContextMenu() {
+    if (userAvatar === null) {
+        return;
+    }
+
+    userAvatar.classList.add('context-menu')
+    let contextMenu = document.createElement('div')
+    contextMenu.classList.add('context-menu-popover')
+    contextMenu.innerHTML = `
+        <div class="item action-settings">
+            <div class="icon">
+                <span class="material-symbols-rounded">
+                    settings
+                </span>
+            </div>
+            <div class="text">
+                Settings
+            </div>
+        </div>
+        <div class="item action-invite">
+            <div class="icon">
+                <span class="material-symbols-rounded">
+                    mail
+                </span>
+            </div>
+            <div class="text">
+                Invite
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="item action-logout">
+            <div class="icon">
+                <span class="material-symbols-rounded">
+                    logout
+                </span>
+            </div>
+            <div class="text">
+                Log out
+            </div>
+        </div>
+    `
+    userAvatar.appendChild(contextMenu)
+
+    userAvatar.addEventListener('pointerup', (e) => {
+        e.stopPropagation()
+        userAvatar.querySelector('.context-menu-popover').classList.toggle('visible')
+    })
+
+    document.addEventListener('pointerdown', (e) => {
+        if (!userAvatar.contains(e.target)) {
+            userAvatar.querySelector('.context-menu-popover').classList.remove('visible')
+        }
+
+    })
+
+    //context menu items
+    let contextMenuItems = contextMenu.querySelectorAll(".item");
+    contextMenuItems.forEach(item => {
+        item.addEventListener("pointerup", (e) => {
+            e.stopPropagation();
+            if (item.classList.contains("action-settings")) {
+                console.log("[User Icon Redirect] Redirecting to profile page")
+                window.location.href = "/settings";
+            } else if (item.classList.contains("action-invite")) {
+                console.log("[User Icon Redirect] Redirecting to invite page")
+                window.location.href = "/invite";
+            } else if (item.classList.contains("action-logout")) {
+                console.log("[User Icon Redirect] Logging out")
+                delete_api("/employee/session.php/session").then(async () => {
+                    await clearStorages();
+                    window.location.href = "/";
+                });
+            } else {
+                console.error("[User Icon Redirect] unknown action")
+            }
+        });
     });
 }
 
@@ -968,37 +1059,102 @@ if (window.location.pathname !== '/') {
     setTimeout(() => {
         if (sidebar !== null) {
             sidebar.classList.add('transition');
+            //no dom queries are inside of the event listener to make global event listener ok
+            const sidebarItems = document.querySelectorAll('.sidebar-item p');
+
+            document.addEventListener('click', (e) => {
+                const sidebarVisible = sidebar.classList.contains('visible');
+                const clickSidebar = sidebar.contains(e.target);
+                const clickHamburger = hamburger.contains(e.target);
+                
+                if (window.innerWidth < 600 && sidebarVisible && !clickSidebar && !clickHamburger) {
+                    sidebar.classList.toggle('visible');
+                    container.classList.toggle('sidebar-open');
+                    sidebarItems.forEach((paragraph) => {
+                        paragraph.classList.toggle('norender');
+                    });
+                }
+            });
         }
     }, 200);
 
-    ensureSettings()
+    ensureSettings();
 
-    if(getSetting("sidebarIsOpen") === true) {
-        console.log("[init] setting sidebar to open")
-        sidebar.classList.add("visible")
-        container.classList.add("sidebar-open")
-        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-            paragraph.classList.remove("norender")
-        })
-    } else {
-        console.log("[init] setting sidebar to closed")
-        sidebar.classList.remove("visible")
-        container.classList.remove("sidebar-open")
-        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-            paragraph.classList.add("norender")
-        })
+    if (sidebar !== null) {
+        if(window.innerWidth > 600 && getSetting("sidebarIsOpen") === true) {
+            console.log("[init] setting sidebar to open")
+            sidebar.classList.add("visible")
+            container.classList.add("sidebar-open")
+            document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+                paragraph.classList.remove("norender")
+            })
+        } else {
+            console.log("[init] setting sidebar to closed")
+            sidebar.classList.remove("visible")
+            container.classList.remove("sidebar-open")
+            document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+                paragraph.classList.add("norender")
+            })
+        }
     }
 
     fillCurrentUserInfo();
+    userIconContextMenu();
     managerElementsEnableIfManager();
-    getEmployeeNotifications().then((items) => {
-        if (items.length > 0) {
-            console.log("[getEmployeeNotifications] notifications found and display badge");
-            console.log(items);
-            notifications = items
-            renderNotifications(items);
-        }
-    });
 
+    if (notificationsButton !== null) {
+        getEmployeeNotifications().then((items) => {
+            if (items.length > 0) {
+                console.log("[getEmployeeNotifications] notifications found and display badge");
+                console.log(items);
+                notifications = items
+                renderNotifications(items);
+            }
+        });
+    }
 
 }
+
+
+// session timeout
+setInterval(async () => {
+    let session = await getCurrentSession(true);
+    if (!session) {
+        return;
+    }
+
+    let expires = new Date(session.expires);
+    let now = new Date((new Date()).toUTCString());
+
+    let diff = expires - now;
+    let lastActive = now - new Date(GLOBAL_LAST_ACTIVE.toUTCString());
+    console.log(`[sessionTimeout] ${diff}ms remaining on session`);
+    console.log(`[sessionTimeout] user last active ${lastActive}ms ago`);
+
+    if (diff < 10 * 60 * 1000) {
+
+        if (lastActive < 15 * 60 * 1000) {
+
+            console.log("[sessionTimeout] session expires in under 10 minutes, renewing");
+            await renewCurrentSession();
+        } else {
+            console.log("[sessionTimeout] user has not been active in the last 15 minutes, wont renew session");
+
+            if (diff < 0) {
+                console.log("[sessionTimeout] session has expired, redirecting to login");
+                let after_login = window.location.pathname + window.location.hash
+                window.location.href = `/#${after_login}&sessionexpired`;
+            }
+
+        }
+    }
+}, 60 * 1000);
+
+// set last active time
+document.addEventListener("mousemove", () => {
+    GLOBAL_LAST_ACTIVE = new Date();
+});
+document.addEventListener("keydown", () => {
+    GLOBAL_LAST_ACTIVE = new Date();
+});
+

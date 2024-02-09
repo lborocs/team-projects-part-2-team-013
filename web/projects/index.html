@@ -186,48 +186,60 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="taskgrid">
-                            <div class="taskcolumn" id="notstarted">
-                                <div class="title-container">
-                                    <div class="columntitle">
-                                        <i class="fa-solid fa-thumbtack"></i> Not Started
+                        <div class="taskgrid-wrapper">
+                            <div class="taskgrid">
+                                <div class="taskcolumn" id="notstarted">
+                                    <div class="title-container">
+                                        <div class="columntitle">
+                                            <span class="material-symbols-rounded">
+                                                push_pin
+                                            </span> 
+                                             Not Started
+                                        </div>
+                                        <div class="task-count" id="notstarted-count">
+                                            3
+                                        </div>
                                     </div>
-                                    <div class="task-count" id="notstarted-count">
-                                        3
+                                    <div class="add-task manager-only team-leader-only norender" id="notstarted-add">
+                                        <i class="fa-solid fa-plus"></i> Create Task
                                     </div>
+
                                 </div>
-                                <div class="add-task manager-only team-leader-only norender" id="notstarted-add">
-                                    <i class="fa-solid fa-plus"></i> Create Task
-                                </div>
-            
-                            </div>
-                            <div class="taskcolumn" id="inprogress">
-                                <div class="title-container">
-                                    <div class="columntitle">
-                                        <i class="fa-solid fa-chart-line"></i> In Progress
+                                <div class="taskcolumn" id="inprogress">
+                                    <div class="title-container">
+                                        <div class="columntitle">
+                                            <span class="material-symbols-rounded">
+                                                timeline
+                                            </span>
+                                             In Progress
+                                        </div>
+                                        <div class="task-count" id="inprogress-count">
+                                            3
+                                        </div>
+                
                                     </div>
-                                    <div class="task-count" id="inprogress-count">
-                                        3
-                                    </div>
-            
-                                </div>
-                            
-            
-                            </div>
-                            <div class="taskcolumn" id="finished">
-                                <div class="title-container">
-                                    <div class="columntitle">
-                                        <i class="fa-regular fa-circle-check"></i> Finished
-                                    </div>
-                                    <div class="task-count" id="finished-count">
-                                        3
-                                    </div>
-            
-                                </div>
                                 
-            
+                
+                                </div>
+                                <div class="taskcolumn" id="finished">
+                                    <div class="title-container">
+                                        <div class="columntitle">
+                                            <span class="material-symbols-rounded">
+                                                check_circle
+                                            </span> 
+                                            Finished
+                                        </div>
+                                        <div class="task-count" id="finished-count">
+                                            3
+                                        </div>
+                
+                                    </div>
+                                    
+                
+                                </div>
                             </div>
                         </div>
+                        
                         <div class="tasklist norender fade">
                             <table class="taskTable">
                                 <thead>
@@ -235,19 +247,25 @@
                                         <th id="title-column">
                                             <div class="header-cell">
                                                 Task
-                                                <i class="fa-solid fa-sort"></i>
+                                                <span class="material-symbols-rounded">
+                                                    arrow_drop_down
+                                                </span>
                                             </div>
                                         </th>
                                         <th id="date-column">
                                             <div class="header-cell">
                                                 Due Date
-                                                <i class="fa-solid fa-sort"></i>
+                                                <span class="material-symbols-rounded">
+                                                    arrow_drop_down
+                                                </span>
                                             </div>
                                         </th>
                                         <th id="status-column">
                                             <div class="header-cell">
                                                 Status
-                                                <i class="fa-solid fa-sort"></i>
+                                                <span class="material-symbols-rounded">
+                                                    arrow_drop_down
+                                                </span>
                                             </div>
                                         </th>
                                     </tr>
@@ -255,7 +273,10 @@
                                 <tbody class="tasktable-body">
                                     <tr id="list-add-row" class="manager-only norender">
                                         <td id="list-add">
-                                            <i class="fa-solid fa-plus"></i> Create Task
+                                            <span class="material-symbols-rounded">
+                                                add
+                                            </span>
+                                            Create Task
                                         </td>
                                         <td></td>
                                         <td></td>
@@ -280,22 +301,32 @@
                         </div>
             
                         <div id="project-description">
-                            <i class="fa-solid fa-book"></i> Project description...
+                            Project description...
                         </div>
                         <div class="divider"></div>
                         <div class="task-overview">
                             <div class="title norender">
             
                             </div>
-                            <div class="description-container">
+                            <div class="explainer-description-container">
                                 <div class="description-icon">
-                                    <i class="fa-solid fa-circle-info"></i>
+                                    <span class="material-symbols-rounded">
+                                        subject
+                                    </span>
                                 </div>
                                 <div class="description">
                                 </div>
                             </div>
                             <div class="date-container">
                                 <div class="date">
+                                </div>
+                                <div class="manhours-container">
+                                    <span class="material-symbols-rounded">
+                                        hourglass_empty
+                                        </span>
+                                    <div class="manhours">
+                                        No Manhours Set
+                                    </div>
                                 </div>
                             </div>
                             <div class="status-container">
@@ -305,10 +336,10 @@
                         </div>
                         <div class="edit-and-delete">
                             <div class="edit-button manager-only team-leader-only norender">
-                                <i class="fa-solid fa-pencil"></i>
+                            
                             </div>
                             <div class="delete-button manager-only team-leader-only norender">
-                                <i class="fa-regular fa-trash-can"></i>
+                            
                             </div>
                         </div>
                     </div>
@@ -340,9 +371,8 @@
                                     </span>
                                 </div>
                                 <div class="button-text">
-                                    Filters
+                                    All Projects
                                 </div>
-                                
                             </div>
                         </div>
                         <div class="sort">
@@ -353,7 +383,16 @@
                                     </span>
                                 </div>
                                 <div class="button-text">
-                                    Sort by
+                                    Last Accessed
+                                </div>
+                            </div>
+                        </div>
+                        <div class="undo">
+                            <div class="icon-button no-box" tabindex="0" id="project-filter">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        undo
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -403,6 +442,16 @@
                                         </div>
                                     </th>
                                     <th>Last Accessed</th>
+                                    <th>
+                                        <div class="header-td">
+                                            <div class="name">
+                                                Due Date
+                                            </div>
+                                            <div class="icon">
+                                                <i class="far fa-sort"></i>
+                                            </div>
+                                        </div>
+                                    </th>
                                     <th></th>
                                 </tr>
                             </thead>

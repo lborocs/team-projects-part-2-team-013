@@ -238,7 +238,7 @@ function db_generic_edit(Table $table, array $values, array $keys) {
 
         $col = $table->get_column($u_field);
 
-        if ($col->type == "binary") {
+        if ($col->type == "binary" && $u_value !== null) {
             $u_value = hex2bin($u_value);
         }
         
@@ -325,6 +325,31 @@ function db_asset_new(
     return $res;
 }
 
+function db_asset_fetch(string $asset_id) {
+    global $db;
+
+    $bin_a_id = hex2bin($asset_id);
+
+    $query = $db->prepare(
+        "SELECT * FROM `ASSETS` WHERE assetID = ?"
+    );
+    $query->bind_param("s", $bin_a_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    
+    if ($res->num_rows == 0) {
+        return false;
+    }
+
+    $row = $res->fetch_assoc();
+    return parse_database_row($row, TABLE_ASSETS);
+}
+
+
 // posts
 
 function db_post_fetchall(string $search_term, ?Array $tags) {
@@ -364,7 +389,7 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
         WHERE LOWER(`POSTS`.postTitle) LIKE ? " . $tag_term . "
         GROUP BY `POSTS`.postID
         ORDER BY views DESC
-        LIMIT " . SEARCH_FETCH_LIMIT
+        LIMIT " . SEARCH_FETCH_DEFAULT
     );
 
     $query->bind_param(
@@ -665,7 +690,7 @@ function db_employee_new(
     $bin_e_id = generate_uuid();
 
     $query = $db->prepare(
-        "INSERT INTO `EMPLOYEES` VALUES (?, ?, ?, '0', NULL)"
+        "INSERT INTO `EMPLOYEES` VALUES (?, ?, ?, '0', NULL, '0')"
     );
 
     $query->bind_param(
@@ -917,7 +942,7 @@ function db_employee_fetch_projects_in(string $user_id, $search_term) {
             OR `PROJECTS`.projectTeamLeader = ?
         )
         ORDER BY lastAccessed DESC
-        LIMIT " . SEARCH_FETCH_LIMIT
+        LIMIT " . SEARCH_FETCH_DEFAULT
     );
     $query->bind_param(
         "ssss",
@@ -947,7 +972,7 @@ function db_account_fetch(string $email) {
     global $db;
 
     $query = $db->prepare(
-        "SELECT `ACCOUNTS`.*, `EMPLOYEES`.isManager 
+        "SELECT `ACCOUNTS`.*, `EMPLOYEES`.*
         FROM `ACCOUNTS`, `EMPLOYEES`
         WHERE `ACCOUNTS`.email = ?
         AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
@@ -973,7 +998,7 @@ function db_account_fetch_by_id(string $hex_id) {
     $bin_id = hex2bin($hex_id);
 
     $query = $db->prepare(
-        "SELECT ACCOUNTS.*, `EMPLOYEES`.isManager 
+        "SELECT ACCOUNTS.*, `EMPLOYEES`.*
         FROM `ACCOUNTS`, `EMPLOYEES` 
         WHERE `ACCOUNTS`.empID = ? AND `ACCOUNTS`.empID = `EMPLOYEES`.empID"
     );
@@ -1122,7 +1147,7 @@ function db_project_fetchall(string $search_term, string $emp_id) {
             AND `PROJECT_ACCESSED`.empID = ?
         WHERE LOWER(`PROJECTS`.projectName) LIKE ?
         ORDER BY lastAccessed DESC
-        LIMIT ". SEARCH_FETCH_LIMIT
+        LIMIT ". SEARCH_FETCH_DEFAULT
     );
     $query->bind_param(
         "ss",

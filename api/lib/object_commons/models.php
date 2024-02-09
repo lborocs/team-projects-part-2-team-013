@@ -24,6 +24,7 @@ enum TASK_UPDATE_TYPE {
     const EDITED = 1;
     const ASSIGNED = 2;
     const UNASSIGNED = 3;
+    const COMPLETED_CHANGE = 4;
 }
 
 
@@ -290,7 +291,8 @@ const TABLE_ASSETS = new Table(
     [], // no url specifiers
     [
         _ASSETID,
-        new Column("ownerID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("assetID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
+        new Column("bucketID", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("assetType", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("contentType", is_primary_key:false, type:"string", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
@@ -316,9 +318,10 @@ CONST TABLE_EMPLOYEES = new Table(
             "avatar", is_primary_key:false, type:"binary", is_nullable:true, is_editable:true, is_server_generated:false,
             constraints:[new ForeignKeyConstraint(TABLE_ASSETS, _ASSETID)]
         ),
+        new Column("employeeDeleted", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
     "employee",
-    null
+    "employee"
 );
 
 const TABLE_ACCOUNTS = new Table(
@@ -484,8 +487,14 @@ const TABLE_TASKS = new Table(
             "taskCreatedBy", is_primary_key:false, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
-        new Column("taskTitle", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false),
-        new Column("taskDescription", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column(
+            "taskTitle", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
+            constraints:[new ContentLengthConstraint(4, 128)]
+        ),
+        new Column(
+            "taskDescription", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false,
+            constraints:[new ContentLengthConstraint(4, 254)]
+        ),
         new Column(
             "taskState", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new RestrictedDomainConstraint(TASK_VALID_STATES)]

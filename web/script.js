@@ -28,10 +28,10 @@ async function login() {
 
             let emp = session.employee;
 
-            console.log(`[login] logged in successfully as ${emp.id} (${global.bothNamesToString(emp.firstName, emp.lastName)}) ${session.id} - redirecting`);
+            console.log(`[login] logged in successfully as ${emp.id} (${global.employeeToName(emp)}) ${session.id} - redirecting`);
     
             if (window.location.hash !== "") {
-                window.location.href = window.location.hash.substring(1);
+                window.location.href = window.location.hash.substring(1).split("&")[0];
             } else {
                 window.location.href = "/projects/";
             }
@@ -79,3 +79,19 @@ global.renewCurrentSession().then((session) => {
         window.location.href = "/projects/";
     }
 });
+
+
+const schema = window.location.hash.substring(1).split("&")[1];
+if (schema) {
+    const msg = {
+        "sessionexpired": "Your session expired and you have been logged out",
+        "authrequired": "You must be logged in to access this page"
+    }[schema]
+
+    if (msg) {
+        setLoginStatus(msg);
+        document.getElementById("status").classList.remove("hidden");
+        document.getElementById("status").classList.add("status-incorrect");  
+    }
+
+}

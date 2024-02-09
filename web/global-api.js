@@ -106,7 +106,11 @@ async function api_request(route, method, body, options={}) {
 
     console.error(`[API] ${method} ${route} ERRORED: ${res.status} - ${error_code} - ${error_message}`);
 
+    var msg;
+
+
     switch (error_code) {
+        
 
         // bad session
         case 3001:
@@ -115,13 +119,13 @@ async function api_request(route, method, body, options={}) {
 
         case 1004: // session expired
         case 1005: // session revoked
-
-            if (options.redirect_on_error) {
-                alert("Your session is no longer valid, please log in again");
-
-            }
             // notice the important lack of break.
+            msg = "&sessionexpired"
         case 1000: // not authenticated
+
+            if (!msg) {
+                msg = "&authrequired"
+            }
 
             localStorage.clear();
             await caches.delete("employees");
@@ -135,7 +139,7 @@ async function api_request(route, method, body, options={}) {
                     break
                 }
                 let after_login = window.location.pathname + window.location.hash;
-                window.location.href = `/#${after_login}` // redirect to login
+                window.location.href = `/#${after_login}${msg}` // redirect to login
                 break;
             };
 

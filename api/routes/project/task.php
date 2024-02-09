@@ -193,7 +193,7 @@ function r_project_fetchall_tasks(RequestContext $ctx, string $args) {
     object_check_user_is_part_of_project($ctx, $resource_specifiers);
 
     // if we are a team admin then return associated employee data too
-    $is_team_admin =  ($ctx->session->auth_level >= 2 || $ctx->session->hex_associated_user_id == $ctx->project["teamLeader"]["empID"]);
+    $is_team_admin =  ($ctx->session->auth_level >= AUTH_LEVEL_MANAGER || $ctx->session->hex_associated_user_id == $ctx->project["teamLeader"]["empID"]);
     fetchall_tasks($ctx->session->hex_associated_user_id, $resource_specifiers[0], $is_team_admin);
 
 }
@@ -289,10 +289,25 @@ function _delete_task(RequestContext $ctx, array $url_specifiers) {
 }
 
 function _edit_task(RequestContext $ctx, array $data, array $url_specifiers) {
+
+    ensure_no_unchanged_fields($ctx->task, $data);
+
     // only dispatch notification if something other than task state changes
     if (count($data) > 1 || !array_key_exists("taskState", $data)) {
         notification_task_edit($url_specifiers[1], $ctx->session->hex_associated_user_id);
     }
+
+    // if we changed state
+    // and either we are changing to completed or we are changing from completed
+    // then dispatch a notification
+
+    if (array_key_exists("taskState", $data) && (
+        $data["taskState"] == TASK_STATE_COMPLETED ||
+        ($ctx->task["taskState"] == TASK_STATE_COMPLETED && $data["taskState"] != TASK_STATE_COMPLETED)
+    )) {
+        notification_task_completed_change($url_specifiers[1], $ctx->session->hex_associated_user_id);
+    }
+
     _use_common_edit(TABLE_TASKS, $data, $url_specifiers);
 }
 

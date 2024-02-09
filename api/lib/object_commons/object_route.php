@@ -20,13 +20,14 @@ const OBJECT_GENERIC_FETCH_FUNCS = [
     "`TASKS`"=>"_fetch_task",
     "`POSTS`"=>"_fetch_post",
     "`PROJECTS`"=>"_fetch_project",
+    "`EMPLOYEE_PERSONALS`"=>"_fetch_personal",
 ];
 
 const OBJECT_GENERIC_EDIT_FUNCS = [
     "`TASKS`"=>"_edit_task",
     "`POSTS`"=>"_edit_post",
     "`EMPLOYEE_PERSONALS`"=>"_edit_personal",
-    "`PROJECTS`"=>"_use_common_edit",
+    "`PROJECTS`"=>"_edit_project",
     "`TAGS`"=>"_use_common_edit",
     "`EMPLOYEE_PERSONALS`"=>"_use_common_edit"
 ];
@@ -37,6 +38,19 @@ const OBJECT_GENERIC_DELETE_FUNCS = [
     "`POSTS`"=>"_delete_post",
     "`EMPLOYEE_PERSONALS`"=>"_delete_personal"
 ];
+
+
+function ensure_no_unchanged_fields(Array $old, Array $new) {
+    foreach ($old as $key => $value) {
+        if (array_key_exists($key, $new) && $new[$key] == $value) {
+            respond_bad_request(
+                "Field $key is unchanged and should not be provided",
+                ERROR_BODY_INVALID
+            );
+        }
+    }
+}
+
 
 
 function object_manipulation_generic(array $method_checks, Table $model, RequestContext $ctx, string $args, array $allowed_fields = []) {
@@ -261,99 +275,6 @@ function _use_common_edit(Table $table, array $data, array $url_specifiers) {
     $primary_keys = $table->name_url_specifiers($url_specifiers);
     db_generic_edit($table, $data, $primary_keys);
     respond_no_content();
-}
-
-// project
-
-function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
-    $author_id = $ctx->session->hex_associated_user_id;
-
-    $projID = generate_uuid();
-    $projName = $body["projectName"];
-    $description = $body["projectDescription"] ?? null;
-    $createdBy = hex2bin($author_id);
-    $teamLeader = hex2bin($body["projectTeamLeader"]);
-    $createdAt = timestamp();
-    $dueDate = $body["projectDueDate"] ?? null;
-
-    if (db_generic_new(
-        TABLE_PROJECTS ,
-        [
-            $projID,
-            $projName,
-            $description,
-            $createdBy,
-            $teamLeader,
-            $createdAt,
-            $dueDate
-        ],
-        "sssssss"
-    )) {
-
-        $body["projID"] = $projID;
-        $body["projectCreatedBy"] = $createdBy;
-        $body["projectTeamLeader"] = $teamLeader;
-        $body["projectCreatedAt"] = $createdAt;
-
-        respond_ok(parse_database_row($body, TABLE_PROJECTS));
-    } else {
-        respond_internal_error(ERROR_DB_INSERTION_FAILED);
-    }
-}
-
-
-function _delete_project(RequestContext $ctx, array $url_specifiers) {
-    respond_not_implemented();
-}
-
-function _fetch_project(RequestContext $ctx, array $url_specifiers) {
-    db_project_accesses_set($ctx->project["projID"], $ctx->session->hex_associated_user_id);
-    respond_ok($ctx->project);
-}
-
-// personals
-
-function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) {
-    $author_id = $ctx->session->hex_associated_user_id;
-
-    $itemID = generate_uuid();
-    $assignedTo = hex2bin($author_id);
-    $state = $body["personalState"];
-    $dueDate = $body["personalDueDate"] ?? null;
-    $title = $body["personalTitle"];
-    $content = $body["personalContent"] ?? null;
-
-    if (db_generic_new(
-        TABLE_PERSONALS ,
-        [
-            $itemID,
-            $assignedTo,
-            $state,
-            $dueDate,
-            $title,
-            $content
-        ],
-        "ssiiss"
-    )) {
-
-        $body["itemID"] = $itemID;
-        $body["personalAssignedTo"] = $assignedTo;
-
-        respond_ok(parse_database_row($body, TABLE_PERSONALS));
-    } else {
-        respond_internal_error(ERROR_DB_INSERTION_FAILED);
-    }
-}
-
-
-function _delete_personal(RequestContext $ctx, array $url_specifiers) {
-    db_personal_delete($url_specifiers[1]);
-    respond_no_content();
-}
-
-function _fetch_personal(RequestContext $ctx, array $url_specifiers) {
-
-    respond_ok($ctx->personal);
 }
 
 ?>

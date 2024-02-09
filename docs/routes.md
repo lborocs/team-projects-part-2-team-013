@@ -3,6 +3,18 @@ Written/designed by aidan F223129
 
 ## employee.php
 
+- [ ] **/employee/employee.php/employee/:EMP_ID:** (replace emp_id with @me for self)
+  - [x] GET (get employee)
+  - [x] PATCH (edit employee)
+    ```jsonc
+      {
+        "firstname":"new fname",
+        "lastName": "new lname",
+        "avatar":"base64 avatar bytes",
+        "isManager":0, // manager only
+      }
+
+
 - [x] **/employee/employee.php/bulk?ids=id1,id2** (no query params defaults to the logged in user)
   - GET (get all employees)
     
@@ -46,9 +58,9 @@ Written/designed by aidan F223129
     }
     ```
 
-- [ ] **/employee/employee.php/personal/:employee_id:/:personal_id:**
+- [x] **/employee/employee.php/personal/:employee_id:/:personal_id:**
   - [x] GET (Get individual todo list item info)
-  - [ ] POST (Create new todo list item)
+  - [x] POST (Create new todo list item)
   - [x] PATCH (Edit users todolist item)
   - [x] DELETE (Delete from todolist)
 
@@ -83,6 +95,13 @@ Written/designed by aidan F223129
     ``` 
 
 ## session.php
+
+- [x] **/employee/session.php/resetpassword**
+  - [x] PATCH {"newPassword":string, "token":string} (change password with token)
+  - [x] POST {"email":string} (send password reset email)
+  - [x] PUT {"token":string} (get employee object from token) 
+
+
 - [x] **/employee/session.php/login**
   - [x] POST (log in) {"username":string,"password":string}
     ```jsonc
@@ -128,7 +147,7 @@ Written/designed by aidan F223129
         },
       }
       ```
-    - [x] PATCH {"password":string, "newPassword":string} (requires otp)
+    - [x] PATCH {"password":string, "newPassword":string}
 
 - [x] **/employee/session.php/register**
     - POST (register account) {firstName:?string, lastName:string, password:string, email:string, token:string}
@@ -138,6 +157,8 @@ Written/designed by aidan F223129
 - [x] **/employee/meta.php/notifications**
   - GET get all notifications (defined in notifications.md)
 
+- [ ] **/employee/meta.php/preferences**
+  - GET get preferences
 
 # project
 

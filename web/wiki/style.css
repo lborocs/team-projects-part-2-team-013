@@ -14,7 +14,7 @@ body {
     display: flex;
     flex-direction: row;
     height: 100%;
-    background-color: #f4f4f4;
+    background-color: var(--light-grey-bg);
 }
 
 .type-of-post {
@@ -64,12 +64,13 @@ body {
 .category {
     font-size: 0.9em;
     font-weight: 600;
-    color: #2d2e30;
+    color: #0f0f0f;
     width: 50%;
     height: 3em;
     padding-left: 0.5em;
     padding-right: 0.5em;
     text-align: center;
+    
     
 }
 
@@ -90,8 +91,17 @@ body {
 .filters {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
     width: 100%;
+    gap: 0.5em;
+
+    .title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2d2e30;
+
+    }
 }
 
 
@@ -114,13 +124,6 @@ body {
     color: #4e5057;
 }
 
-.avatar {
-    width: 1.5em;
-    height: 1.5em;
-    border-radius: 50%;
-    background-color: rgba(0,0,0,0);
-}
-
 
 .posts {
     display: flex;
@@ -130,7 +133,7 @@ body {
     gap: 1em;
     padding: 1em;
     overflow-y: scroll;
-    background-color: #f4f4f4;
+    background-color: var(--light-grey-bg);
     height: 100%;
     width: 100%;
 }
@@ -151,9 +154,9 @@ body {
         cursor: pointer;
     }
 
-    .selected{
-        color: #ffffff !important;
-        background-color: #00a2ff !important;
+    .selected {
+        transition: background-color 0.05s ease-out;
+        background-color: #fcefb4;
     }
 }
 
@@ -197,13 +200,7 @@ body {
             font-size: 0.85em;
             font-weight: 500;
             color: #2d2e30;
-            margin-bottom: 1em;
-            .avatar {
-                width: 1.5em;
-                height: 1.5em;
-                border-radius: 50%;
-                background-color: #f0f0f0;
-            }
+            margin-top: 1em;
         }
     }
 
@@ -222,14 +219,16 @@ body {
     flex-direction: row;
     align-items: center;
     padding: 0.25em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
     border-radius: 1em;
     background-color: #ebedef;
     color: #2d2e30;
     font-size: 14px;
     font-weight: 600;
-    gap: 0.25em;
+    gap: 0.4em;
+
+    transition: background-color 0.05s ease-out;
 
     user-select: none;
 
@@ -290,7 +289,7 @@ input[type="text"] {
     background-color: #3098ff;
     color: white;
     white-space: nowrap;
-    height: 100%;
+    height: 3.5rem;
     border-radius: 8px;
     border: 1px solid #f4f4f4;
 
@@ -320,10 +319,10 @@ input[type="text"] {
 .divider {
     width: 100%;
         height: 2px;
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
+        margin-top: 0.25em;
+        margin-bottom: 0.25em;
         background-color: #0f0f0f;
-        opacity: 0.5;
+        opacity: 0.2;
 }
 
 input[type="text"] {
@@ -350,7 +349,7 @@ input[type="text"] {
     height: 3.5em;
     align-items: center;
     color: #555555;
-    background-color: #eeeeee;
+    background-color: var(--light-grey-bg);
     border-radius: 8px;
     border: solid 1px #e0e0e0;
     transition: 0.1s ease-out;
@@ -374,13 +373,14 @@ label {
     align-items: center;
     cursor: pointer;
     transition: 0.1s ease-out;
+    background-color: var(--light-grey-bg);
 }
 
 
 input[type="radio"]:checked + label {
     display: flex;
     justify-content: center;
-    background-color: #fff;
+    background-color: #fcefb4;
     color: #2d2e30;
     width: 100%;
 
@@ -391,6 +391,14 @@ input[type="radio"] + label {
     width: 100%;
 
 }
+
+input[type="radio"]:not(:checked) + label:hover {
+    background-color: rgb(219, 219, 219);
+    color: #2d2e30;
+    transition-duration: 0.1s;
+}
+
+
 
 .sidebar {
     z-index: 1;

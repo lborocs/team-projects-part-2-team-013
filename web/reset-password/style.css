@@ -29,11 +29,6 @@ body {
     font-weight: 600;
 }
 
-.forgot-password {
-    font-weight: 600;
-    font-size: 14px;
-    line-height: 1;
-}
 
 .login-box {
     padding-bottom: 1em;
@@ -102,12 +97,6 @@ label {
     padding-right: 42px;
 }
 
-.left-right-labels {
-    display: flex;
-    justify-content:space-between;
-}
-
-
 .textfield {
     padding: 2px 8px;
     border: none;
@@ -117,11 +106,12 @@ label {
     box-sizing: border-box;
     font-size: 14px;
     font-family: 'Open Sans', sans-serif;
+    width: 100%;
 }
 
 
 
-#togglePassword {
+#toggleNewPassword {
     cursor: pointer;
     position: absolute;
     right: 6px;
@@ -131,7 +121,21 @@ label {
     color: rgb(98, 111, 134);
 }
 
-#togglePassword:hover {
+#toggleNewPassword:hover {
+    color: black;
+}
+
+#toggleNewPasswordConfirm {
+    cursor: pointer;
+    position: absolute;
+    right: 6px;
+
+    user-select: none;
+
+    color: rgb(98, 111, 134);
+}
+
+#toggleNewPasswordConfirm:hover {
     color: black;
 }
 
@@ -142,7 +146,7 @@ label {
     gap: 10px;
 }
 
-#login {
+#change {
     width: 100%;
     margin-top: 4px;
     height: 38px;
@@ -188,4 +192,28 @@ label {
     & span {
         color: black;
     }
+}
+
+.text {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    border: solid 1px var(--white, white);
+    transition: 0.1s ease-out;
+
+}
+
+.profile-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: calc(100% - 2rem);
+    align-items: center;
+    justify-content: flex-start;
 }

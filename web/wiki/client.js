@@ -9,15 +9,30 @@ var selectedValue = selectedCategory.value;
 
 var postsMap = new Map();
 
-async function fetchPosts() {
+async function fetchPosts(tagsList) {
     global.setBreadcrumb(["Wiki"], ["./"]);
-
     const data = await get_api("/wiki/post.php/posts");
     console.log(data);
     if (data.success == true) {
         console.log("Posts have been fetched")
         data.data.posts.forEach(post => {
-            renderPost(post.postID, post.title, post.author, post.isTechnical, post.tags)
+            console.log(post)
+            console.log(post.tags)
+            if (post.tags != null) {
+                let newtags = [];
+                console.log(post.tags)
+                console.log("TAGS")
+                post.tags.forEach((tag) => {
+                    newtags.push(tagsList.find(findTag(tag)).name)
+                    console.log(tag)
+                    console.log("REPLACING TAGS")
+                });
+            post.tagsNames = newtags;
+            }
+            console.log(post.tags)
+            console.log(post.tagsNames) 
+            console.log("Rendering post")
+            renderPost(post.postID, post.title, post.author, post.isTechnical, post.tagsNames)
             postsContainer = document.querySelector('.posts');
             // Store the post in the Map using postID as the key
             postsMap.set(post.postID, post);
@@ -37,26 +52,35 @@ async function fetchTags() {
     if (data.success == true) {
         console.log("Tags have been fetched")
         data.data.tags.forEach(tag => {
-            document.querySelector('.tag-selection').innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`
+            document.querySelector('.tag-selection').innerHTML += `<div class="tag" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`
         });
+        return data.data.tags;
     } else {
         console.log("Tags failed to be fetched")
     }
 }
 
-fetchTags();
-    
+let tagsList = fetchTags();
+tagsList.then((tagsList) => {
+    document.querySelectorAll('.tag').forEach((tag) => {
+        tag.addEventListener('click', () => {
+            tag.classList.toggle('selected');
+            updatePosts();
+        })
+    });
 
-fetchPosts().then(() => {
-    posts.forEach((post) => {
-        selectedCategory = document.querySelector('input[name="category"]:checked')
-        selectedValue = selectedCategory.value
-        if (post.getAttribute("data-isTechnical") != selectedValue) {
-            post.classList.add("norender");
-        } else {
-            post.classList.remove("norender"); 
-        }
-    })
+    // Move the fetchPosts call inside the then block
+    fetchPosts(tagsList).then(() => {
+        posts.forEach((post) => {
+            selectedCategory = document.querySelector('input[name="category"]:checked')
+            selectedValue = selectedCategory.value
+            if (post.getAttribute("data-isTechnical") != selectedValue) {
+                post.classList.add("norender");
+            } else {
+                post.classList.remove("norender"); 
+            }
+        })
+    });
 });
 
 
@@ -86,36 +110,40 @@ function setUpPostsEventListeners() {
     })
 }
 
+function findTag(tagID) {
+    return function(tag) {
+        return tag.tagID === tagID;
+    }
+}
 
 /**
  * @param {Array} tags 
  */
 function renderPost(postID, title, author, isTechnical, tags) {
-    if (tags == null) {
-        tags = ["Tag 1", "Tag 2"];
-    }
-
-    let tag1 = tags[0];
-    let tag2 = tags[1];
     
     let post = document.createElement("div")
     post.classList.add("post")
-    post.innerHTML = `
-        <div class="post-info">
-            <div class="title">${title}</div>
-            <div class="author">
-                <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
-                ${global.bothNamesToString(author.firstName, author.lastName)}
-            </div>
-            <div class="tags">
-                <div class="tag" name="${tag1}"><span class="material-symbols-rounded">sell</span>
-                    ${tag1}
-                </div>
-                <div class="tag" name="${tag2}"><span class="material-symbols-rounded">sell</span>
-                    ${tag2}
-                </div>
-                
-            </div>
+    let postHTML = `
+    <div class="post-info">
+        <div class="title">${title}</div>
+        <div class="tags">`;
+
+    if (tags != null) {
+        tags.forEach((tag) => {
+            postHTML += `<div class="tag" name="${tag}"><span class="material-symbols-rounded">sell</span>${tag}</div>`;
+        });
+    } else {
+        postHTML += `<div class="tag" name="NoTags">No Tags</div>`;
+    }
+
+    postHTML += `</div>
+        <div class="author">
+            <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
+            ${global.employeeToName(author)}
+        </div>
+    `
+
+    postHTML += `
         </div>
         <div class="post-icons manager-only">
             <div class="icon-button no-box" id="edit">
@@ -135,11 +163,13 @@ function renderPost(postID, title, author, isTechnical, tags) {
         </div>
     `;
 
-    post.setAttribute("data-postID", postID)
-    post.setAttribute("data-isTechnical", isTechnical)
+    post.innerHTML = postHTML;
 
-    postsContainer.appendChild(post)
-}
+        post.setAttribute("data-postID", postID)
+        post.setAttribute("data-isTechnical", isTechnical)
+
+        postsContainer.appendChild(post)
+    }
 
 function updatePosts() {
     console.log("updating posts")
@@ -147,6 +177,7 @@ function updatePosts() {
     selectedValue = selectedCategory.value;
     selectedTags = [];
     document.querySelectorAll('.tag.selected').forEach((tagElement) => {
+        console.log("TAG SELECTED")
         selectedTags.push(tagElement.getAttribute("name"));
     });
     console.log(selectedTags);
@@ -172,10 +203,14 @@ function updatePosts() {
                 postTagNames.push(tag.getAttribute("name"));
             })
             console.log(postTagNames)
+            console.log(selectedTags)
             let containsTag = false;
             selectedTags.forEach((tag) => {
+                console.log(tag)
+                console.log("does not contain tag")
                 if (postTagNames.includes(tag)) {
                     console.log(tag)
+                    console.log("Post contains tag")
                     containsTag = true;
                 }
                 console.log(containsTag)
@@ -217,16 +252,6 @@ function filterFromSearch() {
     
     }
 }
-document.addEventListener('DOMContentLoaded', (event) => {
-    document.querySelectorAll('.tag').forEach((tag) => {
-        console.log("adding event listener")
-        tag.addEventListener('click', () => {
-            tag.classList.toggle('.selected');
-            console.log("clicked")
-            updatePosts();
-        })
-    });
-});
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
     radio.addEventListener('change', () => {

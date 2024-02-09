@@ -31,26 +31,29 @@
     }
 }
 
-.icon-button:hover {
-    background-color: #dcdfe4;
-    transition: background-color 0.05s ease-out;
-}
 
 .icon-button.no-box {
     background-color: transparent;
 }
 
-.icon-button.no-box:hover {
-    background-color: #f1f2f4;
+.icon-button:active {
+    background-color: #c4c9d2;
+    transition: background-color 0.05s ease-out;
 }
 
 .icon-button.circle {
     border-radius: 50%;
 }
 
-.icon-button:active {
-    background-color: #c4c9d2;
-    transition: background-color 0.05s ease-out;
+@media only screen and (min-width: 600px) {
+    .icon-button:hover {
+        background-color: #dcdfe4;
+        transition: background-color 0.05s ease-out;
+    }
+
+    .icon-button.no-box:hover {
+        background-color: #f1f2f4;
+    }
 }
 
 

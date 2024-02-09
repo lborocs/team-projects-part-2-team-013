@@ -6,7 +6,7 @@
     width: 100%;
     padding: 10px;
     margin: 0;
-    background-color: var(--light-gray-bg, #f1f1f1);
+    background-color: var(--light-grey-bg);
     grid-template-columns: repeat(2, 1fr);
     grid-auto-rows: calc(50% - 5px);
     transition-duration: 0s;
@@ -186,7 +186,7 @@
 .popup {
     display: flex;
     justify-content: center;
-    align-items: center;  
+    align-items: center;
 }
 
 .popupDialog {

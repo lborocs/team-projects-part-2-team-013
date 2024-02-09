@@ -38,13 +38,13 @@ function object_check_post_exists(RequestContext $ctx, array $resource_ids) {
 }
 
 function object_check_user_is_post_admin(RequestContext $ctx, array $resource_ids) {
-    if ($ctx->session->auth_level < 2 && $ctx->session->hex_associated_user_id != $ctx->post["author"]["empID"]) {
+    if ($ctx->session->auth_level < AUTH_LEVEL_MANAGER && $ctx->session->hex_associated_user_id != $ctx->post["author"]["empID"]) {
         respond_insufficient_authorization();
     }
 }
 
 function object_check_user_is_manager(RequestContext $ctx, array $resource_ids) {
-    if ($ctx->session->auth_level < 2) {
+    if ($ctx->session->auth_level < AUTH_LEVEL_MANAGER) {
         respond_insufficient_authorization();
     }
 }
@@ -70,7 +70,7 @@ function object_check_user_is_part_of_project(RequestContext $ctx, array $resour
     $author = $ctx->session->hex_associated_user_id;
     
     // if the author is a manager or leader they are always part of the project
-    if ($ctx->session->auth_level > 1 || $author == $ctx->project["teamLeader"]["empID"]) {
+    if ($ctx->session->auth_level > AUTH_LEVEL_USER || $author == $ctx->project["teamLeader"]["empID"]) {
         return;
     }
 
@@ -93,7 +93,7 @@ function object_check_user_is_admin_of_project(RequestContext $ctx, array $resou
     $author = $ctx->session->hex_associated_user_id;
 
 
-    if ($ctx->session->auth_level < 2 && $author != $ctx->project["teamLeader"]["empID"]) {
+    if ($ctx->session->auth_level < AUTH_LEVEL_MANAGER && $author != $ctx->project["teamLeader"]["empID"]) {
         respond_insufficient_authorization();
     }
 }
@@ -156,7 +156,7 @@ function object_check_user_has_personal_access(RequestContext $ctx, array $resou
         return;
     }
     // managers can do what they like
-    elseif ($ctx->session->auth_level >= 2) {
+    elseif ($ctx->session->auth_level >= AUTH_LEVEL_MANAGER) {
         return;
     }
     

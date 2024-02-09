@@ -13,7 +13,7 @@
     padding: 0.55em;
     padding-top: 0.35em;
     cursor: pointer;
-    transition: transform 0.1s ease-in-out !important;
+    transition: transform 0.05s ease-in-out !important; /* allowing this important, task cards have a very different click animation */
     transition: color 0.1s ease-out;
     .title {
         font-size: 1em;
@@ -28,7 +28,7 @@
     .date {
         font-size: 0.85em;
         text-wrap: nowrap;
-        font-weight: 500;
+        font-weight: 600;
         color: #0f0f0faa;
         line-height: 24px;
     }
@@ -66,6 +66,7 @@
     
 }
 
+
 .task-context-menu-button {
     opacity: 0;
     color: #777777;
@@ -100,7 +101,7 @@
     flex-direction: row;
     justify-content: flex-start;
     gap: 0.5em;
-
+    
     & span {
         color: #2f2f2f;
     }
@@ -114,6 +115,7 @@
     align-items: center;
     padding-right: 0.2em;
     border-radius: 3px;
+    background-color: #f3f3f3;
     transition: background-color 0.1s ease-in-out;
 
     & span {
@@ -125,14 +127,15 @@
 
 .status-container:hover {
     cursor: pointer;
-    background-color: #f1f2f4;
+    background-color: #d6d6d6;
 }
 
-.date-and-users {
+.task-info {
     display: flex;
     align-items: center;
     width: 100%;
     height: 1.5em;
+    gap: 0.5em;
 }
 
 .urgent {
@@ -179,7 +182,7 @@
     background-color: #fff;
 }
 
-.avatar {
+.task-avatar {
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 50%;
@@ -210,4 +213,18 @@
 
 .task-focussed {
     outline: solid 2px #388bffaa;
+}
+
+.manhours {
+    font-size: 0.85em;
+    text-wrap: nowrap;
+    font-weight: 600;
+    color: #0f0f0faa;
+    line-height: 24px;
+    }
+
+.manhours-container {
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
 }

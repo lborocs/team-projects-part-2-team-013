@@ -1,5 +1,7 @@
 <?php
 require("lib/context.php");
+require_once("lib/auth.php");
+require_once("lib/mailer/client.php");
 
 function hash_pass(string $password) {
     return password_hash(
@@ -9,13 +11,14 @@ function hash_pass(string $password) {
     );
 }
 
-function auth_session_issue_new($account) {
+function auth_session_issue_new($account, $num_renews = 0) {
     // id must be 32bits for serialisation
     $new_session = new Session(
         bin2hex(generate_uuid()),
         $account["empID"],
         $account["isManager"] + 1,
-        timestamp()
+        timestamp(),
+        $num_renews
     );
     return $new_session;
 }
@@ -174,14 +177,31 @@ function r_session_session(RequestContext $ctx, string $args) {
             "expires"=>$ctx->session->issued + SESSION_INACTIVITY_EPOCH,
             "id"=>$ctx->session->hex_id,
             "auth_level"=>$ctx->session->auth_level,
-            "employee" => db_employee_fetch($ctx->session->hex_associated_user_id)
+            "employee" => db_employee_fetch($ctx->session->hex_associated_user_id),
+            "generation"=>$ctx->session->generation,
         ));   
     } else if ($ctx->request_method == "PUT") {
         $ctx->session->yank();
 
+        if ($ctx->session->generation >= SESSION_RENEW_LIMIT) {
+            respond_not_authenticated(
+                "Session has been renewed too many times",
+                ERROR_SESSION_EXPIRED
+            );
+        }
+
         $account = db_account_fetch_by_id($ctx->session->hex_associated_user_id);
 
-        $session = auth_session_issue_new($account);
+        if ($account == false) {
+            respond_not_authenticated(
+                "Account does not exist",
+                ERROR_RESOURCE_NOT_FOUND
+            );
+        }
+
+
+
+        $session = auth_session_issue_new($account, $ctx->session->generation + 1);
 
         respond_ok(array(
             "session_token"=>$session->encrypt(),
@@ -250,6 +270,69 @@ function r_session_account(RequestContext $ctx, string $args) {
     } 
 }
 
+
+function r_session_reset_password(RequestContext $ctx, string $args) {
+
+    if ($ctx->request_method == "POST") {
+        $ctx->body_require_fields_as_types([
+            "email"=>"string",
+        ]);
+
+        $email = $ctx->request_body["email"];
+
+        $account = db_account_fetch($email);
+
+        if ($account == false) {
+            // bad way to prevent timing attacks
+            // probably not a very good mitigation
+            http_request("HEAD", "https://api.mailjet.com/v3/REST/account");
+            respond_no_content();
+        }
+        $emp_id = $account["empID"];
+
+        $token = auth_password_reset_create_token($email, $emp_id);
+
+        $message = "Click here to reset your password: " . "https://013.team/reset-password#$token";
+
+        send_email($email, "$email ($emp_id)", "Password Reset", $message);
+
+        respond_no_content();
+    } elseif ($ctx->request_method == "PATCH") {
+        $ctx->body_require_fields_as_types([
+            "token"=>"string",
+            "newPassword"=>"string",
+        ]);
+        $new_password = $ctx->request_body["newPassword"];
+
+        validate_password_constraints($new_password, PASSWORD_BANNED_PHRASES);
+
+        
+        $token = $ctx->request_body["token"];
+        $data = auth_password_burn_token($token);
+        $emp_id = $data["emp_id"];
+
+        db_account_password_change($emp_id, hash_pass($new_password));
+
+        respond_no_content();
+
+    } elseif ($ctx->request_method == "PUT") {
+        // this should really be a GET but
+        // GET doesnt accept a body
+        // and putting the token in the uri is a bad idea
+
+        $ctx->body_require_fields_as_types([
+            "token"=>"string",
+        ]);
+        $data = auth_password_validate_token($ctx->request_body["token"]);
+
+        $account = db_account_fetch($data["emp_id"]);
+
+        respond_ok(Array(
+            "employee"=>$account,
+        ));
+    }
+}
+
 function r_session_204(RequestContext $ctx, string $args) {
     respond_no_content();
 }
@@ -260,6 +343,7 @@ register_route(new Route(["POST"], "/otp", "r_session_otp", 1, ["REQUIRES_BODY"]
 register_route(new Route(["PATCH", "GET"], "/account", "r_session_account", 1, ["REQUIRES_BODY"]));
 register_route(new Route(["GET"], "/generate_204", "r_session_204", 0));
 register_route(new Route(["GET", "POST"], "/register", "r_session_register", 0, ["REQUIRES_BODY"]));
+register_route(new Route(["POST", "PATCH", "PUT"], "/resetpassword", "r_session_reset_password", 0, ["REQUIRES_BODY"]));
 register_route(new Route(["POST"], "/logoutall", "r_session_logout_all", 1));
 
 

@@ -1,6 +1,5 @@
-import * as global from "../global-ui.js"
-import { animate } from "../global-ui.js"
-import { getEmployeesById } from '../global-ui.js';
+import * as global from "../global-ui.js";
+import { animate, getEmployeesById } from "../global-ui.js";
 
 const RENDER_COLUMN = 1;
 const RENDER_LIST = 2;
@@ -18,6 +17,7 @@ let sortArray = [titleButton, dateButton, statusButton];
 
 //single things
 const taskGrid = document.querySelector(".taskgrid")
+const taskGridWrapper = document.querySelector(".taskgrid-wrapper")
 const taskList = document.querySelector(".tasklist")
 const taskTable = document.querySelector(".tasktable")
 const taskTableBody = document.querySelector(".tasktable-body")
@@ -44,6 +44,7 @@ const listAddButton = document.querySelector("#list-add")
 const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
 const taskSearchInput = document.querySelector("#task-search")
+const explainerTaskManhours = document.querySelector(".manhours-container")
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -114,7 +115,7 @@ async function projectSwitchToOnClick(projectRow) {
     projectTitle.innerText = project.name;
     explainerTitle.innerText = project.name;
     explainerDescription.innerHTML = project.description;
-    explainerTeamLeaderName.innerText = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
+    explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
     teamLeaderEnableElementsIfTeamLeader()
@@ -142,7 +143,7 @@ function setActivePane(newPane) {
 function setUpAllProjectRowEventListeners() {
     projectRows = document.querySelectorAll(".project-row")
     projectRows.forEach((projectRow, i) => {
-        projectRow.addEventListener("click", () => {
+        projectRow.addEventListener("pointerup", () => {
             projectSwitchToOnClick(projectRow);
 
         })
@@ -150,7 +151,7 @@ function setUpAllProjectRowEventListeners() {
 }
 
 function setUpProjectRowEventListeners(projectRow) {
-    projectRow.addEventListener("click", () => {
+    projectRow.addEventListener("pointerup", () => {
         projectSwitchToOnClick(projectRow);
 
     })
@@ -158,7 +159,7 @@ function setUpProjectRowEventListeners(projectRow) {
 
 views.forEach((view, i) => {
     
-    view.addEventListener("click", () => {
+    view.addEventListener("pointerup", () => {
         if (!view.classList.contains("selected")) {
             
             view.classList.add("selected")
@@ -169,10 +170,10 @@ views.forEach((view, i) => {
             })
             console.log("[viewOnClick] selected")
 
-            taskGrid.classList.toggle("fade")
+            taskGridWrapper.classList.toggle("fade")
             taskList.classList.toggle("fade")
             setTimeout(() => {
-                taskGrid.classList.toggle("norender")
+                taskGridWrapper.classList.toggle("norender")
                 taskList.classList.toggle("norender")
             }, 50)
         } 
@@ -183,8 +184,8 @@ views.forEach((view, i) => {
         if (session.auth_level >= 2) {
 
             view.classList.toggle("selected");
-            taskGrid.classList.add("fade");
-            taskGrid.classList.add("norender");
+            taskGridWrapper.classList.add("fade");
+            taskGridWrapper.classList.add("norender");
             taskList.classList.remove("fade");
             taskList.classList.remove("norender");
             
@@ -193,12 +194,12 @@ views.forEach((view, i) => {
 
 })
 
-projectBackButton.addEventListener("click", () => {
+projectBackButton.addEventListener("pointerup", () => {
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
     renderFromBreadcrumb([null, null]);
 })
 
-explainerShowHide.addEventListener("click", () => {
+explainerShowHide.addEventListener("pointerup", () => {
     explainer.classList.toggle("hidden")
 
     if (explainer.classList.contains("hidden")) {
@@ -290,6 +291,16 @@ function showTaskInExplainer(task) {
     let taskTitle = task.getAttribute("data-title");
     explainerTaskTitle.innerHTML = taskTitle;
     explainerTaskTitle.classList.remove("norender");
+    
+    let manHours = task.getAttribute("data-expectedManHours");
+    explainerTaskManhours.innerHTML = `
+    <span class="material-symbols-rounded">
+        hourglass_empty
+    </span>
+    <div class="manhours">
+        ${manHours/3600} Manhour${manHours !== 3600 ? 's' : ''}
+    </div>
+    `;
 
     let descElement = task.getAttribute("data-desc");
     explainerTaskDescription.innerHTML = descElement ? descElement : "<i>No description...</i>";
@@ -336,7 +347,7 @@ function setUpTaskEventListeners() {
         let contextMenuButton = taskCard.querySelector(".context-menu");
         let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
 
-        contextMenuButton.addEventListener("click", (e) => {
+        contextMenuButton.addEventListener("pointerup", (e) => {
             e.stopPropagation();
             //closes the rest of them first
             let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
@@ -354,7 +365,7 @@ function setUpTaskEventListeners() {
         let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
         contextMenuItems.forEach(item => {
             let timeoutId;
-            item.addEventListener("click", (e) => {
+            item.addEventListener("pointerup", (e) => {
                 e.stopPropagation();
                 console.log("[contextMenuItemOnClick] clicked")
 
@@ -418,16 +429,29 @@ function setUpTaskEventListeners() {
         
 
         //have to include mouse up and down this is crazy event propagation
-        contextMenuButton.addEventListener("mouseup", (e) => {
+        contextMenuButton.addEventListener("pointerup", (e) => {
             e.stopPropagation();
         });
 
-        contextMenuButton.addEventListener("mousedown", (e) => {
+        contextMenuButton.addEventListener("pointerdown", (e) => {
             e.stopPropagation();
         });
+
+        let taskStatusContainers = taskCard.querySelectorAll(".status-container");
+        taskStatusContainers.forEach((icon) => {
+
+            icon.addEventListener("pointerdown", (e) => {
+                e.stopPropagation();
+            });
+
+            icon.addEventListener("pointerup", (e) => {
+                e.stopPropagation();
+            });
+        
+        })
 
         //closes the context menu if they click outside
-        document.addEventListener("click", (e) => {
+        document.addEventListener("pointerup", (e) => {
             if (!contextMenuButton.contains(e.target)) {
                 contextMenuPopover.classList.remove("visible");
                 contextMenuButton.classList.remove("active");
@@ -452,36 +476,43 @@ function setUpTaskEventListeners() {
         });
 
 
-        taskCard.addEventListener("mousedown", (e) => {
+        taskCard.addEventListener("pointerdown", (e) => {
             //if the target is the context menu button, dont show the explainer
             if (e.target.classList.contains("context-menu")) {
                 return
             }
+            
+
+            
+
+            taskCards.forEach((card) => {
+                card.classList.remove("clicked")
+                card.classList.remove("task-focussed")
+            })
+            taskCard.classList.add("clicked")
+            taskCard.classList.add("task-focussed")
+        });
+        taskCard.addEventListener("pointerup", (e) => {
+
+            if (e.target.classList.contains("context-menu")) {
+                return
+            }
+
+            if (taskCard.classList.contains("beingdragged")) {
+                return
+            }
+
             //show explainer
             // console.log(explainer)
             explainer.classList.remove("hidden")
             overlay.classList.remove("norender")
-            animate(taskCard, "click-small")
+            
             taskCards.forEach((card) => {
-                card.classList.remove("task-focussed")
+                card.classList.remove("clicked")
             })
-            taskCard.classList.add("task-focussed")
-        });
-        taskCard.addEventListener("mouseup", (e) => {
-            //if the target is the context menu button, dont show the explainer
-            if (e.target.classList.contains("context-menu")) {
-                return
-            }
 
             showTaskInExplainer(taskCard);
             
-        });
-
-        taskCard.addEventListener("touchstart", () => {
-            //show explainer
-            console.log("[taskCardOnTouch] clicked")
-            animate(taskCard, "click-small")
-            showTaskInExplainer(taskCard);
         });
 
         taskCard.addEventListener("dragstart", () => {
@@ -490,7 +521,12 @@ function setUpTaskEventListeners() {
 
         taskCard.addEventListener("dragend", () => {
             taskCard.classList.remove("beingdragged");
-            showTaskInExplainer(taskCard);
+            taskCard.classList.remove("clicked");
+
+            if (taskCard.getAttribute("id") !== explainerTask.getAttribute("task-id")) {
+                taskCard.classList.remove("task-focussed");
+            }
+
             updateTaskState(taskCard);
             calculateTaskCount()
         });
@@ -499,22 +535,23 @@ function setUpTaskEventListeners() {
     //list view
     taskRows = document.querySelectorAll(".taskRow");
     taskRows.forEach((taskRow) => {
-        taskRow.addEventListener("mousedown", () => {
-            //show explainer
+        taskRow.addEventListener("pointerdown", () => {
             console.log("[taskRowOnMouseDown] clicked")
-            animate(taskRow, "click-small")
+            //taskRow.classList.add("clicked")
         });
-        taskRow.addEventListener("mouseup", () => {
-            showTaskInExplainer(taskRow);
-        });
-        taskRow.addEventListener("touchstart", () => {
+
+        taskRow.addEventListener("pointerup", () => {
             //show explainer
             console.log("[taskRowOnTouchStart] clicked")
-            animate(taskRow, "click-small")
+            // taskRows.forEach((row) => {
+            //     row.classList.remove("clicked")
+            // })
             showTaskInExplainer(taskRow);
         });
     });
 }
+
+
 
 
 
@@ -610,19 +647,19 @@ async function renderTasks(tasks) {
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
     console.log("[taskObjectRenderAll] rendering task object "+task.title)
-    let date = task.dueDate ? global.formatDate(new Date(task.dueDate)) : "Due date not set";
+    let date = task.dueDate ? global.formatDate(new Date(task.dueDate)) : "";
     let desc = task.description
     let title = task.title || "No Title";
     let createdBy = task.createdBy || "Unknown";
     let state = task.state
     let taskID = task.taskID || "Unknown";
     let expectedManHours = task.expectedManHours; //no safety here because not null i think
-
+    let assignments = task.assignments || [];
 
     console.log(task)
 
     if (update & RENDER_COLUMN) {
-        renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours);
+        renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours, assignments);
     }
     if (update & RENDER_LIST) {
         renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours);
@@ -634,6 +671,12 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
 }
 
 async function renderAssignments(assignments) {
+
+    if (assignments.length == 0) {
+        console.log("[renderAssignments] assignments is empty")
+        return
+    }
+
     let unique_users = new Set();
 
     assignments.forEach((assignment) => {
@@ -645,7 +688,7 @@ async function renderAssignments(assignments) {
     assignments.forEach((assignment) => {
         // emp first
         let emp = employees.get(assignment.employee.empID);
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
 
         // find task html element
@@ -663,10 +706,12 @@ async function renderAssignments(assignments) {
         assignmentElem.classList.add("assignment");
         assignmentElem.classList.add("tooltip", "tooltip-under");
         assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
-        <img src="${emp_icon}" class="avatar">`
+        <img src="${emp_icon}" class="task-avatar">`
 
-        // add child element
-        usersAssigned.appendChild(assignmentElem);
+        // add child element if usersAssigned exists
+        if (usersAssigned) {
+            usersAssigned.appendChild(assignmentElem);
+        }
     });
 }
 
@@ -796,10 +841,7 @@ async function renderFromBreadcrumb(locations) {
     }
 
     return true;
-
-
 }
-
 
 function calculateTaskCount() {
     let notStartedCount = notStartedColumn.querySelectorAll(".task").length || 0
@@ -810,9 +852,9 @@ function calculateTaskCount() {
     document.querySelector("#finished-count").innerHTML = finishedCount
 }
 
-
 function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours) {
     console.log("[renderTaskInList] renering task in list")
+    
 
     let taskRow = document.createElement("tr");
     taskRow.classList.add("taskRow");
@@ -821,10 +863,23 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         <td class="title">
             ${title}
         </td>
-        <td class="date">
+    `; 
+
+    if (dueDate === "") {
+        taskRow.innerHTML += `
+            <td class="date disabled">
+                Not set
+            </td>
+        `;
+    } else {
+        taskRow.innerHTML += `
+            <td class="date">
                 ${dueDate}
             </td>
-    `; 
+        `;
+    }
+
+
     
     
     //set id to the task id
@@ -842,7 +897,9 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         taskRow.innerHTML += `
             <td class="not-started">
                 <div class="status-cell">
-                    <i class="fa-solid fa-thumbtack"></i> Not Started
+                    <span class="material-symbols-rounded">
+                        push_pin
+                    </span> Not Started
                 </div>
             </td>
         `;
@@ -850,7 +907,9 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         taskRow.innerHTML += `
             <td class="in-progress">
                 <div class="status-cell">
-                    <i class="fa-solid fa-chart-line"></i> In Progress
+                    <span class="material-symbols-rounded">
+                        timeline
+                    </span> In Progress
                 </div>
             </td>
         `;
@@ -858,7 +917,9 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         taskRow.innerHTML += `
             <td class="finished">
                 <div class="status-cell">
-                    <i class="fa-regular fa-circle-check"></i> Finished
+                    <span class="material-symbols-rounded">
+                        check_circle
+                    </span> Finished
                 </div>
             </td>
         `;
@@ -871,11 +932,8 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     calculateTaskCount();
 }
 
-
-
-
 sortArray.forEach((sortObject) => {
-    sortObject.addEventListener("click", () => {
+    sortObject.addEventListener("pointerup", () => {
         //sort out what criteria to sort by
         if (sortObject.classList.contains("selected")) {
             if(sortObject.classList.contains("asc")) {
@@ -907,6 +965,7 @@ sortArray.forEach((sortObject) => {
             console.error("invalid sort criteria");
         }
         //remove all tasks from the table
+        taskRows = document.querySelectorAll(".taskRow");
         taskRows.forEach((task) => {
             task.remove();
         });
@@ -958,7 +1017,7 @@ function sortByState(tasks, ascending) {
 }
 
 //TODO: render the context menu
-async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours) {
+async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours, assignments = []) {
     //check for null values and set default values (null doesnt count as undefined)
     state = state === null ? 0 : state;
     ID = ID === null ? "" : ID;
@@ -966,6 +1025,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     createdBy = createdBy === null ? "" : createdBy;
     date = date === null ? "" : date;
     expectedManHours = expectedManHours === null ? "" : expectedManHours;
+    assignments = assignments === null ? [] : assignments;
     console.log("[renderTask] Task createdBy to " + createdBy)
 
 
@@ -990,6 +1050,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     //this is some genuinely insane code that avoids having to write a loop
     let selectedState = ["", "", ""];
     selectedState[state] = "disabled";
+
 
 
     //generating the html for the task
@@ -1107,44 +1168,96 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let statusIcon;
     let overdueContainerClass = "";
     let dateTooltip;
-    if (timestamp < dateToday && state !== 2) {
+    if (timestamp === null) {
+        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
+        dateTooltip = `No due date set`;
+    } else if (timestamp < dateToday && state !== 2) {
         // tasks which are overdue
         statusIcon = `<span class="material-symbols-rounded">calendar_clock</span>`;
         overdueContainerClass = "overdue";
         const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+    } else if (state === 2 && timestamp > dateToday) {
+        // tasks which are finished but have a due date in the future
+        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
+        const daysUntilDue = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
+        dateTooltip = `Task finished but due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}`;
     } else if (state !== 2){
-        // tasks which are finished and have a due date in the past
+        // tasks which are not finished and have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         const dueInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
         dateTooltip = `Due in ${dueInDays} day${dueInDays !== 1 ? 's' : ''}`;
     } else {
-        // tasks which have a due date in the future
+        // tasks which are finished and have a due date in the past
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         const finishedDaysAgo = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
         dateTooltip = `Finished ${finishedDaysAgo} day${finishedDaysAgo !== 1 ? 's' : ''} ago`;
     }
 
+    let manHoursTooltip;
+    if (expectedManHours === null || expectedManHours === 0) {
+        manHoursTooltip = "No man hours set";
+    } else if (expectedManHours === 3600) {
+        manHoursTooltip = "1 expected hour";
+    } else {
+        manHoursTooltip = `${expectedManHours/3600} expected hours`;
+    }
+    let taskInfo = document.createElement("div");
+    taskInfo.classList.add("task-info");
+    if (date !== "" || expectedManHours !== 0 || desc !== "<p><br></p>") {
+    task.appendChild(taskInfo);
+    }
+    
     if (date !== "") {
-        task.innerHTML += `
-
-        <div class="date-and-users">
+        const formattedDate = formatDateWithOrdinals(date);
+        taskInfo.innerHTML += `
             <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
                 <p class="tooltiptext">${dateTooltip}</p>
                 ${statusIcon}
                 <div class="date" id="task-date">
-                    ${date}
+                    ${formattedDate}
                 </div>
             </div>
-            
-            <div class="users-assigned">
+        `;
+    };
+
+    if (expectedManHours !== 0) {
+        taskInfo.innerHTML += `
+
+            <div class="tooltip tooltip-under manhours-container status-container">
+                <p class="tooltiptext">${manHoursTooltip}</p>
+                <span class="material-symbols-rounded">
+                hourglass_empty
+                </span>
+                <div class="manhours">
+                    ${expectedManHours/3600} Hour${expectedManHours !==  3600? 's' : ''}
+                </div>
             </div>
+        `;
+    }
+        
+
+    if (desc !== "<p><br></p>" && desc !== null) {
+        taskInfo.innerHTML += `
+        <div class="tooltip tooltip-under description-icon-container status-container">
+            <p class="tooltiptext">This task contains a description</p>
+            <span class="material-symbols-rounded">
+                subject
+            </span>
         </div>
-    `;
+
+        `;
     }
 
+    if (assignments.length > 0) {
+        console.log("[Assigned user IDs]: " + assignments);
 
-    
+        taskInfo.innerHTML += `
+            <div class="users-assigned"></div>
+        `;
+
+        renderAssignments(assignments);
+    }
     
     //check if state is 0,1,2 and do separate things for each. otherwise, error
     if (state == 0) {
@@ -1162,6 +1275,49 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     notStartedColumn.appendChild(notStartedAddButton);
 
     calculateTaskCount();
+    correctContextMenus()
+}
+
+function formatDateWithOrdinals(date) {
+    const day = parseInt(date.split(" ")[0]);
+    const ordinal = getOrdinalSuffix(day);
+    const monthYear = date.split(" ")[1];
+    return `${day}<sup>${ordinal} </sup> ${monthYear}`;
+}
+
+function getOrdinalSuffix(day) {
+    if (day >= 11 && day <= 13) {
+        return "th";
+    }
+    switch (day % 10) {
+        case 1:
+            return "st";
+        case 2:
+            return "nd";
+        case 3:
+            return "rd";
+        default:
+            return "th";
+    }
+}
+
+function correctContextMenus() {
+    let tasks = document.querySelectorAll(".task");
+    let taskGrid = document.querySelector(".taskgrid");
+    let taskGridRect = taskGrid.getBoundingClientRect();
+
+    tasks.forEach((task) => {
+        let contextMenu = task.querySelector(".context-menu-popover");
+        let rect = contextMenu.getBoundingClientRect();
+        let availableSpace = taskGridRect.bottom - rect.top;
+        if (rect.height > availableSpace) {
+            contextMenu.classList.add("above");
+            console.log(`[correctContextMenus] adding above`)
+        } else {
+            contextMenu.classList.remove("above");
+            console.log(`[correctContextMenus] removing above`)
+        }
+    });
 }
 
 
@@ -1193,19 +1349,20 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 //     return project
 // }
  
-function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, lastAccessed) {
+function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, lastAccessed, dueDate) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
-    let project = document.createElement("tr")
-    project.setAttribute("tabindex", "0")
-    project.classList.add("project-row")
-    let icon = isTeamLeader ? `folder_managed` : `folder`;
+    let project = document.createElement("tr");
+    project.setAttribute("tabindex", "0");
+    project.classList.add("project-row");
+    let icon = isTeamLeader ? `bookmark_manager` : `folder`;
 
-    let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
+    let teamLeaderName = global.employeeToName(teamLeader);
 
-    console.log(`[renderProject] using icon: ${icon}`)
+    console.log(`[renderProject] using icon: ${icon}`);
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
-    let lastAccessedFormatted = lastAccessed ? global.howLongAgo(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
+    let lastAccessedFormatted = lastAccessed ? formatLastAccessed(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
+    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : `<span class="disabled">Not set</span>`;
     project.innerHTML = `
         <td>
             <div class="project-card">
@@ -1228,25 +1385,61 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
             </div>
         </td>
         <td>${date}</td>
-        <td>${lastAccessedFormatted}</td>
         <td>
-            <div class="icon-button no-box">
-                <i class="fa-solid fa-ellipsis"></i>
+            <div class="tooltip tooltip-above">
+                <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
+                ${lastAccessedFormatted}
             </div>
         </td>
-    `
+        <td>${dueDateFormatted}</td>
+        <td>
+            <div class="icon-button no-box project-actions">
+                <span class="material-symbols-rounded">
+                    more_horiz
+                </span>
+            </div>
+        </td>
+    `;
 
     projectTitle.innerHTML = title;
 
     //set id to the project id
-    project.setAttribute("data-ID", ID)
-    project.setAttribute("data-title", title)
-    project.setAttribute("data-description", desc)
-    project.setAttribute("data-team-leader", JSON.stringify(teamLeader))
-    projectsTable.querySelector("tbody").appendChild(project)
-    teamLeaderEnableElementsIfTeamLeader()
+    project.setAttribute("data-ID", ID);
+    project.setAttribute("data-title", title);
+    project.setAttribute("data-description", desc);
+    project.setAttribute("data-team-leader", JSON.stringify(teamLeader));
+    projectsTable.querySelector("tbody").appendChild(project);
+    teamLeaderEnableElementsIfTeamLeader();
 
-    return project
+    return project;
+}
+
+function formatLastAccessed(date) {
+    const now = new Date();
+    const diff = now - date;
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const weeks = Math.floor(days / 7);
+    const months = Math.floor(days / 30);
+    const years = Math.floor(days / 365);
+
+    if (years > 0) {
+        return `${years} year${years > 1 ? 's' : ''} ago`;
+    } else if (months > 0) {
+        return `${months} month${months > 1 ? 's' : ''} ago`;
+    } else if (weeks > 0) {
+        return weeks === 1 ? 'Last week' : `${weeks} weeks ago`;
+    } else if (days > 0) {
+        return days === 1 ? 'Yesterday' : `${days} days ago`;
+    } else if (hours > 0) {
+        return hours === 1 ? 'An hour ago' : `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    } else if (minutes > 0) {
+        return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
+    } else {
+        return `Just now`;
+    }
 }
 async function addTask() {
     
@@ -1303,22 +1496,28 @@ async function addTask() {
                 
                 </div>
             </div>
-            
-            <div class="number-picker" id="expected-man-hours">
-                <div class = "stepper decrement" tabindex="0">
-                    <span class="material-symbols-rounded">
-                        remove
-                    </span>
+            <div class="manhours-row">
+                <div class="manhours-label">
+                    Expected Manhours:
                 </div>
 
-                <input type="number" class="number-input" value="1" min="0" tabindex="0">
+                <div class="number-picker" id="expected-man-hours">
+                    <div class = "stepper decrement" tabindex="0">
+                        <span class="material-symbols-rounded">
+                            remove
+                        </span>
+                    </div>
 
-                <div class="stepper increment" tabindex="0">
-                    <span class="material-symbols-rounded">
-                        add
-                    </span>
+                    <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+                    <div class="stepper increment" tabindex="0">
+                        <span class="material-symbols-rounded">
+                            add
+                        </span>
+                    </div>
                 </div>
             </div>
+
             <div class="date-picker" id="due-date">
                 <div class="date-picker-icon">
                     <span class="material-symbols-rounded">event</span>
@@ -1329,7 +1528,7 @@ async function addTask() {
                 <div class="text-button" id="discard-button">
                     <div class="button-text">
                         Discard
-                    </div>  
+                    </div>
                 </div>
                 <div class="text-button blue" id="create-button">
                     <div class="button-text">
@@ -1389,7 +1588,7 @@ async function addTask() {
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let avatar = global.employeeAvatarOrFallback(emp);
         let option = document.createElement("div");
         option.classList.add("name-card");
@@ -1413,7 +1612,7 @@ async function addTask() {
     // add event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
-        option.addEventListener("click", () => {
+        option.addEventListener("pointerup", () => {
             let empID = option.getAttribute("data-id");
             assignedEmployees.add(empID);
             updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap)
@@ -1515,7 +1714,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
 
     assignedSet.forEach((empID) => {
         let emp = employeeMap.get(empID);
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
         let listItem = document.createElement("div");
         listItem.classList.add("employee-list-item");
@@ -1530,7 +1729,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
 const addButtonArray = [notStartedAddButton];
 
 addButtonArray.forEach((button) => {
-    button.addEventListener("click", async () => {
+    button.addEventListener("pointerup", async () => {
         if (button.id == "notstarted-add") {
             await addTask();
         } else {
@@ -1541,12 +1740,12 @@ addButtonArray.forEach((button) => {
 });
 
 let listAddTaskButton = document.getElementById("list-add");
-listAddTaskButton.addEventListener("click", async () => {
+listAddTaskButton.addEventListener("pointerup", async () => {
     await addTask();
 });
 
 let boardAddTaskButton = document.getElementById("add-task-button");
-boardAddTaskButton.addEventListener("click", async () => {
+boardAddTaskButton.addEventListener("pointerup", async () => {
     await addTask();
 });
 
@@ -1666,7 +1865,7 @@ function confirmDelete() {
 window.onload = function() {
     let deleteTaskButtons = document.querySelectorAll(".delete-button");
     deleteTaskButtons.forEach((button) => {
-        button.addEventListener("click", (event) => {
+        button.addEventListener("pointerup", (event) => {
             event.stopPropagation();
             console.log("[DeletTaskButtonsClick] delete button clicked")
             confirmDelete().then(() => {
@@ -1815,7 +2014,7 @@ async function addProject() {
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let avatar = global.employeeAvatarOrFallback(emp);
         let option = document.createElement("div");
         option.classList.add("name-card");
@@ -1839,13 +2038,13 @@ async function addProject() {
     // add event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
-        option.addEventListener("click", () => {
+        option.addEventListener("pointerup", () => {
             let empID = option.getAttribute("data-id");
             teamLeader = empID;
             teamLeaderDiv.innerHTML = `
                 <div class="name-card">
                     <img src="${global.employeeAvatarOrFallback(employeeMap.get(empID))}" class="avatar">
-                    <span>${global.bothNamesToString(employeeMap.get(empID).firstName, employeeMap.get(empID).lastName)}</span>
+                    <span>${global.employeeToName(employeeMap.get(empID))}</span>
                 </div>
             `;
         })
@@ -1938,7 +2137,7 @@ async function projectObjectRenderAndListeners(project) {
     let teamLeader = emps.get(project.teamLeader.empID);
 
 
-    let teamLeaderName = global.bothNamesToString(teamLeader.firstName, teamLeader.lastName);
+    let teamLeaderName = global.employeeToName(teamLeader);
     let element = renderProject(project.projID, project.name, project.description, teamLeader, isTeamLeader, project.createdAt, project.lastAccessed);
 
     setUpProjectRowEventListeners(element);
@@ -1948,7 +2147,7 @@ async function projectObjectRenderAndListeners(project) {
 }
 
 let createProjectButton = document.querySelector("#new-project");
-createProjectButton.addEventListener("click", async () => {
+createProjectButton.addEventListener("pointerup", async () => {
         console.log("[addProjectButtonClick] add project button clicked")
         await addProject();
 
@@ -2015,7 +2214,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
         employeeMap.set(emp.empID, emp);
     });
     employeeList.forEach((emp) => {
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let option = document.createElement("option");
         option.value = emp.empID;
         option.innerText = emp_name;
@@ -2066,7 +2265,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
     addButton.addEventListener('click', (event) => {
         teamLeader = empList.value;
         let emp = employeeMap.get(teamLeader);
-        let emp_name = global.bothNamesToString(emp.firstName, emp.lastName);
+        let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
         //teamLeaderElem.innerHTML = `<img src="${emp_icon}" class="avatar">${emp_name}`
     });
@@ -2074,7 +2273,7 @@ async function editTaskPopup(title, desc, timestamp, assignments){
 }
 
 
-document.querySelector(".edit-button").addEventListener("click", async () => {
+document.querySelector(".edit-button").addEventListener("pointerup", async () => {
     let taskID = explainerTask.getAttribute("task-id");
     let taskElem = document.getElementById(taskID);
     if (taskElem == null) {
@@ -2093,25 +2292,43 @@ document.querySelector(".edit-button").addEventListener("click", async () => {
     );
 });
 
-projectSearchInput.addEventListener("keydown", (e) => {
-    sleep(10).then(() => {
-        searchAndRenderProjects(projectSearchInput.value)
-    })
+
+var projectSearchTimeout;
+function startOrRollProjectSearchTimeout() {
+    if (!projectSearchTimeout || projectSearchTimeout.dirty) {
+        console.log("[RollingProjectSearch] creating new timeout");
+        projectSearchTimeout = new global.RollingTimeout(() => {
+            let search = projectSearchInput.value;
+            console.log("[RollingProjectSearch] starting search for", search);
+            searchAndRenderProjects(search);
+        }, 150);
+        projectSearchTimeout.roll();
+    } else {
+        console.log("[RollingProjectSearch] rolling timeout");
+        projectSearchTimeout.roll();
+    }
+}
+
+
+projectSearchInput.addEventListener("input", (e) => {
+    startOrRollProjectSearchTimeout();
 })
 
-document.getElementById("task-search").addEventListener("keydown", (e) => {
+document.getElementById("task-search").addEventListener("input", (e) => {
     sleep(10).then(() => {
         searchAndRenderTasks()
     })
 })
 
 
-document.getElementById("delete-project-search").addEventListener("click", () => {
+document.getElementById("delete-project-search").addEventListener("pointerup", () => {
     projectSearchInput.value = "";
     searchAndRenderProjects()
+    startOrRollProjectSearchTimeout();
+
 })
 
-document.getElementById("delete-task-search").addEventListener("click", () => {
+document.getElementById("delete-task-search").addEventListener("pointerup", () => {
     taskSearchInput.value = "";
     searchAndRenderTasks()
 })
@@ -2140,11 +2357,12 @@ async function searchAndRenderProjects(search) {
 }
 
 
-async function searchTasks(search) {
+async function searchTasks(query) {
     let tasks = globalTasksList;
     let filteredTasks = [];
+    let search = query.toLowerCase();
     tasks.forEach((task) => {
-        let title = task.title;
+        let title = task.title.toLowerCase();
         let desc = task.description;
         let dueDate = task.dueDate;
         dueDate = dueDate ? global.formatDateFull(new Date(dueDate)) : null; //gets it into searchable format
@@ -2163,3 +2381,4 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
+

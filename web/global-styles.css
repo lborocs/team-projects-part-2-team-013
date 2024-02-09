@@ -1,7 +1,8 @@
 :root {
     --border-clr: #e0e0e0;
     --icon-clr: #5f6368;
-    --light-grey-bg: rgb(244,244,244);
+    /* --light-grey-bg: rgb(244,244,244); */
+    --light-grey-bg: #f6f8fa;
     --task-column-border: rgba(0,0,0,0.15);
     --box-shadow-clr: rgba(0,0,0,0.15);
     --box-shadow-softer-clr: rgba(0,0,0,0.1);
@@ -16,11 +17,11 @@
     --overdue-red-bg: rgb(255,235,235);
     --add-task-border: rgb(211,211,211);
 
-    --not-started-status-cell: rgba(245,205,188,0.7);
+    --not-started-status-cell:  rgba(245,205,188,0.7);
     --not-started-status-cell-hover: rgba(245,205,188,1);
     --not-started-bg: rgba(252,245,242,0.7);
     --not-started-title-bg: rgb(250,222,201);
-    --not-started-title-clr: rgb(73,41,14);
+    --not-started-title-clr: rgb(33, 29, 26);
     --not-started-add-task-hover: rgba(250,222,201,0.47);
 
     --in-progress-status-cell: rgba(188,219,245,0.7);
@@ -36,6 +37,10 @@
     --finished-title-bg: rgb(219,237,219);
     --finished-title-clr: rgb(28,56,41);
     --finished-add-task-hover: rgba(219,237,219,0.47);
+
+    --error-border: solid 1px #ff4f4f6b;
+    --error-background: #ff4f4f24;
+    --error-text: #920000;
 
 }
 
@@ -99,7 +104,7 @@ input {
     width: fit-content;
     opacity: 0;
     transition: opacity 0.3s 0.6s;
-    background-color: #2f2f2fee;
+    background-color: #2f2f2f;
     box-shadow: 0 0 6px rgba(0,0,0,0.15);
     color: #ffffff;
     text-align: center;
@@ -185,6 +190,18 @@ input {
     border-color: #2f2f2fcc transparent transparent transparent;
 }
 
+
+.avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    aspect-ratio: 1;
+    border: solid 1px var(--white, white);
+    transition: 0.1s ease-out;
+    z-index: 0;
+}
+
+
 .sidebar-container {
     display: flex;
     flex-direction: row;
@@ -241,7 +258,7 @@ input {
 }
 
 .sidebar.transition {
-    transition: flex 0.1s ease-in-out;
+    transition: flex 0.1s ease-in-out, all 0.2s ease-in-out;
 }
 
 #hamburger {
@@ -483,6 +500,7 @@ input {
         align-items: center;
         white-space: nowrap;
         gap: 0.1rem;
+        overflow: clip;
     }
 
     .breadcrumb {
@@ -566,9 +584,23 @@ button:hover {
     aspect-ratio: 1;
 }
 
-#user-icon:hover {
-    background-color: rgba(0,0,0,0);
+#user-icon-container {
+    border-radius: 50%;
+    transition: 0.05s ease-out;
 }
+
+#user-icon-container:hover {
+    border: none;
+    transition: 0.05s ease-out;
+    box-shadow: 0 0 0 2px #388bffaa;
+}
+
+#user-icon-container:hover #user-icon {
+    border: none;
+}
+
+
+
 
 
 .edit-and-save {
@@ -589,6 +621,13 @@ button:hover {
         cursor: pointer;
     }
 }
+
+
+.clicked {
+    transform: scale(0.98);
+    transition-duration: 0.05s;
+}
+
 
 .click {
     animation: click 0.3s ease-out;
@@ -691,4 +730,8 @@ button:hover {
         }
     }
 
+}
+
+sup {
+    line-height: 0;
 }
