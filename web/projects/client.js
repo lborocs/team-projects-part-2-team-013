@@ -160,23 +160,25 @@ function setUpProjectRowEventListeners(projectRow) {
 views.forEach((view, i) => {
     
     view.addEventListener("pointerup", () => {
-        if (!view.classList.contains("selected")) {
-            
-            view.classList.add("selected")
-            views.forEach((tab, j) => {
-                if (j !== i) {
-                    tab.classList.remove("selected")
-                }
-            })
-            console.log("[viewOnClick] selected")
 
-            taskGridWrapper.classList.toggle("fade")
-            taskList.classList.toggle("fade")
-            setTimeout(() => {
-                taskGridWrapper.classList.toggle("norender")
-                taskList.classList.toggle("norender")
-            }, 50)
-        } 
+        if (view.classList.contains("selected")) {
+            return
+        }
+
+        view.classList.add("selected")
+        views.forEach((tab, j) => {
+            if (j !== i) {
+                tab.classList.remove("selected")
+            }
+        })
+        console.log("[viewOnClick] selected")
+
+        taskGridWrapper.classList.toggle("fade")
+        taskList.classList.toggle("fade")
+        setTimeout(() => {
+            taskGridWrapper.classList.toggle("norender")
+            taskList.classList.toggle("norender")
+        }, 50)
     })
 
     global.getCurrentSession().then((session) => {
@@ -211,6 +213,7 @@ explainerShowHide.addEventListener("pointerup", () => {
 })
 
 function explainerTaskSetToDefault() {
+
     console.log("[explainerTaskSetToDefault] setting to default");
     explainerTaskTitle.innerHTML = ""
     explainerTaskDescription.innerHTML = "Select a task to view more information..."
@@ -230,6 +233,7 @@ function explainerTaskSetToDefault() {
 }
 
 function getTaskState(task) {
+
     let taskState = task.getAttribute("data-state");
     if (taskState == null) {
         console.error("[getTaskState] task has no state");
@@ -282,12 +286,10 @@ function updateTaskState(task) {
 //THIS WILL BE REFACTORED
 function showTaskInExplainer(task) {
 
-
     let taskState = getTaskState(task);
 
     let taskID = task.getAttribute("id");
     explainerTask.setAttribute("task-id", taskID);
-    // get the task title from data-title
     let taskTitle = task.getAttribute("data-title");
     explainerTaskTitle.innerHTML = taskTitle;
     explainerTaskTitle.classList.remove("norender");
@@ -330,7 +332,7 @@ function showTaskInExplainer(task) {
     }
     
     let statusElement = document.querySelector(".status");
-    statusElement.innerHTML = `${icon} ${statusText}`;;
+    statusElement.innerHTML = `${icon} ${statusText}`;
     animate(document.querySelector(".task-overview"), "flash")
 
     global.setBreadcrumb(["Projects", globalCurrentProject.name, taskTitle], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + taskID])
@@ -481,9 +483,6 @@ function setUpTaskEventListeners() {
             if (e.target.classList.contains("context-menu")) {
                 return
             }
-            
-
-            
 
             taskCards.forEach((card) => {
                 card.classList.remove("clicked")
@@ -502,7 +501,6 @@ function setUpTaskEventListeners() {
                 return
             }
 
-            //show explainer
             // console.log(explainer)
             explainer.classList.remove("hidden")
             overlay.classList.remove("norender")
@@ -613,23 +611,25 @@ async function fetchTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
     console.log("[fetchTasks] fetched tasks for " + projID);
     console.log(data);
-    if (data.success == true) {
-        console.log(`tasks have been fetched for ${projID}`)
-        if (data.data.contains_assignments) {
-            globalAssignments = data.data.assignments;
-
-            data.data.tasks.forEach((task) => {
-                task.assignments = [];
-                data.data.assignments.forEach((assignment) => {
-                    if (assignment.task.taskID === task.taskID) {
-                        task.assignments.push(assignment.employee.empID);
-                    }
-                });
-            });
-        }
-        globalTasksList = data.data.tasks;
-        return data.data.tasks
+    if (data.success != true) {
+        return
     }
+    console.log(`tasks have been fetched for ${projID}`)
+    if (!data.data.contains_assignments) {
+        return
+    }
+    globalAssignments = data.data.assignments;
+
+        data.data.tasks.forEach((task) => {
+            task.assignments = [];
+            data.data.assignments.forEach((assignment) => {
+                if (assignment.task.taskID === task.taskID) {
+                    task.assignments.push(assignment.employee.empID);
+                }
+            });
+        });
+    globalTasksList = data.data.tasks;
+    return data.data.tasks
 }
 
 /**
@@ -945,7 +945,6 @@ sortArray.forEach((sortObject) => {
             sortObject.classList.add("selected", "asc");
         }
         
-        //sort the tasks
         let ascending = sortObject.classList.contains("asc");
         let descending = sortObject.classList.contains("desc");
         let sortBy = sortObject.id;
@@ -959,12 +958,10 @@ sortArray.forEach((sortObject) => {
         } else {
             console.error("invalid sort criteria");
         }
-        //remove all tasks from the table
         taskRows = document.querySelectorAll(".taskRow");
         taskRows.forEach((task) => {
             task.remove();
         });
-        //render all tasks in the table
         tasks.forEach((task) => {
             taskObjectRenderAll(task, RENDER_LIST);
         });
@@ -1164,36 +1161,35 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let overdueContainerClass = "";
     let dateTooltip;
 
+    // Calculate the difference in days
+    const diffInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
+
     if (timestamp === null) {
 
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         dateTooltip = `No due date set`;
 
-    } else if (timestamp < dateToday && state !== 2) {
+    } else if (diffInDays < 0 && state !== 2) {
 
         // tasks which are overdue
         statusIcon = `<span class="material-symbols-rounded">calendar_clock</span>`;
         overdueContainerClass = "overdue";
-        const overdueDays = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
-        dateTooltip = `Task overdue by ${overdueDays} day${overdueDays !== 1 ? 's' : ''}`;
+        dateTooltip = `Task overdue by ${-diffInDays} day${-diffInDays !== 1 ? 's' : ''}`;
 
-    } else if (state === 2 && timestamp > dateToday) {
+    } else if (state === 2 && diffInDays > 0) {
 
         // tasks which are finished but have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        const daysUntilDue = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
-        dateTooltip = `Task finished but due in ${daysUntilDue} day${daysUntilDue !== 1 ? 's' : ''}`;
+        dateTooltip = `Task finished but due in ${diffInDays} day${diffInDays !== 1 ? 's' : ''}`;
 
     } else if (state !== 2){
         // tasks which are not finished and have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        const dueInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
-        dateTooltip = `Due in ${dueInDays} day${dueInDays !== 1 ? 's' : ''}`;
+        dateTooltip = `Due in ${diffInDays} day${diffInDays !== 1 ? 's' : ''}`;
     } else {
         // tasks which are finished and have a due date in the past
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        const finishedDaysAgo = Math.floor((dateToday - timestamp) / (24 * 60 * 60 * 1000));
-        dateTooltip = `Finished ${finishedDaysAgo} day${finishedDaysAgo !== 1 ? 's' : ''} ago`;
+        dateTooltip = `Finished ${-diffInDays} day${-diffInDays !== 1 ? 's' : ''} ago`;
     }
 
     let manHoursTooltip;
