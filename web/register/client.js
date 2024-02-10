@@ -125,7 +125,7 @@ async function register() {
             console.log("[register] registered successfully")
             let emp = session.employee;
             console.log(`[register] registered successfully as ${emp.id} (${global.employeeToName(emp)}) ${session.id} - redirecting`);
-            // window.location.href = "/projects/";
+            window.location.href = "/projects/";
         });
     } else {
         console.log("[register] failed to register")

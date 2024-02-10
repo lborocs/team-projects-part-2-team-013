@@ -1072,7 +1072,7 @@ if (window.location.pathname !== '/' || window.location.pathname !== '/register/
     userIconContextMenu();
     managerElementsEnableIfManager();
 
-    if (topbar.notificationPopover !== null) {
+    if (topbar.topbar !== null) {
         getEmployeeNotifications().then((items) => {
             if (items.length > 0) {
                 console.log("[getEmployeeNotifications] notifications found and display badge");
