@@ -39,6 +39,7 @@ class RequestContext extends stdClass {
     public ?Array $request_body = null;
     public string $request_method;
     public string $request_uri;
+    public bool $no_track = false;
     public ?Session $session = null;
 
     function __construct() {
@@ -53,6 +54,8 @@ class RequestContext extends stdClass {
         } else {
             $this->request_uri = $request_uri;
         }
+
+        $this->no_track = array_key_exists("X-No-Track", apache_request_headers());
 
         // authentication
 
