@@ -610,25 +610,43 @@ function findNext(container, y) {
 async function fetchTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
     console.log("[fetchTasks] fetched tasks for " + projID);
-    if (data.success != true) {
-        return
-    }
-    console.log(`tasks have been fetched for ${projID}`)
-    if (!data.data.contains_assignments) {
-        return
-    }
-    globalAssignments = data.data.assignments;
+    // if (data.success != true) {
+    //     return
+    // }
+    // console.log(`tasks have been fetched for ${projID}`)
+    // if (!data.data.contains_assignments) {
+    //     return
+    // }
+    // globalAssignments = data.data.assignments;
 
-        data.data.tasks.forEach((task) => {
-            task.assignments = [];
-            data.data.assignments.forEach((assignment) => {
-                if (assignment.task.taskID === task.taskID) {
-                    task.assignments.push(assignment.employee.empID);
-                }
+    //     data.data.tasks.forEach((task) => {
+    //         task.assignments = [];
+    //         data.data.assignments.forEach((assignment) => {
+    //             if (assignment.task.taskID === task.taskID) {
+    //                 task.assignments.push(assignment.employee.empID);
+    //             }
+    //         });
+    //     });
+    // globalTasksList = data.data.tasks;
+    // return data.data.tasks
+
+    if (data.success == true) {
+        console.log(`tasks have been fetched for ${projID}`)
+        if (data.data.contains_assignments) {
+            globalAssignments = data.data.assignments;
+
+            data.data.tasks.forEach((task) => {
+                task.assignments = [];
+                data.data.assignments.forEach((assignment) => {
+                    if (assignment.task.taskID === task.taskID) {
+                        task.assignments.push(assignment.employee.empID);
+                    }
+                });
             });
-        });
-    globalTasksList = data.data.tasks;
-    return data.data.tasks
+        }
+        globalTasksList = data.data.tasks;
+        return data.data.tasks
+    }
 }
 
 /**
