@@ -54,7 +54,8 @@ function updateCriteriaHints() {
     const passwordLength = passwordValue.length;
     const passwordHasUppercase = /[A-Z]/.test(passwordValue);
     const passwordHasNumber = /\d/.test(passwordValue);
-    const passwordHasSpecialChar = /[!@#$%^&*()-_=+{};:,<.>'`"\ ]/.test(passwordValue);
+    const passwordHasSpecialChar = /[!@#$%^&*()\-_=+{};:,<.>'`\"\ ]/.test(passwordValue);
+    console.log(passwordHasSpecialChar)
 
     let results = []
     results[0] = showCriteriaResult(passwordLength >= 8, eightChars);
