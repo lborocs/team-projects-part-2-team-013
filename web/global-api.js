@@ -64,6 +64,11 @@ async function api_request(route, method, body, options={}) {
         reqInit.body = JSON.stringify(body);
     }
 
+    if (options.no_track) {
+        reqInit.headers["X-No-Track"] = "true";
+    }
+
+
     const raw_response = await fetch(API_BASE + route, reqInit);
 
 

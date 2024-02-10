@@ -120,7 +120,83 @@ class Dashboard {
 
 
 
+async function getProjectData() {
 
+    const res = await get_api("/project/project.php/projects", {no_track: true});
+
+    // only use first half of projects
+    const projects = res.data.projects.slice(0, res.data.projects.length / 2);
+
+    // pick a random project
+    const project = projects[Math.floor(Math.random() * projects.length)];
+    console.log("[getProjectData] project: ", project);
+    const tasks = await get_api(`/project/task.php/tasks/${project.projID}`, {no_track: true});
+
+    document.getElementById("project-name").innerText = project.name;
+
+    return {
+        project: project.data,
+        tasks: tasks.data
+    }
+}
+
+const projectData = await getProjectData();
+
+
+async function getTaskCompletion() {
+    let completed = 0;
+    let inProgress = 0;
+    let toDo = 0;
+    projectData.tasks.tasks.forEach(task => {
+        switch (task.state) {
+            case 0:
+                toDo++;
+                break;
+            case 1:
+                inProgress++;
+                break;
+            case 2:
+                completed++;
+                break;
+        }
+    });
+    return {
+        labels: ["To-do", "In-Progress", "Finished"],
+        values:[toDo, inProgress, completed]
+    };
+}
+
+
+
+async function getTasksPerEmployee() {
+    let tasksPerEmployee = {};
+    projectData.tasks.assignments.forEach(assignment => {
+        if (tasksPerEmployee[assignment.employee.empID] === undefined) {
+            tasksPerEmployee[assignment.employee.empID] = 1;
+        } else {
+            tasksPerEmployee[assignment.employee.empID]++;
+        }
+    });
+
+    const data = {};
+
+    await Promise.all(Object.keys(tasksPerEmployee).map(async (empID) => {
+        const saturated = (await global.getEmployeesById([empID])).get(empID);
+        data[global.employeeToName(saturated)] = tasksPerEmployee[empID];
+    }));
+
+    // sort by value
+    const sorted = Object.fromEntries(
+        Object.entries(data).sort(([empA,tasksA],[empB,tasksB]) => tasksB-tasksA)
+    );
+
+    return {
+        labels: Object.keys(sorted),
+        values: Object.values(sorted),
+        max: Math.max(...Object.values(sorted)) * 1.5
+    };
+
+}
 
 
 //chartjs styling
@@ -142,14 +218,17 @@ Chart.defaults.animations = false;
 
 let charts = [];
 
+
+const completionData = await getTaskCompletion();
+
 charts.push(new Chart(document.getElementById("completionChart"), {
     type: 'pie',
     data: {
-        labels: ["To-do", "In-Progress", "Finished"],
+        labels: completionData.labels,
         datasets: [{
             backgroundColor: ["rgba(245,205,188,0.7)", "rgba(188,219,245,0.7)", "rgba(188,245,188,0.7)"],
             borderColor: ["rgba(245,205,188,1)", "rgba(188,219,245,1)", "rgba(188,245,188,1)"],
-            data: [16, 11, 43]
+            data: completionData.values
         }]
     },
     options: {
@@ -198,16 +277,18 @@ charts.push(new Chart(document.getElementById("manHoursChart"), {
 
 
 
+const tasksPerEmployeeData = await getTasksPerEmployee();
+
 charts.push(new Chart(document.getElementById("tasksPerEmployeeChart"), {
     type: 'bar',
     data: {
-        labels: ["Firat", "Octavian", "Usman", "Danial", "Aidan", "Oliver", "Terry", "Dave", "Jamie"],
+        labels: tasksPerEmployeeData.labels,
         datasets: [{
             label: "Tasks Per Employee",
             backgroundColor: 'rgba(255, 99, 132, 0.5)',
             borderColor: 'rgba(255, 99, 132, 1)',
             borderWidth: 2,
-            data: [26, 25, 20, 19, 15, 13, 9, 9, 8]
+            data: tasksPerEmployeeData.values
         }]
     },
     options: {
@@ -219,7 +300,10 @@ charts.push(new Chart(document.getElementById("tasksPerEmployeeChart"), {
         scales: {
             y: {
                 beginAtZero: true,
-                suggestedMax: 30
+                suggestedMax: tasksPerEmployeeData.max,
+                ticks: {
+                    stepSize: 1
+                }
             }
         }
     }

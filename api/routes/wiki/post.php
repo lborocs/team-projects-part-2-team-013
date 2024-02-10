@@ -410,7 +410,9 @@ function _delete_post(RequestContext $ctx, array $url_specifiers) {
 }
 
 function _fetch_post(RequestContext $ctx, array $url_specifiers) {
-    db_post_accesses_add($ctx->session->hex_associated_user_id, $ctx->post["postID"]);
+    if (!$ctx->no_track) {
+        db_post_accesses_add($ctx->session->hex_associated_user_id, $url_specifiers[0]);
+    }
     $assets = db_post_fetch_assets($ctx->post["postID"]);
     $ctx->post["images"] = $assets;
     respond_ok($ctx->post);
