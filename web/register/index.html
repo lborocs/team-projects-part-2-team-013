@@ -8,13 +8,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="../global-styles.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
     <link rel="stylesheet" href="/ui-elements/text-button.css">
-    <script defer src="script.js"></script>
+    <script src="/global-api.js"></script>
+    <script src="/global-ui.js" defer type="module"></script>
+    <script defer src="client.js" type="module"></script>
 </head>
 <body>
     <div class="fullscreen">
@@ -26,40 +27,69 @@
                 <div class="input-container">
                     <label for="name">Name</label>
                     <div class="textfield-container">
-                        <input type="text" placeholder="Enter full name here" id="name" class="textfield">
+                        <input type="text" placeholder="Enter full name here" autocomplete="name"  id="name" class="textfield" required>
                     </div>
                 </div>
                 <div class="input-container">
                     <label for="email">Email</label>
                     <div class="textfield-container">
-                        <input type="text" placeholder="example@email.com" id="email" class="textfield">
+                        <input type="email" placeholder="example@email.com" id="email" class="textfield" required>
                     </div>
                 </div>
                 <div class="input-container">
                     <label for="password">Password</label>
                     <div class="textfield-container">
-                        <input type="password" placeholder="" id="password" class="textfield">
+                        <input type="password" placeholder="" id="password" class="textfield" required>
                         <span class="material-symbols-rounded" id="togglePassword">
                             visibility_off
                         </span>
                     </div>
                 </div>
-                <div class="password-criteria">
-                    Your password should contain:
-                    <ul class="fa-ul">
-                        <li id="eightChars"><span class="fa-li"><i id="eightCharsIcon" class="fa"></i></span>At least 8 characters</li>
-                        <li id="uppercaseLetter"><span class="fa-li"><i id="uppercaseLetterIcon" class="fa"></i></span>At least 1 uppercase letter</li>
-                        <li id="number"><span class="fa-li"><i id="numberIcon" class="fa"></i></span>At least 1 number</li>
-                        <li id="specialChar"><span class="fa-li"><i id="specialCharIcon" class="fa"></i></span>At least 1 special character (?, !, _)</li>
+                <div class="password-criteria disabled">
+                    Your password must contain:
+                    <ul class="password-criteria">
+                        <li id="eight-chars">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 8 characters
+                            </div>
+                        </li>
+                        <li id="uppercase-letter">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 uppercase letter
+                            </div>
+                        </li>
+                        <li id="number">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 number
+                            </div>
+                        </li>
+                        <li id="special-char">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 special character
+                            </div>
+                        </li>
                       </ul>
                 </div>
-                <div id="register" class="text-button blue">
+                <div id="register" class="text-button blue disabled">
                     <div class="button-text">
                         Register
                     </div>
                 </div>
             </div>
         </div>
+        <div id="status" class="box hidden"></div>
     </div>
 </body>
 </html>

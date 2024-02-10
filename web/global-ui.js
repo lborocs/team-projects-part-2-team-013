@@ -1013,7 +1013,7 @@ export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHas
 }
 
 
-if (window.location.pathname !== '/') {
+if (window.location.pathname !== '/' || window.location.pathname !== '/register/') {
 
     setTimeout(() => {
         if (sidebarContainer !== null) {

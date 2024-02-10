@@ -62,15 +62,15 @@ emailInput.addEventListener('keypress', function (e) {
 
 
 document.getElementById('togglePassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('password');
+
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         document.getElementById("togglePassword").textContent = "visibility";
     } else {
         passwordInput.type = 'password';
         document.getElementById("togglePassword").textContent = "visibility_off";
-        
     }
+
 });
 
 // redirect to projects if we are logged in

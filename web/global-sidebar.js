@@ -1,6 +1,6 @@
 //injects the sidebar html into the sidebar element on the page, with event listeners for actions
 //gets imported into global-ui.js as sidebar, so items can be accessed by sidebar.items
-//page needs to have a single sidebar element declared with a set width so we dont get cumulative layout shift
+//page needs to have a single sidebar element declared with a set width so we dont get layout shift
 console.log("[import] sidebar.js loaded");
 
 export var sidebar = null
