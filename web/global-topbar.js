@@ -27,7 +27,7 @@ breadcrumb.classList.add('breadcrumb');
 
 export const logo = document.createElement('img')
 logo.classList.add('fullLogo');
-logo.src = 'https://cdn.013.team/assets/wordmark-large.png';
+logo.src = 'https://cdn.013.team/assets/logo-large.png';
 logo.alt = 'logo';
 
 export const search = document.createElement('div')
@@ -87,9 +87,9 @@ notificationPopover.innerHTML = `
 `
 
 left.appendChild(hamburger);
+left.appendChild(logo);
 left.appendChild(breadcrumb);
 
-center.appendChild(logo);
 
 right.appendChild(search);
 right.appendChild(notificationPopover);
