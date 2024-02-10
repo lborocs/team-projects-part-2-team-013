@@ -121,7 +121,11 @@ function r_session_register(RequestContext $ctx, string $args) {
     $email = $ctx->request_body["email"];
     $password = $ctx->request_body["password"];
 
-    if (array_key_exists("firstName", $ctx->request_body) && gettype($first_name) != "string") {
+    if (
+        $first_name !== null &&
+        array_key_exists("firstName", $ctx->request_body) &&
+        gettype($first_name) != "string"
+        ) {
         respond_bad_request(
             "Expected field firstName to be a string",
             ERROR_BODY_FIELD_INVALID_TYPE
