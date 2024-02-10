@@ -1212,7 +1212,12 @@ function db_task_fetch(string $task_id) {
 
     // query and check we have 1 row
     $res = $query->get_result();
-    return $res->fetch_assoc(); // row 0
+
+    if ($res->num_rows == 0) {
+        return false;
+    }
+
+    return parse_database_row($res->fetch_assoc(), TABLE_TASKS);
 }
 
 function db_task_fetchall(string $project_id) {
@@ -1405,7 +1410,7 @@ function db_personal_fetch(string $personal_id) {
         return false;
     }
     
-    return $res->fetch_assoc();
+    return parse_database_row($res->fetch_assoc(), TABLE_PERSONALS);
 }
 
 // tags
@@ -1657,6 +1662,65 @@ function db_notification_create(int $type, string $user_id) {
 
     return bin2hex($bin_n_id);
 }
+
+
+function db_preferences_fetch(string $user_id) {
+    global $db;
+
+    $bin_u_id = hex2bin($user_id);
+
+    $query = $db->prepare(
+        "SELECT * FROM `EMPLOYEE_PREFERENCES` WHERE empID = ?"
+    );
+    $query->bind_param("s", $bin_u_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    
+    if ($res->num_rows == 0) {
+        return false;
+    }
+    
+    $row = $res->fetch_assoc();
+
+    return $row["preferences"];
+}
+
+function db_preferences_set(string $user_id, $preferences) {
+    global $db;
+
+    $bin_u_id = hex2bin($user_id);
+
+    // insert on duplicate key update
+    $query = $db->prepare(
+        "INSERT INTO `EMPLOYEE_PREFERENCES` VALUES (?, ?) ON DUPLICATE KEY UPDATE preferences = ?"
+    );
+
+    $query->bind_param("sss", $bin_u_id, $preferences, $preferences);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+}
+
+function db_preferences_delete(string $user_id) {
+    global $db;
+
+    $bin_u_id = hex2bin($user_id);
+
+    $query = $db->prepare(
+        "DELETE FROM `EMPLOYEE_PREFERENCES` WHERE `empID` = ?"
+    );
+
+    $query->bind_param("s", $bin_u_id);
+    $query->execute();
+    return $query->affected_rows > 0;
+}
+
 
 
 ?>

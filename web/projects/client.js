@@ -1250,8 +1250,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         taskInfo.innerHTML += `
             <div class="users-assigned"></div>
         `;
-
-        renderAssignments(assignments);
     }
     
     //check if state is 0,1,2 and do separate things for each. otherwise, error
