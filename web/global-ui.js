@@ -578,6 +578,7 @@ export async function getEmployeeNotifications() {
  * Detail 1 - Task updated
  * Detail 2 - Task assigned to you
  * Detail 3 - Task unassigned to you
+ * Detail 4 - Task completed status changed
  * 
  * @param {Array} notifications 
  */
@@ -691,6 +692,10 @@ export async function renderNotifications(notifications) {
                     case 3: // task has been unassigned to you
                         icon = "person_remove";
                         desc = `Removed you from <span>${task.title}</span> in <span>${project.name}</span>.`
+                        break;
+                    case 4: // task has been completed
+                        icon = "check_circle";
+                        desc = `Changed the completion status of <span>${task.title}</span> in <span>${project.name}</span>.`
                         break;
                     default: // unknown
                         icon = "question_mark";
