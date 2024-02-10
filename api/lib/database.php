@@ -876,6 +876,25 @@ function db_employee_in_project(string $user_id, string $project_id) {
     return $result->num_rows > 0;
 }
 
+function db_employee_assigned_to_task(string $task_id, string $employee_id) {
+    global $db;
+
+    $bin_t_id = hex2bin($task_id);
+    $bin_e_id = hex2bin($employee_id);
+
+    $query = $db->prepare(
+        "SELECT 1 FROM `EMPLOYEE_TASKS` WHERE taskID = ? AND empID = ?"
+    );
+    $query->bind_param("ss", $bin_t_id, $bin_e_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return $query->get_result()->num_rows > 0;
+}
+
 function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id) {
     $bin_p_id = hex2bin($project_id);
     $bin_u_id = hex2bin($user_id);
@@ -1260,15 +1279,15 @@ function db_task_assign_bulk(string $task_id, Array $employee_ids) {
     global $db;
 
     $values = array_merge(...array_map(function ($emp_id) use ($task_id) {
-        return [hex2bin($emp_id), hex2bin($task_id)];
+        return [hex2bin($emp_id), hex2bin($task_id), 0];
     }, $employee_ids));
 
     $query = $db->prepare(
-        "INSERT INTO `EMPLOYEE_TASKS` VALUES " . create_chunked_array_binding(count($employee_ids), 2)
+        "INSERT INTO `EMPLOYEE_TASKS` VALUES " . create_chunked_array_binding(count($employee_ids), 3)
     );
 
     $query->bind_param(
-        str_repeat("ss", count($employee_ids)),
+        str_repeat("ssi", count($employee_ids)),
         ...$values
     );
 
@@ -1299,6 +1318,25 @@ function db_task_unassign_bulk(string $task_id, Array $employee_ids) {
     );
 
     if (!$query->execute()) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+}
+
+function db_task_assign_set_manhours(string $task_id, string $emp_id, int $manhours) {
+    global $db;
+
+    $bin_t_id = hex2bin($task_id);
+    $bin_e_id = hex2bin($emp_id);
+
+    $query = $db->prepare(
+        "UPDATE `EMPLOYEE_TASKS` SET `employeeTaskManHours` = ? WHERE `taskID` = ? AND `empID` = ?"
+    );
+    $query->bind_param("iss", $manhours, $bin_t_id, $bin_e_id);
+    $result = $query->execute();
+
+    if (!$result) {
         respond_database_failure();
     }
 

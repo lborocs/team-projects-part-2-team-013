@@ -112,7 +112,35 @@ function object_check_task_exists(RequestContext $ctx, array $resource_ids) {
 
     $ctx->task = $task;
 
+}
 
+function object_check_user_has_access_to_task(RequestContext $ctx, array $resource_ids) {
+    // requires task exists
+
+    if ($ctx->session->auth_level >= AUTH_LEVEL_MANAGER) {
+        return;
+    }
+
+
+
+    if (!db_employee_assigned_to_task($ctx->session->hex_associated_user_id, $ctx->task["taskID"])) {
+        respond_insufficient_authorization();
+    }
+}
+
+function object_check_user_assigned_to_task(RequestContext $ctx, array $resource_ids) {
+    // requires task exists
+    // requires user_has_access_to_task
+
+    // if the user is not a manager then they must be assigned to the task
+    // because otherwise the access check would have failed
+    if ($ctx->session->auth_level > AUTH_LEVEL_MANAGER) {
+        return;
+    }
+
+    if (!db_employee_assigned_to_task($resource_ids[1], $ctx->session->hex_associated_user_id)) {
+        respond_bad_request("You are not assigned to this task", ERROR_BAD_REQUEST);
+    }
 }
 
 function object_check_task_edit_validation(RequestContext $ctx, array $resource_ids) {
