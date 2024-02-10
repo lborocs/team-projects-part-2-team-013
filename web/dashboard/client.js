@@ -122,7 +122,7 @@ class Dashboard {
 
 async function getProjectData() {
 
-    const res = await get_api("/project/project.php/projects");
+    const res = await get_api("/project/project.php/projects", {no_track: true});
 
     // only use first half of projects
     const projects = res.data.projects.slice(0, res.data.projects.length / 2);
@@ -130,7 +130,7 @@ async function getProjectData() {
     // pick a random project
     const project = projects[Math.floor(Math.random() * projects.length)];
     console.log("[getProjectData] project: ", project);
-    const tasks = await get_api(`/project/task.php/tasks/${project.projID}`);
+    const tasks = await get_api(`/project/task.php/tasks/${project.projID}`, {no_track: true});
 
     document.getElementById("project-name").innerText = project.name;
 
