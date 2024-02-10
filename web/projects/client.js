@@ -931,23 +931,24 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 sortArray.forEach((sortObject) => {
     sortObject.addEventListener("pointerup", () => {
         //sort out what criteria to sort by
-        if (sortObject.classList.contains("selected")) {
-            if(sortObject.classList.contains("asc")) {
-                sortObject.classList.remove("asc");
-                sortObject.classList.add("desc");
+        const cl = sortObject.classList;
+        if (cl.contains("selected")) {
+            if(cl.contains("asc")) {
+                cl.remove("asc");
+                cl.add("desc");
             } else {
-                sortObject.classList.remove("desc");
-                sortObject.classList.add("asc");
+                cl.remove("desc");
+                cl.add("asc");
             }
         } else  {
             sortArray.forEach((sortObject) => {
                 sortObject.classList.remove("selected", "asc", "desc");
             });
-            sortObject.classList.add("selected", "asc");
+            cl.add("selected", "asc");
         }
         
-        let ascending = sortObject.classList.contains("asc");
-        let descending = sortObject.classList.contains("desc");
+        let ascending = cl.contains("asc");
+        let descending = cl.contains("desc");
         let sortBy = sortObject.id;
         let tasks = globalTasksList;
         if (sortBy == "title-column") {
