@@ -107,7 +107,9 @@ function _edit_project(RequestContext $ctx, array $body, array $url_specifiers) 
 }
 
 function _fetch_project(RequestContext $ctx, array $url_specifiers) {
-    db_project_accesses_set($ctx->project["projID"], $ctx->session->hex_associated_user_id);
+    if (!$_GET["notrack"]) {
+        db_project_accesses_set($url_specifiers[0], $ctx->session->hex_associated_user_id);
+    }
     respond_ok($ctx->project);
 }
 
