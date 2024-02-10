@@ -492,6 +492,8 @@ export function showConfirmCheck(parent) {
     return check;
 }
 
+let _globalEmployeeRequest = new GlobalEmployeeRequest();
+
 /**
  * Fetches the employee data for a set of employee IDs.
  * 
@@ -503,7 +505,6 @@ export function showConfirmCheck(parent) {
  * getEmployeesById([1, 2, 3]).then(data => console.log(data));
  */
 
-let _globalEmployeeRequest = new GlobalEmployeeRequest();
 
 export async function getEmployeesById(employees) {
 
