@@ -401,19 +401,19 @@ function setUpTaskEventListeners() {
                     let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
                     window.open(link, "_blank")
 
-                } else if (item.classList.contains("not-started-state") && !item.classList.contains("disabled")) {
-                    console.log("[contextMenuItemOnClick] not started clicked")
-                } else if (item.classList.contains("in-progress-state") && !item.classList.contains("disabled")) {
-                    console.log("[contextMenuItemOnClick] in progress clicked")
-                } else if (item.classList.contains("finished-state") && !item.classList.contains("disabled")) {
-                    console.log("[contextMenuItemOnClick] finished clicked")
+                } else if (!item.classList.contains("disabled")) {
+                    if (item.classList.contains("not-started-state")) {
+                        console.log("[contextMenuItemOnClick] not started clicked")
+                    } else if (item.classList.contains("in-progress-state")) {
+                        console.log("[contextMenuItemOnClick] in progress clicked")
+                    } else if (item.classList.contains("finished-state")) {
+                        console.log("[contextMenuItemOnClick] finished clicked")
+                    }
                 } else {
                     console.log("[contextMenuItemOnClick] no known action")
                 }
             });
         });
-
-        
 
         //have to include mouse up and down this is crazy event propagation
         contextMenuButton.addEventListener("pointerup", (e) => {
@@ -774,14 +774,15 @@ async function fetchAndRenderAllProjects() {
     const data = await get_api('/project/project.php/projects');
     console.log("[fetchAndRenderAllProjects] fetched projects");
     // process the data here
-    if (data.success == true) {
-        clearProjectList();
-        console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
-        await Promise.all(data.data.projects.map( async (project) => {
-            await projectObjectRenderAndListeners(project);
-        }));
-        return data.data.projects
+    if (data.success == false) {
+        return
     }
+    clearProjectList();
+    console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
+    await Promise.all(data.data.projects.map( async (project) => {
+        await projectObjectRenderAndListeners(project);
+    }));
+    return data.data.projects
 }
 
 
@@ -831,15 +832,16 @@ async function renderFromBreadcrumb(locations) {
     await projectSwitchToOnClick(element);
 
 
-    if (taskID) {
-        console.log(`[renderFromBreadcrumb] attempting to render task ${taskID}`)
-        let task = document.getElementById(taskID);
-        if (task) {
-            showTaskInExplainer(task);
-        } else {
-            alert("You appear to have followed a link to a task that either does not exist or you do not have access to.");
-        }
+    if (!taskID) {
+        return;
     }
+    console.log(`[renderFromBreadcrumb] attempting to render task ${taskID}`);
+    let task = document.getElementById(taskID);
+    if (!task) {
+        alert("You appear to have followed a link to a task that either does not exist or you do not have access to.");
+        return;
+    } 
+    showTaskInExplainer(task);
 
     return true;
 }
@@ -1189,10 +1191,13 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         dateTooltip = `Finished but due in ${diffInDays} day${diffInDays !== 1 ? 's' : ''}`;
 
     } else if (state !== 2){
+
         // tasks which are not finished and have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         dateTooltip = `Due in ${diffInDays} day${diffInDays !== 1 ? 's' : ''}`;
+
     } else {
+        
         // tasks which are finished and have a due date in the past
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
         dateTooltip = `Finished ${-diffInDays} day${-diffInDays !== 1 ? 's' : ''} ago`;
@@ -2419,15 +2424,17 @@ async function searchAndRenderProjects(search) {
     const data = await get_api('/project/project.php/projects?q=' + search);
     console.log("[searchAndRenderProjects(" + search + ")] fetched projects");
     console.log('.project-row.selected');
-    if (data.success == true) {
-        clearProjectList();
-        console.log("[searchAndRenderAllProjects] projects have been fetched successfully")
-        await Promise.all(data.data.projects.map(async (project) => {
-
-            await projectObjectRenderAndListeners(project);
-        }));
-        return data.data.projects
+    if (data.success !== true) {
+        return;
     }
+    
+    clearProjectList();
+    console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
+    await Promise.all(data.data.projects.map(async (project) => {
+        await projectObjectRenderAndListeners(project);
+    }));
+    
+    return data.data.projects;
 }
 
 
@@ -2454,4 +2461,3 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
-
