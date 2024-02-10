@@ -50,15 +50,17 @@ async function fetchPosts(tagsList) {
 
 async function fetchTags() {
     const data = await get_api("/wiki/post.php/tags");
-    if (data.success == true) {
-        console.log("Tags have been fetched")
-        data.data.tags.forEach(tag => {
-            document.querySelector('.tag-selection').innerHTML += `<div class="tag" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`
-        });
-        return data.data.tags;
+
+    if (data.success !== true) {
+        console.log("Tags failed to be fetched");
+        return;
     }
 
-    console.log("Tags failed to be fetched")
+    console.log("Tags have been fetched");
+    data.data.tags.forEach(tag => {
+        document.querySelector('.tag-selection').innerHTML += `<div class="tag" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
+    });
+    return data.data.tags;
 }
 
 let tagsList = fetchTags();
