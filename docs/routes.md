@@ -157,9 +157,20 @@ Written/designed by aidan F223129
 - [x] **/employee/meta.php/notifications**
   - GET get all notifications (defined in notifications.md)
 
-- [ ] **/employee/meta.php/preferences**
-  - GET get preferences
-
+- [x] **/employee/meta.php/preferences**
+  - [x] GET get preferences
+    ```jsonc
+    {
+      "success":true,
+      "data":{
+        "preferences":{
+          // preferences object
+        }
+      }
+    }
+    ```
+  - [x] PUT overwrite preferences {"preferences":{...}}
+  - [x] DELETE reset preferences to default
 # project
 
 ## task.php
