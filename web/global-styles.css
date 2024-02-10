@@ -100,10 +100,14 @@ input {
 }
   
 .tooltip .tooltiptext {
+    
     visibility: hidden;
     width: fit-content;
     opacity: 0;
-    transition: opacity 0.15s;
+
+    transform: translate(-50%, -25%);
+    transition: opacity 0.2s ease-in, transform 0.2s ease-out;
+
     background-color: #2f2f2f;
     box-shadow: 0 0 6px rgba(0,0,0,0.15);
     color: #ffffff;
@@ -120,11 +124,7 @@ input {
     z-index: 999;
 }
 
-.tooltip:hover .tooltiptext {
-    font-family: 'Open Sans', sans-serif;
-    visibility: visible;
-    opacity: 1;
-}
+
 
 
 .tooltip .tooltiptext::after {
@@ -135,9 +135,10 @@ input {
 }
 
 .tooltip.tooltip-under .tooltiptext {
-    top: 125%;
+    top: 100%;
     left: 50%;
-    transform: translate(-50%);
+    transition: transform 1s ease-out;
+    transform: translate(-50%, 1);
 }
 
 .tooltip.tooltip-under .tooltiptext::after{
@@ -179,7 +180,7 @@ input {
 .tooltip.tooltip-above .tooltiptext {
     bottom: 100%;
     left: 50%;
-    transform: translate(-50%);
+    transform: translate(-50%, 0);
 }
 
 .tooltip.tooltip-above .tooltiptext::after{
@@ -188,6 +189,14 @@ input {
     margin-left: -5px;
     border-style: solid;
     border-color: #2f2f2fcc transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+    font-family: 'Open Sans', sans-serif;
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.3s ease-out, transform 0.1s ease-out;
+    transform: translate(-50%, -10%);
 }
 
 
