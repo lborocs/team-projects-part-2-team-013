@@ -164,8 +164,14 @@ function r_session_register(RequestContext $ctx, string $args) {
         hash_pass($password),
     );
 
+    $session = auth_session_issue_new(Array(
+        "empID"=>$emp_id,
+        "isManager"=>0,
+    ));
+
     respond_ok(Array(
         "empID"=>$emp_id,
+        "session_token"=>$session->encrypt(),
     ));
 
 };
