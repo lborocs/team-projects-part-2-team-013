@@ -273,6 +273,11 @@ export function formatDate(date) {
 }
 
 export function formatDateFull(date) {
+
+    if (date == null) {
+        return false;
+    }
+
     let currentDate = new Date();
     let day = date.getDate();
     let month = date.getMonth();
