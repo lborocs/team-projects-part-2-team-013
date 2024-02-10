@@ -2147,113 +2147,212 @@ async function editTaskPopup(task){
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
     popupDiv.innerHTML = `
-        <dialog open class='popupDialog' id="edit-task-popup">
-            <p class="edit-task-title">Edit task:</p>
-            <input type="text" placeholder="Task title..." class="edit-task-title-input" value="${task.title}">
-
-            <p class="edit-task-title" id="edit-task-description">Assign employees to task:</p>
+        <dialog open class='popupDialog' id="add-task-popup">
+            <div class="popup-title">
+            <span>Create Task</span>
+            <div class="small-icon" id="close-button">
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+            </div>
+            </div>
+            <input type="text" placeholder="Task title" class="add-task-title-input">
+            
+            <div class="add-task-description-container">
+                <div id="description-editor"></div>
+            </div>
             <div class="dropdown-and-employee-list">
-                <div class="dropdown-button-container">
-                    <select class="dropdown", id="employee-select">
-                    </select>
-                    <button class="addButton">Add</button>
+                <div class="search-dropdown" id="employee-select" tabindex="0">
+                    <div class="search">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+            
+                        
+                        <div class="search-icon">
+                            <span class="material-symbols-rounded">search</span>
+                        </div>
+                        <div class="search-icon clear-icon">
+                            <span class="material-symbols-rounded">close</span>
+                        </div>
+                    </div>
+                    <div class="popover">
+                        <div class="employee-list">
+                        </div>
+                        <div class="show-more text-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">
+                                    more_horiz
+                                </span>
+                            </div>
+                            <div class="button-text">
+                                Show More
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="assigned-employees">           
+                <div class="assigned-employees">
+                
                 </div>
             </div>
-            <p class="edit-task-title" id="edit-task-description">Edit task description:</p>
-            <textarea placeholder="Edit task description..." class="edit-task-description-input">${task.description.trimStart().trimEnd()}
-            </textarea>
-            <div class="date-picker">
-                <label for="due-date" class="due-date-prompt">Due Date:</label>
-                <input type="date" class="add-task-date-input">
+            <div class="manhours-row">
+                <div class="manhours-label">
+                    Expected Manhours:
+                </div>
+
+                <div class="number-picker" id="expected-man-hours">
+                    <div class = "stepper decrement" tabindex="0">
+                        <span class="material-symbols-rounded">
+                            remove
+                        </span>
+                    </div>
+
+                    <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+                    <div class="stepper increment" tabindex="0">
+                        <span class="material-symbols-rounded">
+                            add
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div class="buttonForm">
-                <button class="closeButton">Cancel</button>
-                <button class="editButton">Edit</button>
+
+            <div class="date-picker" id="due-date">
+                <div class="date-picker-icon">
+                    <span class="material-symbols-rounded">event</span>
+                </div>
+                <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
+            </div>
+            <div class="confirm-buttons-row">
+                <div class="text-button" id="discard-button">
+                    <div class="button-text">
+                        Discard
+                    </div>
+                </div>
+                <div class="text-button blue" id="create-button">
+                    <div class="button-text">
+                        Create
+                    </div>
+                </div>
             </div>
         </dialog>
     `;
 
-    fullscreenDiv.style.filter = 'brightness(0.6)';
-    let dialog = popupDiv.querySelector('.popupDialog');
-    dialog.style.transform = 'translateY(0px)'
-    dialog.style.opacity = '1';
-    let editButton = dialog.querySelector('.editButton');
-    let closeButton = dialog.querySelector('.closeButton');
-    let addButton = dialog.querySelector('.addButton');
-    let dateSelector = dialog.querySelector('.add-task-date-input');
-    let date = new Date(task.dueDate).toISOString().split('T')[0];
+    //quill for description
+    var quill = new Quill('#description-editor', {
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, false] }],
+                ['bold', 'italic', 'underline'],
+                ['image', 'code-block']
+            ]
+        },
+        placeholder: 'Description...',
+        theme: 'snow'
+    });
 
-    dateSelector.value = date
-    
+    //event listeners for the number picker
+    let numberPicker = document.querySelector("#expected-man-hours");
+    let numberPickerInput = numberPicker.querySelector('input[type="number"]')
+    let numberPickerPlus = numberPicker.querySelector('.stepper.increment')
+    let numberPickerMinus = numberPicker.querySelector('.stepper.decrement')
+    numberPickerPlus.addEventListener('click', e => {
+        e.preventDefault()
+        numberPickerInput.stepUp()
+    })
+    numberPickerMinus.addEventListener('click', e => {
+        e.preventDefault()
+        numberPickerInput.stepDown()
+    })
+    numberPickerInput.addEventListener('focus', e => {
+        numberPickerInput.select()
+    })
 
-    let teamLeaderElem = dialog.querySelector('.assigned-team-leader');
+    //flatpickr for date picker
+    let datePickerInput = popupDiv.querySelector('.date-picker-input')
+    let fp = flatpickr(datePickerInput, {
+        dateFormat: 'd/m/Y',
+        altInput: true,
+        altFormat: 'F j, Y',
+        disableMobile: true,
+        onChange: (selectedDates, dateStr, instance) => {
+            datePickerInput.dispatchEvent(new Event('change'))
+        }
+    })
 
-    let teamLeader;
+    let assignedEmployees = new Set();
+    let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
 
-    let empList = popupDiv.querySelector('#employee-select');
+    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
+    employeeList.forEach((emp) => {
+        let emp_name = global.employeeToName(emp);
+        let avatar = global.employeeAvatarOrFallback(emp);
+        let option = document.createElement("div");
+        option.classList.add("name-card");
+        option.innerHTML = `
+            <img src="${avatar}" class="avatar">
+            <span>${emp_name}</span>
+            <span class="material-symbols-rounded icon">
+                person_add
+            </span>
+        `
+        option.setAttribute("data-id", emp.empID);
+        empList.appendChild(option);
+    });
+
+    // turn employeelist into a map of id to employee
     let employeeMap = new Map();
     employeeList.forEach((emp) => {
         employeeMap.set(emp.empID, emp);
     });
-    employeeList.forEach((emp) => {
-        let emp_name = global.employeeToName(emp);
-        let option = document.createElement("option");
-        option.value = emp.empID;
-        option.innerText = emp_name;
-        empList.appendChild(option);
-    });
 
+    // add event listeners to employee list
+    let employeeListOptions = empList.querySelectorAll(".name-card");
+    employeeListOptions.forEach((option) => {
+        option.addEventListener("pointerup", () => {
+            let empID = option.getAttribute("data-id");
+            assignedEmployees.add(empID);
+            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap)
+        })
+    })
 
-
-
+    fullscreenDiv.style.filter = 'brightness(0.75)';
+    let dialog = popupDiv.querySelector('.popupDialog');
+    dialog.style.transform = 'translateY(0px)'
+    dialog.style.opacity = '1';
+    
+    let createButton = dialog.querySelector('#create-button');
+    let closeButton = dialog.querySelector('#close-button');
+    let discardButton = dialog.querySelector('#discard-button');
 
     closeButton.addEventListener('click', (event) => {
         event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
+        dialog.style.display = 'none';
+        
+        
+        fullscreenDiv.style.filter = 'none';
+        console.log("[addTaskCloseButton] rejecting")
+    });
+
+    discardButton.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
         dialog.style.display = 'none';
         fullscreenDiv.style.filter = 'none';
+        console.log("[addTaskDiscardButton] rejecting")
     });
-    
-    editButton.addEventListener('click', async (event) => {
-        event.preventDefault();
-    
 
-        let titleInput = dialog.querySelector('.add-task-title-input');
-        let descInput = dialog.querySelector('.add-task-description-input');
-
-
-        let res = await post_api(
-            `/project/project.php/project`,
-            {
-                projName: titleInput.value,
-                description: descInput.value,
-                teamLeader: teamLeader,
-            }
-        );
-
-        if (res.success) {
-            let newProject = res.data;
-            await projectObjectRenderAndListeners(newProject);
-
-        } else {
-            let error = `${res.error.message} (${res.error.code})`
-            console.error("Error creating new project : " + error);
+    dialog.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addTaskEscape] rejecting")
         }
-
-        dialog.style.display = 'none';
-        fullscreenDiv.style.filter = 'none';
-        console.log("[editTaskPopupEditButtonClick] resolving")
-    });
-
-    addButton.addEventListener('click', (event) => {
-        teamLeader = empList.value;
-        let emp = employeeMap.get(teamLeader);
-        let emp_name = global.employeeToName(emp);
-        let emp_icon = global.employeeAvatarOrFallback(emp);
-        //teamLeaderElem.innerHTML = `<img src="${emp_icon}" class="avatar">${emp_name}`
     });
 
 }
