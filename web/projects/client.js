@@ -9,6 +9,7 @@ const RENDER_BOTH = 3;
 var globalTasksList = [];
 var globalAssignments = [];
 var globalCurrentProject;
+var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
 let statusButton = document.getElementById("status-column");
@@ -28,12 +29,13 @@ const explainerTitle = explainer.querySelector("#explainer-title")
 const explainerDescription = document.querySelector("#project-description")
 const explainerTeamLeaderAvatar = document.querySelector("#team-leader-avatar")
 const explainerTeamLeaderName = document.querySelector("#team-leader-name")
-const explainerTask = explainer.querySelector(".task-overview")
-const explainerTaskTitle = explainerTask.querySelector(".title")
-const explainerTaskDescriptionContainer = explainerTask.querySelector(".description-container")
-const explainerTaskDescription = explainerTask.querySelector(".description")
-const explainerTaskDateContainer = explainerTask.querySelector(".date-container")
-const explainerTaskDate = explainerTask.querySelector(".date")
+
+const explainerTaskContainer = explainer.querySelector(".task-overview")
+const explainerTaskTitle = explainerTaskContainer.querySelector(".title")
+const explainerTaskDescriptionContainer = explainerTaskContainer.querySelector(".description-container")
+const explainerTaskDescription = explainerTaskContainer.querySelector(".description")
+const explainerTaskDateContainer = explainerTaskContainer.querySelector(".date-container")
+const explainerTaskDate = explainerTaskContainer.querySelector(".date")
 const explainerShowHide = document.querySelector("#explainer-show-hide")
 const notStartedColumn = document.querySelector("#notstarted")
 const inProgressColumn = document.querySelector("#inprogress")
@@ -215,6 +217,7 @@ explainerShowHide.addEventListener("pointerup", () => {
 function explainerTaskSetToDefault() {
 
     console.log("[explainerTaskSetToDefault] setting to default");
+    explainerTask = null;
     explainerTaskTitle.innerHTML = ""
     explainerTaskDescription.innerHTML = "Select a task to view more information..."
     explainerTaskDate.innerHTML = ""
@@ -269,6 +272,10 @@ function updateTaskState(task) {
         });
         stateItems[newState].classList.add("disabled");
 
+        //globally udpates task state on client
+        let globalTask = globalTasksList.find(task => task.id === taskID);
+        globalTask.state = newState;
+
 
         patch_api(`/project/task.php/task/${projID}/${taskID}`, {state:newState}).then((res) => {
             if (res.status == 204) { // 204 no content (success)
@@ -280,62 +287,39 @@ function updateTaskState(task) {
     }
 }
 
-//shows the taskRow in the explainer
-//the taskRow contains title, due date and state in columns"
-//the rest of the informaton is in the data attributes: desc, assignee, date
-//THIS WILL BE REFACTORED
-function showTaskInExplainer(task) {
+//takes a task card HTML ELEMENT
+function showTaskInExplainer(taskCard) {
 
-    let taskState = getTaskState(task);
-
-    let taskID = task.getAttribute("id");
-    explainerTask.setAttribute("task-id", taskID);
-    let taskTitle = task.getAttribute("data-title");
-    explainerTaskTitle.innerHTML = taskTitle;
+    let taskID = taskCard.getAttribute("id");
+    explainerTaskContainer.setAttribute("task-id", taskID);
+    //get the task from globalTasksList
+    let currentTask = globalTasksList.find((task) => {
+        return task.taskID == taskID;
+    });
+    console.log(currentTask)
+    explainerTask = currentTask
+    explainerTaskTitle.innerHTML = currentTask.title;
     explainerTaskTitle.classList.remove("norender");
     
-    let manHours = task.getAttribute("data-expectedManHours");
     explainerTaskManhours.innerHTML = `
     <span class="material-symbols-rounded">
         hourglass_empty
     </span>
     <div class="manhours">
-        ${manHours/3600} Manhour${manHours !== 3600 ? 's' : ''}
+        ${currentTask.expectedManHours/3600} Manhour${currentTask.expectedManHours !== 3600 ? 's' : ''}
     </div>
     `;
 
-    let descElement = task.getAttribute("data-desc");
-    explainerTaskDescription.innerHTML = descElement ? descElement : "<i>No description...</i>";
+    explainerTaskDescription.innerHTML = currentTask.description ? currentTask.description : "<i>No description...</i>";
 
-    let dateElement = task.getAttribute("data-date");
-    explainerTaskDate.innerHTML = dateElement ? `<i class="fa-regular fa-calendar"></i> ${dateElement}` : "<i>No due date</i>";
+    let dueDate = new Date(currentTask.dueDate);
+    explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "No due date";
 
-    //get task state from what is in the status column the third column of a row
-
-    explainerTaskDate.setAttribute("data-timestamp", task.getAttribute("data-timestamp"));
-
-    let icon;
-    let statusText;
-    
-    if (taskState == 0) {
-        icon = '<i class="fa-solid fa-thumbtack" id="task-status-icon"></i>';
-        statusText = 'Not Started';
-    } else if (taskState == 1) {
-        icon = '<i class="fa-solid fa-chart-line" id="task-status-icon"></i>';
-        statusText = 'In Progress';
-    } else if (taskState == 2) {
-        icon = '<i class="fa-regular fa-circle-check" id="task-status-icon"></i>';
-        statusText = 'Finished';
-    } else {
-        icon = '';
-        statusText = 'Error';
-    }
-    
     let statusElement = document.querySelector(".status");
-    statusElement.innerHTML = `${icon} ${statusText}`;
+    statusElement.innerHTML = currentTask.state == 0 ? "Not Started" : currentTask.state == 1 ? "In Progress" : "Finished";
     animate(document.querySelector(".task-overview"), "flash")
 
-    global.setBreadcrumb(["Projects", globalCurrentProject.name, taskTitle], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + taskID])
+    global.setBreadcrumb(["Projects", globalCurrentProject.name, currentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + taskID])
 }
 
 
@@ -521,7 +505,7 @@ function setUpTaskEventListeners() {
             taskCard.classList.remove("beingdragged");
             taskCard.classList.remove("clicked");
 
-            if (taskCard.getAttribute("id") !== explainerTask.getAttribute("task-id")) {
+            if (taskCard.getAttribute("id") !== explainerTaskContainer.getAttribute("task-id")) {
                 taskCard.classList.remove("task-focussed");
             }
 
@@ -691,6 +675,9 @@ async function renderAssignments(assignments) {
         console.log("[renderAssignments] assignments is empty")
         return
     }
+
+    console.log('[renderAssignments] rendering assignments:')
+    console.log(assignments)
 
     let unique_users = new Set();
 
@@ -1884,7 +1871,7 @@ window.onload = function() {
 }
 
 function deleteTaskFromExplainer() {
-    let taskID = explainerTask.getAttribute("task-id");
+    let taskID = explainerTaskContainer.getAttribute("task-id");
     deleteTask(taskID);
 }
 
@@ -2156,14 +2143,14 @@ createProjectButton.addEventListener("pointerup", async () => {
     }
 );
 
-async function editTaskPopup(title, desc, timestamp, assignments){
+async function editTaskPopup(task){
     console.log("[editTaskPopup] Running editTaskPopup")
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="edit-task-popup">
             <p class="edit-task-title">Edit task:</p>
-            <input type="text" placeholder="Task title..." class="edit-task-title-input" value="${title}">
+            <input type="text" placeholder="Task title..." class="edit-task-title-input" value="${task.title}">
 
             <p class="edit-task-title" id="edit-task-description">Assign employees to task:</p>
             <div class="dropdown-and-employee-list">
@@ -2272,22 +2259,14 @@ async function editTaskPopup(title, desc, timestamp, assignments){
 
 
 document.querySelector(".edit-button").addEventListener("pointerup", async () => {
-    let taskID = explainerTask.getAttribute("task-id");
-    let taskElem = document.getElementById(taskID);
-    if (taskElem == null) {
-        return
-    };
-    let currentDescription = taskElem.getAttribute("data-desc");
-    let currentTimestamp = taskElem.getAttribute("data-timestamp");
-    let currentTitle = taskElem.querySelector(".title").innerText;
-    //let currentAssignee = area.querySelector(".users-assigned");
-    //console.log(currentAssignee);
+    let taskID = explainerTaskContainer.getAttribute("task-id");
+    //get task from globalTasksList
+    console.log(globalTasksList)
+    let task = globalTasksList.find((task) => task.taskID == taskID);
+
     console.log("[editButtonClick] edit button clicked");
-    await editTaskPopup(
-        currentTitle,
-        currentDescription,
-        currentTimestamp,
-    );
+    console.log(task)
+    await editTaskPopup(task);
 });
 
 
