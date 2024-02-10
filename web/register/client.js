@@ -105,8 +105,8 @@ async function register() {
         }
     } else {
         fullname = {
-            first: name,
-            last: ""
+            first: null,
+            last: name
         }
     }
 
