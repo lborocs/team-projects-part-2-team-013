@@ -253,6 +253,18 @@ class RestrictedContentConstraint extends Constraint {
     }
 }
 
+class UnsignedIntegerConstraint extends Constraint {
+    public function validate(string $user_column, $user_field) {
+        //error_log("running unsigned integer constraint on" . $user_column . ":" . $user_field);
+        if (!is_int($user_field) || $user_field < 0) {
+            respond_bad_request(
+                "Invalid value for column '$user_column'. Must be an unsigned integer",
+                ERROR_BODY_FIELD_INVALID_DATA
+            );
+        }
+    }
+}
+
 class ContentLengthConstraint extends Constraint {
     public int $min;
     public int $max;
@@ -520,9 +532,13 @@ const TABLE_EMPLOYEE_TASKS = new Table(
             "taskID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true,
             constraints:[new ForeignKeyConstraint(TABLE_TASKS, _TASKID, "db_task_fetch")]
         ),
+        new Column(
+            "employeeTaskManHours", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
+            constraints:[new UnsignedIntegerConstraint()]
+        )
     ],
     "assignment",
-    null
+    "employeeTask"
 );
 
 const TABLE_PERSONALS = new Table(

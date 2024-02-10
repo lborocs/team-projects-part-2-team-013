@@ -15,6 +15,7 @@ const TASK_METHOD_CHECKS = [
         "project_exists",
         "user_is_part_of_project",
         "task_exists",
+        "user_has_access_to_task",
     ],
     "PATCH"=>[
         "duo_arg",
@@ -169,6 +170,48 @@ function r_task_assignments(RequestContext $ctx, string $args) {
 
 }
 
+function r_project_task_manhours(RequestContext $ctx, string $args) {
+
+    $ctx->body_require_fields_as_types(["manHours"=>"integer"]);
+
+    $man_hours = $ctx->request_body["manHours"];
+
+    if ($man_hours < 0) {
+        respond_bad_request(
+            "Manhours must be a positive integer",
+            ERROR_BODY_FIELD_INVALID_TYPE,
+        );
+    }
+
+    $resource_specifiers = explode_args_into_array($args);
+    
+    // ensure resources specifiers are valid hex
+    foreach ($resource_specifiers as $specifier) {
+        if (!@hex2bin($specifier)) {
+            respond_bad_request(
+                "Url resource specifiers are expected to be valid hex (offender ". $specifier .")",
+                ERROR_REQUEST_URL_PATH_PARAMS_INVALID,
+            );
+        }        
+    }
+
+    // ensure that user is part of project
+    object_check_project_exists($ctx, $resource_specifiers);
+    object_check_user_is_part_of_project($ctx, $resource_specifiers);
+
+    // ensure task exists
+    object_check_task_exists($ctx, $resource_specifiers);
+
+    $task_id = $resource_specifiers[1];
+
+    object_check_user_has_access_to_task($ctx, $resource_specifiers);
+    object_check_user_assigned_to_task($ctx, $resource_specifiers);
+    
+    db_task_assign_set_manhours($task_id, $ctx->session->hex_associated_user_id, $man_hours);
+    respond_no_content();
+
+}
+
 
 function r_project_task(RequestContext $ctx, string $args) {
     object_manipulation_generic(TASK_METHOD_CHECKS, TABLE_TASKS, $ctx, $args);
@@ -220,6 +263,19 @@ register_route(new Route(
         "URL_PATH_ARGS_REQUIRED"
     ]
 ));
+
+register_route(new Route(
+    ["PUT"],
+    "/manhours",
+    "r_project_task_manhours",
+    1,
+    [
+        "REQUIRES_BODY",
+        "URL_PATH_ARGS_LEGAL",
+        "URL_PATH_ARGS_REQUIRED"
+    ]
+));
+
 
 register_route(new Route(
     ["GET", "PUT"],

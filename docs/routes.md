@@ -207,7 +207,7 @@ Written/designed by aidan F223129
   - [x] DELETE (delete task)
 
 - [x] **/project/task.php/assignments/:PROJECT_ID:/:TASK_ID:**
-  - [x] GET (get assignments for a task)
+  - [x] GET (get assignments for a task, with manhours spent)
   - [x] PUT (overwrite task assignments) {assignments:[empid1, empid2]}
     ```jsonc
     {
@@ -218,6 +218,9 @@ Written/designed by aidan F223129
       }
     }
     ```
+
+- [x] **/project/task.php/manhours/:PROJECT_ID:/:TASK_ID**
+  - PUT {"manHours":int} (set spent manhours)
 
 ## project.php
 - [x] **/project/project.php/projects?q=search_term**
