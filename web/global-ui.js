@@ -758,6 +758,19 @@ if (topbar.hamburger !== null) {
     })
 }
 
+if (sidebar.closeSidebar !== null) {
+    sidebar.closeSidebar.addEventListener("pointerup", () => {
+
+        sidebar.sidebar.classList.toggle("visible")
+        sidebarContainer.classList.toggle("sidebar-open")
+
+        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+            paragraph.classList.toggle("norender")
+        })
+
+    })
+}
+
 if (sidebar.logout !== null) {
     sidebar.logout.addEventListener("click", () => {
 

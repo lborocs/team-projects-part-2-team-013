@@ -76,19 +76,6 @@ if (sidebar !== null) {
     items = document.querySelectorAll('.sidebar-item');
 }
 
-if (closeSidebar !== null) {
-    closeSidebar.addEventListener("pointerup", () => {
-
-        sidebar.classList.toggle("visible")
-        sidebarContainer.classList.toggle("sidebar-open")
-
-        document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-            paragraph.classList.toggle("norender")
-        })
-
-    })
-}
-
 if (home !== null) {
     home.addEventListener("pointerup", () => {
         window.location.href = "/projects/";
