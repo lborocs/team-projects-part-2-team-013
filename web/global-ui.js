@@ -400,10 +400,11 @@ export function generateAvatarSvg(text, colour) {
  * // returns a data url for an avatar with the initials "FB"
  * nameToAvatar("Firat Batmaz");
  */
-function nameToAvatar(name) {
+function fallbackAvatar(employee, colour) {
+    let name = employeeToName(employee);
     let initials = name.split(" ").map((word) => word[0]).join("");
-    let degree = hash(name) % 360;
-    let colour = hsvToHex(degree, 40, 90);
+    let degree = hash(employee.empID) % 360;
+    colour = colour !== undefined ? colour : hsvToHex(degree, 40, 90);
     console.log(`[nameToAvatar] Generated avatar for ${name}: colour ${colour}`)
     return `data:image/svg+xml;base64,${btoa(generateAvatarSvg(initials, colour))}`;
 }
@@ -412,11 +413,11 @@ function nameToAvatar(name) {
 export function employeeAvatarOrFallback(employee) {
 
     if (employee.deleted) {
-        return nameToAvatar("Deleted User");
+        return fallbackAvatar(employee, "a1a1a1");
     } else if (employee.avatar) {
         return assetToUrl(ASSET_TYPE_EMPLOYEE, employee.empID, employee.avatar.assetID, employee.avatar.contentType);
     } else {
-        return nameToAvatar(employeeToName(employee));
+        return fallbackAvatar(employee);
     }
 }
 
