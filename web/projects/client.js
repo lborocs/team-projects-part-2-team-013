@@ -387,7 +387,7 @@ function setUpTaskEventListeners() {
                         taskCard.remove()
                         calculateTaskCount()
                     }).catch((e) => {
-                        console.log('[DeletTaskButtonsClick] Deletion cancelled');
+                        console.log('[DeleteTaskButtonsClick] Deletion cancelled');
                         console.log(e)
                     });
 
@@ -610,7 +610,6 @@ function findNext(container, y) {
 async function fetchTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
     console.log("[fetchTasks] fetched tasks for " + projID);
-    console.log(data);
     if (data.success != true) {
         return
     }
@@ -654,9 +653,7 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     let state = task.state
     let taskID = task.taskID || "Unknown";
     let expectedManHours = task.expectedManHours; //no safety here because not null i think
-    let assignments = task.assignments || [];
-
-    console.log(task)
+    let assignments = task.assignments || [];    
 
     if (update & RENDER_COLUMN) {
         renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours, assignments);
@@ -770,13 +767,11 @@ async function fetchAndRenderAllProjects() {
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
     const data = await get_api('/project/project.php/projects');
     console.log("[fetchAndRenderAllProjects] fetched projects");
-    console.log(data);
     // process the data here
     if (data.success == true) {
         clearProjectList();
         console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
-        await Promise.all(data.data.projects.map(async (project) => {
-
+        await Promise.all(data.data.projects.map( async (project) => {
             await projectObjectRenderAndListeners(project);
         }));
         return data.data.projects
@@ -1018,8 +1013,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     date = date === null ? "" : date;
     expectedManHours = expectedManHours === null ? "" : expectedManHours;
     assignments = assignments === null ? [] : assignments;
-    console.log("[renderTask] Task createdBy to " + createdBy)
-
 
     let dateToday = (new Date()).getTime();
 
@@ -1174,13 +1167,13 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         // tasks which are overdue
         statusIcon = `<span class="material-symbols-rounded">calendar_clock</span>`;
         overdueContainerClass = "overdue";
-        dateTooltip = `Task overdue by ${-diffInDays} day${-diffInDays !== 1 ? 's' : ''}`;
+        dateTooltip = `Overdue by ${-diffInDays} day${-diffInDays !== 1 ? 's' : ''}`;
 
     } else if (state === 2 && diffInDays > 0) {
 
         // tasks which are finished but have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        dateTooltip = `Task finished but due in ${diffInDays} day${diffInDays !== 1 ? 's' : ''}`;
+        dateTooltip = `Finished but due in ${diffInDays} day${diffInDays !== 1 ? 's' : ''}`;
 
     } else if (state !== 2){
         // tasks which are not finished and have a due date in the future
@@ -1194,7 +1187,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
     let manHoursTooltip;
     if (expectedManHours === null || expectedManHours === 0) {
-        manHoursTooltip = "No man hours set";
+        manHoursTooltip = "Not set";
     } else if (expectedManHours === 3600) {
         manHoursTooltip = "1 expected hour";
     } else {
@@ -1248,7 +1241,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     }
 
     if (assignments.length > 0) {
-        console.log("[Assigned user IDs]: " + assignments);
 
         taskInfo.innerHTML += `
             <div class="users-assigned"></div>
@@ -1357,7 +1349,6 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
 
     let teamLeaderName = global.employeeToName(teamLeader);
 
-    console.log(`[renderProject] using icon: ${icon}`);
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
     let lastAccessedFormatted = lastAccessed ? formatLastAccessed(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
     let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : `<span class="disabled">Not set</span>`;
@@ -1444,9 +1435,7 @@ async function addTask() {
 
     console.log("[addTask] Creating popup")
     let popupDiv = document.querySelector('.popup');
-    console.log(popupDiv)
     let fullscreenDiv = document.querySelector('.fullscreen');
-    console.log("[addTask] before popup")
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
             <div class="popup-title">
@@ -1617,9 +1606,6 @@ async function addTask() {
         })
     })
 
-
-    console.log(popupDiv.innerHTML)
-    console.log("[addTask] after popup")
     fullscreenDiv.style.filter = 'brightness(0.75)';
     let dialog = popupDiv.querySelector('.popupDialog');
     dialog.style.transform = 'translateY(0px)'
@@ -2155,9 +2141,7 @@ createProjectButton.addEventListener("pointerup", async () => {
 async function editTaskPopup(title, desc, timestamp, assignments){
     console.log("[editTaskPopup] Running editTaskPopup")
     let popupDiv = document.querySelector('.popup');
-    console.log(popupDiv)
     let fullscreenDiv = document.querySelector('.fullscreen');
-    console.log("[editTaskPopup] before popup")
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="edit-task-popup">
             <p class="edit-task-title">Edit task:</p>
@@ -2194,8 +2178,6 @@ async function editTaskPopup(title, desc, timestamp, assignments){
     let addButton = dialog.querySelector('.addButton');
     let dateSelector = dialog.querySelector('.add-task-date-input');
     let date = new Date(timestamp).toISOString().split('T')[0];
-    console.log("[editTaskPopup] current date is")
-    console.log(date)
 
     dateSelector.value = date
     
@@ -2332,7 +2314,6 @@ const sleep = (ms) => {
 async function searchAndRenderProjects(search) {
     const data = await get_api('/project/project.php/projects?q=' + search);
     console.log("[searchAndRenderProjects(" + search + ")] fetched projects");
-    console.log(data);
     console.log('.project-row.selected');
     if (data.success == true) {
         clearProjectList();
@@ -2365,8 +2346,7 @@ async function searchTasks(query) {
 async function searchAndRenderTasks() {
     let search = taskSearchInput.value;
     let tasks = await searchTasks(search);
-    console.log("[renderTasksFromSearch] filtered tasks: ");
-    console.log(tasks);
+    console.log("[renderTasksFromSearch] filtered tasks");
     clearRenderedTasks()
     renderTasks(tasks);
 }
