@@ -132,7 +132,7 @@ function r_session_register(RequestContext $ctx, string $args) {
         );
     }
 
-    if (strlen($first_name) == 0) {
+    if ($first_name !== null && strlen($first_name) == 0) {
         respond_bad_request(
             "Expected field firstName to be a non-empty string",
             ERROR_BODY_FIELD_INVALID_DATA
