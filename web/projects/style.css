@@ -775,15 +775,18 @@
 }
 
 .tasklist {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-    width: calc(100% - 2em);
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: grid;
+    padding: 1em;
     padding-top: 0;
-    margin: 0;
-    margin-top: 0;
+    border-radius: 5px;
+    &::-webkit-scrollbar-track {
+        background-color: rgba(0,0,0,0);
+    }
     
-    & table {
+    /* & table {
         border-collapse: collapse;
         width: 100%;
         align-self: center;
@@ -800,7 +803,7 @@
         border-bottom: solid 1px rgba(105,112,125, 0.25);  
     }
 
-    /* this is needed to target the "last" element because the add task button is the last child, even when hidden. */
+    /* this is needed to target the "last" element because the add task button is the last child, even when hidden. *//*
     & tr:nth-last-child(2) td {
         border-bottom: none;
     }
@@ -842,6 +845,145 @@
         color: var(--text-off-black, #0f0f0f);
         transition-duration: 0.08s;
         background-color: var(--light-grey-bg);
+    }
+
+    .disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    } */
+}
+
+.taskTable {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: white;
+
+    & thead {
+        background-color: #fff;
+        color: var(--text-off-black, #0f0f0f);
+        font-weight: 700;
+    }
+
+    & th {
+        font-size: 14px;
+        font-weight: 600;
+        padding: 4px 8px;
+        line-height: 1.5;
+        vertical-align: middle;
+        text-align: left;
+        position: sticky;
+
+        padding: 0.5em;
+        padding-left: 1em;
+        padding-right: 1em;
+        border-bottom: solid 2px var(--team-leader-text-clr, #2f2f2f);
+    }
+
+    & th span {
+        font-size: 22px;
+        color: var(--icon-clr, #777777);
+        transition: 0.2s ease-out;
+        margin-left: 0.25em;
+        margin-right: 0.25em;
+        text-align: center;
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+    
+        .selected {
+            color: var(--text-off-black, #0f0f0f);
+            background-color: var(--light-grey-bg);   
+        }
+    }
+
+    & th span:hover {
+        color: var(--text-off-black, #0f0f0f);
+        transition-duration: 0.08s;
+        background-color: var(--light-grey-bg);
+    }
+
+    .header-td {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.5em;
+
+        .icon {
+            opacity: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: auto;
+            aspect-ratio: 1;
+            transition: 0.1s ease-out;
+
+            & i {
+                font-size: 16px;
+                color: var(--icon-clr, #777777);
+            }
+            
+        }
+    }
+
+    .header-cell:hover {
+        .icon {
+            opacity: 1;
+        }
+    }
+    & td {
+        padding: 6px 8px;
+        line-height: 1.5;
+        vertical-align: middle;
+        text-align: left;
+        font-size: 14px;
+        border-bottom: solid 1px var(--border-clr);
+
+        padding: 0.5em;
+        padding-left: 1em;
+        padding-right: 1em;
+        border-bottom: solid 1px rgba(105,112,125, 0.25);  
+    }
+
+    & td:last-child {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+
+    & tr {
+        background-color: transparent;
+        transition: 0.1s ease-out;
+        cursor: pointer;
+
+    }
+
+    
+    & tr:last-child {
+        border-bottom: solid 2px var(--border-clr, #e0e0e0);
+        & td {
+            border-bottom: solid 2px var(--border-clr, #e0e0e0);
+        }
+    }
+
+    & tbody tr:hover {
+        background-color: #388bff11;
+        transition-duration: 0.05s;
+
+        .project-card .name {
+            text-decoration: underline;
+        }
+    }
+
+    & tr:hover td:last-child {
+        opacity: 1;
+        transition-duration: 0.05s;
     }
 
     .disabled {
