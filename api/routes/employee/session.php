@@ -128,6 +128,19 @@ function r_session_register(RequestContext $ctx, string $args) {
         );
     }
 
+    if (strlen($first_name) == 0) {
+        respond_bad_request(
+            "Expected field firstName to be a non-empty string",
+            ERROR_BODY_FIELD_INVALID_DATA
+        );
+    }
+    if (strlen($last_name) == 0) {
+        respond_bad_request(
+            "Expected field lastName to be a non-empty string",
+            ERROR_BODY_FIELD_INVALID_DATA
+        );
+    }
+
     // input validation
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
