@@ -148,7 +148,7 @@ async function getTaskCompletion() {
     let inProgress = 0;
     let toDo = 0;
     projectData.tasks.tasks.forEach(task => {
-        switch (task.status) {
+        switch (task.state) {
             case 0:
                 toDo++;
                 break;
