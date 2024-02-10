@@ -9,6 +9,7 @@ const RENDER_BOTH = 3;
 var globalTasksList = [];
 var globalAssignments = [];
 var globalCurrentProject;
+var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
@@ -293,12 +294,12 @@ function showTaskInExplainer(taskCard) {
     let taskID = taskCard.getAttribute("id");
     explainerTaskContainer.setAttribute("task-id", taskID);
     //get the task from globalTasksList
-    let currentTask = globalTasksList.find((task) => {
+    globalCurrentTask = globalTasksList.find((task) => {
         return task.taskID == taskID;
     });
-    console.log(currentTask)
-    explainerTask = currentTask
-    explainerTaskTitle.innerHTML = currentTask.title;
+    console.log(globalCurrentTask)
+    explainerTask = globalCurrentTask
+    explainerTaskTitle.innerHTML = globalCurrentTask.title;
     explainerTaskTitle.classList.remove("norender");
     
     explainerTaskManhours.innerHTML = `
@@ -306,20 +307,20 @@ function showTaskInExplainer(taskCard) {
         hourglass_empty
     </span>
     <div class="manhours">
-        ${currentTask.expectedManHours/3600} Manhour${currentTask.expectedManHours !== 3600 ? 's' : ''}
+        ${globalCurrentTask.expectedManHours/3600} Manhour${globalCurrentTask.expectedManHours !== 3600 ? 's' : ''}
     </div>
     `;
 
-    explainerTaskDescription.innerHTML = currentTask.description ? currentTask.description : "<i>No description...</i>";
+    explainerTaskDescription.innerHTML = globalCurrentTask.description ? globalCurrentTask.description : "<i>No description...</i>";
 
-    let dueDate = new Date(currentTask.dueDate);
+    let dueDate = new Date(globalCurrentTask.dueDate);
     explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "No due date";
 
     let statusElement = document.querySelector(".status");
-    statusElement.innerHTML = currentTask.state == 0 ? "Not Started" : currentTask.state == 1 ? "In Progress" : "Finished";
+    statusElement.innerHTML = globalCurrentTask.state == 0 ? "Not Started" : globalCurrentTask.state == 1 ? "In Progress" : "Finished";
     animate(document.querySelector(".task-overview"), "flash")
 
-    global.setBreadcrumb(["Projects", globalCurrentProject.name, currentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + taskID])
+    global.setBreadcrumb(["Projects", globalCurrentProject.name, globalCurrentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + globalCurrentTask.taskID])
 }
 
 
@@ -2161,7 +2162,7 @@ async function editTaskPopup(task){
                 </div>
             </div>
             <p class="edit-task-title" id="edit-task-description">Edit task description:</p>
-            <textarea placeholder="Edit task description..." class="edit-task-description-input">${desc.trimStart().trimEnd()}
+            <textarea placeholder="Edit task description..." class="edit-task-description-input">${task.description.trimStart().trimEnd()}
             </textarea>
             <div class="date-picker">
                 <label for="due-date" class="due-date-prompt">Due Date:</label>
@@ -2176,11 +2177,13 @@ async function editTaskPopup(task){
 
     fullscreenDiv.style.filter = 'brightness(0.6)';
     let dialog = popupDiv.querySelector('.popupDialog');
+    dialog.style.transform = 'translateY(0px)'
+    dialog.style.opacity = '1';
     let editButton = dialog.querySelector('.editButton');
     let closeButton = dialog.querySelector('.closeButton');
     let addButton = dialog.querySelector('.addButton');
     let dateSelector = dialog.querySelector('.add-task-date-input');
-    let date = new Date(timestamp).toISOString().split('T')[0];
+    let date = new Date(task.dueDate).toISOString().split('T')[0];
 
     dateSelector.value = date
     
