@@ -88,4 +88,33 @@ const ACCOUNT_PASSWORD_MIN_LENGTH = 10;
 const ACCOUNT_EMAIL_MAX_LENGTH = 255;
 const PASSWORD_SPECIAL_CHARS_REGEX = "/[!@#$%^&*()\-_=+{};:,<.>'`\"\ ]/";
 const PASSWORD_BANNED_PHRASES = ["password","makeitall"];
+
+
+// preferences
+const PREFERENCES_MAX_LENGTH = 1024; // 1KB
+const DEFAULT_EMPLOYEE_PREFERENCES = [
+    'sidebarIsOpen' => false,
+    'taskView' => 'board',
+    'taskSort' => 'none',
+    'taskOrder' => 'desc',
+    'taskFilters' =>[
+        'managerMine' => false,
+        'group' => false,
+        'single' => false,
+        'finished' => false,
+        'inProgress' => false,
+        'notStarted' => false,
+        'overdue' => false,
+        'notOverdue' => false,
+   ],
+    'projectSort' => 'none',
+    'projectOrder' => 'desc',
+    'projectFilters' =>[
+        'managerMine' => false,
+        'teamLeader' => false,
+        'overdue' => false,
+        'notOverdue' => false,
+   ],
+];
+
 ?>
