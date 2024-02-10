@@ -24,6 +24,12 @@ function auth_session_issue_new($account, $num_renews = 0) {
 }
 
 function validate_password_constraints(string $password, Array $banned_words) {
+
+    $banned_words = array_filter($banned_words, function($word) {
+        return strlen($word) > 2;
+    });
+
+
     if (ACCOUNT_PASSWORD_MIN_LENGTH > strlen($password) || strlen($password) > ACCOUNT_PASSWORD_MAX_LENGTH) {
         respond_bad_request(
             "Expected password to be between ". ACCOUNT_PASSWORD_MIN_LENGTH ." and ". ACCOUNT_PASSWORD_MAX_LENGTH ." bytes",
