@@ -932,19 +932,25 @@ sortArray.forEach((sortObject) => {
     sortObject.addEventListener("pointerup", () => {
         //sort out what criteria to sort by
         const cl = sortObject.classList;
+        const symbol = sortObject.querySelector('.material-symbols-rounded');
         if (cl.contains("selected")) {
             if(cl.contains("asc")) {
                 cl.remove("asc");
                 cl.add("desc");
+                if (symbol) symbol.innerHTML = "arrow_drop_down";
             } else {
                 cl.remove("desc");
                 cl.add("asc");
+                if (symbol) symbol.innerHTML = "arrow_drop_up";
             }
         } else  {
             sortArray.forEach((sortObject) => {
                 sortObject.classList.remove("selected", "asc", "desc");
+                const otherSymbol = sortObject.querySelector('.material-symbols-rounded');
+                if (otherSymbol) otherSymbol.innerHTML = "arrow_drop_down";
             });
             cl.add("selected", "asc");
+            if (symbol) symbol.innerHTML = "arrow_drop_up";
         }
         
         let ascending = cl.contains("asc");
