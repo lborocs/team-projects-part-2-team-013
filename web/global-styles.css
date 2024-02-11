@@ -60,6 +60,11 @@ input {
     caret-color: black;
 }
 
+#mobile-back {
+    display : none;
+
+}
+
 .breadcrumb {
     display:flex;
     flex-direction: row;
@@ -747,6 +752,10 @@ button:hover {
         .content {
             max-height: 90dvh;
         }
+    }
+
+    #mobile-back {
+        display: flex;
     }
 
     .breadcrumb-navigator {
