@@ -317,6 +317,8 @@ input {
     border-radius: 3px;
     transition: 0.1s ease-out;
     transition: margin 0s ease-out;
+
+    text-decoration: none;
     
     gap: 0.5em;
     user-select: none;

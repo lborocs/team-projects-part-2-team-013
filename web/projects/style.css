@@ -148,6 +148,9 @@
             text-align: left;
             font-size: 14px;
             border-bottom: solid 1px var(--border-clr);
+            & a {
+                text-decoration: none;
+            }
         }
 
         & td:last-child {

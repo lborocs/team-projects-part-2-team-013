@@ -142,21 +142,11 @@ function setActivePane(newPane) {
 }
 
 
-//event listeners
-function setUpAllProjectRowEventListeners() {
-    projectRows = document.querySelectorAll(".project-row")
-    projectRows.forEach((projectRow, i) => {
-        projectRow.addEventListener("pointerup", () => {
-            projectSwitchToOnClick(projectRow);
-
-        })
-    })
-}
 
 function setUpProjectRowEventListeners(projectRow) {
-    projectRow.addEventListener("pointerup", () => {
-        projectSwitchToOnClick(projectRow);
-
+    projectRow.addEventListener("pointerup", (e) => {
+        if (e.button !== 0) { return}
+        projectSwitchToOnClick(projectRow);        
     })
 }
 
@@ -1369,39 +1359,47 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
     let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : `<span class="disabled">Not set</span>`;
     project.innerHTML = `
         <td>
-            <div class="project-card">
-                <div class="icon">
-                    <span class="material-symbols-rounded">${icon}</span>
+            <a href="/projects/#${ID}">
+                <div class="project-card">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">${icon}</span>
+                    </div>
+                    <div class="name">
+                        ${title}
+                    </div>
                 </div>
-                <div class="name">
-                    ${title}
-                </div>
-            </div>
+            </a>
         </td>
         <td>
-            <div class="name-card">
-                <div class="icon">
-                    <img src="${global.employeeAvatarOrFallback(teamLeader)}" class="avatar">
+            <a href="/projects/#${ID}">
+                <div class="name-card">
+                    <div class="icon">
+                        <img src="${global.employeeAvatarOrFallback(teamLeader)}" class="avatar">
+                    </div>
+                    <div class="name">
+                        ${teamLeaderName}
+                    </div>
                 </div>
-                <div class="name">
-                    ${teamLeaderName}
-                </div>
-            </div>
+            <a href="/projects/#${ID}">
         </td>
         <td>${date}</td>
         <td>
-            <div class="tooltip tooltip-above">
-                <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
-                ${lastAccessedFormatted}
-            </div>
+            <a href="/projects/#${ID}">
+                <div class="tooltip tooltip-above">
+                    <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
+                    ${lastAccessedFormatted}
+                </div>
+            <a href="/projects/#${ID}">
         </td>
         <td>${dueDateFormatted}</td>
         <td>
-            <div class="icon-button no-box project-actions">
-                <span class="material-symbols-rounded">
-                    more_horiz
-                </span>
-            </div>
+            <a href="/projects/#${ID}">
+                <div class="icon-button no-box project-actions">
+                    <span class="material-symbols-rounded">
+                        more_horiz
+                    </span>
+                </div>
+            <a href="/projects/#${ID}">
         </td>
     `;
 

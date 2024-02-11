@@ -17,34 +17,34 @@ logo.classList.add('fullLogo');
 logo.src = 'https://cdn.013.team/assets/wordmark-large.png';
 logo.alt = 'logo';
 
-export const closeSidebar = document.createElement('div')
+export const closeSidebar = document.createElement('a')
 closeSidebar.classList.add('small-icon')
 closeSidebar.id = 'close-sidebar';
 
-export const home = document.createElement('div')
+export const home = document.createElement('a')
 home.classList.add('sidebar-item')
 home.id = 'home';
-home.setAttribute('data-url', '/projects/');
+home.setAttribute('href', '/projects/');
 
-export const personal = document.createElement('div')
+export const personal = document.createElement('a')
 personal.classList.add('sidebar-item')
 personal.id = 'mylist';
-personal.setAttribute('data-url', '/personal/');
+personal.setAttribute('href', '/personal/');
 
-export const wiki = document.createElement('div')
+export const wiki = document.createElement('a')
 wiki.classList.add('sidebar-item')
 wiki.id = 'wiki';
-wiki.setAttribute('data-url', '/wiki/');
+wiki.setAttribute('href', '/wiki/');
 
-export const workload = document.createElement('div')
+export const workload = document.createElement('a')
 workload.classList.add('sidebar-item', 'manager-only', 'norender')
 workload.id = 'workload';
-workload.setAttribute('data-url', '/workload/');
+workload.setAttribute('href', '/workload/');
 
-export const training = document.createElement('div')
+export const training = document.createElement('a')
 training.classList.add('sidebar-item', 'manager-only', 'norender')
 training.id = 'training';
-training.setAttribute('data-url', '/dashboard/');
+training.setAttribute('href', '/dashboard/');
 
 export const logout = document.createElement('div')
 logout.classList.add('sidebar-item')
@@ -76,35 +76,6 @@ if (sidebar !== null) {
     items = document.querySelectorAll('.sidebar-item');
 }
 
-if (home !== null) {
-    home.addEventListener("pointerup", () => {
-        window.location.href = "/projects/";
-    });
-}
-
-if (personal !== null) {
-    personal.addEventListener("pointerup", () => {
-        window.location.href = "/personal/";
-    });
-}
-
-if (wiki !== null) {
-    wiki.addEventListener("pointerup", () => {
-        window.location.href = "/wiki/";
-    });
-}
-
-if (workload !== null) {
-    workload.addEventListener("pointerup", () => {
-        window.location.href = "/workload/";
-    });
-}
-
-if (training !== null) {
-    training.addEventListener("pointerup", () => {
-        window.location.href = "/dashboard/";
-    });
-}
 
 //selects the right sidebar item when clicked
 let selectedItem = null;
@@ -129,7 +100,7 @@ if (items !== null) {
             return
         }
 
-        if (item.getAttribute('data-url') === window.location.pathname) {
+        if (item.getAttribute('href') === window.location.pathname) {
             item.classList.add("selected")
         }
     })
