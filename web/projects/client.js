@@ -1609,6 +1609,7 @@ async function addTask() {
     let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
+    console.log(employeeList)
     employeeList.forEach((emp) => {
         let emp_name = global.employeeToName(emp);
         let avatar = global.employeeAvatarOrFallback(emp);

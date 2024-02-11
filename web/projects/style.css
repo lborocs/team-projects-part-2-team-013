@@ -221,15 +221,6 @@
     }
 }
 
-#project-back:hover {
-    background-color: var(--view-selected-bg, rgb(246,246,245));
-    color: #000000;
-    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
-    transition: 0.15s ease-out;
-    cursor: pointer;
-    border-radius: 4px;
-}
-
 #new-project {
     margin-left: auto;
 }
@@ -241,10 +232,10 @@
     align-items: center;
     gap: 0.5em;
     height: 3em;
-    width: 100%;
+    width: calc(100% - 2em);
     padding-bottom: 0;
     margin-bottom: 0.75em;
-    padding: 10px 10px 0 10px;
+    padding-top: 10px;
     font-weight: 600;
     background-color: transparent;
 
@@ -405,25 +396,7 @@
 }
 
 .viewport-button {
-    display: flex;
-    align-items: center;
-    aspect-ratio: 1;
-    color: #555555;
-    cursor: pointer;
-    border-radius: 8px;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-top: 0.2em;
-    padding-bottom: 0.2em;
-    transition: 0.1s ease-out;
     margin-left: auto;
-    user-select: none;
-}
-
-.viewport-button:hover {
-    color: var(--text-off-black, #0f0f0f);
-    background-color: var(--white, white);
-    transition-duration: 0.1s;
 }
 
 .taskarea {
