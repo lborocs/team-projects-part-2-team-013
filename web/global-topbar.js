@@ -61,6 +61,17 @@ search.innerHTML = `
     </div>
 `;
 
+search.querySelector('#delete-search').addEventListener('click', () => {
+    document.getElementById('search').value = '';
+});
+
+search.querySelector('#search').addEventListener('keypress', (function(event) {
+    if ((search.querySelector('#search').value === '') || (event.key != 'Enter')) {
+        return
+    }
+    window.location.href = `/search/?${search.querySelector('#search').value}`;
+}));
+
 notificationPopover.innerHTML = `
     <div class="icon-button no-box">
         <div class="button-icon">
