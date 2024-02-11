@@ -243,6 +243,7 @@
     height: 3em;
     width: 100%;
     padding-bottom: 0;
+    margin-bottom: 0.75em;
     padding: 10px 10px 0 10px;
     font-weight: 600;
     background-color: transparent;
@@ -575,7 +576,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.75em;
     background-color: inherit;
 }
 
@@ -612,7 +612,7 @@
     gap: 1em;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    margin-top: 0;
+    margin-top: 0.75em;
     margin-left: 1em;
     margin-right: 1em;
     justify-content: center;
@@ -683,6 +683,12 @@
     gap: 0.85em;
     width: clamp(22em, 32%, 34em);
     transition: 0.08s ease-out;
+}
+
+.taskcolumn.highlight {
+    outline: solid 2px #388bffaa;
+    outline-offset: -1px;
+    transition: outline 0.1s ease-out;
 }
 
 .title-container {
@@ -786,7 +792,7 @@
     overflow-x: hidden;
     display: grid;
     padding: 1em;
-    padding-top: 0;
+    padding-top: 0.75em;
     border-radius: 5px;
     &::-webkit-scrollbar-track {
         background-color: rgba(0,0,0,0);

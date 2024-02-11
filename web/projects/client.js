@@ -459,7 +459,7 @@ function setUpTaskEventListeners() {
             taskCard.classList.add("clicked")
             taskCard.classList.add("task-focussed")
         });
-        taskCard.addEventListener("pointerup", (e) => {
+        taskCard.addEventListener("click", (e) => {
 
             if (e.target.classList.contains("context-menu")) {
                 return
@@ -488,6 +488,10 @@ function setUpTaskEventListeners() {
         taskCard.addEventListener("dragend", () => {
             taskCard.classList.remove("beingdragged");
             taskCard.classList.remove("clicked");
+
+            taskColumns.forEach((column) => {
+                column.classList.remove("highlight")
+            })
 
             if (taskCard.getAttribute("id") !== explainerTaskContainer.getAttribute("task-id")) {
                 taskCard.classList.remove("task-focussed");
@@ -527,6 +531,8 @@ taskColumns.forEach((taskColumn) => {
         e.preventDefault()
         const afterElement = findNext(taskColumn, e.clientY)
 
+        taskColumn.classList.add("highlight")
+
         // optimisation: redrawing is crazy expensive so we only
         // want to redraw if the user has actually moved the task
         if (afterElement == taskDragLastDrawnElement && taskColumn == taskDragLastDrawnColumn) {
@@ -534,6 +540,13 @@ taskColumns.forEach((taskColumn) => {
         } else {
             taskDragLastDrawnElement = afterElement;
             taskDragLastDrawnColumn = taskColumn;
+
+            taskColumns.forEach((column) => {
+                column.classList.remove("highlight")
+            })
+
+            taskColumn.classList.add("highlight")
+
         }
         console.log("[taskColumnDragover] inserting above", afterElement?.getAttribute("data-title"))
         const draggable = document.querySelector(".beingdragged")
