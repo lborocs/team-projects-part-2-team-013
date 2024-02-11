@@ -324,7 +324,7 @@ function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
             $expectedManHours,
             null
         ],
-        "sssssiiiii"
+        "sssssiiiiii"
     )) {
 
         $data["taskID"] = $taskID;
