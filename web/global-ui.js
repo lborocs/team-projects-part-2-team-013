@@ -982,6 +982,13 @@ function userIconContextMenu() {
 }
 
 export function setBreadcrumb(breadcrumbPaths, hrefs) {
+
+    if (checkMutex("locationHash")) {
+        console.log("[setBreadcrumb] locationHash mutex is locked, ignoring setBreadcrumb");
+        return;
+    }
+    const id = takeMutex("locationHash");
+
     let breadcrumb = document.querySelector(".breadcrumb")
     if (breadcrumb === null) {
         return;
@@ -1028,8 +1035,9 @@ export function setBreadcrumb(breadcrumbPaths, hrefs) {
     
     console.log("[setBreadcrumb] updating hash to " + last);
 
-    const id = takeMutex("locationHash");
-    document.location.hash = new URL(last, document.location).hash;
+    const url = new URL(last, document.location);
+    document.location.hash = url.hash;
+
     releaseMutex("locationHash", id);
 }
 
@@ -1057,7 +1065,7 @@ window.addEventListener("popstate", async (e) => {
         return;
     }
 
-    await new Promise(r => setTimeout(r, 150));
+    await new Promise(r => setTimeout(r, 50));
     dispatchBreadcrumbnavigateEvent(e.type);
 });
 
