@@ -1464,7 +1464,7 @@ function formatLastAccessed(date) {
     } else if (weeks > 0) {
         return weeks === 1 ? 'Last week' : `${weeks} weeks ago`;
     } else {
-        return days === 1 ? 'Yesterday' : `${days} days ago`;
+        return days <= 1 ? 'Yesterday' : `${days} days ago`;
     }
 }
 async function addTask() {
