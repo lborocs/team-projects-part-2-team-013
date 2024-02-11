@@ -144,14 +144,6 @@ function setActivePane(newPane) {
 }
 
 
-
-function setUpProjectRowEventListeners(projectRow) {
-    projectRow.addEventListener("pointerup", (e) => {
-        if (e.button !== 0) { return}
-        projectSwitchToOnClick(projectRow);        
-    })
-}
-
 views.forEach((view, i) => {
     
     view.addEventListener("pointerup", () => {
