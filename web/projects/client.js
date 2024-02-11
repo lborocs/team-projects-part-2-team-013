@@ -1192,14 +1192,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         dateTooltip = `Finished ${-diffInDays} day${-diffInDays !== 1 ? 's' : ''} ago`;
     }
 
-    let manHoursTooltip;
-    if (expectedManHours === null || expectedManHours === 0) {
-        manHoursTooltip = "Not set";
-    } else if (expectedManHours === 3600) {
-        manHoursTooltip = "1 expected hour";
-    } else {
-        manHoursTooltip = `${expectedManHours/3600} expected hours`;
-    }
     let taskInfo = document.createElement("div");
     taskInfo.classList.add("task-info");
     if (date !== "" || expectedManHours !== 0 || desc !== "<p><br></p>") {
@@ -1220,6 +1212,18 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     };
 
     if (expectedManHours !== 0) {
+        let manHours = expectedManHours / 3600;
+        let timeDisplay;
+        let manHoursTooltip;
+        if (manHours < 1) {
+            let manMinutes = manHours * 60;
+            timeDisplay = `${manMinutes.toFixed(0)} Minute${manMinutes !== 1 ? 's' : ''}`;
+            manHoursTooltip = `${manMinutes.toFixed(0)} expected minute${manMinutes !== 1 ? 's' : ''}`;
+        } else {
+            manHours = Number.isInteger(manHours) ? manHours : manHours.toFixed(2);
+            timeDisplay = `${manHours} Hour${manHours !== 1 ? 's' : ''}`;
+            manHoursTooltip = `${manHours} expected hour${manHours !== 1 ? 's' : ''}`;
+        }
         taskInfo.innerHTML += `
 
             <div class="tooltip tooltip-under manhours-container status-container">
@@ -1228,12 +1232,11 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                 hourglass_empty
                 </span>
                 <div class="manhours">
-                    ${expectedManHours/3600} Hour${expectedManHours !==  3600? 's' : ''}
+                    ${timeDisplay}
                 </div>
             </div>
         `;
     }
-        
 
     if (desc !== "<p><br></p>" && desc !== null) {
         taskInfo.innerHTML += `
