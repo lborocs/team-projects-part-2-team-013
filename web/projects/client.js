@@ -710,8 +710,12 @@ async function renderAssignments(assignments) {
                 usersAssigned.appendChild(assignmentElem);
             } else if (count === 3) {
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
+
+                const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
+                const url = "data:image/svg+xml;base64," + btoa(icon);
+            
                 assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
-                <img src="${additionalUsers}" class="task-avatar">`
+                <img src="${url}" class="task-avatar">`
                 usersAssigned.appendChild(assignmentElem);
             }
             taskUserCount.set(assignment.task.taskID, count + 1);
