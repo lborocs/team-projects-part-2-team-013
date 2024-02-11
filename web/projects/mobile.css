@@ -70,13 +70,16 @@
         position: relative;
         z-index: 0;
         justify-content: flex-start;
-        margin: 0 10px;
+        align-content: space-between;
+        margin: 1em;
+        gap: 0;
     }
 
     .view {
         font-size: 1.1em;
         margin-left: 0;
-        margin-right: 10px;
+        margin-right: 0.5em;
+        margin-bottom: 0.5em;
     }
 
     .search {
@@ -191,10 +194,18 @@
 
     .taskcolumn {
         width: auto;
-        flex: 0 0 22em;
+        flex: 0 0 20em;
 
         scroll-snap-align: start;
         scroll-snap-stop: normal;
+
+        .title-container {
+            width: calc(100% - 1em);
+        }
+
+        .task {
+            width: calc(100% - 1em);
+        }
 
     }
 
@@ -211,6 +222,7 @@
     .viewport {
         width: 100%;
         height: 100%;
+        gap: 0;
     }
 
    
@@ -262,6 +274,10 @@
 
     .projects-container {
         height: 100%;
+    }
+
+    #add-task-button {
+        display: none;
     }
 
 
