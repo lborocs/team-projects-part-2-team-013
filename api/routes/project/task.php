@@ -322,6 +322,7 @@ function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
             $createdAt,
             $dueDate,
             $expectedManHours,
+            null
         ],
         "sssssiiiii"
     )) {
