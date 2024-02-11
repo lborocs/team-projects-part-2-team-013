@@ -888,7 +888,7 @@
         padding: 0.5em;
         padding-left: 1em;
         padding-right: 1em;
-        border-bottom: solid 2px var(--team-leader-text-clr, #2f2f2f);
+        border-bottom: solid 2px var(--border-clr);
     }
 
     & th span {
