@@ -318,7 +318,7 @@ function setUpTaskEventListeners() {
         let contextMenuButton = taskCard.querySelector(".context-menu");
         let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
 
-        contextMenuButton.addEventListener("pointerup", (e) => {
+        contextMenuButton.addEventListener("click", (e) => {
             e.stopPropagation();
             //closes the rest of them first
             let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
@@ -459,13 +459,18 @@ function setUpTaskEventListeners() {
             taskCard.classList.add("clicked")
             taskCard.classList.add("task-focussed")
         });
-        taskCard.addEventListener("pointerup", (e) => {
+        taskCard.addEventListener("click", (e) => {
 
             if (e.target.classList.contains("context-menu")) {
                 return
             }
 
             if (taskCard.classList.contains("beingdragged")) {
+                return
+            }
+
+            //right click
+            if (e.button == 2) {
                 return
             }
 
@@ -488,6 +493,10 @@ function setUpTaskEventListeners() {
         taskCard.addEventListener("dragend", () => {
             taskCard.classList.remove("beingdragged");
             taskCard.classList.remove("clicked");
+
+            taskColumns.forEach((column) => {
+                column.classList.remove("highlight")
+            })
 
             if (taskCard.getAttribute("id") !== explainerTaskContainer.getAttribute("task-id")) {
                 taskCard.classList.remove("task-focussed");
@@ -527,6 +536,8 @@ taskColumns.forEach((taskColumn) => {
         e.preventDefault()
         const afterElement = findNext(taskColumn, e.clientY)
 
+        taskColumn.classList.add("highlight")
+
         // optimisation: redrawing is crazy expensive so we only
         // want to redraw if the user has actually moved the task
         if (afterElement == taskDragLastDrawnElement && taskColumn == taskDragLastDrawnColumn) {
@@ -534,6 +545,13 @@ taskColumns.forEach((taskColumn) => {
         } else {
             taskDragLastDrawnElement = afterElement;
             taskDragLastDrawnColumn = taskColumn;
+
+            taskColumns.forEach((column) => {
+                column.classList.remove("highlight")
+            })
+
+            taskColumn.classList.add("highlight")
+
         }
         console.log("[taskColumnDragover] inserting above", afterElement?.getAttribute("data-title"))
         const draggable = document.querySelector(".beingdragged")
@@ -1437,24 +1455,19 @@ function formatLastAccessed(date) {
     const months = Math.floor(days / 30);
     const years = Math.floor(days / 365);
 
-    if (years > 0) {
+    if (now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate()) {
+        return `Today`;
+    } else if (years > 0) {
         return `${years} year${years > 1 ? 's' : ''} ago`;
     } else if (months > 0) {
         return `${months} month${months > 1 ? 's' : ''} ago`;
     } else if (weeks > 0) {
         return weeks === 1 ? 'Last week' : `${weeks} weeks ago`;
-    } else if (days > 0) {
-        return days === 1 ? 'Yesterday' : `${days} days ago`;
-    } else if (hours > 0) {
-        return hours === 1 ? 'An hour ago' : `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else if (minutes > 0) {
-        return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
     } else {
-        return `Just now`;
+        return days <= 1 ? 'Yesterday' : `${days} days ago`;
     }
 }
 async function addTask() {
-    
 
     console.log("[addTask] Creating popup")
     let popupDiv = document.querySelector('.popup');
@@ -1596,6 +1609,7 @@ async function addTask() {
     let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
+    console.log(employeeList)
     employeeList.forEach((emp) => {
         let emp_name = global.employeeToName(emp);
         let avatar = global.employeeAvatarOrFallback(emp);
@@ -2451,6 +2465,23 @@ document.getElementById("delete-task-search").addEventListener("pointerup", () =
     searchAndRenderTasks()
 })
 
+let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th"); // these will be defined by classes later
+projectTableHeaders.forEach((header) => {
+    header.addEventListener("click", (e) => {
+        if (!header.classList.contains("sorting-by")) {
+            projectTableHeaders.forEach((header) => {
+                header.classList.remove("sorting-by");
+            });
+            header.classList.add("sorting-by");
+            return;
+        }
+        if (header.classList.contains("sorting-by")) {
+            header.classList.toggle("reverse");
+        }
+
+
+    });
+})
 
 const sleep = (ms) => {
     return new Promise((resolve) => {

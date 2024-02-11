@@ -63,14 +63,18 @@
                 <div class="taskarea">
                     <div class="viewport">
                         <div class="project-bar">
-                            <div class="icon" id="project-back">
-                                <i class="fas fa-chevron-left"></i>
+                            <div class="icon-button" id="project-back">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">arrow_back</span>
+                                </div>
                             </div>
                             <div class="title" id="project-title">
                                 Project Name
                             </div>
-                            <div class="viewport-button" id="explainer-show-hide">
-                                <span class="material-symbols-rounded">right_panel_open</span>
+                            <div class="icon-button viewport-button" id="explainer-show-hide">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">arrow_upward</span>
+                                </div>
                             </div>
                         </div>
                         <div class="views">
@@ -264,6 +268,16 @@
                     <div class="title">
                         Projects
                     </div>
+                    <div class="text-button blue manager-only norender" id="new-project">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                add
+                            </span>
+                        </div>
+                        <div class="button-text">
+                            New Project
+                        </div>
+                    </div>
                 </div>
                 <div class="projects-container">
                     <div class="search-row">
@@ -309,16 +323,50 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-button blue manager-only norender" id="new-project">
-                            <div class="button-icon">
-                                <span class="material-symbols-rounded">
-                                    add
-                                </span>
+
+                        <div class="project-table-pagination">
+                        <div class="label">
+                            Projects per page
+                        </div>
+                        <div class="dropdown" id="projects-per-page" tabindex="0">
+                            <div class="dropdown-text">
+                                10
                             </div>
-                            <div class="button-text">
-                                New Project
+                            <div class="dropdown-chevron">
+                                <span class="material-symbols-rounded">expand_more</span>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-option">
+                                    10
+                                </div>
+                                <div class="dropdown-option">
+                                    25
+                                </div>
+                                <div class="dropdown-option">
+                                    50
+                                </div>
+                                <div class="dropdown-option">
+                                    100
+                                </div>
                             </div>
                         </div>
+                            
+
+                        <div class="left-arrow icon-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">arrow_back</span>
+                            </div>
+                        </div>
+                        <div class="page-number">
+                            1 / 12
+                        </div>
+                        <div class="right-arrow icon-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+                        
                     </div>
                     <div class="project-table-div">
                         <table id="projects-table">
@@ -330,7 +378,7 @@
                                                 Name
                                             </div>
                                             <div class="icon">
-                                                <i class="far fa-sort"></i>
+                                                <span class="material-symbols-rounded">arrow_drop_down</span>
                                             </div>
                                         </div>
                                     </th>
@@ -340,7 +388,7 @@
                                                 Team Leader
                                             </div>
                                             <div class="icon">
-                                                <i class="far fa-sort"></i>
+                                                <span class="material-symbols-rounded">arrow_drop_down</span>
                                             </div>
                                         </div>
                                     </th>
@@ -350,13 +398,18 @@
                                                 Creation Date
                                             </div>
                                             <div class="icon">
-                                                <i class="far fa-sort"></i>
+                                                <span class="material-symbols-rounded">arrow_drop_down</span>
                                             </div>
                                         </div>
                                     </th>
-                                    <th>
+                                    <th class="sorting-by">
                                         <div class="header-td">
-                                            Last Accessed
+                                            <div class="name">
+                                                Last Accessed
+                                            </div>
+                                            <div class="icon">
+                                                <span class="material-symbols-rounded">arrow_drop_down</span> 
+                                            </div>
                                         </div>
                                     </th> 
                                     <th>
@@ -365,7 +418,7 @@
                                                 Due Date
                                             </div>
                                             <div class="icon">
-                                                <i class="far fa-sort"></i>
+                                                <span class="material-symbols-rounded">arrow_drop_down</span>
                                             </div>
                                         </div>
                                     </th>
@@ -378,40 +431,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- <tr class="project-row">
-                                    <td>
-                                        <div class="project-card">
-                                            <div class="icon">
-                                                <i class="fas fa-users"></i>
-                                            </div>
-                                            <div class="name">
-                                                Myname Jeff's Project
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>3rd November 2023</td>
-                                    <td>
-                                        <div class="name-card">
-                                            <div class="icon">
-                                                <img src="data:image/svg+xml;base64,CiAgICA8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI1NnB4IiBoZWlnaHQ9IjI1NnB4IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiIgdmVyc2lvbj0iMS4xIj4KICAgICAgICA8Y2lyY2xlIGZpbGw9IiM4OWU1YjQiIGN4PSIxMjgiIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiBjeT0iMTI4IiByPSIxMjgiLz4KICAgICAgICA8dGV4dCB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHN0eWxlPSJjb2xvcjogIzAwMDsgbGluZS1oZWlnaHQ6IDE7IGZvbnQtZmFtaWx5OiAnT3BlbiBTYW5zJywgc2Fucy1zZXJpZiIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTEyIiBmb250LXdlaWdodD0iNDAwIiBkeT0iLjFlbSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0iIzAwMCIgeD0iNTAlIiB5PSI1MCUiPkpTPC90ZXh0PgogICAgPC9zdmc+" class="avatar">
-                                            </div>
-                                            <div class="name">
-                                                Jamie Skitt
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        Yesterday
-                                    </td>
-                                    <td>
-                                        <div class="icon-button no-box">
-                                            <i class="fa-solid fa-ellipsis"></i>
-                                        </div>
-                                    </td>
-                                </tr> -->
+                            
                             </tbody>
                         </table>
                     </div>
+                    
                 </div>
             </div>
         </div>

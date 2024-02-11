@@ -42,6 +42,9 @@
     --error-background: #ff4f4f24;
     --error-text: #920000;
 
+    --sorting-color: #2c75cf;
+
+
 }
 
 body {
@@ -700,12 +703,16 @@ button:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #aaaaaa;
+    background: #ddd;
     border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #777777;
+    background: #bbb;
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: #999;
 }
 
 [contenteditable]:empty:after {

@@ -1097,6 +1097,9 @@ window.addEventListener("popstate", async (e) => {
         return;
     }
 
+    //this closes anythign that is open like context menu or notification popover
+    document.activeElement.blur();
+
     await new Promise(r => setTimeout(r, 50));
     dispatchBreadcrumbnavigateEvent(e.type);
 });
