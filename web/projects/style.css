@@ -113,13 +113,29 @@
             line-height: 1.5;
             vertical-align: middle;
             text-align: left;
+            outline-color: #388bff22;
+            transition-duration: 0.05s;
         }
+
+        & th:not(:last-child):hover {
+            background-color: #f8faff;
+            transition-duration: 0.05s;
+            outline: solid 1px #e2eaff;
+            outline-offset: -1px;
+        }
+
+        & th:hover > .header-td .icon {
+            opacity: 1;
+            transition: 0.05s ease-out;
+        }
+
+
         .header-td {
             display: flex;
             flex-direction: row;
             justify-content: flex-start;
             align-items: center;
-            gap: 0.5em;
+            gap: 0.25em;
             white-space: nowrap;
 
             .icon {
@@ -130,21 +146,30 @@
                 height: 100%;
                 width: auto;
                 aspect-ratio: 1;
+                user-select: none;
+                color: var(--icon-clr, #777777);
                 transition: 0.1s ease-out;
 
-                & i {
-                    font-size: 16px;
-                    color: var(--icon-clr, #777777);
+                & span {
+                    font-size: 24px;
                 }
                 
             }
         }
 
-        .header-cell:hover {
+        .sorting-by {
+            color: var(--sorting-color);
+            background-color: #f8faff;
+            transition-duration: 0.05s;
+            outline: solid 1px #e2eaff;
+            outline-offset: -1px;
+
             .icon {
                 opacity: 1;
+                color: var(--sorting-color);
             }
         }
+        
         & td {
             padding: 6px 8px;
             line-height: 1.5;
