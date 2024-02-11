@@ -49,6 +49,10 @@ input[type="text"] {
     width: auto;
 }
 
+.ql-container{
+    background-color: #fff;
+}
+
 .type-of-post {
     display: flex;
     flex-direction: row-reverse;
@@ -215,6 +219,7 @@ input[type="text"] {
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     width: 25.1em;
     height: 4em;
+    background-color: #fff;
 }
 
 .tag-input ul {
