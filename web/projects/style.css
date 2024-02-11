@@ -885,7 +885,6 @@
         background-color: white;
         z-index: 9999;
 
-        padding: 0.5em;
         padding-left: 1em;
         padding-right: 1em;
         border-bottom: solid 2px var(--border-clr);
@@ -951,18 +950,24 @@
         text-align: left;
         font-size: 14px;
         border-bottom: solid 1px var(--border-clr);
-
+        width: min-content;
         padding: 0.5em;
         padding-left: 1em;
         padding-right: 1em;
         border-bottom: solid 1px rgba(105,112,125, 0.25);  
     }
 
-    & td:last-child {
+    /* & td:last-child {
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
         align-items: center;
+    } */
+
+    & td:first-child {
+        width: 1%;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
     }
 
 
@@ -1071,10 +1076,8 @@
     gap: 0.25em;
     white-space: nowrap;
     height: 100%;
-    width: 100%;
+    width: 8rem;
     padding: 0.25em;
-    margin-left: 0.25em;
-    margin-right: 0.25em;
     border-radius: 4px;
 
     & span {
