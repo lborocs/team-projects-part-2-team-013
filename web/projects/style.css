@@ -858,7 +858,7 @@
 
 .taskTable {
     border: none;
-    border-radius: 0;
+    border-radius: 3px;
     box-shadow: none;
     border-collapse: separate;
     border-spacing: 0;
@@ -997,8 +997,11 @@
 
 #list-add {
     display: flex;
+    justify-content: flex-start;
     align-items: center;
     gap: 0.25em;
+    white-space: nowrap;
+    width: min-content;
     background-color: rgba(255,255,255,0);
     border: none;
     color: var(--icon-clr, #777777);
@@ -1006,19 +1009,21 @@
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s ease-out;
-    border-radius: 8px;
-    border-bottom-right-radius: 0;
+    border-radius: 3px;
     user-select: none;
     padding-top: 0.25em;
     padding-bottom: 0.25em;
     padding-left: 0.5em;
-    border-bottom: solid 1px rgba(105,112,125, 0.25);
 }
 
 #list-add:hover {
     color: var(--text-off-black, #0f0f0f);
     transition-duration: 0.08s;
     background-color: #f0f0f0;
+}
+
+#list-add-row:hover {
+    background-color: white;
 }
 
 .not-started {
@@ -1058,7 +1063,7 @@
     justify-content: flex-start;
     align-items: center;
     gap: 0.25em;
-
+    white-space: nowrap;
     height: 100%;
     width: 100%;
     padding: 0.25em;
