@@ -2494,3 +2494,7 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
+
+window.addEventListener('popstate', () => {
+    global.dispatchBreadcrumbnavigateEvent('popstate');
+});
