@@ -2465,6 +2465,23 @@ document.getElementById("delete-task-search").addEventListener("pointerup", () =
     searchAndRenderTasks()
 })
 
+let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th"); // these will be defined by classes later
+projectTableHeaders.forEach((header) => {
+    header.addEventListener("click", (e) => {
+        if (!header.classList.contains("sorting-by")) {
+            projectTableHeaders.forEach((header) => {
+                header.classList.remove("sorting-by");
+            });
+            header.classList.add("sorting-by");
+            return;
+        }
+        if (header.classList.contains("sorting-by")) {
+            header.classList.toggle("reverse");
+        }
+
+
+    });
+})
 
 const sleep = (ms) => {
     return new Promise((resolve) => {
