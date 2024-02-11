@@ -1388,9 +1388,11 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         <td>${date}</td>
         <td>
             <a href="/projects/#${ID}">
-                <div class="tooltip tooltip-above">
+                <div class="tooltip tooltip-above name-card">
                     <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
-                    ${lastAccessedFormatted}
+                    <div class="name">
+                        ${lastAccessedFormatted}
+                    </div>
                 </div>
             <a href="/projects/#${ID}">
         </td>
@@ -2496,5 +2498,5 @@ async function searchAndRenderTasks() {
 }
 
 window.addEventListener('popstate', () => {
-    global.dispatchBreadcrumbnavigateEvent('popstate');
+    global.dispatchBreadcrumbnavigateEvent('popstate', global.getLocationHashArray());
 });
