@@ -708,7 +708,7 @@ async function renderAssignments(assignments) {
                 usersAssigned.appendChild(assignmentElem);
             } else if (count === 3) {
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
-                assignmentElem.innerHTML = `<p class="tooltiptext">+${additionalUsers} more users assigned</p>
+                assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
                 <img src="${additionalUsers}" class="task-avatar">`
                 usersAssigned.appendChild(assignmentElem);
             }
