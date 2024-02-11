@@ -223,7 +223,7 @@ Written/designed by aidan F223129
   - PUT {"manHours":int} (set spent manhours)
 
 ## project.php
-- [x] **/project/project.php/projects?q=search_term**
+- [x] **/project/project.php/projects?q=search_term&sort_by=field&sort_direct=asc&limit=10&page=2**
     - GET (Get all projects)
       
       will return a body containing an array of projects the user has accesss to (or all for managers)
