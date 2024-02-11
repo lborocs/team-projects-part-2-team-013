@@ -81,7 +81,12 @@ if (sidebar !== null) {
 let selectedItem = null;
 if (items !== null) {
     items.forEach((item) => {
-        item.addEventListener("pointerup", () => {
+        item.addEventListener("pointerup", (e) => {
+
+            if (e.button !== 0) {
+                return
+            }
+
             if (selectedItem) {
                 selectedItem.classList.remove("selected")
             }
