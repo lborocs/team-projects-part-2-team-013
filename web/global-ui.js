@@ -386,6 +386,10 @@ function hsvToHex(h,s, v) {
 }
 
 export function generateAvatarSvg(text, colour) {
+    
+    text = text.toUpperCase();
+    text = text.substring(0, 2);
+
     const fontSize = text.length === 1 ? 130 : 115;
     return `
     <svg xmlns="http://www.w3.org/2000/svg" width="256px" height="256px" viewBox="0 0 256 256" version="1.1">
