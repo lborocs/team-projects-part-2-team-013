@@ -261,5 +261,13 @@
         }
     }
 
+    .project-bar {
+        display: none;
+    }
+
+    .projects-container {
+        height: 100%;
+    }
+
 
 }
