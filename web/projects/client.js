@@ -1455,24 +1455,19 @@ function formatLastAccessed(date) {
     const months = Math.floor(days / 30);
     const years = Math.floor(days / 365);
 
-    if (years > 0) {
+    if (now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate()) {
+        return `Today`;
+    } else if (years > 0) {
         return `${years} year${years > 1 ? 's' : ''} ago`;
     } else if (months > 0) {
         return `${months} month${months > 1 ? 's' : ''} ago`;
     } else if (weeks > 0) {
         return weeks === 1 ? 'Last week' : `${weeks} weeks ago`;
-    } else if (days > 0) {
-        return days === 1 ? 'Yesterday' : `${days} days ago`;
-    } else if (hours > 0) {
-        return hours === 1 ? 'An hour ago' : `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    } else if (minutes > 0) {
-        return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
     } else {
-        return `Just now`;
+        return days === 1 ? 'Yesterday' : `${days} days ago`;
     }
 }
 async function addTask() {
-    
 
     console.log("[addTask] Creating popup")
     let popupDiv = document.querySelector('.popup');
