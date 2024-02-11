@@ -23,6 +23,7 @@
     flex-direction: column;
     border-bottom: solid 1px rgba(105,112,125, 0.1);
     padding-bottom: 5px;
+    gap: 2px;
 }
 
 
@@ -88,5 +89,17 @@
     
     .name-card:hover span {
         visibility: visible;
+    }
+
+    .name-card.selected {
+        background-color: #317cff33;
+
+        .icon {
+            visibility: visible;
+        }
+    }
+
+    .name-card.selected:hover {
+        background-color: #317cff33;
     }
 }

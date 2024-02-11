@@ -358,10 +358,9 @@ function setUpTaskEventListeners() {
 
                 if (item.classList.contains("action-edit")) {
                     console.log("[contextMenuItemOnClick] edit clicked")
-
-                    let taskID = taskCard.getAttribute("id");
-
-                    //edit task popup goes here
+                    showTaskInExplainer(taskCard);
+                    editTaskPopup(globalCurrentTask);
+                    
 
                 } else if (item.classList.contains("action-delete")) {
                     console.log("[contextMenuItemOnClick] delete clicked")
@@ -1501,7 +1500,7 @@ async function addTask() {
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Expected Manhours:
+                    Expected man hours
                 </div>
 
                 <div class="number-picker" id="expected-man-hours">
@@ -1615,10 +1614,27 @@ async function addTask() {
     // add event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
-        option.addEventListener("pointerup", () => {
+        option.addEventListener("click", () => {
+
             let empID = option.getAttribute("data-id");
-            assignedEmployees.add(empID);
-            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap)
+
+            if (!assignedEmployees.has(empID)) {
+
+                option.classList.add('selected');
+                option.querySelector('.icon').innerHTML = "check";
+
+                assignedEmployees.add(empID);
+
+            } else {
+
+                option.classList.remove('selected');
+                option.querySelector('.icon').innerHTML = "person_add";
+                assignedEmployees.delete(empID);
+
+            }
+
+            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+
         })
     })
 
@@ -2161,7 +2177,7 @@ async function editTaskPopup(task){
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
             <div class="popup-title">
-            <span>Create Task</span>
+            <span>Edit Task</span>
             <div class="small-icon" id="close-button">
                 <span class="material-symbols-rounded">
                     close
@@ -2241,7 +2257,7 @@ async function editTaskPopup(task){
                 </div>
                 <div class="text-button blue" id="create-button">
                     <div class="button-text">
-                        Create
+                        Save
                     </div>
                 </div>
             </div>
@@ -2252,9 +2268,8 @@ async function editTaskPopup(task){
     var quill = new Quill('#description-editor', {
         modules: {
             toolbar: [
-                [{ header: [1, 2, false] }],
                 ['bold', 'italic', 'underline'],
-                ['image', 'code-block']
+                ['code-block']
             ]
         },
         placeholder: 'Description...',
@@ -2321,10 +2336,27 @@ async function editTaskPopup(task){
     // add event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
-        option.addEventListener("pointerup", () => {
+        option.addEventListener("click", () => {
+
             let empID = option.getAttribute("data-id");
-            assignedEmployees.add(empID);
-            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap)
+
+            if (!assignedEmployees.has(empID)) {
+
+                option.classList.add('selected');
+                option.querySelector('.icon').innerHTML = "check";
+
+                assignedEmployees.add(empID);
+
+            } else {
+
+                option.classList.remove('selected');
+                option.querySelector('.icon').innerHTML = "person_add";
+                assignedEmployees.delete(empID);
+
+            }
+
+            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+
         })
     })
 
