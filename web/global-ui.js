@@ -386,7 +386,7 @@ function hsvToHex(h,s, v) {
 }
 
 export function generateAvatarSvg(text, colour) {
-    
+
     text = text.toUpperCase();
     text = text.substring(0, 2);
 
@@ -1018,7 +1018,7 @@ export function getLocationHashArray() {
     }
 }
 
-// allow back and forward functionality when only the hash/breadcrumb changes
+// allows back and forward functionality when only the hash/breadcrumb changes
 window.addEventListener("mouseup", async (e) => {
     if (e.button == BACK_BUTTON || e.button == FORWARD_BUTTON) {
         // wait for the browser to update the hash
@@ -1032,6 +1032,15 @@ window.addEventListener("popstate", async (e) => {
     //dispatchBreadcrumbnavigateEvent(e.type);
 });
 
+
+
+/**
+ * dispatches a 'breadcrumbnavigate' event from a specified source.
+ *
+ * @param {string} src - the navigation source
+ * @param {Array} [locations=getLocationHashArray()] - an optional array of location hashes. default = `getLocationHashArray()`.
+ * @fires window#breadcrumbnavigate
+ */
 export function dispatchBreadcrumbnavigateEvent(src, locations  = getLocationHashArray()) {
 
     console.log(`[dispatchBreadcrumbnavigate] dispatching from ${src}`);
