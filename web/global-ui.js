@@ -7,6 +7,7 @@ import * as topbar from "./global-topbar.js";
 //global variables
 export var notifications = []
 export var GLOBAL_LAST_ACTIVE = new Date();
+var globalMutexes = new Map();
 
 export const sidebarContainer = document.querySelector('.sidebar-container');
 export const topbarContainer = document.querySelector('.topbar-container');
@@ -40,9 +41,28 @@ export function setSetting(key, value) {
     console.log(settings);
 }
 
-
-
 caches.open("employees");
+
+export function takeMutex(mutex) {
+    const id = Math.random().toString(16).substring(2);
+    if (globalMutexes.has(mutex)) {
+        globalMutexes.get(mutex).add(id);
+    } else {
+        globalMutexes.set(mutex, new Set([id]));
+    }
+    return id;
+}
+
+export function releaseMutex(mutex, id) {
+    if (globalMutexes.has(mutex)) {
+        globalMutexes.get(mutex).delete(id);
+    }
+}
+
+export function checkMutex(mutex) {
+    return globalMutexes.has(mutex) && globalMutexes.get(mutex).size > 0;
+
+}
 
 
 export class ReusableRollingTimeout {
@@ -1007,7 +1027,10 @@ export function setBreadcrumb(breadcrumbPaths, hrefs) {
     let last = hrefs[hrefs.length - 1];
     
     console.log("[setBreadcrumb] updating hash to " + last);
+
+    const id = takeMutex("locationHash");
     document.location.hash = new URL(last, document.location).hash;
+    releaseMutex("locationHash", id);
 }
 
 export function getLocationHashArray() {
@@ -1028,8 +1051,14 @@ window.addEventListener("mouseup", async (e) => {
 });
 
 window.addEventListener("popstate", async (e) => {
-    await new Promise(r => setTimeout(r, 50));
-    //dispatchBreadcrumbnavigateEvent(e.type);
+
+    if (checkMutex("locationHash")) {
+        console.log("[popstate] locationHash mutex is locked, ignoring popstate");
+        return;
+    }
+
+    await new Promise(r => setTimeout(r, 150));
+    dispatchBreadcrumbnavigateEvent(e.type);
 });
 
 

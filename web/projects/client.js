@@ -66,7 +66,7 @@ var taskDragLastDrawnColumn = 0;
 console.log("[import] loaded client.js")
 
 
-async function projectSwitchToOnClick(projectRow) {
+async function projectSwitchToOnClick(projectRow, setBreadcrumb = true) {
     projectRows = document.querySelectorAll(".project-row")
     projectRows.forEach((row) => {
         row.classList.remove("selected")
@@ -114,7 +114,9 @@ async function projectSwitchToOnClick(projectRow) {
     // unselect not this project
     console.log("[projectSwitchToOnClick] selected " + project.name)
     //update the breadcrumb with the project name
-    global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
+    if (setBreadcrumb) {
+        global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
+    }
     projectTitle.innerText = project.name;
     explainerTitle.innerText = project.name;
     explainerDescription.innerHTML = project.description;
@@ -828,7 +830,7 @@ async function renderFromBreadcrumb(locations) {
 
     let element = await projectObjectRenderAndListeners(project);
 
-    await projectSwitchToOnClick(element);
+    await projectSwitchToOnClick(element, !taskID);
 
 
     if (!taskID) {
@@ -2504,7 +2506,3 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
-
-window.addEventListener('popstate', () => {
-    global.dispatchBreadcrumbnavigateEvent('popstate');
-});
