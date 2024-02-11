@@ -859,27 +859,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     let taskRow = document.createElement("tr");
     taskRow.classList.add("taskRow");
 
-    taskRow.innerHTML = `
-        <td class="title">
-            ${title}
-        </td>
-    `; 
-
-    if (dueDate === "") {
-        taskRow.innerHTML += `
-            <td class="date disabled">
-                Not set
-            </td>
-        `;
-    } else {
-        taskRow.innerHTML += `
-            <td class="date">
-                ${dueDate}
-            </td>
-        `;
-    }
-
-    
     //set id to the task id
     taskRow.setAttribute("id", ID);
     //add the parameters as html data attributes
@@ -889,7 +868,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     taskRow.setAttribute("data-title", title);
     taskRow.setAttribute("data-expectedManHours", expectedManHours);
     taskRow.setAttribute("data-state", state);
-
 
     var icon;
     var statusText;
@@ -910,7 +888,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         console.error(`[renderTaskInList] invalid state (${state}) for task ${title}`);
     }
 
-    taskRow.innerHTML += `
+    taskRow.innerHTML = `
         <td class="${stateClass}">
             <div class="status-cell">
                 <span class="material-symbols-rounded">
@@ -920,6 +898,25 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         </td>
     `;
 
+    taskRow.innerHTML += `
+        <td class="title">
+            ${title}
+        </td>
+    `; 
+
+    if (dueDate === "") {
+        taskRow.innerHTML += `
+            <td class="date disabled">
+                Not set
+            </td>
+        `;
+    } else {
+        taskRow.innerHTML += `
+            <td class="date">
+                ${dueDate}
+            </td>
+        `;
+    }
 
     taskTableBody.appendChild(taskRow);
     //move the add task button to the bottom
@@ -1556,9 +1553,8 @@ async function addTask() {
     var quill = new Quill('#description-editor', {
         modules: {
             toolbar: [
-                [{ header: [1, 2, false] }],
                 ['bold', 'italic', 'underline'],
-                ['image', 'code-block']
+                ['code-block']
             ]
         },
         placeholder: 'Description...',
