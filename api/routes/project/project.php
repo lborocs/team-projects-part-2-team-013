@@ -31,11 +31,11 @@ const PROJECT_MODEL_CHECKS = [
 
 function r_project_fetchall_projects(RequestContext $ctx, string $args) {
 
-    $search_term = urldecode($_GET["q"] ?? "");
+    $search = SearchParams::from_query_params(TABLE_PROJECTS, additionalCols: ["lastAccessed"]);
 
     // managers can get all projects
     if ($ctx->session->auth_level > AUTH_LEVEL_USER) {
-        $projects = db_project_fetchall($search_term, $ctx->session->hex_associated_user_id);
+        $projects = db_project_fetchall($search, $ctx->session->hex_associated_user_id);
         respond_ok(
             array(
                 "projects"=>$projects,
@@ -44,7 +44,7 @@ function r_project_fetchall_projects(RequestContext $ctx, string $args) {
     }
     // users can only get projects they are assigned to
     else {
-        $projects = db_employee_fetch_projects_in($ctx->session->hex_associated_user_id, $search_term);
+        $projects = db_employee_fetch_projects_in($ctx->session->hex_associated_user_id, $search);
         respond_ok(
             array(
                 "projects"=>$projects,

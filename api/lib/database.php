@@ -932,10 +932,9 @@ function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id
     return $data;
 }
 
-function db_employee_fetch_projects_in(string $user_id, $search_term) {
+function db_employee_fetch_projects_in(string $user_id, SearchParams $search) {
     global $db;
 
-    $search_term = "%" . strtolower($search_term) . "%";
 
     $bin_u_id = hex2bin($user_id);
 
@@ -1150,23 +1149,20 @@ function db_project_fetch(string $project_id) {
     return parse_database_row($data, TABLE_PROJECTS);
 }
 
-function db_project_fetchall(string $search_term, string $emp_id) {
+function db_project_fetchall(SearchParams $search, string $emp_id) {
     global $db;
-
-    // like functionality and case insensitive
-    $search_term = "%" . strtolower($search_term) . "%";
 
     $bin_e_id = hex2bin($emp_id);
 
+    $search_term = "%" . strtolower($search->query ?? "") . "%";
 
     $query = $db->prepare(
         "SELECT `PROJECTS`.*, `PROJECT_ACCESSED`.projectAccessTime as lastAccessed FROM `PROJECTS`
         LEFT JOIN `PROJECT_ACCESSED` ON
             `PROJECT_ACCESSED`.projID = `PROJECTS`.projID
             AND `PROJECT_ACCESSED`.empID = ?
-        WHERE LOWER(`PROJECTS`.projectName) LIKE ?
-        ORDER BY lastAccessed DESC
-        LIMIT ". SEARCH_FETCH_DEFAULT
+        WHERE `PROJECTS`.projectName LIKE ? "
+        . $search->to_sql()
     );
     $query->bind_param(
         "ss",

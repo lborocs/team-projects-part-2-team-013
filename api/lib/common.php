@@ -132,7 +132,7 @@ class SearchParams {
     public int $limit=SEARCH_FETCH_DEFAULT;
     public int $page=1;
     public ?string $query=null;
-    public ?Column $sort=null;
+    public $sort=null;
     public SortDirection $sort_direction;
 
     function __construct(
@@ -140,7 +140,7 @@ class SearchParams {
         int $limit,
         int $page,
         ?string $query,
-        ?Column $sort,
+        $sort,
         ?SortDirection $sort_direction,
     ) {
         $this->table = $table;
@@ -155,7 +155,7 @@ class SearchParams {
         $this->sort_direction = $sort_direction;
     }
 
-    static function from_query_params(Table $table, Array $p=null) {
+    static function from_query_params(Table $table, Array $p=null, Array $additionalCols=[]) {
 
         if (is_null($p)) {
             $p = $_GET;
@@ -180,9 +180,11 @@ class SearchParams {
         $sort = $p["sort_by"] ?? null;
         
         if (!is_null($sort)) {
-            $prefixed = array_keys(prepend_col_prefixes($table, [$sort=>null]));
-            $sort = $prefixed[0] ?? respond_bad_request("Sort column does not exist (array)", ERROR_QUERY_PARAMS_INVALID);
-            $sort = $table->get_column($sort) ?? respond_bad_request("Sort column does not exist", ERROR_QUERY_PARAMS_INVALID);
+            if (!in_array($sort, $additionalCols)) {
+                $prefixed = array_keys(prepend_col_prefixes($table, [$sort=>null]));
+                $sort = $prefixed[0] ?? respond_bad_request("Sort column does not exist (array)", ERROR_QUERY_PARAMS_INVALID);
+                $sort = $table->get_column($sort) ?? respond_bad_request("Sort column does not exist", ERROR_QUERY_PARAMS_INVALID);
+            }
 
         }
 
@@ -203,13 +205,22 @@ class SearchParams {
         );
     }
 
+    function get_fq_sort() {
+
+        if (gettype($this->sort) == "string") {
+            return $this->sort;
+        } else {
+            return $this->table->name . "." . $this->sort->name;
+        }
+    }
+
     function to_sql() {
         // we dont deal with the where cause thats up to the db
         // as it may want to search multiple columns
         $sql = "";
 
         if (!is_null($this->sort)) {
-            $sql .= "ORDER BY " . $this->table->name . "." . $this->sort->name;
+            $sql .= "ORDER BY " . $this->get_fq_sort();
             $sql .= match ($this->sort_direction) {
                 SortDirection::ASC => " ASC",
                 SortDirection::DESC => " DESC",
