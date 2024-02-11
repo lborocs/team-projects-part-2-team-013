@@ -62,7 +62,7 @@ search.innerHTML = `
 `;
 
 search.querySelector('#delete-search').addEventListener('click', () => {
-    document.getElementById('search').value = '';
+    search.querySelector('#search').value = '';
 });
 
 search.querySelector('#search').addEventListener('keypress', (function(event) {
