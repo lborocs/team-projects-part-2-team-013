@@ -144,14 +144,6 @@ function setActivePane(newPane) {
 }
 
 
-
-function setUpProjectRowEventListeners(projectRow) {
-    projectRow.addEventListener("pointerup", (e) => {
-        if (e.button !== 0) { return}
-        projectSwitchToOnClick(projectRow);        
-    })
-}
-
 views.forEach((view, i) => {
     
     view.addEventListener("pointerup", () => {
@@ -710,8 +702,12 @@ async function renderAssignments(assignments) {
                 usersAssigned.appendChild(assignmentElem);
             } else if (count === 3) {
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
+
+                const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
+                const url = "data:image/svg+xml;base64," + btoa(icon);
+            
                 assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
-                <img src="${additionalUsers}" class="task-avatar">`
+                <img src="${url}" class="task-avatar">`
                 usersAssigned.appendChild(assignmentElem);
             }
             taskUserCount.set(assignment.task.taskID, count + 1);
@@ -2168,7 +2164,6 @@ async function projectObjectRenderAndListeners(project) {
     let teamLeaderName = global.employeeToName(teamLeader);
     let element = renderProject(project.projID, project.name, project.description, teamLeader, isTeamLeader, project.createdAt, project.lastAccessed);
 
-    setUpProjectRowEventListeners(element);
     calculateTaskCount();
     element.data = project;
     return element;
