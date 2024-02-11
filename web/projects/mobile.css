@@ -240,11 +240,6 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
-    
-    .breadcrumb-navigator {
-        color: black;
-        font-weight: 500;
-    }
 
     .selection-screen {
         padding: 1rem;
