@@ -515,6 +515,7 @@ const TABLE_TASKS = new Table(
         new Column("taskCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("taskDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
         new Column("taskExpectedManHours", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("taskCompletedAt", is_primary_key:false, type:"integer", is_nullable:true, is_editable:false, is_server_generated:true),
     ],
     "task",
     "task"

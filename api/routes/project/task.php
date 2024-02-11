@@ -364,6 +364,15 @@ function _edit_task(RequestContext $ctx, array $data, array $url_specifiers) {
         notification_task_completed_change($url_specifiers[1], $ctx->session->hex_associated_user_id);
     }
 
+    if (array_key_exists("taskState", $data)) {
+
+        if ($data["taskState"] == TASK_STATE_COMPLETED) {
+            $data["taskCompletedAt"] = timestamp();
+        } else {
+            $data["taskCompletedAt"] = null;
+        }
+    }
+
     _use_common_edit(TABLE_TASKS, $data, $url_specifiers);
 }
 
