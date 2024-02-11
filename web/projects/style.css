@@ -879,6 +879,9 @@
         vertical-align: middle;
         text-align: left;
         position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 9999;
 
         padding: 0.5em;
         padding-left: 1em;
