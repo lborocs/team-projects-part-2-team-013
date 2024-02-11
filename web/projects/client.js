@@ -318,7 +318,7 @@ function setUpTaskEventListeners() {
         let contextMenuButton = taskCard.querySelector(".context-menu");
         let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
 
-        contextMenuButton.addEventListener("pointerup", (e) => {
+        contextMenuButton.addEventListener("click", (e) => {
             e.stopPropagation();
             //closes the rest of them first
             let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
@@ -466,6 +466,11 @@ function setUpTaskEventListeners() {
             }
 
             if (taskCard.classList.contains("beingdragged")) {
+                return
+            }
+
+            //right click
+            if (e.button == 2) {
                 return
             }
 
