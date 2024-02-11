@@ -670,6 +670,7 @@ async function renderAssignments(assignments) {
     console.log(assignments)
 
     let unique_users = new Set();
+    let taskUserCount = new Map();
 
     assignments.forEach((assignment) => {
         unique_users.add(assignment.employee.empID);
@@ -697,12 +698,21 @@ async function renderAssignments(assignments) {
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
         assignmentElem.classList.add("tooltip", "tooltip-under");
-        assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
-        <img src="${emp_icon}" class="task-avatar">`
 
         // add child element if usersAssigned exists
         if (usersAssigned) {
-            usersAssigned.appendChild(assignmentElem);
+            let count = taskUserCount.get(assignment.task.taskID) || 0;
+            if (count < 3) {
+                assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
+                <img src="${emp_icon}" class="task-avatar">`
+                usersAssigned.appendChild(assignmentElem);
+            } else if (count === 3) {
+                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
+                assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
+                <img src="${additionalUsers}" class="task-avatar">`
+                usersAssigned.appendChild(assignmentElem);
+            }
+            taskUserCount.set(assignment.task.taskID, count + 1);
         }
     });
 }
@@ -1211,7 +1221,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         `;
     };
 
-    if (expectedManHours !== 0) {
+    if (expectedManHours > 0) {
         let manHours = expectedManHours / 3600;
         let timeDisplay;
         let manHoursTooltip;
