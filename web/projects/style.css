@@ -55,7 +55,8 @@
         align-items: center;
         gap: 0.5em;
         border-radius: 4px;
-        line-height: 1;
+        line-height: 1.25;
+        color: black;
 
         .icon {
             display: flex;
@@ -90,7 +91,7 @@
             width: auto;
             aspect-ratio: 1;
             user-select: none;
-            color: rgb(0,0,238);
+            color: var(--icon-clr);
 
             & span {
                 font-size: 24px;

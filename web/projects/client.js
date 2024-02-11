@@ -710,7 +710,7 @@ async function renderAssignments(assignments) {
                 usersAssigned.appendChild(assignmentElem);
             } else if (count === 3) {
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
-                assignmentElem.innerHTML = `<p class="tooltiptext">+${additionalUsers} more users assigned</p>
+                assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
                 <img src="${additionalUsers}" class="task-avatar">`
                 usersAssigned.appendChild(assignmentElem);
             }
@@ -1400,9 +1400,11 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         <td>${date}</td>
         <td>
             <a href="/projects/#${ID}">
-                <div class="tooltip tooltip-above">
+                <div class="tooltip tooltip-above name-card">
                     <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
-                    ${lastAccessedFormatted}
+                    <div class="name">
+                        ${lastAccessedFormatted}
+                    </div>
                 </div>
             <a href="/projects/#${ID}">
         </td>
