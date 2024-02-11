@@ -1375,6 +1375,10 @@
 
 }
 
+.add-task-title-input:focus {
+    outline: solid 2px #388bffaa;
+}
+
 .add-task-title-input::placeholder {
     color: rgba(0,0,0,0.5);
 }
