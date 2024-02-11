@@ -257,6 +257,38 @@ class GlobalEmployeeRequest {
 }
 
 
+class PreferenceStore {
+
+    store;
+    saver;
+    
+    constructor() {
+        this.store = new Map();
+        // rolling timeout to save 2s after no changes
+        this.saver = new ReusableRollingTimeout(() => {this.save()}, 2000);
+    }
+
+    async save() {
+        await put_api("/employee/preferences.php/preferences", Object.fromEntries(this.store));
+    }
+
+    get(key) {
+        return this.store.get(key);
+    }
+
+    set(key, value) {
+        this.store.set(key, value);
+        this.saver.roll();
+    }
+
+    clear() {
+        this.store.clear();
+    }
+    
+    
+}
+
+
 //utility functions
 
 /**
