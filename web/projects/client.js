@@ -266,7 +266,7 @@ function updateTaskState(task) {
         stateItems[newState].classList.add("disabled");
 
         //globally udpates task state on client
-        let globalTask = globalTasksList.find(task => task.id === taskID);
+        let globalTask = globalTasksList.find(task => task.taskID === taskID);
         globalTask.state = newState;
 
 
@@ -1395,7 +1395,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
                         ${teamLeaderName}
                     </div>
                 </div>
-            <a href="/projects/#${ID}">
+            </a>
         </td>
         <td>${date}</td>
         <td>
@@ -1406,7 +1406,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
                         ${lastAccessedFormatted}
                     </div>
                 </div>
-            <a href="/projects/#${ID}">
+            </a>
         </td>
         <td>${dueDateFormatted}</td>
         <td>
@@ -1416,7 +1416,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
                         more_horiz
                     </span>
                 </div>
-            <a href="/projects/#${ID}">
+            </a>
         </td>
     `;
 
