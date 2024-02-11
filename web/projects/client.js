@@ -2167,7 +2167,6 @@ async function projectObjectRenderAndListeners(project) {
     let teamLeaderName = global.employeeToName(teamLeader);
     let element = renderProject(project.projID, project.name, project.description, teamLeader, isTeamLeader, project.createdAt, project.lastAccessed);
 
-    setUpProjectRowEventListeners(element);
     calculateTaskCount();
     element.data = project;
     return element;
