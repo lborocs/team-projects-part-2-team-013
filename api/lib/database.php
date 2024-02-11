@@ -937,6 +937,7 @@ function db_employee_fetch_projects_in(string $user_id, SearchParams $search) {
 
 
     $bin_u_id = hex2bin($user_id);
+    $search_term = "%" . strtolower($search->query ?? "") . "%";
 
     $query = $db->prepare(
         "SELECT DISTINCT PROJECTS.*, `PROJECT_ACCESSED`.projectAccessTime as lastAccessed FROM PROJECTS
@@ -950,7 +951,7 @@ function db_employee_fetch_projects_in(string $user_id, SearchParams $search) {
             ON `PROJECT_ACCESSED`.projID = `PROJECTS`.projID
             AND `PROJECT_ACCESSED`.empID = ?
         WHERE
-        LOWER(`PROJECTS`.projectName) LIKE ?
+            `PROJECTS`.projectName LIKE ?
         AND (
             (
                 `EMPLOYEE_TASKS`.empID = ?
@@ -958,9 +959,7 @@ function db_employee_fetch_projects_in(string $user_id, SearchParams $search) {
                 AND `TASKS`.projID = `PROJECTS`.projID
             )
             OR `PROJECTS`.projectTeamLeader = ?
-        )
-        ORDER BY lastAccessed DESC
-        LIMIT " . SEARCH_FETCH_DEFAULT
+        )" .$search->to_sql()
     );
     $query->bind_param(
         "ssss",
