@@ -266,7 +266,7 @@ function updateTaskState(task) {
         stateItems[newState].classList.add("disabled");
 
         //globally udpates task state on client
-        let globalTask = globalTasksList.find(task => task.id === taskID);
+        let globalTask = globalTasksList.find(task => task.taskID === taskID);
         globalTask.state = newState;
 
 
