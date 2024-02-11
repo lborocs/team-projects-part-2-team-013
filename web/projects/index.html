@@ -268,6 +268,16 @@
                     <div class="title">
                         Projects
                     </div>
+                    <div class="text-button blue manager-only norender" id="new-project">
+                        <div class="button-icon">
+                            <span class="material-symbols-rounded">
+                                add
+                            </span>
+                        </div>
+                        <div class="button-text">
+                            New Project
+                        </div>
+                    </div>
                 </div>
                 <div class="projects-container">
                     <div class="search-row">
@@ -313,16 +323,50 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-button blue manager-only norender" id="new-project">
-                            <div class="button-icon">
-                                <span class="material-symbols-rounded">
-                                    add
-                                </span>
+
+                        <div class="project-table-pagination">
+                        <div class="label">
+                            Projects per page
+                        </div>
+                        <div class="dropdown" id="projects-per-page" tabindex="0">
+                            <div class="dropdown-text">
+                                10
                             </div>
-                            <div class="button-text">
-                                New Project
+                            <div class="dropdown-chevron">
+                                <span class="material-symbols-rounded">expand_more</span>
+                            </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-option">
+                                    10
+                                </div>
+                                <div class="dropdown-option">
+                                    25
+                                </div>
+                                <div class="dropdown-option">
+                                    50
+                                </div>
+                                <div class="dropdown-option">
+                                    100
+                                </div>
                             </div>
                         </div>
+                            
+
+                        <div class="left-arrow icon-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">arrow_back</span>
+                            </div>
+                        </div>
+                        <div class="page-number">
+                            1 / 12
+                        </div>
+                        <div class="right-arrow icon-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">arrow_forward</span>
+                            </div>
+                        </div>
+                    </div>
+                        
                     </div>
                     <div class="project-table-div">
                         <table id="projects-table">
@@ -386,48 +430,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="project-table-pagination">
-                        <div class="label">
-                            Projects per page
-                        </div>
-                        <div class="dropdown" id="projects-per-page" tabindex="0">
-                            <div class="dropdown-text">
-                                10
-                            </div>
-                            <div class="dropdown-chevron">
-                                <span class="material-symbols-rounded">expand_more</span>
-                            </div>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-option">
-                                    10
-                                </div>
-                                <div class="dropdown-option">
-                                    25
-                                </div>
-                                <div class="dropdown-option">
-                                    50
-                                </div>
-                                <div class="dropdown-option">
-                                    100
-                                </div>
-                            </div>
-                        </div>
-                            
-
-                        <div class="left-arrow icon-button">
-                            <div class="button-icon">
-                                <span class="material-symbols-rounded">arrow_back</span>
-                            </div>
-                        </div>
-                        <div class="page-number">
-                            1
-                        </div>
-                        <div class="right-arrow icon-button">
-                            <div class="button-icon">
-                                <span class="material-symbols-rounded">arrow_forward</span>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
             </div>
         </div>
