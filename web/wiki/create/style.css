@@ -3,6 +3,79 @@
     gap: 1em;
 }
 
+
+.tag-input:focus-within {
+    border-color: #388bffaa;
+}
+
+.search-input {
+    padding: 4px 6px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: inherit;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif;
+    width: 100%; /* firefox has a different default width for input elements to chrome so this is here to override it */
+
+}
+
+
+
+.search-input::placeholder {
+    color: rgb(98, 111, 134);
+    user-select: none;
+}
+
+.search-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    color: rgb(98, 111, 134);
+    margin: 0 8px;
+    width: 16px;
+    height: 16px;
+
+    & span {
+        font-size: 16px;
+        line-height: 1;
+    }
+}
+
+.clear-icon {
+    border-radius: 3px;
+    transition: background-color 0.2s ease-in-out;
+    & span {
+        font-size: 14px;
+    }
+}
+
+.clear-icon:hover {
+    background-color: rgb(228, 230, 234);
+    cursor: pointer;
+}
+
+.clear-icon:active {
+    background-color: rgb(208, 212, 218);
+}
+
+/* magnifying glass / clear icon logic */
+.search-input:not(:placeholder-shown) ~ .search-icon:nth-of-type(1) {
+    display: none;
+}
+.search-input:placeholder-shown ~ .search-icon:nth-of-type(2) {
+    display: none;
+}
+
+
+
+.search.white {
+    color: black;
+    background-color: white;
+}
+
 input[type="text"] {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -42,13 +115,13 @@ input[type="text"] {
 
 .items {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 0.5em;
-    background-color: #fff;
+    gap: 2em;
     height: 100%;
     width: auto;
+    justify-content: space-between;
 }
 
 .ql-container{
@@ -147,7 +220,7 @@ input[type="radio"] + label {
     margin-left: 0.5em;
 }
 
-.submitButton{
+.submitButton {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -159,11 +232,12 @@ input[type="radio"] + label {
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     color: #ffffff;
     white-space: nowrap;
-    height: 100%;
     font-size: 0.9em;
     font-weight: 600;
+    height: 4.5em;
     border-radius: 10px;
 }
+
 
 
 input[type="text"] {
