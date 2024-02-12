@@ -221,7 +221,7 @@
         }
 
         .disabled {
-            opacity: 0.5;
+            color: rgba(0,0,0,0.4);
             pointer-events: none;
         }
     }
@@ -1035,7 +1035,7 @@
     }
 
     .disabled {
-        opacity: 0.5;
+        color: rgba(0, 0, 0, 0.3);
         pointer-events: none;
     }
 }
@@ -1422,6 +1422,7 @@
     flex-direction: row;
 }
 
+
 .add-task-description-container {
     width: 100%;
     line-height: 1;
@@ -1431,7 +1432,26 @@
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
-    
+}
+
+.dropdown-select {
+    font-family: 'Open Sans', system-ui;
+    font-size: 15px;
+    font-weight: 600;
+
+    text-align: center;
+    border: none;
+    border-radius: 3px;
+    padding: 2px;
+    width: 42px;
+}
+
+.dropdown-select:focus {
+    outline: none;
+}
+
+.dropdown-select:hover {
+    cursor: pointer;
 }
 
 #description-editor{
@@ -1689,4 +1709,9 @@
     align-items: center;
     gap: 0.5em;
     height: 100%;
+}
+
+#man-hours-and-minutes {
+    display: flex;
+    gap: 1em;
 }

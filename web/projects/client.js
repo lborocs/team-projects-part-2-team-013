@@ -48,6 +48,11 @@ const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
 const taskSearchInput = document.querySelector("#task-search")
 const explainerTaskManhours = document.querySelector(".manhours-container")
+const manhoursMinutesDropdown = document.querySelector("#manhours-minutes-dropdown")
+const manhoursMinutes0 = document.querySelector("#manhours-minutes0")
+const manhoursMinutes15 = document.querySelector("#manhours-minutes15")
+const manhoursMinutes30 = document.querySelector("#manhours-minutes30")
+const manhoursMinutes45 = document.querySelector("#manhours-minutes45")
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -788,12 +793,34 @@ async function fetchAndRenderAllProjects() {
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
     const data = await get_api('/project/project.php/projects');
     console.log("[fetchAndRenderAllProjects] fetched projects");
-    // process the data here
+
     if (data.success == false) {
         return
     }
+
     clearProjectList();
     console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
+
+    let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
+    projectTableHeaders.forEach((header) => {
+        let sortAttribute = header.getAttribute('data-attribute');
+        if (sortAttribute) { 
+            header.addEventListener("click", (e) => {
+                let sortDirection = 'asc';
+                if (header.classList.contains("sorting-by")) {
+                    header.classList.toggle("reverse");
+                    sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
+                } else {
+                    projectTableHeaders.forEach((header) => {
+                        header.classList.remove("sorting-by", "reverse");
+                    });
+                    header.classList.add("sorting-by");
+                }
+                searchAndRenderProjects('', sortAttribute, sortDirection);
+            });
+        }
+    });
+
     await Promise.all(data.data.projects.map( async (project) => {
         await projectObjectRenderAndListeners(project);
     }));
@@ -1523,20 +1550,48 @@ async function addTask() {
                 <div class="manhours-label">
                     Expected man hours
                 </div>
+                <div id="man-hours-and-minutes">
+                    <div class="number-picker" id="expected-man-hours">
+                        <div class = "stepper decrement" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                remove
+                            </span>
+                        </div>
 
-                <div class="number-picker" id="expected-man-hours">
-                    <div class = "stepper decrement" tabindex="0">
-                        <span class="material-symbols-rounded">
-                            remove
-                        </span>
+                        <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+                        <div class="stepper increment" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                add
+                            </span>
+                        </div>
+                        <div class="manhours-label">
+                            Hours
+                        </div>
                     </div>
 
-                    <input type="number" class="number-input" value="1" min="0" tabindex="0">
-
-                    <div class="stepper increment" tabindex="0">
-                        <span class="material-symbols-rounded">
-                            add
-                        </span>
+                    <div class="number-picker" id="expected-man-minutes">
+                        <div class="number-picker" id="expected-man-minutes">
+                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                                <div class="dropdown-text">
+                                    0
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option" id="manhours-minutes0">0</div>
+                                    <div class="dropdown-option" id="manhours-minutes15">15</div>
+                                    <div class="dropdown-option" id="manhours-minutes30">30</div>
+                                    <div class="dropdown-option" id="manhours-minutes45">45</div>
+                                </div>
+                            </div>
+                            <div class="manhours-label">
+                                Minutes
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2465,7 +2520,7 @@ document.getElementById("delete-task-search").addEventListener("pointerup", () =
     searchAndRenderTasks()
 })
 
-let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th"); // these will be defined by classes later
+let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
 projectTableHeaders.forEach((header) => {
     header.addEventListener("click", (e) => {
         if (!header.classList.contains("sorting-by")) {
@@ -2473,15 +2528,15 @@ projectTableHeaders.forEach((header) => {
                 header.classList.remove("sorting-by");
             });
             header.classList.add("sorting-by");
+            sortProjects(header.getAttribute('data-attribute'), true);
             return;
         }
         if (header.classList.contains("sorting-by")) {
             header.classList.toggle("reverse");
+            sortProjects(header.getAttribute('data-attribute'), !header.classList.contains("reverse"));
         }
-
-
     });
-})
+});
 
 const sleep = (ms) => {
     return new Promise((resolve) => {
@@ -2489,10 +2544,13 @@ const sleep = (ms) => {
     });
 };
 
-async function searchAndRenderProjects(search) {
-    const data = await get_api('/project/project.php/projects?q=' + search);
-    console.log("[searchAndRenderProjects(" + search + ")] fetched projects");
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
+    const data = await get_api(`/project/project.php/projects?q=${search}&sort=${sortAttribute}&direction=${sortDirection}`);
+    console.log(`[searchAndRenderProjects(${search})] fetched projects`);
+    console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
+    console.log(data);
     console.log('.project-row.selected');
+
     if (data.success !== true) {
         return;
     }
@@ -2530,3 +2588,26 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
+
+manhoursMinutesDropdown.addEventListener("click", () => {
+    manhoursMinutesDropdown.classList.toggle("open")
+})
+
+document.addEventListener("click", (e) => {
+    if (!manhoursMinutesDropdown.contains(e.target)) {
+        manhoursMinutesDropdown.classList.remove("open")
+    }
+});
+
+manhoursMinutes0.addEventListener("click", () => {
+    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "0";
+})
+manhoursMinutes15.addEventListener("click", () => {
+    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "15";
+})
+manhoursMinutes30.addEventListener("click", () => {
+    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "30";
+})
+manhoursMinutes45.addEventListener("click", () => {
+    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "45";
+})

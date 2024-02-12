@@ -42,14 +42,22 @@
             <div class="main">
                 <div class="dashboard-options">
                     <div class="title">
-                        <span class="material-symbols-rounded">
-                            arrow_back_ios_new
-                        </span>
-                       <span id="project-name"></span>
+                        <div class="icon-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">
+                                    arrow_back_ios_new
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <span id="project-name"></span>
+
+
                         <div class="dropdown" id="dashboard-time-period" tabindex="0">
                             <div class="dropdown-text">
                                 All time
                             </div>
+
                             <div class="dropdown-chevron">
                                 <span class="material-symbols-rounded">
                                     expand_more
@@ -98,21 +106,21 @@
                             <span class="material-symbols-rounded">
                                 zoom_in
                             </span>
-                        </div> 
+                        </div>
                     </div>
                     <div class="icon-button no-box option disabled tooltip tooltip-under" id="grid-undo" tabindex="0">
                         <div class="tooltiptext">Undo</div>
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
-                                undo
+                                restart_alt
                             </span>
                         </div> 
                     </div>
 
-                    <div class="divider"></div>
-
-                    <div class="icon-button no-box option tooltip tooltip-under" id="add-metric-small" tabindex="0">
-                        <div class="tooltiptext">Add metric</div>
+                    <div class="text-button option" id="add-metric-small" tabindex="0">
+                        <div class="button-text">
+                            Add Metric
+                        </div>
                         <div class="button-icon">
                             <span class="material-symbols-rounded">
                                 add_chart

@@ -20,9 +20,10 @@
     width:100%;
     margin-bottom: 0.6em;
     margin-left: 0.6em;
-    color: var(--text-off-black, #0f0f0f);
+    color: #676666;
     font-weight: 600;
     cursor: pointer;
+    user-select: none;
 }
 
 .sidebar-container{
@@ -49,4 +50,9 @@
     align-items: start;
     font-weight: 600;
     font-size: 1.5em;
+}
+
+.selected{
+    border-bottom: 3px solid black;
+    color: #0f0f0f;
 }
