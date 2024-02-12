@@ -48,6 +48,11 @@ const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
 const taskSearchInput = document.querySelector("#task-search")
 const explainerTaskManhours = document.querySelector(".manhours-container")
+const manhoursMinutesDropdown = document.querySelector("#manhours-minutes-dropdown")
+const manhoursMinutes0 = document.querySelector("#manhours-minutes0")
+const manhoursMinutes15 = document.querySelector("#manhours-minutes15")
+const manhoursMinutes30 = document.querySelector("#manhours-minutes30")
+const manhoursMinutes45 = document.querySelector("#manhours-minutes45")
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -1523,20 +1528,48 @@ async function addTask() {
                 <div class="manhours-label">
                     Expected man hours
                 </div>
+                <div id="man-hours-and-minutes">
+                    <div class="number-picker" id="expected-man-hours">
+                        <div class = "stepper decrement" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                remove
+                            </span>
+                        </div>
 
-                <div class="number-picker" id="expected-man-hours">
-                    <div class = "stepper decrement" tabindex="0">
-                        <span class="material-symbols-rounded">
-                            remove
-                        </span>
+                        <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+                        <div class="stepper increment" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                add
+                            </span>
+                        </div>
+                        <div class="manhours-label">
+                            Hours
+                        </div>
                     </div>
 
-                    <input type="number" class="number-input" value="1" min="0" tabindex="0">
-
-                    <div class="stepper increment" tabindex="0">
-                        <span class="material-symbols-rounded">
-                            add
-                        </span>
+                    <div class="number-picker" id="expected-man-minutes">
+                        <div class="number-picker" id="expected-man-minutes">
+                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                                <div class="dropdown-text">
+                                    0
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option" id="manhours-minutes0">0</div>
+                                    <div class="dropdown-option" id="manhours-minutes15">15</div>
+                                    <div class="dropdown-option" id="manhours-minutes30">30</div>
+                                    <div class="dropdown-option" id="manhours-minutes45">45</div>
+                                </div>
+                            </div>
+                            <div class="manhours-label">
+                                Minutes
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2543,3 +2576,26 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
+
+manhoursMinutesDropdown.addEventListener("click", () => {
+    manhoursMinutesDropdown.classList.toggle("open")
+})
+
+document.addEventListener("click", (e) => {
+    if (!manhoursMinutesDropdown.contains(e.target)) {
+        manhoursMinutesDropdown.classList.remove("open")
+    }
+});
+
+manhoursMinutes0.addEventListener("click", () => {
+    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "0";
+})
+manhoursMinutes15.addEventListener("click", () => {
+    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "15";
+})
+manhoursMinutes30.addEventListener("click", () => {
+    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "30";
+})
+manhoursMinutes45.addEventListener("click", () => {
+    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "45";
+})
