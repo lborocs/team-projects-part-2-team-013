@@ -3,6 +3,10 @@ document.addEventListener("DOMContentLoaded", function() {
     tabElements.forEach((element) => {
         element.addEventListener("click", () => {
             let selectedTab = element.classList[0];
+            tabElements.forEach((tab) => {
+                tab.classList.remove("selected");
+            });
+            element.classList.add("selected");
             let optionTitle = document.querySelector(".option-title")
             console.log(selectedTab);
             let optionMenus = document.querySelectorAll(".options")
