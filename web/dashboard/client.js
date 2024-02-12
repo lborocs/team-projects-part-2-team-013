@@ -209,17 +209,53 @@ async function getManHoursPerEmployee(projectData) {
     // labels: [emp1 emp2]
     // data: [task1: [emp1 spent, emp2 spent]]
 
-    const employees = new Set();
-    const taskEmpSpent = {}
+    const taskNameMap = new Map();
+    projectData.tasks.tasks.forEach(task => {
+        taskNameMap.set(task.taskID, task.name);
+    });
 
-    project.assignments.forEach(assignment => {
-        if (taskEmpSpent[assignment.task.taskID] === undefined) {
-            taskEmpSpent[assignment.task.taskID] = {}
+
+    const employees = new Set();
+    const taskEmpSpent = new Map();
+
+    projectData.tasks.assignments.forEach(assignment => {
+        if (!taskEmpSpent.has(assignment.task.taskID)) {
+            taskEmpSpent.set(assignment.task.taskID, new Map());
         }
 
         employees.add(assignment.employee.empID);
-        taskEmpSpent[assignment.task.taskID][assignment.employee.empID] = assignment.manHours;
+        taskEmpSpent.get(assignment.task.taskID).set(assignment.employee.empID, Math.floor(Math.random() * 3));
     });
+
+    var labels = Array.from(employees);
+    var data = [];
+
+    taskEmpSpent.forEach((empSpent, taskID) => {
+
+
+        const colour = global.hsvToHex(Number("0x" + taskID) % 360, 40, 90)
+        data.push({
+            label: taskID,
+            data: labels.map((empID) => {return empSpent.get(empID) ?? 0}),
+            backgroundColor: `#${colour}7f`,
+            borderColor: `#${colour}`,
+            borderWidth: 1
+        })
+    });
+
+    labels = labels.map(empID => {return global.employeeToName(projectData.employees.get(empID))});
+    data = data.map((task) => {
+        task.label = taskNameMap.get(task.label);
+        return task
+    });
+
+    console.log("[getManHoursPerEmployee] labels: ", labels);
+    console.log("[getManHoursPerEmployee] data: ", data);
+
+    return {
+        labels: labels,
+        data: data
+    };
 
 
 }
@@ -396,48 +432,13 @@ charts.push(new Chart(document.getElementById("taskProgressChart"), {
     }
 }));
 
-const worloadData = getManHoursPerEmployee(randData);
+const workloadData = await getManHoursPerEmployee(randData);
 
 charts.push(new Chart(document.getElementById("workloadChart"), {
     type: 'bar',
     data: {
-        labels: ["Firat", "Octavian", "Usman", "Danial", "Aidan", "Oliver", "Terry", "Dave", "Jamie"],
-        datasets: [
-            {
-                label: 'Task A',
-                data: [10, 5, 0, 0, 0, 0, 0, 0, 0],
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-
-            },
-            {
-                label: 'Task B',
-                data: [0, 0, 0, 0, 1, 3, 3, 3, 0],
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            },
-            {
-                label: 'Task C',
-                data: [0, 1, 0, 2, 0, 0, 2, 0, 5],
-                backgroundColor: 'rgba(255, 206, 86, 0.5)',
-                borderColor: 'rgba(255, 206, 86, 1)',
-                borderWidth: 1
-            },
-            {
-                label: 'Task D',
-                data: [0, 0, 2, 0, 4, 7, 0, 3, 0],
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }
-        ]
-    },
-    plugins: {
-        title: {
-            display: false,
-        }
+        labels: workloadData.labels,
+        datasets: workloadData.data
     },
     options: {
         scales: {
@@ -448,6 +449,14 @@ charts.push(new Chart(document.getElementById("workloadChart"), {
                 stacked: true,
                 beginAtZero: true,
                 suggestedMax: 12
+            }
+        },
+        plugins: {
+            title: {
+                display: false
+            },
+            legend: {
+                display: false
             }
         }
     }

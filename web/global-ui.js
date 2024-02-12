@@ -439,7 +439,7 @@ function rgbComponentToHex(c) {
     return hex.padStart(2, "0");
   }
 
-function hsvToHex(h,s, v) {
+export function hsvToHex(h,s, v) {
     s /= 100;
     v /= 100;
     let i = Math.floor(h / 60);
