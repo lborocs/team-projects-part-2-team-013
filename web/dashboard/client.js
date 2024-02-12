@@ -232,7 +232,7 @@ async function getManHoursPerEmployee(projectData) {
     taskEmpSpent.forEach((empSpent, taskID) => {
 
 
-        const colour = global.hsvToHex(Number("0x" + taskID) % 360, 40, 90)
+        const colour = global.hsvToHex(Number("0x" + taskID.substr(-3)) % 360, 40, 90)
         data.push({
             label: taskID,
             data: labels.map((empID) => {return empSpent.get(empID) ?? 0}),
