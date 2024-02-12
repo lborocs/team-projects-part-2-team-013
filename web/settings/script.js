@@ -5,6 +5,15 @@ document.addEventListener("DOMContentLoaded", function() {
             let selectedTab = element.classList[0];
             let optionTitle = document.querySelector(".option-title")
             console.log(selectedTab);
+            let optionMenus = document.querySelectorAll(".options")
+
+            optionMenus.forEach(menu => {
+                if (menu.classList.contains(`${selectedTab}-options`)) {
+                    menu.classList.remove('norender');
+                } else {
+                    menu.classList.add('norender');
+                }
+            });
 
             if (selectedTab == "account"){
                 optionTitle.innerHTML = "Account"
