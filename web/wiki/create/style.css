@@ -12,7 +12,6 @@ input[type="text"] {
 
 .ql-snow * {
     box-sizing: border-box;
-    max-height: 26em
 }
 .ql-toolbar.ql-snow{
     border-radius: 10px;
@@ -24,12 +23,15 @@ input[type="text"] {
 }
 
 #editor {
-    height:40em;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     border-radius: 10px;
     width: calc(100% - 2em);
     max-width: 800px;
     border: solid 1px #e0e0e0;
+}
+
+#listOfTags{
+    margin-top: 0em;
 }
 
 .options {
@@ -51,6 +53,7 @@ input[type="text"] {
 
 .ql-container{
     background-color: #fff;
+    max-height:40vh;
 }
 
 .type-of-post {
