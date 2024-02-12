@@ -52,7 +52,7 @@
     font-size: 1.5em;
 }
 
-.selected{
+.active-tab{
     border-bottom: 3px solid black;
     color: #0f0f0f;
 }

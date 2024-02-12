@@ -122,28 +122,34 @@ class Dashboard {
 
 async function getProjectData() {
 
-    const res = await get_api("/project/project.php/projects", {no_track: true});
-
-    // only use first half of projects
-    const projects = res.data.projects.slice(0, res.data.projects.length / 2);
+    const res = await get_api("/project/project.php/projects?q=todo", {no_track: true});
 
     // pick a random project
+
+    const projects = res.data.projects;
+
     const project = projects[Math.floor(Math.random() * projects.length)];
     console.log("[getProjectData] project: ", project);
     const tasks = await get_api(`/project/task.php/tasks/${project.projID}`, {no_track: true});
+
+    const employees = await global.getEmployeesById(
+        tasks.data.assignments.map(assignment => assignment.employee.empID).concat(
+            [project.createdBy.empID, project.teamLeader.empID]
+        ))
 
     document.getElementById("project-name").innerText = project.name;
 
     return {
         project: project.data,
-        tasks: tasks.data
+        tasks: tasks.data,
+        employees: employees,
     }
 }
 
-const projectData = await getProjectData();
+const randData = await getProjectData();
 
 
-async function getTaskCompletion() {
+async function getTaskCompletion(projectData) {
     let completed = 0;
     let inProgress = 0;
     let toDo = 0;
@@ -168,7 +174,7 @@ async function getTaskCompletion() {
 
 
 
-async function getTasksPerEmployee() {
+async function getTasksPerEmployee(projectData) {
     let tasksPerEmployee = {};
     projectData.tasks.assignments.forEach(assignment => {
         if (tasksPerEmployee[assignment.employee.empID] === undefined) {
@@ -198,6 +204,26 @@ async function getTasksPerEmployee() {
 
 }
 
+async function getManHoursPerEmployee(projectData) {
+
+    // labels: [emp1 emp2]
+    // data: [task1: [emp1 spent, emp2 spent]]
+
+    const employees = new Set();
+    const taskEmpSpent = {}
+
+    project.assignments.forEach(assignment => {
+        if (taskEmpSpent[assignment.task.taskID] === undefined) {
+            taskEmpSpent[assignment.task.taskID] = {}
+        }
+
+        employees.add(assignment.employee.empID);
+        taskEmpSpent[assignment.task.taskID][assignment.employee.empID] = assignment.manHours;
+    });
+
+
+}
+
 
 //chartjs styling
 Chart.defaults.font.family = 'Open Sans, sans-serif';
@@ -219,7 +245,7 @@ Chart.defaults.animations = false;
 let charts = [];
 
 
-const completionData = await getTaskCompletion();
+const completionData = await getTaskCompletion(randData);
 
 charts.push(new Chart(document.getElementById("completionChart"), {
     type: 'pie',
@@ -277,7 +303,7 @@ charts.push(new Chart(document.getElementById("manHoursChart"), {
 
 
 
-const tasksPerEmployeeData = await getTasksPerEmployee();
+const tasksPerEmployeeData = await getTasksPerEmployee(randData);
 
 charts.push(new Chart(document.getElementById("tasksPerEmployeeChart"), {
     type: 'bar',
@@ -369,6 +395,8 @@ charts.push(new Chart(document.getElementById("taskProgressChart"), {
         }
     }
 }));
+
+const worloadData = getManHoursPerEmployee(randData);
 
 charts.push(new Chart(document.getElementById("workloadChart"), {
     type: 'bar',
