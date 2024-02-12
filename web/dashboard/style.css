@@ -1,10 +1,10 @@
 .dashboard-container {
     display: grid;
-    gap: 10px;
+    gap: 16px;
     overflow-y: auto;
     height: 100%;
     width: 100%;
-    padding: 10px;
+    padding: 16px;
     margin: 0;
     background-color: var(--light-grey-bg);
     grid-template-columns: repeat(2, 1fr);
