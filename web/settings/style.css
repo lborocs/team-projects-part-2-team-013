@@ -23,6 +23,7 @@
     color: var(--text-off-black, #0f0f0f);
     font-weight: 600;
     cursor: pointer;
+    user-select: none;
 }
 
 .sidebar-container{
@@ -49,4 +50,8 @@
     align-items: start;
     font-weight: 600;
     font-size: 1.5em;
+}
+
+.selected{
+    border-bottom: 1px solid black;
 }
