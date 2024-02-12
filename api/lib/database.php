@@ -765,11 +765,9 @@ function db_employee_fetch_by_ids(array $binary_ids) {
     global $db;
     $num = count($binary_ids);
 
-    $stmt = "SELECT EMPLOYEES.*, `ACCOUNTS`.email, `ASSETS`.contentType FROM `EMPLOYEES`
+    $stmt = "SELECT EMPLOYEES.*, `ASSETS`.contentType FROM `EMPLOYEES`
     LEFT JOIN `ASSETS`
         ON `EMPLOYEES`.avatar = `ASSETS`.assetID
-    JOIN `ACCOUNTS`
-        ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
     WHERE `EMPLOYEES`.empID IN ("
     . create_array_binding($num) .
     ")";
