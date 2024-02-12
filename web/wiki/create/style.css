@@ -7,14 +7,21 @@
     .popover {
         position: relative;
         bottom: 85px;
+        width: 25.1em
     }
 }
 
-@media (min-height: 900px) {
-    .popover {
-        position: relative;
-        top: 30px;
-    }
+.popover {
+    position: absolute;
+    width: 25.1em;
+    border: solid 1px rgba(105,112,125, 0.1);
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 3px 3px rgba(0,0,0,0.1);
+    background-color: white;
+    z-index: 999;
+
+    
 }
 
 .tag-input:focus-within {
