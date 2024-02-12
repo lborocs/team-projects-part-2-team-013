@@ -162,6 +162,17 @@
     }
 }
 
+.notification-card.unread {
+    border-left: solid 4px #ffc400;
+    background-color: #fffdf4;
+}
+
+.notification-card.unread:hover {
+    background-color: #fff5d9;
+}
+
+                                                                        
+
 
 
 .notification-card:last-child {
