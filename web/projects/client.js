@@ -2552,7 +2552,7 @@ const sleep = (ms) => {
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
-    const data = await get_api(`/project/project.php/projects?q=${search}&sort=${sortAttribute}&direction=${sortDirection}`);
+    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&direction=${sortDirection}`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
     console.log(data);
