@@ -793,12 +793,34 @@ async function fetchAndRenderAllProjects() {
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
     const data = await get_api('/project/project.php/projects');
     console.log("[fetchAndRenderAllProjects] fetched projects");
-    // process the data here
+
     if (data.success == false) {
         return
     }
+
     clearProjectList();
     console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
+
+    let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
+    projectTableHeaders.forEach((header) => {
+        let sortAttribute = header.getAttribute('data-attribute');
+        if (sortAttribute) { 
+            header.addEventListener("click", (e) => {
+                let sortDirection = 'asc';
+                if (header.classList.contains("sorting-by")) {
+                    header.classList.toggle("reverse");
+                    sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
+                } else {
+                    projectTableHeaders.forEach((header) => {
+                        header.classList.remove("sorting-by", "reverse");
+                    });
+                    header.classList.add("sorting-by");
+                }
+                searchAndRenderProjects('', sortAttribute, sortDirection);
+            });
+        }
+    });
+
     await Promise.all(data.data.projects.map( async (project) => {
         await projectObjectRenderAndListeners(project);
     }));
@@ -2535,10 +2557,12 @@ const sleep = (ms) => {
     });
 };
 
-async function searchAndRenderProjects(search) {
-    const data = await get_api('/project/project.php/projects?q=' + search);
-    console.log("[searchAndRenderProjects(" + search + ")] fetched projects");
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
+    const data = await get_api(`/project/project.php/projects?q=${search}&sort=${sortAttribute}&direction=${sortDirection}`);
+    console.log(`[searchAndRenderProjects(${search})] fetched projects`);
+    console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
     console.log('.project-row.selected');
+
     if (data.success !== true) {
         return;
     }
