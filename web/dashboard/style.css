@@ -143,6 +143,11 @@
         justify-content: center;
         align-items: center;
         gap: 0.5rem;
+
+        #project-name {
+            margin-right: 0.25rem;
+            margin-left: 0.25rem;
+        }
     }
 
     .time-selection {
@@ -168,14 +173,14 @@
 }
 
 #dashboard-time-period {
-    margin-left: 0.5rem;
 }
 
 
 
 
 #add-metric-small {
-    margin-right: 5px;
+    padding-right: 2px;
+    padding-left: 6px;
 }
 
 .fullscreen {
@@ -268,8 +273,8 @@
                 align-items: center;
                 width: 2px;
                 border-radius: 2px;
-                height: 32px;
-                background-color: #aaa;
+                height: 24px;
+                background-color: #ccc;
 
             }
 
