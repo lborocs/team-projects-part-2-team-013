@@ -29,12 +29,25 @@
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
 }
 
+.tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 12rem;
+    border-radius: 6px;
+
+}
+
 .option {
     display: flex;
     flex-direction: row;
     width: 100%;
     justify-content: space-between;
     padding: 1rem 0.5rem;
+
     border-bottom: 1px solid var(--border-clr);
 
     .name, .value {
@@ -47,6 +60,10 @@
 
     .name {
         user-select: none;
+        gap: 0.5rem;
+        display: flex;
+        align-items: center;
+        height: 100%;
     }
 }
 
@@ -58,9 +75,19 @@
     margin-bottom: 0.5rem;
 }
 
+.option-subtitle {
+    display:flex;
+    align-items: start;
+    font-weight: 600;
+    font-size: 1.2em;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+
+}
+
 .active-tab {
-    border-bottom: 2px solid black;
     color: #0f0f0f;
+    background-color: #ffae004f;
 }
 
 .options {
@@ -82,24 +109,55 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 0.5rem;
+    gap: 1rem;
     padding: 1rem;
     width: 100%;
 
     border-radius: 3px;
     background-color: rgba(255, 174, 0, 0.1);
 
+    .avatar-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .details {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        gap: 0.5rem;
+        gap: 0.25rem;
         
     }
 
     .current-name {
         font-weight: 600;
         font-size: 18px;
+    }
+
+    .role-container {
+        margin-left: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: center;
+        justify-content: center;
+
+        .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            & span {
+                font-size: 32px;
+            }
+        }
+
+        .role {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+
     }
 
 
@@ -112,4 +170,25 @@
     height: 4rem;
     border-radius: 50%;
     aspect-ratio: 1;
+}
+
+
+.name-display-input {
+    padding: 4px 6px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: inherit;
+    box-sizing: border-box;
+
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif;
+
+    width: 100%; /* firefox has a different default width for input elements to chrome so this is here to override it */
+
+}
+
+.name-display-input::placeholder {
+    color: rgb(98, 111, 134);
+    user-select: none;
 }

@@ -1,3 +1,5 @@
+import * as global from "../global-ui.js"
+
 const accountTab = document.querySelector('.account');
 const preferencesTab = document.querySelector('.preferences');
 const systemTab = document.querySelector('.system');
@@ -18,6 +20,8 @@ accountTab.addEventListener('click', () => {
     })
 
     accountTab.classList.add('active-tab');
+
+    global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
 })
 
 preferencesTab.addEventListener('click', () => {
@@ -30,6 +34,8 @@ preferencesTab.addEventListener('click', () => {
     })
 
     preferencesTab.classList.add('active-tab');
+
+    global.setBreadcrumb(["Settings", "Preferences"], ["../", '#' + "preferences"])
 })
 
 systemTab.addEventListener('click', () => {
@@ -42,4 +48,10 @@ systemTab.addEventListener('click', () => {
     })
 
     systemTab.classList.add('active-tab');
+
+    global.setBreadcrumb(["Settings", "System"], ["../", '#' + "system"])
 })
+
+
+
+global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
