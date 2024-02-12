@@ -1703,7 +1703,7 @@ async function addTask() {
         event.stopPropagation();
         let title = dialog.querySelector('.add-task-title-input').value;
         let description = quill.root.innerHTML;
-        let expectedManHours = parseInt(numberPickerInput.value, 10);
+        let expectedManHours = parseInt(numberPickerInput.value, 10) * 3600;
         let dueDate = fp.selectedDates[0];
         let dueDateTimestamp = dueDate ? dueDate.getTime() : null;
         let state = 0;
