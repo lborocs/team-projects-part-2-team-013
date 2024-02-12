@@ -33,9 +33,10 @@ logo.classList.add('fullLogo');
 logo.src = 'https://cdn.013.team/assets/logo-large.png';
 logo.alt = 'logo';
 
-export const search = document.createElement('div')
+export const search = document.createElement('form')
 search.classList.add('search', 'white');
 search.id = 'global-search';
+search.autocomplete = "off"
 
 export const notificationPopover = document.createElement('div')
 notificationPopover.classList.add('notification-popover', 'item');
@@ -52,7 +53,7 @@ mobileBack.innerHTML = `<span class="material-symbols-rounded">arrow_back</span>
 hamburger.innerHTML = `<span class="material-symbols-rounded">menu</span>`
 
 search.innerHTML = `
-    <input id="search" class="search-input" type="text" autocomplete="off" placeholder="Search"></input>
+    <input id="search" class="search-input" type="text" autocomplete="false" placeholder="Search"></input>
     <div class="search-icon">
         <span class="material-symbols-rounded">search</span>
     </div>
@@ -88,11 +89,15 @@ notificationPopover.innerHTML = `
                 </span>
             </div>
             Activity
-            <div class="small-icon tooltip tooltip-left" id="read-all" tabindex="0">
-                <p class="tooltiptext">Read all</p>
-                <span class="material-symbols-rounded">
-                    done_all
-                </span>
+            <div class="text-button no-box" id="read-all" tabindex="0">
+                <div class="button-text">
+                    Read all
+                </div>
+                <div class="button-icon">
+                    <span class="material-symbols-rounded">
+                        done_all
+                    </span>
+                </div>
             </div>
         </div>
         <div class="content">
@@ -100,6 +105,7 @@ notificationPopover.innerHTML = `
         </div>
     </div>
 `
+
 
 left.appendChild(hamburger);
 left.appendChild(logo);
