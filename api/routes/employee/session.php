@@ -113,24 +113,16 @@ function r_session_register(RequestContext $ctx, string $args) {
         "password"=>"string",
         "email"=>"string",
         "lastName"=>"string",
-        "token"=>"string",
     ]);
+
+    $ctx->body_require_fields_as_types([
+        "firstName"=>"string",
+    ], true);
 
     $first_name = $ctx->request_body["firstName"] ?? null;
     $last_name = $ctx->request_body["lastName"];
     $email = $ctx->request_body["email"];
     $password = $ctx->request_body["password"];
-
-    if (
-        $first_name !== null &&
-        array_key_exists("firstName", $ctx->request_body) &&
-        gettype($first_name) != "string"
-    ) {
-        respond_bad_request(
-            "Expected field firstName to be a string",
-            ERROR_BODY_FIELD_INVALID_TYPE
-        );
-    }
 
     if ($first_name !== null && strlen($first_name) == 0) {
         respond_bad_request(
@@ -156,14 +148,6 @@ function r_session_register(RequestContext $ctx, string $args) {
 
     $banned_words = array_merge(PASSWORD_BANNED_PHRASES, [$first_name, $last_name, explode($email, "@")[0]]);
     validate_password_constraints($password, $banned_words);
-    
-    // check token
-    // if (strtolower($email) !== auth_signup_validate_token($ctx->request_body["token"])) {
-    //     respond_not_authenticated(
-    //         "Signup token is not valid",
-    //         ERROR_SIGNUP_TOKEN_INVALID
-    //     );
-    // }
 
     // insertion
 
