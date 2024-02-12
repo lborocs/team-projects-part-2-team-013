@@ -1,7 +1,11 @@
-
 document.addEventListener("DOMContentLoaded", function() {
-    let accountTab = document.querySelector(".account");
-    accountTab.addEventListener("click", () => {
-        console.log("Account tab clicked");
+    let tabElements = document.querySelectorAll(".tab");
+    tabElements.forEach((element) => {
+        element.addEventListener("click", () => {
+            let selectedTab = element.classList[0];
+            console.log(selectedTab);
+
+
+        });
     });
 });
