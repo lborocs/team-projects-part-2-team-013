@@ -67,14 +67,7 @@
     background-color: transparent;
 }
 
-.text-button:active {
-    background-color: #c4c9d2;
-    transition: background-color 0.05s ease-out;
-}
 
-.text-button.blue:active {
-    background-color: #1254a0;
-}
 
 @media only screen and (min-width: 600px) {
 
@@ -95,6 +88,15 @@
         background-color: #dcdfe4;
     }
 
+}
+
+.text-button.blue:active {
+    background-color: #1254a0;
+}
+
+.text-button:active {
+    background-color: #c4c9d2;
+    transition: background-color 0.05s ease-out;
 }
 
 .text-button.disabled {
