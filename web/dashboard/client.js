@@ -211,9 +211,8 @@ async function getManHoursPerEmployee(projectData) {
 
     const taskNameMap = new Map();
     projectData.tasks.tasks.forEach(task => {
-        taskNameMap.set(task.taskID, task.name);
+        taskNameMap.set(task.taskID, task.title);
     });
-
 
     const employees = new Set();
     const taskEmpSpent = new Map();
