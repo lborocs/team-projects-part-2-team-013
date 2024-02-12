@@ -2520,19 +2520,6 @@ document.getElementById("delete-task-search").addEventListener("pointerup", () =
     searchAndRenderTasks()
 })
 
-function sortProjects(attribute, ascending = true) {
-    projects.sort((a, b) => {
-        if (a[attribute] < b[attribute]) {
-            return ascending ? -1 : 1;
-        }
-        if (a[attribute] > b[attribute]) {
-            return ascending ? 1 : -1;
-        }
-        return 0;
-    });
-    renderProjectsTable();
-}
-
 let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
 projectTableHeaders.forEach((header) => {
     header.addEventListener("click", (e) => {
@@ -2561,6 +2548,7 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
     const data = await get_api(`/project/project.php/projects?q=${search}&sort=${sortAttribute}&direction=${sortDirection}`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
+    console.log(data);
     console.log('.project-row.selected');
 
     if (data.success !== true) {
