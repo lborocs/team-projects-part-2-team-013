@@ -221,7 +221,7 @@
         }
 
         .disabled {
-            opacity: 0.5;
+            color: rgba(0,0,0,0.4);
             pointer-events: none;
         }
     }
@@ -1035,7 +1035,7 @@
     }
 
     .disabled {
-        opacity: 0.5;
+        color: rgba(0, 0, 0, 0.3);
         pointer-events: none;
     }
 }
