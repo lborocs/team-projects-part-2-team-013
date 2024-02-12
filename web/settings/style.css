@@ -20,7 +20,7 @@
     width:100%;
     margin-bottom: 0.6em;
     margin-left: 0.6em;
-    color: var(--text-off-black, #0f0f0f);
+    color: #676666;
     font-weight: 600;
     cursor: pointer;
     user-select: none;
@@ -54,4 +54,5 @@
 
 .selected{
     border-bottom: 3px solid black;
+    color: #0f0f0f;
 }
