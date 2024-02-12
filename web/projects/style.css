@@ -137,6 +137,7 @@
             align-items: center;
             gap: 0.25em;
             white-space: nowrap;
+            user-select: none;
 
             .icon {
                 opacity: 0;

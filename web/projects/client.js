@@ -48,11 +48,6 @@ const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
 const taskSearchInput = document.querySelector("#task-search")
 const explainerTaskManhours = document.querySelector(".manhours-container")
-const manhoursMinutesDropdown = document.querySelector("#manhours-minutes-dropdown")
-const manhoursMinutes0 = document.querySelector("#manhours-minutes0")
-const manhoursMinutes15 = document.querySelector("#manhours-minutes15")
-const manhoursMinutes30 = document.querySelector("#manhours-minutes30")
-const manhoursMinutes45 = document.querySelector("#manhours-minutes45")
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -1617,6 +1612,35 @@ async function addTask() {
         </dialog>
     `;
 
+    let manhoursMinutesDropdown = document.querySelector("#manhours-minutes-dropdown")
+    let manhoursMinutes0 = document.querySelector("#manhours-minutes0")
+    let manhoursMinutes15 = document.querySelector("#manhours-minutes15")
+    let manhoursMinutes30 = document.querySelector("#manhours-minutes30")
+    let manhoursMinutes45 = document.querySelector("#manhours-minutes45")
+
+    manhoursMinutesDropdown.addEventListener("click", function() {
+        this.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!manhoursMinutesDropdown.contains(e.target)) {
+            manhoursMinutesDropdown.classList.remove("open")
+        }
+    });
+    
+    manhoursMinutes0.addEventListener("click", () => {
+        manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "0";
+    })
+    manhoursMinutes15.addEventListener("click", () => {
+        manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "15";
+    })
+    manhoursMinutes30.addEventListener("click", () => {
+        manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "30";
+    })
+    manhoursMinutes45.addEventListener("click", () => {
+        manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "45";
+    })
+
     //quill for description
     var quill = new Quill('#description-editor', {
         modules: {
@@ -2520,24 +2544,6 @@ document.getElementById("delete-task-search").addEventListener("pointerup", () =
     searchAndRenderTasks()
 })
 
-let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
-projectTableHeaders.forEach((header) => {
-    header.addEventListener("click", (e) => {
-        if (!header.classList.contains("sorting-by")) {
-            projectTableHeaders.forEach((header) => {
-                header.classList.remove("sorting-by");
-            });
-            header.classList.add("sorting-by");
-            sortProjects(header.getAttribute('data-attribute'), true);
-            return;
-        }
-        if (header.classList.contains("sorting-by")) {
-            header.classList.toggle("reverse");
-            sortProjects(header.getAttribute('data-attribute'), !header.classList.contains("reverse"));
-        }
-    });
-});
-
 const sleep = (ms) => {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
@@ -2545,6 +2551,7 @@ const sleep = (ms) => {
 };
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
+    console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
     const data = await get_api(`/project/project.php/projects?q=${search}&sort=${sortAttribute}&direction=${sortDirection}`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
@@ -2589,25 +2596,25 @@ async function searchAndRenderTasks() {
     renderTasks(tasks);
 }
 
-manhoursMinutesDropdown.addEventListener("click", () => {
-    manhoursMinutesDropdown.classList.toggle("open")
-})
+// manhoursMinutesDropdown.addEventListener("click", function() {
+//     this.classList.add("open");
+// });
 
-document.addEventListener("click", (e) => {
-    if (!manhoursMinutesDropdown.contains(e.target)) {
-        manhoursMinutesDropdown.classList.remove("open")
-    }
-});
+// document.addEventListener("click", (e) => {
+//     if (!manhoursMinutesDropdown.contains(e.target)) {
+//         manhoursMinutesDropdown.classList.remove("open")
+//     }
+// });
 
-manhoursMinutes0.addEventListener("click", () => {
-    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "0";
-})
-manhoursMinutes15.addEventListener("click", () => {
-    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "15";
-})
-manhoursMinutes30.addEventListener("click", () => {
-    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "30";
-})
-manhoursMinutes45.addEventListener("click", () => {
-    manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "45";
-})
+// manhoursMinutes0.addEventListener("click", () => {
+//     manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "0";
+// })
+// manhoursMinutes15.addEventListener("click", () => {
+//     manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "15";
+// })
+// manhoursMinutes30.addEventListener("click", () => {
+//     manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "30";
+// })
+// manhoursMinutes45.addEventListener("click", () => {
+//     manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "45";
+// })
