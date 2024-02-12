@@ -261,33 +261,57 @@ class PreferenceStore {
 
     store;
     saver;
+    _lazy;
     
     constructor() {
+        this._lazy = true;
         this.store = new Map();
         // rolling timeout to save 2s after no changes
         this.saver = new ReusableRollingTimeout(() => {this.save()}, 2000);
     }
 
     async save() {
-        await put_api("/employee/preferences.php/preferences", Object.fromEntries(this.store));
+        await put_api("/employee/meta.php/preferences", {preferences: Object.fromEntries(this.store)});
     }
 
-    get(key) {
+    async fill() {
+        const res = await get_api("/employee/meta.php/preferences");
+        if (res.success) {
+            this.store = new Map(Object.entries(res.data.preferences))
+        } else {
+            throw Error(`failed to get preferences (${res.error.code}) ${res.error.message}`)
+        }
+    }
+
+    async get(key) {
+        key = key.toLowerCase();
+
+        if (this._lazy) {
+            await this.fill();
+        }
+
         return this.store.get(key);
     }
 
-    set(key, value) {
+    async set(key, value) {
+        key = key.toLowerCase();
+
+        if (this._lazy) {
+            await this.fill();
+        }
+
         this.store.set(key, value);
         this.saver.roll();
     }
 
-    clear() {
-        this.store.clear();
+    async delete(key) {
+        key = key.toLowerCase();
+        this.store.delete(key);
+        this.saver.roll();
     }
     
-    
 }
-
+export const preferences = new PreferenceStore();
 
 //utility functions
 

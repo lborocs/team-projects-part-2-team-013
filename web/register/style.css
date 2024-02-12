@@ -35,6 +35,11 @@ body {
     background-color: white;
 }
 
+.login-prompt {
+    text-align: center;
+    font-weight: 600;
+}
+
 .box {
     width: 22em;
     border-radius: 8px; 

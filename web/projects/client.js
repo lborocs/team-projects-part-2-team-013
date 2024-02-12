@@ -2498,7 +2498,20 @@ document.getElementById("delete-task-search").addEventListener("pointerup", () =
     searchAndRenderTasks()
 })
 
-let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th"); // these will be defined by classes later
+function sortProjects(attribute, ascending = true) {
+    projects.sort((a, b) => {
+        if (a[attribute] < b[attribute]) {
+            return ascending ? -1 : 1;
+        }
+        if (a[attribute] > b[attribute]) {
+            return ascending ? 1 : -1;
+        }
+        return 0;
+    });
+    renderProjectsTable();
+}
+
+let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
 projectTableHeaders.forEach((header) => {
     header.addEventListener("click", (e) => {
         if (!header.classList.contains("sorting-by")) {
@@ -2506,15 +2519,15 @@ projectTableHeaders.forEach((header) => {
                 header.classList.remove("sorting-by");
             });
             header.classList.add("sorting-by");
+            sortProjects(header.getAttribute('data-attribute'), true);
             return;
         }
         if (header.classList.contains("sorting-by")) {
             header.classList.toggle("reverse");
+            sortProjects(header.getAttribute('data-attribute'), !header.classList.contains("reverse"));
         }
-
-
     });
-})
+});
 
 const sleep = (ms) => {
     return new Promise((resolve) => {

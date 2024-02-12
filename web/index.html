@@ -26,25 +26,25 @@
                 <div class="input-container">
                     <label for="email">Email</label>
                     <div class="textfield-container">
-                        <input type="email" placeholder="example@email.com" id="email" class="textfield" autocomplete="email" required>
+                        <input tabindex="1" type="email" placeholder="example@email.com" id="email" class="textfield" autocomplete="email" required>
                     </div>
                 </div>
                 <div class="input-container">
                     <div class="left-right-labels">
                         <label for="password">Password</label>
-                        <a href="/request-reset/" class="forgot-password">Forgot password?</a>
+                        <a href="/request-reset/" class="forgot-password" tabindex="4">Forgot password?</a>
                     </div>
                     <div class="textfield-container">
-                        <input type="password" placeholder="" id="password" class="textfield" autocomplete="current-password" required>
+                        <input tabindex="2" type="password" placeholder="" id="password" class="textfield" autocomplete="current-password" required>
                         <span class="material-symbols-rounded" id="togglePassword">
                             visibility_off
                         </span>
                     </div>
                 </div>
             </div>
-            <div class="register-prompt">Don't have an account? <a href="/register/">Register</a></div>
+            <div class="register-prompt">Don't have an account? <a tabindex="5" href="/register/">Register</a></div>
             <div id="login" class="text-button blue">
-                <div class="button-text">
+                <div class="button-text" tabindex="3">
                     Sign in
                 </div>
             </div>
