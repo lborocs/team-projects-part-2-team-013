@@ -1431,6 +1431,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
             </a>
         </td>
         <td>${date}</td>
+        <td>${dueDateFormatted}</td>
         <td>
             <a href="/projects/#${ID}">
                 <div class="tooltip tooltip-above name-card">
@@ -1441,7 +1442,6 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
                 </div>
             </a>
         </td>
-        <td>${dueDateFormatted}</td>
         <td>
             <a href="/projects/#${ID}">
                 <div class="icon-button no-box project-actions">

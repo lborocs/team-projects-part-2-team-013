@@ -8,6 +8,8 @@
         background-color: transparent;
         margin-bottom: 0;
         width: 100%;
+        height: 3rem;
+        flex: 0 0 3rem;
     }
 
     .projects-container {
@@ -1715,4 +1717,28 @@
 #man-hours-and-minutes {
     display: flex;
     gap: 1em;
+}
+/* project table column width definitions */
+#header-name {
+    width: 25%;
+}
+
+#header-teamLeader {
+    width: 15%;
+}
+
+#header-createdAt {
+    width: 15%;
+}
+
+#header-dueDate {
+    width: 15%;
+}
+
+#header-sortingBy {
+    width: 12rem;
+}
+
+#header-more {
+    width: 3rem;
 }
