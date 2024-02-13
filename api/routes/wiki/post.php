@@ -44,6 +44,12 @@ function r_post_fetchall_posts(RequestContext $ctx, string $args) {
 
     $tag_term = $_GET["tags"] ?? null;
 
+    $is_technical = $_GET["is_technical"] ?? '0';
+
+    if ($is_technical !== "0" && $is_technical !== "1") {
+        respond_bad_request("Expected query param is_technical to be 0 or 1", ERROR_BODY_FIELD_INVALID_TYPE);
+    }
+
     $tags = null;
     if ($tag_term !== null) {
         $tags = explode(",", urldecode($tag_term));
@@ -58,7 +64,7 @@ function r_post_fetchall_posts(RequestContext $ctx, string $args) {
         }
     }
 
-    $posts = db_post_fetchall($search_term, $tags);
+    $posts = db_post_fetchall($search_term, $tags, $is_technical);
 
     respond_ok(array(
         "posts"=>$posts
