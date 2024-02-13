@@ -699,7 +699,6 @@ export async function renderNotifications(notifications) {
     
     //rendering notifications
     notifications.forEach(notification => {
-        console.log(notification)
         let icon = ""
         let link = "https://013.team/"
         let desc = "Not Implemented"
