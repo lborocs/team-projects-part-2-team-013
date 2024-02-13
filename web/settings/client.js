@@ -52,6 +52,17 @@ systemTab.addEventListener('click', () => {
     global.setBreadcrumb(["Settings", "System"], ["../", '#' + "system"])
 })
 
+//dropdown menu event listeners
+
+document.addEventListener('click', function(event) {
+    if (!avatarOptions.contains(event.target)) {
+        avatarOptions.classList.remove('open');
+    }
+    if (!postingOptions.contains(event.target)) {
+        postingOptions.classList.remove('open');
+    }
+});
+
 let avatarOptions = document.querySelector('#avatar-options');
 avatarOptions.addEventListener('click', () => {
     if (avatarOptions.classList.contains('open')) {
@@ -68,6 +79,23 @@ avatarDropdown.forEach((option) => {
         
     })
 })
+
+let postingOptions = document.querySelector('#posting-options');
+postingOptions.addEventListener('click', () => {
+    if (postingOptions.classList.contains('open')) {
+        postingOptions.classList.remove('open');
+    } else {
+        postingOptions.classList.toggle('open');
+    }
+})
+
+let postingDropdown = document.querySelectorAll('.posting-option');
+postingDropdown.forEach((option) => {
+    option.addEventListener('click', () => {
+        postingOptions.classList.remove('open');
+    })
+})
+
 
 global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
 

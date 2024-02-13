@@ -122,6 +122,7 @@
 
 .dropdown.open .dropdown-menu {
     display: flex;
+    z-index: 1000;
 }
 
 .dropdown.open .dropdown-list {
