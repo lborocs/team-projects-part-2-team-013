@@ -95,6 +95,11 @@ function setUpPostsEventListeners() {
             event.stopPropagation();
             confirmDelete().then(() => {
                 post.remove();
+                let postID = post.getAttribute("data-postID");
+                console.log(postID);
+                delete_api(`/wiki/post.php/post/${postID}`).then((data) => {
+                    console.log(data);
+                });
             }).catch(() => {
                 console.log('Deletion cancelled');
             });
