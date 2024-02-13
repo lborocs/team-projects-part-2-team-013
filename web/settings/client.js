@@ -108,6 +108,48 @@ tagsMenu.forEach((option) => {
     })
 })
 
+let listOptions = document.querySelector('#list-options');
+listOptions.addEventListener('click', () => {
+    listOptions.classList.toggle('open');
+});
+
+let listMenu = document.querySelectorAll('.list-option');
+listMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#list-text').innerHTML = option.innerHTML;
+        listOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
+let sortProjectsOptions = document.querySelector('#sort-projects-options');
+sortProjectsOptions.addEventListener('click', () => {
+    sortProjectsOptions.classList.toggle('open');
+});
+
+let sortProjectsMenu = document.querySelectorAll('.sort-projects-option');
+sortProjectsMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#sort-projects-text').innerHTML = option.innerHTML;
+        sortProjectsOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
+let sortTasksOptions = document.querySelector('#sort-tasks-options');
+sortTasksOptions.addEventListener('click', () => {
+    sortTasksOptions.classList.toggle('open');
+});
+
+let sortTasksMenu = document.querySelectorAll('.sort-tasks-option');
+sortTasksMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#sort-tasks-text').innerHTML = option.innerHTML;
+        sortTasksOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
 
 
 global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])

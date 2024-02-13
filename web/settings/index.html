@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="/ui-elements/number-picker.css">
     <link rel="stylesheet" href="/ui-elements/date-picker.css">
     <link rel="stylesheet" href="/ui-elements/context-menu.css">
+    <link rel="stylesheet" href="/personal/style.css">
 
     <!-- flatpickr.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" 
@@ -113,7 +114,9 @@
                         </div>
                         <div class="option">
                             <label class="name" for="preference-sidebar">Automatically Open Sidebar</label>
-                            <input type="checkbox" class="value" id="preference-sidebar">
+                            <div class="checkbox">
+                                <input type="checkbox">
+                            </div>
                         </div>
 
                         <div class="option">
@@ -138,8 +141,8 @@
 
                         <div class="option">
                             <label class="name" for="preference-sort-tasks">Sort Tasks</label>
-                            <div class="dropdown" id="sort-options">
-                                <div class="dropdown-text" id="sort-text">
+                            <div class="dropdown" id="sort-tasks-options">
+                                <div class="dropdown-text" id="sort-tasks-text">
                                     By Name - Ascending
                                 </div>
                                 <div class="dropdown-chevron">
@@ -148,12 +151,12 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-option" id="sort-name-asc">By Name - Ascending</div>
-                                    <div class="dropdown-option sort-option" id="sort-name-desc">By Name - Descending</div>
-                                    <div class="dropdown-option sort-option" id="sort-date-asc">By Date - Ascending</div>
-                                    <div class="dropdown-option sort-option" id="sort-date-desc">By Date - Descending</div>
-                                    <div class="dropdown-option sort-option" id="sort-status-asc">By Status - Ascending</div>
-                                    <div class="dropdown-option sort-option" id="sort-status-desc">By Status - Descending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-name-asc">By Name - Ascending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-name-desc">By Name - Descending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-date-asc">By Date - Ascending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-date-desc">By Date - Descending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-status-asc">By Status - Ascending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-status-desc">By Status - Descending</div>
                                 </div>
                             </div>
                         </div>
