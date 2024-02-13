@@ -120,7 +120,7 @@
                         </div>
 
                         <div class="option">
-                            <label class="name" for="list-options">Default to List View</label>
+                            <label class="name" for="list-options">Default to List View when Opening a Project</label>
                             <div class="dropdown" id="list-options">
                                 <div class="dropdown-text" id="list-text">
                                     <!-- this is whatever preference they have set, JS puts a value here on page load -->
@@ -133,7 +133,7 @@
                                 <div class="dropdown-menu">
                                     <div class="dropdown-option list-option" id="list-always">Always</div>
                                     <div class="dropdown-option list-option" id="list-never">Never</div>
-                                    <div class="dropdown-option list-option" id="list-manager">On tasks I manage</div>
+                                    <div class="dropdown-option list-option" id="list-manager">For Projects I Manage</div>
                                 </div>
                             </div>
                         </div>
@@ -141,7 +141,7 @@
 
                         <div class="option">
                             <label class="name" for="preference-sort-tasks">Sort Tasks</label>
-                            <div class="dropdown" id="sort-tasks-options">
+                            <div class="dropdown" id="sort-tasks-option-type">
                                 <div class="dropdown-text" id="sort-tasks-text">
                                     <!-- this is whatever preference they have set, JS puts a value here on page load -->
                                 </div>
@@ -151,12 +151,23 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-tasks-option" id="sort-name-asc">By Name - Ascending</div>
-                                    <div class="dropdown-option sort-tasks-option" id="sort-name-desc">By Name - Descending</div>
-                                    <div class="dropdown-option sort-tasks-option" id="sort-date-asc">By Date - Ascending</div>
-                                    <div class="dropdown-option sort-tasks-option" id="sort-date-desc">By Date - Descending</div>
-                                    <div class="dropdown-option sort-tasks-option" id="sort-status-asc">By Status - Ascending</div>
-                                    <div class="dropdown-option sort-tasks-option" id="sort-status-desc">By Status - Descending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-name-asc">By Name</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-date-asc">By Date</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-status-desc">By Status</div>
+                                </div>
+                            </div>
+                            <div class="dropdown" id="sort-tasks-option-direction">
+                                <div class="dropdown-text" id="sort-tasks-text">
+                                    <!-- this is whatever preference they have set, JS puts a value here on page load -->
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option sort-tasks-option" id="sort-name-asc">Ascending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-name-desc">Descending</div>
                                 </div>
                             </div>
                         </div>

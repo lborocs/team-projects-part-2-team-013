@@ -47,6 +47,7 @@
     width: 100%;
     justify-content: space-between;
     padding: 1rem 0.5rem;
+    gap: 0.5rem;
 
     border-bottom: 1px solid var(--border-clr);
 
@@ -208,4 +209,8 @@
     & input:hover {
         cursor: pointer;
     }
+}
+
+#sort-tasks-option-type {
+    margin-left: auto;
 }
