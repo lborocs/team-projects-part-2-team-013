@@ -52,6 +52,22 @@ systemTab.addEventListener('click', () => {
     global.setBreadcrumb(["Settings", "System"], ["../", '#' + "system"])
 })
 
+let avatarOptions = document.querySelector('#avatar-options');
+avatarOptions.addEventListener('click', () => {
+    if (avatarOptions.classList.contains('open')) {
+        avatarOptions.classList.remove('open');
+    } else {
+        avatarOptions.classList.toggle('open');
+    }
+})
 
+let avatarDropdown = document.querySelectorAll('.avatar-option');
+avatarDropdown.forEach((option) => {
+    option.addEventListener('click', () => {
+        avatarOptions.classList.remove('open');
+        
+    })
+})
 
 global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
+
