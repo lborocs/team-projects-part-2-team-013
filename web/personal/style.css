@@ -1,3 +1,4 @@
+/* this also contains the page title to save space for more personal items on the screen */
 .controls {
     display: flex;
     flex-direction: row;
@@ -29,6 +30,17 @@
     }
 }
 
+.list-container {
+    display: flex;
+    flex-direction: column;
+
+    .title {
+        margin-left: 1rem;
+        width: calc(100% - 2rem);
+    }
+
+}
+
 .list {
     display: flex;
     flex-direction: column;
@@ -50,12 +62,15 @@
     align-items: center;
 
     gap: 1rem;
-    padding: 1rem;
+    padding: 0.5rem 1rem;
+    padding-right: 0.5rem;
     
     width: 100%;
 
     background-color: white;
     border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.05s ease-out;
 
     .personal-content {
         display: flex;
@@ -69,7 +84,7 @@
     }
 
     .personal-title {
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 400;
     }
 
@@ -81,6 +96,12 @@
 
         gap: 0.5rem;
     }
-    
+
+}
+
+.personal-task:hover {
+    background-color: var(--make-it-all-tint);
+    cursor: pointer;
+    transition: background-color 0.1s ease-out;
 }
 
