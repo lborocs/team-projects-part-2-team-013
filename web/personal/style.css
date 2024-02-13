@@ -100,8 +100,17 @@
 }
 
 .personal-task:hover {
-    background-color: var(--make-it-all-tint);
+    background-color: #388bff11;
     cursor: pointer;
     transition: background-color 0.1s ease-out;
+}
+
+.personal-task:active {
+    background-color: var(--make-it-all-tint);
+    transition: background-color 0.1s ease-out;
+}
+
+.personal-task.selected {
+    outline: solid 2px #388bffaa;
 }
 
