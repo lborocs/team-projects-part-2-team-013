@@ -544,7 +544,7 @@ const TABLE_EMPLOYEE_TASKS = new Table(
 
 const TABLE_PERSONALS = new Table(
     "`EMPLOYEE_PERSONALS`",
-    ["itemID"],
+    ["empID", "itemID"],
     [
         new Column("itemID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column(
