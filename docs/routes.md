@@ -254,7 +254,7 @@ Written/designed by aidan F223129
 
 # wiki
 ## post.php
-- [x] **/wiki/post.php/posts?q=search_term&tags=tagid1,tagid2**
+- [x] **/wiki/post.php/posts?q=search_term&tags=tagid1,tagid2&is_technical=1**
   - GET (get all posts)
     will return a body containing a list of posts
     ```jsonc

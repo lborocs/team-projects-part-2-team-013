@@ -352,7 +352,7 @@ function db_asset_fetch(string $asset_id) {
 
 // posts
 
-function db_post_fetchall(string $search_term, ?Array $tags) {
+function db_post_fetchall(string $search_term, ?Array $tags, $is_technical) {
 
     global $db;
 
@@ -386,16 +386,19 @@ function db_post_fetchall(string $search_term, ?Array $tags) {
             ON `POST_TAGS`.tagID = `TAGS`.tagID
         LEFT JOIN `POST_VIEWS` 
             ON `POST_VIEWS`.postID = `POSTS`.postID
-        WHERE LOWER(`POSTS`.postTitle) LIKE ? " . $tag_term . "
+        WHERE LOWER(`POSTS`.postTitle) LIKE ? 
+        AND `POSTS`.postIsTechnical = ?
+        " . $tag_term . "
         GROUP BY `POSTS`.postID
         ORDER BY views DESC
         LIMIT " . SEARCH_FETCH_DEFAULT
     );
 
     $query->bind_param(
-        str_repeat("s", count($tags) + 1),
+        "si" . str_repeat("s", count($tags)),
         $search,
-        ...$tags
+        $is_technical,
+        ...$tags,
     );
 
     $result = $query->execute();
