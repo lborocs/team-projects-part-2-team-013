@@ -20,7 +20,7 @@
 
     .sidebar-item {
         font-size: 1.5rem;
-        
+
         & p {
             margin: 0;
         }
@@ -59,16 +59,31 @@
         }
     }
 
+    #global-search {
+        display: none;
+    }
+
     .views {
-        height: 3.5em;
-        width: 100%;
+        height: 5rem;
+        flex: 0 0 5rem;
+        flex-wrap: wrap;
         position: relative;
         z-index: 0;
         justify-content: flex-start;
+        align-content: space-between;
+        margin: 1em;
+        gap: 0;
     }
 
     .view {
         font-size: 1.1em;
+        margin-left: 0;
+        margin-right: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    .search {
+        width: 100%;
     }
 
     .container {
@@ -77,7 +92,7 @@
         justify-content: flex-start;
         align-items: center;
     }
-    
+
     #finished {
         margin-bottom: 0.75em;
     }
@@ -95,6 +110,7 @@
     }
 
     .explainer {
+       
         height: 60%;
         width: calc(100% - 2em);
         background-color: white;
@@ -105,9 +121,11 @@
         transition: 0.15s ease-out;
         z-index: 2;
         position: fixed;
+       
         top: 70%;
         left: 50%;
         transform: translate(-50%, -50%);
+       
         margin: 0;
         padding: 1em;
         box-sizing: border-box;
@@ -158,9 +176,37 @@
     }
 
     .taskgrid {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: scroll;
+        width: 100vw;
+
+        scroll-snap-type: x mandatory;
+        scroll-padding: 0 1em;
+
+        padding-left: 1rem;
+        padding-right: 1rem;
+
+        margin-left: 0;
+        margin-right: 0;
+
+    }
+
+    .taskcolumn {
+        width: auto;
+        flex: 0 0 20em;
+
+        scroll-snap-align: start;
+        scroll-snap-stop: normal;
+
+        .title-container {
+            width: calc(100% - 1em);
+        }
+
+        .task {
+            width: calc(100% - 1em);
+        }
+
     }
 
     .tasklist {
@@ -176,10 +222,22 @@
     .viewport {
         width: 100%;
         height: 100%;
+        gap: 0;
     }
 
-    .projectsbar .project:not(.selected) {
+   
+    .projectsbar {
+        overflow-x: scroll;
+        overflow-y: hidden;
+    }
+
+    ::-webkit-scrollbar {
         display: none;
+    }
+    
+    .taksarea {
+       
+        overflow-y: hidden;
     }
 
     th {
@@ -195,10 +253,32 @@
         transform: translate(-50%, -50%);
     }
 
-    .breadcrumb {
+    .selection-screen {
+        padding: 1rem;
+        .search-row {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            .search {
+                width: 100%;
+            }
+        }
+
+        #projects-table thead th {
+            z-index: 1;
+        }
+    }
+
+    .project-bar {
         display: none;
     }
 
-    
-    
+    .projects-container {
+        height: 100%;
+    }
+
+    #add-task-button {
+        display: none;
+    }
+
+
 }
