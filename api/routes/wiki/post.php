@@ -406,7 +406,8 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
 }
 
 function _delete_post(RequestContext $ctx, array $url_specifiers) {
-    respond_not_implemented();
+    db_post_delete($url_specifiers[0]);
+    respond_no_content();
 }
 
 function _fetch_post(RequestContext $ctx, array $url_specifiers) {
