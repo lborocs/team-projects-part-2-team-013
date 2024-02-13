@@ -510,6 +510,25 @@ function db_post_bind_assets($post_id, $assets) {
 }
 
 
+function db_post_delete(string $post_id) {
+    global $db;
+
+    $bin_id = hex2bin($post_id);
+
+    $query = $db->prepare(
+        "DELETE FROM `POSTS` WHERE postID = ?"
+    );
+    $query->bind_param("s", $bin_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+}
+
+
 
 function db_post_set_tags(string $post_id, Array $tags) {
     global $db;
