@@ -46,6 +46,12 @@
 
     .search {
         width: 15em;
+        transition: width 0.1s ease-in-out;
+    }
+
+    .search:focus-within {
+        width: 280px;
+        transition: width 0.1s ease-in-out;
     }
 
     .filter {
@@ -418,6 +424,16 @@
         margin: 0;
         background-color: #3b3b3b;
         opacity: 0.2;
+    }
+
+    .search{
+        width: 15em;
+        transition: width 0.1s ease-in-out;
+    }
+
+    .search:focus-within {
+        width: 280px;
+        transition: width 0.1s ease-in-out;
     }
 }
 
