@@ -33,15 +33,15 @@ async function getPersonals() {
 }
 
 function selectPersonal(id) {
-    const personalState = document.getElementById(id)
+    const personalCheckbox = document.getElementById(id)
     //personal checkbox has the ID so we can do idElement.value, but this means we have to travel 2 parent elements up to find the personal card.
-    const personal = personalState.parentNode.parentNode 
-    const personalCards = document.querySelectorAll('.personal-task')
+    const personal = personalCheckbox.parentNode.parentNode 
 
+    const personalCards = document.querySelectorAll('.personal-task')
     personalCards.forEach((card) => {
         card.classList.remove('selected')
     })
-    
+
     personal.classList.add('selected')
 }
 
@@ -88,6 +88,16 @@ function renderPersonal(id) {
         selectPersonal(id)
     })
 
+    personalCard.querySelector('.personal-checkbox').addEventListener('click', (e) => {
+        e.stopPropagation()
+        togglePersonalState(id)
+    })
+
+    personalCard.querySelector('.edit').addEventListener('click', (e) => {
+        e.stopPropagation()
+        editPersonal(id)
+    })
+
 }
 
 function unrenderPersonal(id) {
@@ -95,7 +105,40 @@ function unrenderPersonal(id) {
     personal.remove()
 }
 
+async function togglePersonalState(id) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+    console.log(session)
+    const personal = globalPersonalsList.find(personal => personal.itemID === id)
+    console.log(personal)
 
+    let state = 1
+    if (personal.state) {
+        state = 0
+    }
+
+    const body = {
+        state: state
+    }
+
+    const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
+
+    if (!res.success) {
+        return false
+    }
+
+    personal.state = !personal.state
+
+    if (personal.state === 1) {
+        completedList.appendChild(personal)
+    } else {
+        activeList.appendChild(personal)
+    }
+}
+
+
+//initialise the page
+global.setBreadcrumb(["My List"], ["./"])
 
 getPersonals().then(() => {
     globalPersonalsList.forEach(personal => {
@@ -103,4 +146,4 @@ getPersonals().then(() => {
     })
 })
 
-global.setBreadcrumb(["My List"], ["./"])
+
