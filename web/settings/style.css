@@ -192,3 +192,20 @@
     color: rgb(98, 111, 134);
     user-select: none;
 }
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & input {
+        margin: 0;
+        line-height: normal;
+        width: 1rem;
+        height: 1rem;
+    }
+
+    & input:hover {
+        cursor: pointer;
+    }
+}

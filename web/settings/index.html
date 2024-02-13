@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="/ui-elements/number-picker.css">
     <link rel="stylesheet" href="/ui-elements/date-picker.css">
     <link rel="stylesheet" href="/ui-elements/context-menu.css">
+    <link rel="stylesheet" href="/personal/style.css">
 
     <!-- flatpickr.js -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css" 
@@ -105,7 +106,7 @@
                         <div class="option">
                             <div class="name">Delete Account</div>
                         </div>
-                    </div>  
+                    </div>
 
                     <div class="preferences-options options norender">
                         <div class="option-title">
@@ -113,20 +114,75 @@
                         </div>
                         <div class="option">
                             <label class="name" for="preference-sidebar">Automatically Open Sidebar</label>
-                            <input type="checkbox" class="value" id="preference-sidebar">
+                            <div class="checkbox">
+                                <input type="checkbox">
+                            </div>
                         </div>
+
                         <div class="option">
-                            <label class="name" for="preference-list-view">Default to List View</label>
-                            <button class="value" id="preference-list-view">Dropdown</button>
+                            <label class="name" for="list-options">Default to List View</label>
+                            <div class="dropdown" id="list-options">
+                                <div class="dropdown-text" id="list-text">
+                                    For Nobody
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option list-option" id="list-always">Always</div>
+                                    <div class="dropdown-option list-option" id="list-never">Never</div>
+                                    <div class="dropdown-option list-option" id="list-manager">On tasks I manage</div>
+                                </div>
+                            </div>
                         </div>
+
+
                         <div class="option">
                             <label class="name" for="preference-sort-tasks">Sort Tasks</label>
-                            <button class="value" id="preference-sort-tasks">Dropdown</button>
+                            <div class="dropdown" id="sort-tasks-options">
+                                <div class="dropdown-text" id="sort-tasks-text">
+                                    By Name - Ascending
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option sort-tasks-option" id="sort-name-asc">By Name - Ascending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-name-desc">By Name - Descending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-date-asc">By Date - Ascending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-date-desc">By Date - Descending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-status-asc">By Status - Ascending</div>
+                                    <div class="dropdown-option sort-tasks-option" id="sort-status-desc">By Status - Descending</div>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="option">
-                            <label class="name" for="preference-sort-projects">Sort Projects</label>
-                            <button class="value" id="preference-sort-projects">Dropdown</button>
+                            <label class="name" for="preferences-sort-projects">Sort Projects</label>
+                            <div class="dropdown" id="sort-projects-options">
+                                <div class="dropdown-text" id="sort-projects-text">
+                                    By Name - Ascending
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option sort-projects-option" id="sort-projects-name-asc">By Name - Ascending</div>
+                                    <div class="dropdown-option sort-projects-option" id="sort-projects-name-desc">By Name - Descending</div>
+                                    <div class="dropdown-option sort-projects-option" id="sort-projects-date-asc">By Date - Ascending</div>
+                                    <div class="dropdown-option sort-projects-option" id="sort-projects-date-desc">By Date - Descending</div>
+                                    <div class="dropdown-option sort-projects-option" id="sort-projects-status-asc">By Status - Ascending</div>
+                                    <div class="dropdown-option sort-projects-option" id="sort-projects-status-desc">By Status - Descending</div>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
 
                     <div class="system-options options norender">
@@ -134,50 +190,61 @@
                             System
                         </div>
                         <div class="option">
-                            <label class="name" for="system-avatars">Disable Avatars</label>
+                            <label class="name" for="system-avatars">Enable Avatars</label>
                             <div class="dropdown" id="avatar-options">
                                 <div class="dropdown-text" id="avatar-text">
                                     For Nobody
                                 </div>
-
                                 <div class="dropdown-chevron">
                                     <span class="material-symbols-rounded">
                                         expand_more
                                     </span>
                                 </div>
-
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option avatar-option" id="disable-none">For Nobody</div>
-                                    <div class="dropdown-option avatar-option" id="disable-employees">For Employees Only</div>
-                                    <div class="dropdown-option avatar-option" id="disable-managers">For Managers Only</div>
-                                    <div class="dropdown-option avatar-option" id="disable-all">For Everybody</div>
+                                    <div class="dropdown-option avatar-option" id="enable-none">For Nobody</div>
+                                    <div class="dropdown-option avatar-option" id="enable-employees">For Employees Only</div>
+                                    <div class="dropdown-option avatar-option" id="enable-managers">For Managers Only</div>
+                                    <div class="dropdown-option avatar-option" id="enable-all">For Everybody</div>
                                 </div>
                             </div>
                         </div>
                         <div class="option">
-                            <label class="name" for="system-wiki-posting">Disable Posting</label>
+                            <label class="name" for="system-wiki-posting">Enable Posting</label>
                             <div class="dropdown" id="posting-options">
                                 <div class="dropdown-text" id="posting-text">
                                     For Nobody
                                 </div>
-
                                 <div class="dropdown-chevron">
                                     <span class="material-symbols-rounded">
                                         expand_more
                                     </span>
                                 </div>
-
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option postiing-option" id="disable-none">For Nobody</div>
-                                    <div class="dropdown-option postiing-option" id="disable-employees">For Employees Only</div>
-                                    <div class="dropdown-option postiing-option" id="disable-managers">For Managers Only</div>
-                                    <div class="dropdown-option postiing-option" id="disable-all">For Everybody</div>
+                                    <div class="dropdown-option posting-option" id="enable-none">For Nobody</div>
+                                    <div class="dropdown-option posting-option" id="enable-employees">For Employees Only</div>
+                                    <div class="dropdown-option posting-option" id="enable-managers">For Managers Only</div>
+                                    <div class="dropdown-option posting-option" id="enable-all">For Everybody</div>
                                 </div>
                             </div>
                         </div>
                         <div class="option">
-                            <label class="name" for="system-tag-creation">Can Create Tags</label>
-                            <button class="value" id="system-tag-creation">Dropdown</button>
+                            <label class="name" for="system-tags">Enable Tags</label>
+                            <div class="dropdown" id="tags-options">
+                                <div class="dropdown-text" id="tags-text">
+                                    For Nobody
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option tags-option" id="enable-none">For Nobody</div>
+                                    <div class="dropdown-option tags-option" id="enable-employees">For Employees Only</div>
+                                    <div class="dropdown-option tags-option" id="enable-managers">For Managers Only</div>
+                                    <div class="dropdown-option tags-option" id="enable-all">For Everybody</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
