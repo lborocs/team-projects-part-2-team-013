@@ -72,6 +72,23 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     transition: background-color 0.05s ease-out;
 
+    .personal-checkbox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & input {
+            margin: 0;
+            line-height: normal;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        & input:hover {
+            cursor: pointer;
+        }
+    }
+
     .personal-content {
         display: flex;
         flex-direction: row;
