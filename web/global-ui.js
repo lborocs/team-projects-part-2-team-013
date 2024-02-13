@@ -11,6 +11,7 @@ var globalMutexes = new Map();
 
 export const sidebarContainer = document.querySelector('.sidebar-container');
 export const topbarContainer = document.querySelector('.topbar-container');
+const notificationReadButton = document.getElementById('read-all');
 
 //sidebar state is either "open" or "closed", default is open
 export var sidebarState = localStorage.getItem("sidebarState") || "open";
@@ -690,6 +691,8 @@ export async function renderNotifications(notifications) {
 
     //getting data needed for rendering
     let employees = await getEmployeesById(empIDs);
+    const session = await getCurrentSession();
+    const notifsLastReadAt = new Date(await preferences.get("notificationsLastReadAt") ?? 0);
     //no longer need to get projects because they are returned in the notification body
     
 
@@ -698,18 +701,30 @@ export async function renderNotifications(notifications) {
     notifications.forEach(notification => {
         console.log(notification)
         let icon = ""
-        let link = "https://www.google.com"
+        let link = "https://013.team/"
         let desc = "Not Implemented"
-        let time = howLongAgo(new Date(notification.time));
+        const notificationTime = new Date(notification.time);
+        let time = howLongAgo(notificationTime);
 
         //notification author
         let empID = notification.author.empID;
-        let name = employeeToName(employees.get(empID));
+        let name;
+        if (empID = session.employee.empID) {
+            name = "You";
+        } else {
+            name = employeeToName(employees.get(empID));
+        }
         let avatar = employeeAvatarOrFallback(employees.get(empID));
 
         //notification card
         let notificationCard = document.createElement("a");
         notificationCard.classList.add("notification-card");
+
+        if (notificationTime > notifsLastReadAt) {
+            console.log("[renderNotifications] notification is unread")
+            notificationCard.classList.add("unread");   
+        }
+
         
         switch(notification.type) {
             case 0: // post they are following has been edited
@@ -1201,6 +1216,12 @@ if (window.location.pathname !== '/' || window.location.pathname !== '/register/
                 notifications = items
                 renderNotifications(items);
             }
+        });
+        notificationReadButton.addEventListener("pointerup", async () => {
+            await preferences.set("notificationsLastReadAt", (new Date()).toUTCString());
+            document.querySelectorAll(".notification-card.unread").forEach((card) => {
+                card.classList.remove("unread");
+            });
         });
     }
 

@@ -1,4 +1,4 @@
-import * as global from "../global-ui.js"
+import * as global from "../global-ui.js";
 
 const accountTab = document.querySelector('.account');
 const preferencesTab = document.querySelector('.preferences');
