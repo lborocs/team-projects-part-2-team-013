@@ -737,14 +737,16 @@ button:hover {
 }
 
 #global-search {
-    width: 205px;
+    width: min(30vw, 400px);
     transition: width 0.1s ease-in-out;
+    border: solid 1px var(--border-clr);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-#global-search:focus-within {
+/* #global-search:focus-within {
     width: 280px;
     transition: width 0.1s ease-in-out;
-}
+} */
 
 
 @media (max-width: 800px) {
