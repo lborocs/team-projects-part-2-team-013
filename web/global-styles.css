@@ -554,8 +554,9 @@ input {
     }
 
     .fullLogo {
-        height: 32px;
+        height: 28px;
         width: auto;
+        margin-right: 0.5rem;
     }
 
     .right {
