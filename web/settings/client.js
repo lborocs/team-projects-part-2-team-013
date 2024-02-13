@@ -61,40 +61,53 @@ document.addEventListener('click', function(event) {
     if (!postingOptions.contains(event.target)) {
         postingOptions.classList.remove('open');
     }
+    if (!tagsOptions.contains(event.target)) {
+        tagsOptions.classList.remove('open');
+    }
 });
 
 let avatarOptions = document.querySelector('#avatar-options');
 avatarOptions.addEventListener('click', () => {
-    if (avatarOptions.classList.contains('open')) {
-        avatarOptions.classList.remove('open');
-    } else {
-        avatarOptions.classList.toggle('open');
-    }
-})
+    avatarOptions.classList.toggle('open');
+});
 
-let avatarDropdown = document.querySelectorAll('.avatar-option');
-avatarDropdown.forEach((option) => {
-    option.addEventListener('click', () => {
+let avatarMenu = document.querySelectorAll('.avatar-option');
+avatarMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#avatar-text').innerHTML = option.innerHTML;
         avatarOptions.classList.remove('open');
-        
+        event.stopPropagation();
     })
 })
 
 let postingOptions = document.querySelector('#posting-options');
 postingOptions.addEventListener('click', () => {
-    if (postingOptions.classList.contains('open')) {
-        postingOptions.classList.remove('open');
-    } else {
-        postingOptions.classList.toggle('open');
-    }
-})
+    postingOptions.classList.toggle('open');
+});
 
-let postingDropdown = document.querySelectorAll('.posting-option');
-postingDropdown.forEach((option) => {
-    option.addEventListener('click', () => {
+let postingMenu = document.querySelectorAll('.posting-option');
+postingMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#posting-text').innerHTML = option.innerHTML;
         postingOptions.classList.remove('open');
+        event.stopPropagation();
     })
 })
+
+let tagsOptions = document.querySelector('#tags-options');
+tagsOptions.addEventListener('click', () => {
+    tagsOptions.classList.toggle('open');
+});
+
+let tagsMenu = document.querySelectorAll('.tags-option');
+tagsMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#tags-text').innerHTML = option.innerHTML;
+        tagsOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
 
 
 global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
