@@ -47,12 +47,12 @@ async function getPersonal(id) {
     console.log(res.data)
 
     const personal = res.data
-    const index = globalPersonalsList.findIndex(p => p.itemID === id);
+    const index = globalPersonalsList.findIndex(p => p.itemID === id)
 
     if (index !== -1) { //-1 used for not found
-        globalPersonalsList[index] = personal;
+        globalPersonalsList[index] = personal
     } else {
-        console.error(`globalPersonalsList is not up to date with the server. Personal ${id} was not found in the list`);
+        console.error(`globalPersonalsList is not up to date with the server. Personal ${id} was not found in the list`)
     }
 
     return true
@@ -125,6 +125,11 @@ function renderPersonal(id) {
         editPersonal(id)
     })
 
+    personalCard.querySelector('.delete').addEventListener('click', (e) => {
+        e.stopPropagation()
+        deletePersonal(id)
+    })
+
 }
 
 function unrenderPersonal(id) {
@@ -159,6 +164,66 @@ async function togglePersonalState(id) {
 
     unrenderPersonal(id)
     renderPersonal(id)
+}
+
+async function editPersonalTitle(id, title) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const body = {
+        title: title
+    }
+
+    const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
+
+    if (!res.success) {
+        return false
+    }
+
+    await getPersonal(id)
+
+    unrenderPersonal(id)
+    renderPersonal(id)
+
+}
+
+async function editPersonalDescription(id, description) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const body = {
+        content: description
+    }
+
+    const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
+
+    if (!res.success) {
+        return false
+    }
+
+    await getPersonal(id)
+
+    unrenderPersonal(id)
+    renderPersonal(id)
+
+}
+
+
+async function deletePersonal(id) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const res = await delete_api(`/employee/employee.php/personal/${employeeID}/${id}`)
+
+    if (!res.success) {
+        return false
+    }
+
+    const index = globalPersonalsList.findIndex(personal => personal.itemID === id)
+    globalPersonalsList.splice(index, 1)
+
+    unrenderPersonal(id)
+
 }
 
 
