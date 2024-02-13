@@ -276,10 +276,10 @@ function confirmDelete() {
                     <li class="popup-list-item"><input type="radio" name="deleteReason" value="4">Other</li>
                 </ul>
                 <div class="popup-buttons">
-                    <div class="text-button" id="closeButton">
+                    <div class="text-button" id="cancel-button">
                         <div class="button-text">Cancel</div>
                     </div>
-                    <div class="text-button red" id="deleteButton">
+                    <div class="text-button red" id="delete-button">
                         <div class="button-text">Delete</div>
                     </div>
                 </div>
@@ -288,11 +288,19 @@ function confirmDelete() {
         fullscreenDiv.style.filter = 'brightness(0.75)';
 
         let dialog = popupDiv.querySelector('.popup-dialog');
-        let closeButton = dialog.querySelector('#close-button');
+        let closeButton = dialog.querySelector('.close-button');
+        let cancelButton = dialog.querySelector('#cancel-button');
         let deleteButton = dialog.querySelector('#delete-button');
 
         closeButton.addEventListener('click', (event) => {
             event.preventDefault(); 
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            reject();
+        });
+
+        cancelButton.addEventListener('click', (event) => {
+            event.preventDefault();
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
             reject();

@@ -52,22 +52,105 @@ systemTab.addEventListener('click', () => {
     global.setBreadcrumb(["Settings", "System"], ["../", '#' + "system"])
 })
 
+//dropdown menu event listeners
+
+document.addEventListener('click', function(event) {
+    if (!avatarOptions.contains(event.target)) {
+        avatarOptions.classList.remove('open');
+    }
+    if (!postingOptions.contains(event.target)) {
+        postingOptions.classList.remove('open');
+    }
+    if (!tagsOptions.contains(event.target)) {
+        tagsOptions.classList.remove('open');
+    }
+});
+
 let avatarOptions = document.querySelector('#avatar-options');
 avatarOptions.addEventListener('click', () => {
-    if (avatarOptions.classList.contains('open')) {
-        avatarOptions.classList.remove('open');
-    } else {
-        avatarOptions.classList.toggle('open');
-    }
-})
+    avatarOptions.classList.toggle('open');
+});
 
-let avatarDropdown = document.querySelectorAll('.avatar-option');
-avatarDropdown.forEach((option) => {
-    option.addEventListener('click', () => {
+let avatarMenu = document.querySelectorAll('.avatar-option');
+avatarMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#avatar-text').innerHTML = option.innerHTML;
         avatarOptions.classList.remove('open');
-        
+        event.stopPropagation();
     })
 })
+
+let postingOptions = document.querySelector('#posting-options');
+postingOptions.addEventListener('click', () => {
+    postingOptions.classList.toggle('open');
+});
+
+let postingMenu = document.querySelectorAll('.posting-option');
+postingMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#posting-text').innerHTML = option.innerHTML;
+        postingOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
+let tagsOptions = document.querySelector('#tags-options');
+tagsOptions.addEventListener('click', () => {
+    tagsOptions.classList.toggle('open');
+});
+
+let tagsMenu = document.querySelectorAll('.tags-option');
+tagsMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#tags-text').innerHTML = option.innerHTML;
+        tagsOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
+let listOptions = document.querySelector('#list-options');
+listOptions.addEventListener('click', () => {
+    listOptions.classList.toggle('open');
+});
+
+let listMenu = document.querySelectorAll('.list-option');
+listMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#list-text').innerHTML = option.innerHTML;
+        listOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
+let sortProjectsOptions = document.querySelector('#sort-projects-options');
+sortProjectsOptions.addEventListener('click', () => {
+    sortProjectsOptions.classList.toggle('open');
+});
+
+let sortProjectsMenu = document.querySelectorAll('.sort-projects-option');
+sortProjectsMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#sort-projects-text').innerHTML = option.innerHTML;
+        sortProjectsOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
+let sortTasksOptions = document.querySelector('#sort-tasks-options');
+sortTasksOptions.addEventListener('click', () => {
+    sortTasksOptions.classList.toggle('open');
+});
+
+let sortTasksMenu = document.querySelectorAll('.sort-tasks-option');
+sortTasksMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#sort-tasks-text').innerHTML = option.innerHTML;
+        sortTasksOptions.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
+
 
 global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
 

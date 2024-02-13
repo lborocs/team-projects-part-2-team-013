@@ -1,5 +1,4 @@
 import * as global from "../global-ui.js";
-
 /* PERSONALS FORMAT:
 {
     assignedTo: {
@@ -17,7 +16,7 @@ var globalPersonalsList = []
 const activeList = document.getElementById('active-list')
 const completedList = document.getElementById('completed-list')
 
-async function getPersonals() {
+async function getAllPersonals() {
     const res = await get_api(`/employee/employee.php/personals`)
 
     if (!res.success) {
@@ -32,10 +31,60 @@ async function getPersonals() {
 
 }
 
+//used to update a single personal in globalPersonalsList with data from the server
+async function getPersonal(id) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const res = await get_api(`/employee/employee.php/personal/${employeeID}/${id}`)
+
+    if (!res.success) {
+        return false
+    }
+
+    console.log(`[getPersonals] Fetched personal ${id}`)
+    console.log(res.data)
+
+    const personal = res.data
+    const index = globalPersonalsList.findIndex(p => p.itemID === id)
+
+    if (index !== -1) { //-1 used for not found
+        globalPersonalsList[index] = personal
+    } else {
+        console.error(`globalPersonalsList is not up to date with the server. Personal ${id} was not found in the list`)
+    }
+
+    return true
+
+}
+
+async function createPersonal(title) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const body = {
+        title: title,
+        state: 0
+    }
+
+    const res = await post_api(`/employee/employee.php/personal/${employeeID}`, body)
+
+    if (!res.success) {
+        return false
+    }
+
+    console.log(`[createPersonal] Personal created`)
+    console.log(res.data)
+
+    globalPersonalsList.push(res.data)
+
+    return true 
+}
+
 function selectPersonal(id) {
     const personalCheckbox = document.getElementById(id)
-    //personal checkbox has the ID so we can do idElement.value, but this means we have to travel 2 parent elements up to find the personal card.
-    const personal = personalCheckbox.parentNode.parentNode 
+    
+    const personal = getPersonalCardById(id)
 
     const personalCards = document.querySelectorAll('.personal-task')
     personalCards.forEach((card) => {
@@ -95,20 +144,43 @@ function renderPersonal(id) {
 
     personalCard.querySelector('.edit').addEventListener('click', (e) => {
         e.stopPropagation()
-        editPersonal(id)
+        enterEditMode(id)
+    })
+
+    personalCard.querySelector('.delete').addEventListener('click', (e) => {
+        e.stopPropagation()
+        confirmDelete().then(() => {
+            deletePersonal(id).then(() => {
+                unrenderPersonal(id)
+            })
+        })
     })
 
 }
 
+function getPersonalCardById(id) {
+    //personal checkbox has the ID so we can do idElement.value, but this means we have to travel 2 parent elements up to find the personal card.
+    const checkbox = document.getElementById(id)
+    if (!checkbox) {
+        console.error(`Couln't find a personal! No element with id ${id} found.`)
+        return null
+    }
+    const personal = checkbox.parentNode && checkbox.parentNode.parentNode; //personal card is grandparent of checkbox
+    if (!personal) {
+        console.error(`Couldn't find a personal! Element with id ${id} is not granchild of a personal card.`);
+        return null;
+    }
+    return personal;
+}
 function unrenderPersonal(id) {
-    const personal = document.getElementById(id)
+    const personal = getPersonalCardById(id)
     personal.remove()
 }
 
 async function togglePersonalState(id) {
     const session = await global.getCurrentSession()
     const employeeID = session.employee.empID
-    console.log(session)
+
     const personal = globalPersonalsList.find(personal => personal.itemID === id)
     console.log(personal)
 
@@ -127,23 +199,178 @@ async function togglePersonalState(id) {
         return false
     }
 
-    personal.state = !personal.state
+    await getPersonal(id)
 
-    if (personal.state === 1) {
-        completedList.appendChild(personal)
-    } else {
-        activeList.appendChild(personal)
-    }
+    unrenderPersonal(id)
+    renderPersonal(id)
 }
+
+async function editPersonalTitle(id, title) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const body = {
+        title: title
+    }
+
+    const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
+
+    if (!res.success) {
+        return false
+    }
+
+    await getPersonal(id)
+
+    unrenderPersonal(id)
+    renderPersonal(id)
+
+}
+
+async function editPersonalDescription(id, description) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const body = {
+        content: description
+    }
+
+    const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
+
+    if (!res.success) {
+        return false
+    }
+
+    await getPersonal(id)
+
+    unrenderPersonal(id)
+    renderPersonal(id)
+
+}
+
+
+async function deletePersonal(id) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const res = await delete_api(`/employee/employee.php/personal/${employeeID}/${id}`)
+
+    if (!res.success) {
+        return false
+    }
+
+    const index = globalPersonalsList.findIndex(personal => personal.itemID === id)
+    globalPersonalsList.splice(index, 1)
+
+    return true
+
+}
+
+async function enterEditMode(id) {
+    const personal = globalPersonalsList.find(personal => personal.itemID === id)
+    const personalCard = getPersonalCardById(id)
+
+    const title = personalCard.querySelector('.title-text').innerHTML
+    const description = personal.content
+
+    //enter edit mode in some way
+
+}
+
+
+
+//event listeners
+document.getElementById('new-personal').addEventListener('click', () => {
+    const title = "poctavian"
+    if (title === null) {
+        return
+    }
+    createPersonal(title).then(() => {
+        renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
+    })
+
+})
+
+
 
 
 //initialise the page
 global.setBreadcrumb(["My List"], ["./"])
 
-getPersonals().then(() => {
+getAllPersonals().then(() => {
     globalPersonalsList.forEach(personal => {
         renderPersonal(personal.itemID)
     })
 })
+
+
+
+
+
+
+
+
+
+
+
+//modified confirmDelete from wiki.
+function confirmDelete() {
+    return new Promise((resolve, reject) => {
+        let popupDiv = document.querySelector('.popup');
+        let fullscreenDiv = document.querySelector('.fullscreen');
+
+        popupDiv.innerHTML = `
+            <dialog open class='popup-dialog'>
+                <div class="popup-title">
+                    Delete Todo Item
+                    <div class="small-icon close-button">
+                        <span class="material-symbols-rounded">
+                            close
+                        </span>
+                    </div>
+                </div>
+                <div class="popup-text">Are you sure you want to delete this Todo item?</div>
+                <div class="popup-text">This action cannot be undone.</div>
+
+                <div class="popup-buttons">
+                    <div class="text-button" id="cancel-button">
+                        <div class="button-text">Cancel</div>
+                    </div>
+                    <div class="text-button red" id="delete-button">
+                        <div class="button-text">Delete</div>
+                    </div>
+                </div>
+            </dialog>
+        `;
+        fullscreenDiv.style.filter = 'brightness(0.75)';
+
+        let dialog = popupDiv.querySelector('.popup-dialog');
+        let closeButton = dialog.querySelector('.close-button');
+        let cancelButton = dialog.querySelector('#cancel-button');
+        let deleteButton = dialog.querySelector('#delete-button');
+
+        closeButton.addEventListener('click', (event) => {
+            event.preventDefault(); 
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            reject();
+        });
+
+        cancelButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            reject();
+        });
+
+        deleteButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            resolve();
+        });
+    });
+}
+
+
 
 
