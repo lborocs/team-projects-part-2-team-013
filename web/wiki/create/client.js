@@ -161,3 +161,23 @@ function submitPost(){
     }
     window.location.href = "../";
 }
+
+document.querySelector(".search-input").addEventListener("focus", function() {
+   document.querySelector("#glass").classList.add("norender");
+   document.querySelector("#ex").classList.remove("norender");
+});
+
+document.querySelector(".search-input").addEventListener("blur", function() {
+    document.querySelector("#glass").classList.remove("norender");
+    document.querySelector("#ex").classList.add("norender");
+});
+
+document.querySelector("clear-icon").addEventListener("click", function() {
+    document.querySelector("#input-tag").value = "";
+    document.querySelector("#glass").classList.remove("norerender");
+    document.querySelector("#ex").classList.add("norender");
+    console.log("clicked");
+}
+);
+
+document.querySelector("#ex").classList.add("norender");
