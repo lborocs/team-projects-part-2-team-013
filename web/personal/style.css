@@ -106,6 +106,8 @@
     }
 
     .personal-icons {
+        opacity: 0;
+        transition: opacity 0.1s ease-out;
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
@@ -120,7 +122,13 @@
     background-color: #388bff11;
     cursor: pointer;
     transition: background-color 0.1s ease-out;
+
+    .personal-icons {
+        opacity: 1;
+        transition: opacity 0.1s ease-out;
+    }
 }
+
 
 .personal-task:active {
     background-color: var(--make-it-all-tint);
@@ -131,3 +139,45 @@
     outline: solid 2px #388bffaa;
 }
 
+
+
+/* popup css modified from wiki. */
+
+.popup-dialog {
+    top: 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: #fff;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));
+    padding: 18px;
+    padding-top: 14px;
+    max-width: 600px;
+    width: calc(100% - 2.5em);
+    gap: 0.75em;
+
+    .popup-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--text-off-black, #0f0f0f);
+        width: 100%;
+        .small-icon {
+            margin-left: auto;
+        }
+    }
+
+    .popup-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+}
