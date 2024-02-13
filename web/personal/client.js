@@ -19,11 +19,17 @@ const completedList = document.getElementById('completed-list')
 
 async function getPersonals() {
     const res = await get_api(`/employee/employee.php/personals`)
-    if (res.success === true) {
-        console.log(`[getPersonals] Personals fetched`)
-        globalPersonalsList = res.data.personals
-        console.log(globalPersonalsList)
+    
+    if (!res.success) {
+        return false
     }
+
+    console.log(`[getPersonals] Personals fetched`)
+    globalPersonalsList = res.data.personals
+    console.log(globalPersonalsList)
+
+    return true
+
 }
 
 function selectPersonal(id) {
@@ -40,7 +46,7 @@ function renderPersonal(id) {
     const personalCard = document.createElement('div')
     personalCard.classList.add('personal-task')
 
-    const checkedState = (personal.state === true) ? 'checked' : '';
+    const checkedState = (personal.state === true) ? 'checked' : ''
 
     personalCard.innerHTML = `
         <div class="personal-checkbox">
