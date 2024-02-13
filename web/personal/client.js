@@ -19,7 +19,7 @@ const completedList = document.getElementById('completed-list')
 
 async function getPersonals() {
     const res = await get_api(`/employee/employee.php/personals`)
-    
+
     if (!res.success) {
         return false
     }
@@ -33,11 +33,15 @@ async function getPersonals() {
 }
 
 function selectPersonal(id) {
-    const personal = document.getElementById(id)
+    const personalState = document.getElementById(id)
+    //personal checkbox has the ID so we can do idElement.value, but this means we have to travel 2 parent elements up to find the personal card.
+    const personal = personalState.parentNode.parentNode 
     const personalCards = document.querySelectorAll('.personal-task')
-    personalCards.forEach(card, () => {
+
+    personalCards.forEach((card) => {
         card.classList.remove('selected')
     })
+    
     personal.classList.add('selected')
 }
 
@@ -80,6 +84,15 @@ function renderPersonal(id) {
         activeList.appendChild(personalCard)
     }
 
+    personalCard.addEventListener('click', () => {
+        selectPersonal(id)
+    })
+
+}
+
+function unrenderPersonal(id) {
+    const personal = document.getElementById(id)
+    personal.remove()
 }
 
 
