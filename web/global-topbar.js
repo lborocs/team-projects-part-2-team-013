@@ -112,8 +112,7 @@ left.appendChild(logo);
 left.appendChild(mobileBack);
 left.appendChild(breadcrumb);
 
-center.appendChild(search);
-
+right.appendChild(search);
 right.appendChild(notificationPopover);
 right.appendChild(userAvatar);
 
