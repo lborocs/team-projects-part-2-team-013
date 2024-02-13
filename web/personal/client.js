@@ -17,7 +17,7 @@ var globalPersonalsList = []
 const activeList = document.getElementById('active-list')
 const completedList = document.getElementById('completed-list')
 
-async function getPersonals() {
+async function getAllPersonals() {
     const res = await get_api(`/employee/employee.php/personals`)
 
     if (!res.success) {
@@ -27,6 +27,33 @@ async function getPersonals() {
     console.log(`[getPersonals] Personals fetched`)
     globalPersonalsList = res.data.personals
     console.log(globalPersonalsList)
+
+    return true
+
+}
+
+//used to update a single personal in globalPersonalsList with data from the server
+async function getPersonal(id) {
+    const session = await global.getCurrentSession()
+    const employeeID = session.employee.empID
+
+    const res = await get_api(`/employee/employee.php/personal/${employeeID}/${id}`)
+
+    if (!res.success) {
+        return false
+    }
+
+    console.log(`[getPersonals] Fetched personal ${id}`)
+    console.log(res.data)
+
+    const personal = res.data
+    const index = globalPersonalsList.findIndex(p => p.itemID === id);
+
+    if (index !== -1) { //-1 used for not found
+        globalPersonalsList[index] = personal;
+    } else {
+        console.error(`globalPersonalsList is not up to date with the server. Personal ${id} was not found in the list`);
+    }
 
     return true
 
@@ -101,14 +128,15 @@ function renderPersonal(id) {
 }
 
 function unrenderPersonal(id) {
-    const personal = document.getElementById(id)
+    const checkbox = document.getElementById(id)
+    const personal = checkbox.parentNode.parentNode //personal card is grandparent of checkbox
     personal.remove()
 }
 
 async function togglePersonalState(id) {
     const session = await global.getCurrentSession()
     const employeeID = session.employee.empID
-    console.log(session)
+
     const personal = globalPersonalsList.find(personal => personal.itemID === id)
     console.log(personal)
 
@@ -127,23 +155,22 @@ async function togglePersonalState(id) {
         return false
     }
 
-    personal.state = !personal.state
+    await getPersonal(id)
 
-    if (personal.state === 1) {
-        completedList.appendChild(personal)
-    } else {
-        activeList.appendChild(personal)
-    }
+    unrenderPersonal(id)
+    renderPersonal(id)
 }
 
 
 //initialise the page
 global.setBreadcrumb(["My List"], ["./"])
 
-getPersonals().then(() => {
+getAllPersonals().then(() => {
     globalPersonalsList.forEach(personal => {
         renderPersonal(personal.itemID)
     })
 })
+
+getPersonal("c2b4e29490c2a2c2b4e29490c2a2c2b4")
 
 
