@@ -94,6 +94,14 @@ function selectPersonal(id) {
     personal.classList.add('selected')
 }
 
+function deselectAllPersonals() {
+    const personalCards = document.querySelectorAll('.personal-task')
+    personalCards.forEach((card) => {
+        card.classList.remove('selected')
+    })
+}
+
+
 function renderPersonal(id) {
     const personal = globalPersonalsList.find(personal => personal.itemID === id)
     const personalCard = document.createElement('div')
@@ -135,6 +143,7 @@ function renderPersonal(id) {
 
     personalCard.addEventListener('click', () => {
         selectPersonal(id)
+        displayPersonalModal(id)
     })
 
     personalCard.querySelector('.personal-checkbox').addEventListener('click', (e) => {
@@ -309,7 +318,47 @@ getAllPersonals().then(() => {
 
 
 
+function displayPersonalModal(id) {
+    const personal = globalPersonalsList.find(personal => personal.itemID === id)
+    console.log(personal)
 
+    let popupContainer = document.querySelector('.popup');
+    let fullscreen = document.querySelector('.fullscreen');
+
+    popupContainer.innerHTML = `
+        <dialog open class='popup-dialog'>
+            <div class="popup-title">
+                ${personal.title}
+                <div class="small-icon close-button">
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+                </div>
+            </div>
+            <div class="popup-text">${personal.content}</div>
+            <div class="popup-text">State ${personal.state}</div>
+
+            <div class="popup-buttons">
+                <div class="text-button blue edit-button">
+                    <div class="button-text">Edit</div>
+                </div>
+            </div>
+        </dialog>
+    `;
+    fullscreen.style.filter = 'brightness(0.75)';
+
+    let dialog = popupContainer.querySelector('.popup-dialog');
+    let closeButton = dialog.querySelector('.close-button');
+    let deleteButton = dialog.querySelector('.edit-button');
+
+    closeButton.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.display = 'none';
+        fullscreen.style.filter = 'none';
+        reject();
+    });
+
+}
 
 
 //modified confirmDelete from wiki.

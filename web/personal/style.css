@@ -19,10 +19,11 @@
     .search {
         width: 100%;
         max-width: 300px;
+        margin-left: auto;
     }
 
     #personals-sort {
-        margin-left: auto;
+        
     }
 
     #new-personal {
