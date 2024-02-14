@@ -132,7 +132,7 @@
 
     .personal-icons {
         opacity: 0;
-        transition: opacity 0.1s ease-out;
+        transition: opacity 0s ease-out;
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
@@ -155,15 +155,6 @@
         transition: visibility 0.1s ease-out, height 0.1s ease-out, width 0.1s ease-out;
     }
 
-    .save {
-        opacity: 0;
-        visibility: hidden;
-        height: 0;
-        width: 0;
-
-        transition: visibility 0.1s ease-out, height 0.1s ease-out, width 0.1s ease-out;
-    }
-
 }
 
 .personal-task:hover {
@@ -173,18 +164,13 @@
 
     .personal-icons {
         opacity: 1;
-        transition: opacity 0.1s ease-out;
+        transition: opacity 0.05s ease-out;
     }
 
 
 }
 
 .edit-mode {
-
-    .personal-icons {
-        opacity: 1;
-        transition: opacity 0.1s ease-out;
-    }
 
     .add-description {
         opacity: 1;
@@ -194,13 +180,6 @@
         width: auto;
     }
 
-    .save {
-        opacity: 1;
-        transition: opacity 0.1s ease-out;
-        visibility: visible;
-        height: auto;
-        width: auto;
-    }
 }
 
 

@@ -141,15 +141,12 @@ function renderPersonal(id) {
                         <span class="material-symbols-rounded">delete</span>
                     </div>
                 </div>
-                <div class="icon-button blue save">
-                    <div class="button-icon">
-                        <span class="material-symbols-rounded">save</span>
-                    </div>
+            </div>
+            <div class="text-button blue save norender">
                     <div class="button-text">
                         Save
                     </div>
                 </div>
-            </div>
         </div>
 
         
@@ -302,6 +299,7 @@ function personalCardEditMode(id) {
 
 
         personalCard.classList.add('edit-mode')
+        saveButton.classList.remove('norender')
 
         const title = personalCard.querySelector('.title-text')
         var newTitle = title.innerHTML
@@ -339,6 +337,7 @@ function personalCardEditMode(id) {
             editPersonalTitle(id, newTitle)
             editPersonalDescription(id, newDescription)
             personalCard.classList.remove('edit-mode')
+            saveButton.classList.add('norender')
             resolve()
         })
 
