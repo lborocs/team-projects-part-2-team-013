@@ -335,17 +335,8 @@ input[type="radio"] + label {
     margin-left: 0.5em;
 }
 
-.submitButton {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+#submitButton {
     width: 9.5em;
-    border: 1px solid #e0e0e0;
-    background-color: #3098ff;
-    color: #2d2e30;
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
-    color: #ffffff;
     white-space: nowrap;
     font-size: 0.9em;
     font-weight: 600;
