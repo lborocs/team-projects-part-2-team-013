@@ -129,3 +129,8 @@
     display: flex;
 }
 
+
+.dropdown.no-box {
+    border: none;
+    border-bottom: solid 2px #dcdfe4;
+}
