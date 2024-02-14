@@ -37,13 +37,21 @@
 
     overflow-y: scroll;
 
-    .title {
+    .header {
         margin-left: 1rem;
         width: calc(100% - 2rem);
         display: flex;
         flex-direction: row;
-        align-items: column;
+        align-items: baseline;
         justify-content: space-between;
+
+        .title {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            gap: 0.5rem;
+        }
 
         .title-text {
             font-size: 18px;
