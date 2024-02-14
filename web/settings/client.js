@@ -64,6 +64,18 @@ document.addEventListener('click', function(event) {
     if (!tagsOptions.contains(event.target)) {
         tagsOptions.classList.remove('open');
     }
+    if (!listOptions.contains(event.target)) {
+        listOptions.classList.remove('open');
+    }
+    if (!sortProjectsType.contains(event.target)) {
+        sortProjectsType.classList.remove('open');
+    }
+    if (!sortTasksType.contains(event.target)) {
+        sortTasksType.classList.remove('open');
+    }
+    if (!sortTasksDirection.contains(event.target)) {
+        sortTasksDirection.classList.remove('open');
+    }
 });
 
 let avatarOptions = document.querySelector('#avatar-options');
@@ -150,6 +162,19 @@ sortTasksMenu.forEach((option) => {
     })
 })
 
+let sortTasksDirection = document.querySelector('#sort-tasks-direction');
+sortTasksDirection.addEventListener('click', () => {
+    sortTasksDirection.classList.toggle('open');
+});
+
+let sortTasksDirectionMenu = document.querySelectorAll('.sort-tasks-direction-option');
+sortTasksDirectionMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#sort-tasks-text').innerHTML = option.innerHTML;
+        sortTasksDirection.classList.remove('open');
+        event.stopPropagation();
+    })
+})
 
 
 global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
