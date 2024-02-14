@@ -708,7 +708,7 @@ export async function renderNotifications(notifications) {
         //notification author
         let empID = notification.author.empID;
         let name;
-        if (empID = session.employee.empID) {
+        if (empID == session.employee.empID) {
             name = "You";
         } else {
             name = employeeToName(employees.get(empID));
