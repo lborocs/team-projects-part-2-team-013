@@ -178,7 +178,9 @@ function renderPersonal(id) {
             deletePersonal(id).then(() => {
                 unrenderPersonal(id)
             })
-        })
+        }).catch(() => {
+            console.log("[deleteButton] Delete aborted")
+        });
     })
 
 }
@@ -415,8 +417,28 @@ function displayPersonalModal(id) {
 function confirmDelete() {
     return new Promise((resolve, reject) => {
 
-        if (global.queryModalSkip()) {
+        if (global.checkMutex("confirmDelete")) {
+            console.log("[confirmDelete] Mutex is locked, skipping modal")
+            reject();
+            return;
+        }
+
+        const handle = global.takeMutex("confirmDelete");
+
+        const resolveAndUnlock = () => {
+            console.log("[confirmDelete] Resolving and releasing mutex")
+            global.releaseMutex(handle);
             resolve();
+        };
+        const rejectAndUnlock = () => {
+            console.log("[confirmDelete] Rejecting and releasing mutex")
+            global.releaseMutex(handle);
+            reject();
+        };
+
+
+        if (global.queryModalSkip()) {
+            resolveAndUnlock();
             return;
         }
 
@@ -458,21 +480,21 @@ function confirmDelete() {
             event.preventDefault(); 
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            reject();
+            rejectAndUnlock();
         });
 
         cancelButton.addEventListener('click', (event) => {
             event.preventDefault();
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            reject();
+            rejectAndUnlock();
         });
 
         deleteButton.addEventListener('click', (event) => {
             event.preventDefault();
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            resolve();
+            resolveAndUnlock();
         });
     });
 }
