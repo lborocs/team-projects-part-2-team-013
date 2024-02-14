@@ -35,6 +35,8 @@
     display: flex;
     flex-direction: column;
 
+    overflow-y: scroll;
+
     .title {
         margin-left: 1rem;
         width: calc(100% - 2rem);
@@ -109,6 +111,8 @@
         gap: 1rem;
 
         width: 100%;
+
+        user-select: none;
     }
 
     .personal-title {
