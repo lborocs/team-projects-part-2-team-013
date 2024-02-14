@@ -386,6 +386,10 @@ input {
 
 #settings {
     margin-top: auto !important;
+    
+}
+
+#logout {
     margin-bottom: 0.4rem !important;
 }
 
