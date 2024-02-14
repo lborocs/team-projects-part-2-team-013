@@ -414,6 +414,12 @@ function displayPersonalModal(id) {
 //modified confirmDelete from wiki.
 function confirmDelete() {
     return new Promise((resolve, reject) => {
+
+        if (global.queryModalSkip()) {
+            resolve();
+            return;
+        }
+
         let popupDiv = document.querySelector('.popup');
         let fullscreenDiv = document.querySelector('.fullscreen');
 

@@ -1262,10 +1262,53 @@ setInterval(async () => {
 }, 60 * 1000);
 
 // set last active time
-document.addEventListener("mousemove", () => {
+document.addEventListener("mousemove", (e) => {
     GLOBAL_LAST_ACTIVE = new Date();
+    skipModals = e.shiftKey;
 });
 document.addEventListener("keydown", () => {
     GLOBAL_LAST_ACTIVE = new Date();
+});
+
+var skipModals = false;
+
+export function queryModalSkip() {
+
+    // we gotta check that the shift key is STILL down in case they alt tab
+    if (!skipModals) {
+        document.querySelectorAll(".modal-skippable").forEach((modal) => {
+            modal.classList.remove("modal-skippable-active");
+        });
+    }
+
+    return skipModals;
+
+}
+
+
+document.addEventListener("keydown", (e) => {
+
+    if (e.key != "Shift") {
+        return
+    }
+
+    console.log("[modalSkipper] setting skip");
+
+    document.querySelectorAll(".modal-skippable").forEach((modal) => {
+        modal.classList.add("modal-skippable-active");
+    });
+
+    skipModals = true;
+});
+
+document.addEventListener("keyup", (e) => {
+    if (e.key != "Shift") {
+        return
+    }
+    console.log("[modalSkipper] no longer skipping");
+    skipModals = false;
+    document.querySelectorAll(".modal-skippable").forEach((modal) => {
+        modal.classList.remove("modal-skippable-active");
+    });
 });
 

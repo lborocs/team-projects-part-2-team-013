@@ -64,6 +64,21 @@ document.addEventListener('click', function(event) {
     if (!tagsOptions.contains(event.target)) {
         tagsOptions.classList.remove('open');
     }
+    if (!listOptions.contains(event.target)) {
+        listOptions.classList.remove('open');
+    }
+    if (!sortProjectsType.contains(event.target)) {
+        sortProjectsType.classList.remove('open');
+    }
+    if (!sortTasksType.contains(event.target)) {
+        sortTasksType.classList.remove('open');
+    }
+    if (!sortTasksDirection.contains(event.target)) {
+        sortTasksDirection.classList.remove('open');
+    }
+    if (!sortProjectsDirection.contains(event.target)) {
+        sortProjectsDirection.classList.remove('open');
+    }
 });
 
 let avatarOptions = document.querySelector('#avatar-options');
@@ -127,11 +142,25 @@ sortProjectsType.addEventListener('click', () => {
     sortProjectsType.classList.toggle('open');
 });
 
-let sortProjectsMenu = document.querySelectorAll('.sort-projects-option');
+let sortProjectsMenu = document.querySelectorAll('.sort-projects-type');
 sortProjectsMenu.forEach((option) => {
     option.addEventListener('click', (event) => {
-        document.querySelector('#sort-projects-text').innerHTML = option.innerHTML;
+        document.querySelector('#sort-projects-type-text').innerHTML = option.innerHTML;
         sortProjectsType.classList.remove('open');
+        event.stopPropagation();
+    })
+})
+
+let sortProjectsDirection = document.querySelector('#sort-projects-direction');
+sortProjectsDirection.addEventListener('click', () => {
+    sortProjectsDirection.classList.toggle('open');
+});
+
+let sortProjectsDirectionMenu = document.querySelectorAll('.sort-projects-direction-option');
+sortProjectsDirectionMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#sort-projects-direction-text').innerHTML = option.innerHTML;
+        sortProjectsDirection.classList.remove('open');
         event.stopPropagation();
     })
 })
@@ -141,15 +170,28 @@ sortTasksType.addEventListener('click', () => {
     sortTasksType.classList.toggle('open');
 });
 
-let sortTasksMenu = document.querySelectorAll('.sort-tasks-type-option');
+let sortTasksMenu = document.querySelectorAll('.sort-tasks-type');
 sortTasksMenu.forEach((option) => {
     option.addEventListener('click', (event) => {
-        document.querySelector('#sort-tasks-text').innerHTML = option.innerHTML;
+        document.querySelector('#sort-tasks-type-text').innerHTML = option.innerHTML;
         sortTasksType.classList.remove('open');
         event.stopPropagation();
     })
 })
 
+let sortTasksDirection = document.querySelector('#sort-tasks-direction');
+sortTasksDirection.addEventListener('click', () => {
+    sortTasksDirection.classList.toggle('open');
+});
+
+let sortTasksDirectionMenu = document.querySelectorAll('.sort-tasks-direction-option');
+sortTasksDirectionMenu.forEach((option) => {
+    option.addEventListener('click', (event) => {
+        document.querySelector('#sort-tasks-direction-text').innerHTML = option.innerHTML;
+        sortTasksDirection.classList.remove('open');
+        event.stopPropagation();
+    })
+})
 
 
 global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
