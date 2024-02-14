@@ -77,6 +77,11 @@ async function projectSwitchToOnClick(projectRow, setBreadcrumb = true) {
     let id = projectRow.getAttribute("data-ID");
 
 
+    await renderIndividualProject(id, setBreadcrumb);
+
+}
+
+async function renderIndividualProject(id, setBreadcrumb = true) {
     let project = await getProjectById(id);
     if (!project) {
         console.error(`[projectSwitchToOnClick] Error fetching project`);
@@ -640,14 +645,13 @@ async function fetchTasks(projID) {
  * @param {Array} tasks 
  */
 async function renderTasks(tasks) {
+    clearRenderedTasks();
     await Promise.all(tasks.map((task) => {
         taskObjectRenderAll(task)
     }));
     setUpTaskEventListeners();
-    renderAssignments(globalAssignments);
-    renderAssignmentsList(globalAssignments);
+    await renderAssignments(globalAssignments);
 }
-
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
     console.log("[taskObjectRenderAll] rendering task object "+task.title)
@@ -672,65 +676,6 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     teamLeaderEnableElementsIfTeamLeader();
 }
 
-async function renderAssignmentsList(assignments) {
-
-    if (assignments.length == 0) {
-        console.log("[renderAssignments] assignments is empty")
-        return
-    }
-
-    console.log('[renderAssignments] rendering assignments:')
-    console.log(assignments)
-
-    let unique_users = new Set();
-    let taskUserCount = new Map();
-
-    assignments.forEach((assignment) => {
-        unique_users.add(assignment.employee.empID);
-    });
-
-    let employees = await getEmployeesById([...unique_users]);
-
-    assignments.forEach((assignment) => {
-        let emp = employees.get(assignment.employee.empID);
-        let emp_name = global.employeeToName(emp);
-        let emp_icon = global.employeeAvatarOrFallback(emp);
-
-        let task = document.getElementById(assignment.task.taskID);
-        let taskTable = document.querySelector(".tasktable-body");
-        let taskTableTask = taskTable.querySelector(`[id="${assignment.task.taskID}"]`);
-
-        if (!task) {
-            console.log(`[renderAssignment] Task ${assignment.task.taskID} not found (we leaked an assignment)`)
-            return
-        }
-
-        let usersAssignedList = taskTableTask.querySelector(".users-assigned-list");
-        
-        let assignmentElem = document.createElement("div");
-        assignmentElem.classList.add("assignment");
-        assignmentElem.classList.add("tooltip", "tooltip-under");
-
-        if (usersAssignedList) {
-            let count = taskUserCount.get(assignment.task.taskID) || 0;
-            if (count < 3) {
-                assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
-                <img src="${emp_icon}" class="task-avatar">`
-                usersAssignedList.appendChild(assignmentElem);
-            } else if (count === 3) {
-                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
-
-                const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
-                const url = "data:image/svg+xml;base64," + btoa(icon);
-            
-                assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
-                <img src="${url}" class="task-avatar">`
-                usersAssignedList.appendChild(assignmentElem);
-            }
-            taskUserCount.set(assignment.task.taskID, count + 1);
-        }
-    });
-}
 
 async function renderAssignments(assignments) {
 
@@ -739,7 +684,7 @@ async function renderAssignments(assignments) {
         return
     }
 
-    console.log('[renderAssignments] rendering assignments:')
+    console.error('[renderAssignments] rendering assignments:')
     console.log(assignments)
 
     let unique_users = new Set();
@@ -762,8 +707,10 @@ async function renderAssignments(assignments) {
             console.log(`[renderAssignment] Task ${assignment.task.taskID} not found (we leaked an assignment)`)
             return
         }
-
+        let taskTable = document.querySelector(".tasktable-body");
+        let taskTableTask = taskTable.querySelector(`[id="${assignment.task.taskID}"]`);
         let usersAssigned = task.querySelector(".users-assigned");
+        let usersAssignedList = taskTableTask.querySelector(".users-assigned-list");
         
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
@@ -775,6 +722,7 @@ async function renderAssignments(assignments) {
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
                 usersAssigned.appendChild(assignmentElem);
+                usersAssignedList.appendChild(assignmentElem.cloneNode(true));
             } else if (count === 3) {
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
 
@@ -784,6 +732,7 @@ async function renderAssignments(assignments) {
                 assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
                 <img src="${url}" class="task-avatar">`
                 usersAssigned.appendChild(assignmentElem);
+                usersAssignedList.appendChild(assignmentElem.cloneNode(true));
             }
             taskUserCount.set(assignment.task.taskID, count + 1);
         }
@@ -898,33 +847,7 @@ async function renderFromBreadcrumb(locations) {
         return await fetchAndRenderAllProjects();
     }
 
-    setActivePane("individual-project-pane");
-    let res = await get_api(`/project/project.php/project/${projID}`);
-
-    if (!res.success) {
-
-        if (res.error.code == 4002) { // resource not found code
-            alert("You appear to have followed a link to a project that either does not exist or you do not have access to.")
-        }
-
-        console.error(`[renderFromBreadcrumb] Error fetching project ${projID}: ${res.error.message} (${res.error.code})`);
-        return false;
-    }
-
-    let project = res.data;
-
-    for (let i = 0; i < projectRows.length; i++) {
-        if (projectRows[i].getAttribute("data-ID") == projID) {
-            projectRows[i].remove();
-            break;
-        }
-    }
-
-
-    let element = await projectObjectRenderAndListeners(project);
-
-    await projectSwitchToOnClick(element, !taskID);
-
+    await renderIndividualProject(projID, true);
 
     if (!taskID) {
         return;
