@@ -384,7 +384,7 @@ input {
     margin-top: 0.4rem !important;
 }
 
-.sidebar-item:last-child {
+#settings {
     margin-top: auto !important;
     margin-bottom: 0.4rem !important;
 }
