@@ -435,7 +435,7 @@ function confirmDelete() {
                 </div>
                 <div class="popup-text">Are you sure you want to delete this Todo item?<br>This action cannot be undone.</div>
                 <div class="modal-buttons-and-tip">
-                    <span class="modal-tip-text">Tip: you can hold SHIFT to skip this modal</span>
+                    <span class="modal-tip-text">TIP:<br>You can hold <kbd>SHIFT</kbd> to skip this modal</span>
                     <div class="popup-buttons modal-tip">
                         <div class="text-button" id="cancel-button">
                             <div class="button-text">Cancel</div>
