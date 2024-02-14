@@ -31,6 +31,20 @@
     }
 }
 
+.modal-buttons-and-tip {
+    display: flex;
+    justify-content: space-between;
+
+    .modal-tip-text {
+        opacity: 0.5;
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--text-off-black);
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
 .list-container {
     display: flex;
     flex-direction: column;
@@ -255,4 +269,15 @@
         gap: 0.5em;
     }
 
+}
+
+#delete-button {
+    background-color: #ff4b5c;
+    color: white;
+    transition: background-color 0.1s ease;
+}
+
+#delete-button:hover {
+    background-color: #cc3946;
+    color: white;
 }
