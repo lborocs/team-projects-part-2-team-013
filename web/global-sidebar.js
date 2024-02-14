@@ -46,6 +46,12 @@ training.classList.add('sidebar-item', 'manager-only', 'norender')
 training.id = 'training';
 training.setAttribute('href', '/workload/');
 
+export const settings = document.createElement('a')
+settings.classList.add('sidebar-item', 'manager-only', 'norender')
+settings.id = 'settings';
+settings.setAttribute('href', '/settings/');
+
+
 export const logout = document.createElement('div')
 logout.classList.add('sidebar-item')
 logout.id = 'logout';
@@ -62,6 +68,7 @@ personal.innerHTML = `<span class="material-symbols-rounded">checklist</span> <p
 wiki.innerHTML = `<span class="material-symbols-rounded">menu_book</span> <p class="">Wiki</p>`;
 dashboard.innerHTML = `<span class="material-symbols-rounded">speed</span> <p class="">Dashboards</p>`;
 training.innerHTML = `<span class="material-symbols-rounded">school</span> <p class="">Training</p>`;
+settings.innerHTML = `<span class="material-symbols-rounded">settings</span> <p class="">Settings</p>`;
 logout.innerHTML = `<span class="material-symbols-rounded">logout</span> <p class="">Logout</p>`;
 
 //injects before all the page content within .main
@@ -72,6 +79,7 @@ if (sidebar !== null) {
     sidebar.appendChild(wiki);
     sidebar.appendChild(dashboard);
     sidebar.appendChild(training);
+    sidebar.appendChild(settings);
     sidebar.appendChild(logout);
     items = document.querySelectorAll('.sidebar-item');
 }
