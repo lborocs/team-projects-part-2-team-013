@@ -109,17 +109,27 @@ function renderPersonal(id) {
 
     const checkedState = (personal.state === true) ? 'checked' : ''
 
+    const hasDescription = personal.content !== null
+    const chevronOrAddDescription = hasDescription ? `
+        <div class="personal-chevron"><span class="material-symbols-rounded">expand_more</span></div>` 
+        : 
+        '<div class="small-icon add-description"><span class="material-symbols-rounded">docs_add_on</span></div>'
+
     personalCard.innerHTML = `
         <div class="personal-checkbox">
             <input type="checkbox" id="${id}" ${checkedState}>
             <label for="task-2" class="checkbox-label"></label>
         </div>
-        <div class="personal-content">
-            <div class="personal-title">
-                <div class="title-text">
-                    ${personal.title}
+        <div class="personal-main">
+            <div class="personal-content">
+                <div class="personal-title">
+                    <div class="title-text">
+                        ${personal.title}
+                    </div>
                 </div>
+                <div class="personal-description">${personal.content ? personal.content : ''}</div>
             </div>
+            ${chevronOrAddDescription}
             <div class="personal-icons">
                 <div class="icon-button no-box edit">
                     <div class="button-icon">
@@ -131,8 +141,18 @@ function renderPersonal(id) {
                         <span class="material-symbols-rounded">delete</span>
                     </div>
                 </div>
+                <div class="icon-button blue save">
+                    <div class="button-icon">
+                        <span class="material-symbols-rounded">save</span>
+                    </div>
+                    <div class="button-text">
+                        Save
+                    </div>
+                </div>
             </div>
         </div>
+
+        
     `
 
     if (personal.state === 1) {
@@ -143,7 +163,6 @@ function renderPersonal(id) {
 
     personalCard.addEventListener('click', () => {
         selectPersonal(id)
-        displayPersonalModal(id)
     })
 
     personalCard.querySelector('.personal-checkbox').addEventListener('click', (e) => {
@@ -153,7 +172,7 @@ function renderPersonal(id) {
 
     personalCard.querySelector('.edit').addEventListener('click', (e) => {
         e.stopPropagation()
-        enterEditMode(id)
+        personalCardEditMode(id)
     })
 
     personalCard.querySelector('.delete').addEventListener('click', (e) => {
@@ -274,15 +293,58 @@ async function deletePersonal(id) {
 
 }
 
-async function enterEditMode(id) {
-    const personal = globalPersonalsList.find(personal => personal.itemID === id)
-    const personalCard = getPersonalCardById(id)
+//works like a modal promise but its inline editing instead
+function personalCardEditMode(id) {
+    return new Promise((resolve, reject) => {
+        const personal = globalPersonalsList.find(personal => personal.itemID === id)
+        const personalCard = getPersonalCardById(id)
+        const saveButton = personalCard.querySelector('.save')
 
-    const title = personalCard.querySelector('.title-text').innerHTML
-    const description = personal.content
 
-    //enter edit mode in some way
+        personalCard.classList.add('edit-mode')
 
+        const title = personalCard.querySelector('.title-text')
+        var newTitle = title.innerHTML
+        const description = personalCard.querySelector('.personal-description')
+        var newDescription = description.innerHTML
+        
+        title.setAttribute('contenteditable', 'true')
+        title.focus()
+        title.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                title.blur()
+            }
+        })
+
+        description.setAttribute('contenteditable', 'true')
+        description.focus()
+        description.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                description.blur()
+            }
+        })
+
+        title.addEventListener('blur', () => {
+            newTitle = title.innerHTML
+        })
+
+        description.addEventListener('blur', () => {
+            newDescription = description.innerHTML
+        })
+
+        saveButton.addEventListener('click', () => {
+            //TODO: change to be a single server request
+            editPersonalTitle(id, newTitle)
+            editPersonalDescription(id, newDescription)
+            personalCard.classList.remove('edit-mode')
+            resolve()
+        })
+
+        
+
+    });
 }
 
 

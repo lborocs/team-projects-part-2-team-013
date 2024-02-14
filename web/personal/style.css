@@ -90,10 +90,10 @@
         }
     }
 
-    .personal-content {
+    .personal-main {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        justify-content: flex-start;
         align-items: center;
 
         gap: 1rem;
@@ -106,6 +106,30 @@
         font-weight: 400;
     }
 
+    .title-text {
+        line-height: 1;
+    }
+
+    .add-description {
+        opacity: 0;
+        transition: opacity 0.1s ease-out;
+
+        & span {
+            font-size: 20px;
+        }
+    }
+
+    .personal-chevron {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        & span {
+            font-size: 22px;
+            color: var(--icon-clr);
+        }
+    }
+
     .personal-icons {
         opacity: 0;
         transition: opacity 0.1s ease-out;
@@ -115,6 +139,29 @@
         align-items: center;
 
         gap: 0.5rem;
+        margin-left: auto;
+
+    }
+
+    .personal-description {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: flex-start;
+
+        visibility: hidden;
+        height: 0;
+        width: 0;
+        transition: visibility 0.1s ease-out, height 0.1s ease-out, width 0.1s ease-out;
+    }
+
+    .save {
+        opacity: 0;
+        visibility: hidden;
+        height: 0;
+        width: 0;
+
+        transition: visibility 0.1s ease-out, height 0.1s ease-out, width 0.1s ease-out;
     }
 
 }
@@ -127,6 +174,32 @@
     .personal-icons {
         opacity: 1;
         transition: opacity 0.1s ease-out;
+    }
+
+
+}
+
+.edit-mode {
+
+    .personal-icons {
+        opacity: 1;
+        transition: opacity 0.1s ease-out;
+    }
+
+    .add-description {
+        opacity: 1;
+        transition: opacity 0.1s ease-out;
+        visibility: visible;
+        height: auto;
+        width: auto;
+    }
+
+    .save {
+        opacity: 1;
+        transition: opacity 0.1s ease-out;
+        visibility: visible;
+        height: auto;
+        width: auto;
     }
 }
 
