@@ -1758,3 +1758,13 @@
 #header-more {
     width: 3rem;
 }
+
+.users-assigned-list {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    height: 1.5em;
+    aspect-ratio: 1;
+    width: 100%;
+
+}

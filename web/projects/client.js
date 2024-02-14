@@ -645,6 +645,7 @@ async function renderTasks(tasks) {
     }));
     setUpTaskEventListeners();
     renderAssignments(globalAssignments);
+    renderAssignmentsList(globalAssignments);
 }
 
 
@@ -671,6 +672,66 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     teamLeaderEnableElementsIfTeamLeader();
 }
 
+async function renderAssignmentsList(assignments) {
+
+    if (assignments.length == 0) {
+        console.log("[renderAssignments] assignments is empty")
+        return
+    }
+
+    console.log('[renderAssignments] rendering assignments:')
+    console.log(assignments)
+
+    let unique_users = new Set();
+    let taskUserCount = new Map();
+
+    assignments.forEach((assignment) => {
+        unique_users.add(assignment.employee.empID);
+    });
+
+    let employees = await getEmployeesById([...unique_users]);
+
+    assignments.forEach((assignment) => {
+        let emp = employees.get(assignment.employee.empID);
+        let emp_name = global.employeeToName(emp);
+        let emp_icon = global.employeeAvatarOrFallback(emp);
+
+        let task = document.getElementById(assignment.task.taskID);
+        let taskTable = document.querySelector(".tasktable-body");
+        let taskTableTask = taskTable.querySelector(`[id="${assignment.task.taskID}"]`);
+
+        if (!task) {
+            console.log(`[renderAssignment] Task ${assignment.task.taskID} not found (we leaked an assignment)`)
+            return
+        }
+
+        let usersAssignedList = taskTableTask.querySelector(".users-assigned-list");
+        
+        let assignmentElem = document.createElement("div");
+        assignmentElem.classList.add("assignment");
+        assignmentElem.classList.add("tooltip", "tooltip-under");
+
+        if (usersAssignedList) {
+            let count = taskUserCount.get(assignment.task.taskID) || 0;
+            if (count < 3) {
+                assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
+                <img src="${emp_icon}" class="task-avatar">`
+                usersAssignedList.appendChild(assignmentElem);
+            } else if (count === 3) {
+                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
+
+                const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
+                const url = "data:image/svg+xml;base64," + btoa(icon);
+            
+                assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
+                <img src="${url}" class="task-avatar">`
+                usersAssignedList.appendChild(assignmentElem);
+            }
+            taskUserCount.set(assignment.task.taskID, count + 1);
+        }
+    });
+}
+
 async function renderAssignments(assignments) {
 
     if (assignments.length == 0) {
@@ -691,12 +752,10 @@ async function renderAssignments(assignments) {
     let employees = await getEmployeesById([...unique_users]);
 
     assignments.forEach((assignment) => {
-        // emp first
         let emp = employees.get(assignment.employee.empID);
         let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
 
-        // find task html element
         let task = document.getElementById(assignment.task.taskID);
 
         if (!task) {
@@ -706,12 +765,10 @@ async function renderAssignments(assignments) {
 
         let usersAssigned = task.querySelector(".users-assigned");
         
-        // create child
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
         assignmentElem.classList.add("tooltip", "tooltip-under");
 
-        // add child element if usersAssigned exists
         if (usersAssigned) {
             let count = taskUserCount.get(assignment.task.taskID) || 0;
             if (count < 3) {
@@ -967,9 +1024,11 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         `;
     } else {
         console.log("[renderTaskInList] assignments:" + assignments)
+        
 
         taskRow.innerHTML += `
-            <td class="users-assigned">
+            <td>
+                <div class="users-assigned-list"></div>
             </td>
         `;
     }
