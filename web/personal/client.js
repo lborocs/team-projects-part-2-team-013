@@ -143,10 +143,10 @@ function renderPersonal(id) {
                 </div>
             </div>
             <div class="text-button blue save norender">
-                    <div class="button-text">
-                        Save
-                    </div>
+                <div class="button-text">
+                    Save
                 </div>
+            </div>
         </div>
 
         
@@ -433,18 +433,18 @@ function confirmDelete() {
                         </span>
                     </div>
                 </div>
-                <div class="popup-text">Are you sure you want to delete this Todo item?</div>
-                <div class="popup-text">This action cannot be undone.</div>
-
-                <div class="popup-buttons">
-                    <div class="text-button" id="cancel-button">
-                        <div class="button-text">Cancel</div>
-                    </div>
-                    <div class="text-button red" id="delete-button">
-                        <div class="button-text">Delete</div>
+                <div class="popup-text">Are you sure you want to delete this Todo item?<br>This action cannot be undone.</div>
+                <div class="modal-buttons-and-tip">
+                    <span class="modal-tip-text">TIP:<br>You can hold <kbd>SHIFT</kbd> to skip this modal</span>
+                    <div class="popup-buttons modal-tip">
+                        <div class="text-button" id="cancel-button">
+                            <div class="button-text">Cancel</div>
+                        </div>
+                        <div class="text-button red" id="delete-button">
+                            <div class="button-text">Delete</div>
+                        </div>
                     </div>
                 </div>
-                <span>Tip: you can hold SHIFT to skip this modal</span>
             </dialog>
         `;
         fullscreenDiv.style.filter = 'brightness(0.75)';

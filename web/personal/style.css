@@ -31,6 +31,33 @@
     }
 }
 
+.modal-buttons-and-tip {
+    display: flex;
+    justify-content: space-between;
+
+    .modal-tip-text {
+        opacity: 0.5;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-off-black);
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .modal-tip-text kbd {
+        padding: 2px 4px;
+        font-size: 11px;
+        line-height: 10px;
+        color: #555;
+        vertical-align: middle;
+        background-color: #fcfcfc;
+        border: solid 1px #ccc;
+        border-bottom-color: #bbb;
+        border-radius: 3px;
+        box-shadow: inset 0 -1px 0 #bbb;
+    }
+}
+
 .list-container {
     display: flex;
     flex-direction: column;
@@ -255,4 +282,15 @@
         gap: 0.5em;
     }
 
+}
+
+#delete-button {
+    background-color: #ff4b5c;
+    color: white;
+    transition: background-color 0.1s ease;
+}
+
+#delete-button:hover {
+    background-color: #cc3946;
+    color: white;
 }
