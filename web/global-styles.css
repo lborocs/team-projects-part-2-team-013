@@ -594,7 +594,7 @@ button:hover {
     
 }
 
-#inbox-icon::after {
+#inbox-icon.unread::after {
     content: "";
     position: absolute;
     top: 1px;

@@ -704,6 +704,7 @@ export async function renderNotifications(notifications) {
         let desc = "Not Implemented"
         const notificationTime = new Date(notification.time);
         let time = howLongAgo(notificationTime);
+        let unreadIndicator = document.querySelector(".notification-popover");
 
         //notification author
         let empID = notification.author.empID;
@@ -721,7 +722,8 @@ export async function renderNotifications(notifications) {
 
         if (notificationTime > notifsLastReadAt) {
             console.log("[renderNotifications] notification is unread")
-            notificationCard.classList.add("unread");   
+            notificationCard.classList.add("unread");
+            unreadIndicator.classList.add("unread");
         }
 
         
@@ -1207,6 +1209,8 @@ if (window.location.pathname !== '/' || window.location.pathname !== '/register/
     userIconContextMenu();
     managerElementsEnableIfManager();
 
+    let unreadIndicator = document.querySelector(".notification-popover");
+
     if (topbar.topbar !== null) {
         getEmployeeNotifications().then((items) => {
             if (items.length > 0) {
@@ -1221,6 +1225,8 @@ if (window.location.pathname !== '/' || window.location.pathname !== '/register/
             document.querySelectorAll(".notification-card.unread").forEach((card) => {
                 card.classList.remove("unread");
             });
+            unreadIndicator.classList.remove("unread");
+
         });
     }
 
