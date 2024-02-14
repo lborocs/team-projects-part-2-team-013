@@ -386,6 +386,9 @@ input {
 
 #settings {
     margin-top: auto !important;
+}
+
+#logout {
     margin-bottom: 0.4rem !important;
 }
 
@@ -594,7 +597,7 @@ button:hover {
     
 }
 
-#inbox-icon::after {
+#inbox-icon.unread::after {
     content: "";
     position: absolute;
     top: 1px;

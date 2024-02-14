@@ -621,8 +621,8 @@ export async function getCurrentSession(lazy = false) {
     return session;
 }
 
-export async function renewCurrentSession() {
-    let data = await put_api("/employee/session.php/session", undefined, {redirect_on_error:false});
+export async function renewCurrentSession(redirect_on_error = false) {
+    let data = await put_api("/employee/session.php/session", undefined, {redirect_on_error:redirect_on_error});
 
     if (data.success) {
         localStorage.setItem("token", data.data.session_token)
@@ -704,11 +704,12 @@ export async function renderNotifications(notifications) {
         let desc = "Not Implemented"
         const notificationTime = new Date(notification.time);
         let time = howLongAgo(notificationTime);
+        let unreadIndicator = document.querySelector(".notification-popover");
 
         //notification author
         let empID = notification.author.empID;
         let name;
-        if (empID = session.employee.empID) {
+        if (empID == session.employee.empID) {
             name = "You";
         } else {
             name = employeeToName(employees.get(empID));
@@ -721,7 +722,8 @@ export async function renderNotifications(notifications) {
 
         if (notificationTime > notifsLastReadAt) {
             console.log("[renderNotifications] notification is unread")
-            notificationCard.classList.add("unread");   
+            notificationCard.classList.add("unread");
+            unreadIndicator.classList.add("unread");
         }
 
         
@@ -1207,6 +1209,8 @@ if (window.location.pathname !== '/' || window.location.pathname !== '/register/
     userIconContextMenu();
     managerElementsEnableIfManager();
 
+    let unreadIndicator = document.querySelector(".notification-popover");
+
     if (topbar.topbar !== null) {
         getEmployeeNotifications().then((items) => {
             if (items.length > 0) {
@@ -1221,6 +1225,8 @@ if (window.location.pathname !== '/' || window.location.pathname !== '/register/
             document.querySelectorAll(".notification-card.unread").forEach((card) => {
                 card.classList.remove("unread");
             });
+            unreadIndicator.classList.remove("unread");
+
         });
     }
 
@@ -1247,7 +1253,7 @@ setInterval(async () => {
         if (lastActive < 15 * 60 * 1000) {
 
             console.log("[sessionTimeout] session expires in under 10 minutes, renewing");
-            await renewCurrentSession();
+            await renewCurrentSession(true);
         } else {
             console.log("[sessionTimeout] user has not been active in the last 15 minutes, wont renew session");
 

@@ -11,10 +11,11 @@ import * as global from "../global-ui.js";
 }
 */
 
-//important shit
+
 var globalPersonalsList = []
 const activeList = document.getElementById('active-list')
 const completedList = document.getElementById('completed-list')
+const titleChevrons = document.querySelectorAll('.title-chevron')
 
 async function getAllPersonals() {
     const res = await get_api(`/employee/employee.php/personals`)
@@ -178,7 +179,9 @@ function renderPersonal(id) {
             deletePersonal(id).then(() => {
                 unrenderPersonal(id)
             })
-        })
+        }).catch(() => {
+            console.log("[deleteButton] Delete aborted")
+        });
     })
 
 }
@@ -349,6 +352,20 @@ document.getElementById('new-personal').addEventListener('click', () => {
 
 })
 
+titleChevrons.forEach((chevron) => {
+    chevron.addEventListener('click', () => {
+        const header = chevron.parentNode.parentNode
+        const list = header.nextElementSibling
+        list.classList.toggle('collapsed')
+        chevron.innerHTML = (list.classList.contains('collapsed')) ? '<span class="material-symbols-rounded">expand_more</span>' : '<span class="material-symbols-rounded">expand_less</span>'
+    })
+})
+
+
+
+
+
+
 
 
 
@@ -415,8 +432,28 @@ function displayPersonalModal(id) {
 function confirmDelete() {
     return new Promise((resolve, reject) => {
 
-        if (global.queryModalSkip()) {
+        if (global.checkMutex("confirmDelete")) {
+            console.log("[confirmDelete] Mutex is locked, skipping modal")
+            reject();
+            return;
+        }
+
+        const handle = global.takeMutex("confirmDelete");
+
+        const resolveAndUnlock = () => {
+            console.log("[confirmDelete] Resolving and releasing mutex")
+            global.releaseMutex("confirmDelete", handle);
             resolve();
+        };
+        const rejectAndUnlock = () => {
+            console.log("[confirmDelete] Rejecting and releasing mutex")
+            global.releaseMutex("confirmDelete", handle);
+            reject();
+        };
+
+
+        if (global.queryModalSkip()) {
+            resolveAndUnlock();
             return;
         }
 
@@ -435,7 +472,7 @@ function confirmDelete() {
                 </div>
                 <div class="popup-text">Are you sure you want to delete this Todo item?<br>This action cannot be undone.</div>
                 <div class="modal-buttons-and-tip">
-                    <span class="modal-tip-text">TIP:<br>You can hold <kbd>SHIFT</kbd> to skip this modal</span>
+                    <span class="modal-tip-text">TIP:<br>Hold <kbd>SHIFT</kbd> to skip this popup</span>
                     <div class="popup-buttons modal-tip">
                         <div class="text-button" id="cancel-button">
                             <div class="button-text">Cancel</div>
@@ -458,21 +495,21 @@ function confirmDelete() {
             event.preventDefault(); 
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            reject();
+            rejectAndUnlock();
         });
 
         cancelButton.addEventListener('click', (event) => {
             event.preventDefault();
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            reject();
+            rejectAndUnlock();
         });
 
         deleteButton.addEventListener('click', (event) => {
             event.preventDefault();
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            resolve();
+            resolveAndUnlock();
         });
     });
 }
