@@ -45,6 +45,7 @@
     }
 
     .modal-tip-text kbd {
+        margin: 0 0.25rem;
         padding: 2px 4px;
         font-size: 11px;
         line-height: 10px;
