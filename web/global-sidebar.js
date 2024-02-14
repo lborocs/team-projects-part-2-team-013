@@ -36,15 +36,15 @@ wiki.classList.add('sidebar-item')
 wiki.id = 'wiki';
 wiki.setAttribute('href', '/wiki/');
 
-export const workload = document.createElement('a')
-workload.classList.add('sidebar-item', 'manager-only', 'norender')
-workload.id = 'workload';
-workload.setAttribute('href', '/workload/');
+export const dashboard = document.createElement('a')
+dashboard.classList.add('sidebar-item', 'manager-only', 'norender')
+dashboard.id = 'workload';
+dashboard.setAttribute('href', '/dashboard/');
 
 export const training = document.createElement('a')
 training.classList.add('sidebar-item', 'manager-only', 'norender')
 training.id = 'training';
-training.setAttribute('href', '/dashboard/');
+training.setAttribute('href', '/workload/');
 
 export const logout = document.createElement('div')
 logout.classList.add('sidebar-item')
@@ -60,7 +60,7 @@ mobileSidebarHeader.appendChild(closeSidebar);
 home.innerHTML = `<span class="material-symbols-rounded">home</span> <p class="">Projects</p>`;
 personal.innerHTML = `<span class="material-symbols-rounded">checklist</span> <p class="">My List</p>`;
 wiki.innerHTML = `<span class="material-symbols-rounded">menu_book</span> <p class="">Wiki</p>`;
-workload.innerHTML = `<span class="material-symbols-rounded">speed</span> <p class="">Workload</p>`;
+dashboard.innerHTML = `<span class="material-symbols-rounded">speed</span> <p class="">Dashboards</p>`;
 training.innerHTML = `<span class="material-symbols-rounded">school</span> <p class="">Training</p>`;
 logout.innerHTML = `<span class="material-symbols-rounded">logout</span> <p class="">Logout</p>`;
 
@@ -70,7 +70,7 @@ if (sidebar !== null) {
     sidebar.appendChild(home);
     sidebar.appendChild(personal);
     sidebar.appendChild(wiki);
-    sidebar.appendChild(workload);
+    sidebar.appendChild(dashboard);
     sidebar.appendChild(training);
     sidebar.appendChild(logout);
     items = document.querySelectorAll('.sidebar-item');
