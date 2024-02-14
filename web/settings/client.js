@@ -197,11 +197,10 @@ let deleteAccountButton = document.querySelector('.delete-account');
 deleteAccountButton.addEventListener('click', () => {
     confirmDelete()
         .then(() => {
-            window.location.href = '../';
         })
         .catch((error) => {
             console.log('Delete account cancelled');
-        });
+        })
 });
 
 
