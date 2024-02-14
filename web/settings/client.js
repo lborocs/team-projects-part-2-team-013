@@ -271,6 +271,30 @@ function confirmDelete() {
     });
 }
 
+async function getEmployee(empID="@me") {
+    const res = await get_api(`/employee/employee.php/employee/${empID}`);
+    if (res.success) {
+        return res.employee;
+    } else {
+    console.error("[getEmployee] failed to get employee", empID)
+}
+}
+
+async function setUserData() {
+    let employeeData = await getEmployee();
+    let employeeName = employeeData.first_name + " " + employeeData.last_name;
+    let employeeEmail = employeeData.email;
+    let employeeAvatar = employeeData.avatar;
+
+    document.querySelector('.current-name').innerHTML = employeeName;
+    document.querySelector('.email').innerHTML = employeeEmail;
+};
+
+setUserData();
+
+
+
+
 
 global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
 
