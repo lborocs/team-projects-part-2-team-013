@@ -47,7 +47,7 @@ training.id = 'training';
 training.setAttribute('href', '/workload/');
 
 export const settings = document.createElement('a')
-settings.classList.add('sidebar-item', 'manager-only', 'norender')
+settings.classList.add('sidebar-item')
 settings.id = 'settings';
 settings.setAttribute('href', '/settings/');
 
