@@ -11,10 +11,11 @@ import * as global from "../global-ui.js";
 }
 */
 
-//important shit
+
 var globalPersonalsList = []
 const activeList = document.getElementById('active-list')
 const completedList = document.getElementById('completed-list')
+const titleChevrons = document.querySelectorAll('.title-chevron')
 
 async function getAllPersonals() {
     const res = await get_api(`/employee/employee.php/personals`)
@@ -350,6 +351,19 @@ document.getElementById('new-personal').addEventListener('click', () => {
     })
 
 })
+
+titleChevrons.forEach((chevron) => {
+    chevron.addEventListener('click', () => {
+        const header = chevron.parentNode.parentNode
+        const list = header.nextElementSibling
+        list.classList.toggle('collapsed')
+    })
+})
+
+
+
+
+
 
 
 

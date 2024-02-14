@@ -103,6 +103,13 @@
     align-self: center;
 }
 
+.list.collapsed {
+    height: 0;
+    .personal-task {
+        display: none;
+    }
+}
+
 .personal-task {
     display: flex;
     flex-direction: row;
