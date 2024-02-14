@@ -288,7 +288,7 @@ function showTaskInExplainer(taskCard) {
     
     explainerTaskManhours.innerHTML = `
     <span class="material-symbols-rounded">
-        hourglass_empty
+        timer
     </span>
     <div class="manhours">
         ${globalCurrentTask.expectedManHours/3600} Manhour${globalCurrentTask.expectedManHours !== 3600 ? 's' : ''}
@@ -1290,7 +1290,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
             <div class="tooltip tooltip-under manhours-container status-container">
                 <p class="tooltiptext">${manHoursTooltip}</p>
                 <span class="material-symbols-rounded">
-                hourglass_empty
+                    timer
                 </span>
                 <div class="manhours">
                     ${timeDisplay}
