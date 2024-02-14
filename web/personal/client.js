@@ -107,7 +107,7 @@ function renderPersonal(id) {
     const personalCard = document.createElement('div')
     personalCard.classList.add('personal-task')
 
-    const checkedState = (personal.state === true) ? 'checked' : ''
+    const checkedState = (personal.state === 1) ? 'checked' : ''
 
     const hasDescription = personal.content !== null
     const chevronOrAddDescription = hasDescription ? `
@@ -230,12 +230,17 @@ async function togglePersonalState(id) {
     renderPersonal(id)
 }
 
-async function editPersonalTitle(id, title) {
+async function editPersonal(id, title, description) {
     const session = await global.getCurrentSession()
     const employeeID = session.employee.empID
 
-    const body = {
-        title: title
+    const body = {}
+
+    if (title) {
+        body.title = title
+    }
+    if (description) {
+        body.content = description
     }
 
     const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
@@ -244,28 +249,13 @@ async function editPersonalTitle(id, title) {
         return false
     }
 
-    await getPersonal(id)
-
-    unrenderPersonal(id)
-    renderPersonal(id)
-
-}
-
-async function editPersonalDescription(id, description) {
-    const session = await global.getCurrentSession()
-    const employeeID = session.employee.empID
-
-    const body = {
-        content: description
+    const personal = globalPersonalsList.find(personal => personal.itemID === id);
+    if (title) {
+        personal.title = title
     }
-
-    const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
-
-    if (!res.success) {
-        return false
+    if (description) {
+        personal.content = description
     }
-
-    await getPersonal(id)
 
     unrenderPersonal(id)
     renderPersonal(id)
@@ -334,8 +324,7 @@ function personalCardEditMode(id) {
 
         saveButton.addEventListener('click', () => {
             //TODO: change to be a single server request
-            editPersonalTitle(id, newTitle)
-            editPersonalDescription(id, newDescription)
+            editPersonal(id, newTitle, newDescription)
             personalCard.classList.remove('edit-mode')
             saveButton.classList.add('norender')
             resolve()
