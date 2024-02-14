@@ -211,6 +211,10 @@
     }
 }
 
-#sort-tasks-option-type {
+#sort-tasks-type {
+    margin-left: auto;
+}
+
+#sort-projects-type {
     margin-left: auto;
 }
