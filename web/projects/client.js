@@ -781,12 +781,12 @@ async function teamLeaderEnableElementsIfTeamLeader() {
 
 
 async function getProjectById(projID) {
-    let data = await get_api(`/project/project.php/project/${projID}`);
-    if (!data.success) {
+    let res = await get_api(`/project/project.php/project/${projID}`);
+    if (!res.success) {
         console.error(`[getProjectById] Error fetching project ${projID}: ${res.error.message} (${res.error.code})`);
-        return null;
+        throw res;
     }
-    return data.data;
+    return res.data;
 }
 
 async function fetchAndRenderAllProjects() {
@@ -847,7 +847,11 @@ async function renderFromBreadcrumb(locations) {
         return await fetchAndRenderAllProjects();
     }
 
-    await renderIndividualProject(projID, true);
+    try {
+        await renderIndividualProject(projID, true);
+    } catch (e) {
+        await fetchAndRenderAllProjects();
+    }
 
     if (!taskID) {
         return;
