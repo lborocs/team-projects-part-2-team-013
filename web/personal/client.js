@@ -136,7 +136,7 @@ function renderPersonal(id) {
                         <span class="material-symbols-rounded">edit</span>
                     </div>
                 </div>
-                <div class="icon-button no-box delete">
+                <div class="icon-button no-box delete modal-skippable">
                     <div class="button-icon">
                         <span class="material-symbols-rounded">delete</span>
                     </div>
@@ -438,6 +438,7 @@ function confirmDelete() {
                         <div class="button-text">Delete</div>
                     </div>
                 </div>
+                <span>Tip: you can hold SHIFT to skip this modal</span>
             </dialog>
         `;
         fullscreenDiv.style.filter = 'brightness(0.75)';
