@@ -621,8 +621,8 @@ export async function getCurrentSession(lazy = false) {
     return session;
 }
 
-export async function renewCurrentSession() {
-    let data = await put_api("/employee/session.php/session", undefined, {redirect_on_error:false});
+export async function renewCurrentSession(redirect_on_error = false) {
+    let data = await put_api("/employee/session.php/session", undefined, {redirect_on_error:redirect_on_error});
 
     if (data.success) {
         localStorage.setItem("token", data.data.session_token)
@@ -709,7 +709,7 @@ export async function renderNotifications(notifications) {
         //notification author
         let empID = notification.author.empID;
         let name;
-        if (empID = session.employee.empID) {
+        if (empID == session.employee.empID) {
             name = "You";
         } else {
             name = employeeToName(employees.get(empID));
@@ -1253,7 +1253,7 @@ setInterval(async () => {
         if (lastActive < 15 * 60 * 1000) {
 
             console.log("[sessionTimeout] session expires in under 10 minutes, renewing");
-            await renewCurrentSession();
+            await renewCurrentSession(true);
         } else {
             console.log("[sessionTimeout] user has not been active in the last 15 minutes, wont renew session");
 
