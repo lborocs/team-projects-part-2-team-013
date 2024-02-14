@@ -663,7 +663,7 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
         renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours, assignments);
     }
     if (update & RENDER_LIST) {
-        renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours);
+        renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours, assignments);
     }
     
     calculateTaskCount()
@@ -892,7 +892,7 @@ function calculateTaskCount() {
     document.querySelector("#finished-count").innerHTML = finishedCount
 }
 
-function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours) {
+function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours, assignments = []) {
     console.log("[renderTaskInList] renering task in list")
     
 
@@ -908,6 +908,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     taskRow.setAttribute("data-title", title);
     taskRow.setAttribute("data-expectedManHours", expectedManHours);
     taskRow.setAttribute("data-state", state);
+    taskRow.setAttribute("data-assignments", JSON.stringify(assignments));
 
     var icon;
     var statusText;
@@ -954,6 +955,21 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         taskRow.innerHTML += `
             <td class="date">
                 ${dueDate}
+            </td>
+        `;
+    }
+
+    if (assignments.length == 0) {
+        taskRow.innerHTML += `
+            <td class="assignee disabled">
+                Not set
+            </td>
+        `;
+    } else {
+        console.log("[renderTaskInList] assignments:" + assignments)
+
+        taskRow.innerHTML += `
+            <td class="users-assigned">
             </td>
         `;
     }
@@ -2595,26 +2611,3 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
-
-// manhoursMinutesDropdown.addEventListener("click", function() {
-//     this.classList.add("open");
-// });
-
-// document.addEventListener("click", (e) => {
-//     if (!manhoursMinutesDropdown.contains(e.target)) {
-//         manhoursMinutesDropdown.classList.remove("open")
-//     }
-// });
-
-// manhoursMinutes0.addEventListener("click", () => {
-//     manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "0";
-// })
-// manhoursMinutes15.addEventListener("click", () => {
-//     manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "15";
-// })
-// manhoursMinutes30.addEventListener("click", () => {
-//     manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "30";
-// })
-// manhoursMinutes45.addEventListener("click", () => {
-//     manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "45";
-// })
