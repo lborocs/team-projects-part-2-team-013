@@ -1,6 +1,7 @@
 const tags = document.getElementById("tags");
 const input = document.getElementById("input-tag");
-
+const submitButton = document.getElementById("submitButton");
+var editing = false;
 function getQueryParam() {
     return window.location.hash.substring(1);
 }
@@ -25,7 +26,6 @@ async function fetchTags() {
 let tagsList = fetchTags();
 tagsList.then((tagsList) => {
     let postID = getQueryParam();
-    let editing = false;
     if (postID != "") {
         editing = true;
         document.querySelector("#submitPostButton").innerHTML = 'Update post &nbsp <span class="material-symbols-rounded">done</span>';
@@ -178,3 +178,5 @@ document.querySelector("#ex").addEventListener("click", function() {
 });
 
 document.querySelector("#ex").classList.add("norender");
+
+submitButton.addEventListener("click", submitPost);
