@@ -172,7 +172,7 @@ document.querySelector(".search-input").addEventListener("blur", function() {
     document.querySelector("#ex").classList.add("norender");
 });
 
-document.querySelector("clear-icon").addEventListener("click", function() {
+document.querySelector(".clear-icon").addEventListener("click", function() {
     document.querySelector("#input-tag").value = "";
     document.querySelector("#glass").classList.remove("norerender");
     document.querySelector("#ex").classList.add("norender");

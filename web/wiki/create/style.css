@@ -3,15 +3,24 @@
     gap: 1em;
 }
 
-@media (max-height: 1100px) {
+@media (max-height: 850px) {
     .popover {
-        position: relative;
-        bottom: 65px;
+        position: absolute;
+        top: unset;
+        bottom: 100%;
     }
 }
 
+@media (min-height: 850px) {
+    .popover {
+        position: absolute;
+        bottom: unset;
+    }
+}
+
+
 .popover {
-    position: absolute;
+    position: relative;
     width: 25.1em;
     border: solid 1px rgba(105,112,125, 0.1);
     border-radius: 5px;
@@ -232,7 +241,7 @@ input[type="text"] {
 
 .ql-container{
     background-color: #fff;
-    max-height:55%;
+    max-height:45%;
 }
 
 .type-of-post {
