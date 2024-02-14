@@ -1420,7 +1420,9 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
 
     let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
     let lastAccessedFormatted = lastAccessed ? formatLastAccessed(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
+    let lastAccessedTooltip = lastAccessedFormatted.includes("Never") ? "Never accessed" : new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'});
     let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : `<span class="disabled">Not set</span>`;
+
     project.innerHTML = `
         <td>
             <a href="/projects/#${ID}">
@@ -1451,7 +1453,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         <td>
             <a href="/projects/#${ID}">
                 <div class="tooltip tooltip-above name-card">
-                    <p class="tooltiptext">${new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'})}</p>
+                    <p class="tooltiptext">${lastAccessedTooltip}</p>
                     <div class="name">
                         ${lastAccessedFormatted}
                     </div>

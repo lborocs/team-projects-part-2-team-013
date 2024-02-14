@@ -37,11 +37,24 @@
 
     .modal-tip-text {
         opacity: 0.5;
-        font-size: 14px;
-        font-weight: 400;
+        font-size: 12px;
+        font-weight: 600;
         color: var(--text-off-black);
         display: flex;
         align-items: flex-end;
+    }
+
+    .modal-tip-text kbd {
+        padding: 2px 4px;
+        font-size: 11px;
+        line-height: 10px;
+        color: #555;
+        vertical-align: middle;
+        background-color: #fcfcfc;
+        border: solid 1px #ccc;
+        border-bottom-color: #bbb;
+        border-radius: 3px;
+        box-shadow: inset 0 -1px 0 #bbb;
     }
 }
 
