@@ -357,6 +357,7 @@ titleChevrons.forEach((chevron) => {
         const header = chevron.parentNode.parentNode
         const list = header.nextElementSibling
         list.classList.toggle('collapsed')
+        chevron.innerHTML = (list.classList.contains('collapsed')) ? '<span class="material-symbols-rounded">expand_more</span>' : '<span class="material-symbols-rounded">expand_less</span>'
     })
 })
 
