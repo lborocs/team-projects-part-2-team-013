@@ -140,9 +140,9 @@
 
 
                         <div class="option">
-                            <label class="name" for="preference-sort-tasks">Sort Tasks</label>
-                            <div class="dropdown" id="sort-tasks-option-type">
-                                <div class="dropdown-text" id="sort-tasks-text">
+                            <label class="name" for="preference-sort-tasks-type">Default sort tasks by</label>
+                            <div class="dropdown" id="sort-tasks-type">
+                                <div class="dropdown-text" id="sort-tasks-type-text">
                                     <!-- this is whatever preference they have set, JS puts a value here on page load -->
                                 </div>
                                 <div class="dropdown-chevron">
@@ -151,13 +151,13 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-tasks-option" id="sort-name-asc">By Name</div>
-                                    <div class="dropdown-option sort-tasks-option" id="sort-date-asc">By Date</div>
-                                    <div class="dropdown-option sort-tasks-option" id="sort-status-desc">By Status</div>
+                                    <div class="dropdown-option sort-tasks-type" id="sort-name-asc">By Name</div>
+                                    <div class="dropdown-option sort-tasks-type" id="sort-date-asc">By Date</div>
+                                    <div class="dropdown-option sort-tasks-type" id="sort-status-desc">By Status</div>
                                 </div>
                             </div>
-                            <div class="dropdown" id="sort-tasks-option-direction">
-                                <div class="dropdown-text" id="sort-tasks-text">
+                            <div class="dropdown" id="sort-tasks-direction">
+                                <div class="dropdown-text" id="sort-tasks-type-text">
                                     <!-- this is whatever preference they have set, JS puts a value here on page load -->
                                 </div>
                                 <div class="dropdown-chevron">
@@ -166,16 +166,16 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-tasks-option" id="sort-name-asc">Ascending</div>
-                                    <div class="dropdown-option sort-tasks-option" id="sort-name-desc">Descending</div>
+                                    <div class="dropdown-option sort-tasks-direction-option" id="sort-tasks-asc">Ascending</div>
+                                    <div class="dropdown-option sort-tasks-direction-option" id="sort-tasks-desc">Descending</div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="option">
-                            <label class="name" for="preferences-sort-projects">Sort Projects</label>
-                            <div class="dropdown" id="sort-projects-options">
-                                <div class="dropdown-text" id="sort-projects-text">
+                            <label class="name" for="preference-sort-projects-type">Default sort projects by</label>
+                            <div class="dropdown" id="sort-projects-type">
+                                <div class="dropdown-text" id="sort-projects-type-text">
                                     <!-- this is whatever preference they have set, JS puts a value here on page load -->
                                 </div>
                                 <div class="dropdown-chevron">
@@ -184,12 +184,23 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-projects-option" id="sort-projects-name-asc">By Name - Ascending</div>
-                                    <div class="dropdown-option sort-projects-option" id="sort-projects-name-desc">By Name - Descending</div>
-                                    <div class="dropdown-option sort-projects-option" id="sort-projects-date-asc">By Date - Ascending</div>
-                                    <div class="dropdown-option sort-projects-option" id="sort-projects-date-desc">By Date - Descending</div>
-                                    <div class="dropdown-option sort-projects-option" id="sort-projects-status-asc">By Status - Ascending</div>
-                                    <div class="dropdown-option sort-projects-option" id="sort-projects-status-desc">By Status - Descending</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-name-asc">By Name</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-date-asc">By Date</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-status-desc">By Status</div>
+                                </div>
+                            </div>
+                            <div class="dropdown" id="sort-projects-direction">
+                                <div class="dropdown-text" id="sort-projects-type-text">
+                                    <!-- this is whatever preference they have set, JS puts a value here on page load -->
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option sort-projects-direction-option" id="sort-projects-asc">Ascending</div>
+                                    <div class="dropdown-option sort-projects-direction-option" id="sort-projects-desc">Descending</div>
                                 </div>
                             </div>
                         </div>

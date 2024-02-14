@@ -122,30 +122,30 @@ listMenu.forEach((option) => {
     })
 })
 
-let sortProjectsOptions = document.querySelector('#sort-projects-options');
-sortProjectsOptions.addEventListener('click', () => {
-    sortProjectsOptions.classList.toggle('open');
+let sortProjectsType = document.querySelector('#sort-projects-type');
+sortProjectsType.addEventListener('click', () => {
+    sortProjectsType.classList.toggle('open');
 });
 
 let sortProjectsMenu = document.querySelectorAll('.sort-projects-option');
 sortProjectsMenu.forEach((option) => {
     option.addEventListener('click', (event) => {
         document.querySelector('#sort-projects-text').innerHTML = option.innerHTML;
-        sortProjectsOptions.classList.remove('open');
+        sortProjectsType.classList.remove('open');
         event.stopPropagation();
     })
 })
 
-let sortTasksOptions = document.querySelector('#sort-tasks-options');
-sortTasksOptions.addEventListener('click', () => {
-    sortTasksOptions.classList.toggle('open');
+let sortTasksType = document.querySelector('#sort-tasks-type');
+sortTasksType.addEventListener('click', () => {
+    sortTasksType.classList.toggle('open');
 });
 
-let sortTasksMenu = document.querySelectorAll('.sort-tasks-option');
+let sortTasksMenu = document.querySelectorAll('.sort-tasks-type-option');
 sortTasksMenu.forEach((option) => {
     option.addEventListener('click', (event) => {
         document.querySelector('#sort-tasks-text').innerHTML = option.innerHTML;
-        sortTasksOptions.classList.remove('open');
+        sortTasksType.classList.remove('open');
         event.stopPropagation();
     })
 })
