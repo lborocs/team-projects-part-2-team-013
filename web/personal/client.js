@@ -442,12 +442,12 @@ function confirmDelete() {
 
         const resolveAndUnlock = () => {
             console.log("[confirmDelete] Resolving and releasing mutex")
-            global.releaseMutex(handle);
+            global.releaseMutex("confirmDelete", handle);
             resolve();
         };
         const rejectAndUnlock = () => {
             console.log("[confirmDelete] Rejecting and releasing mutex")
-            global.releaseMutex(handle);
+            global.releaseMutex("confirmDelete", handle);
             reject();
         };
 
