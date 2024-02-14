@@ -71,6 +71,11 @@ input {
 
 }
 
+
+.modal-skippable-active {
+    color : red !important;
+}
+
 .breadcrumb {
     display:flex;
     flex-direction: row;
