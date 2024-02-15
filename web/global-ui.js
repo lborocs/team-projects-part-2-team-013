@@ -124,6 +124,11 @@ export class RollingTimeout {
         this.callback();
     }
 
+    cancel() {
+        clearTimeout(this._timeout);
+        this.dirty = true;
+    }
+
 }
 
 
@@ -270,9 +275,10 @@ class PreferenceStore {
         // rolling timeout to save 2s after no changes
         this.saver = new ReusableRollingTimeout(() => {this.save()}, 2000);
 
-        window.addEventListener('beforeunload', () => {
-        this.saver.executeNow();
-    });
+        window.addEventListener('beforeunload', async () => {
+            this.saver.inner.cancel();
+            await this.save();
+        });
 
     }
 
@@ -280,7 +286,7 @@ class PreferenceStore {
         await put_api("/employee/meta.php/preferences", {preferences: Object.fromEntries(this.store)});
     }
 
-    async fill() {
+    async _fill() {
         const res = await get_api("/employee/meta.php/preferences");
         if (res.success) {
             this.store = new Map(Object.entries(res.data.preferences))
@@ -293,7 +299,7 @@ class PreferenceStore {
         key = key.toLowerCase();
 
         if (this._lazy) {
-            await this.fill();
+            await this._fill();
         }
 
         return this.store.get(key);
@@ -303,7 +309,7 @@ class PreferenceStore {
         key = key.toLowerCase();
     
         if (this._lazy) {
-            await this.fill();
+            await this._fill();
         }
     
         this.store.set(key, value);
@@ -318,6 +324,7 @@ class PreferenceStore {
     
 }
 export const preferences = new PreferenceStore();
+document.preferences = preferences;
 
 //utility functions
 
