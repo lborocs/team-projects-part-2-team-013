@@ -186,6 +186,79 @@ function renderPersonal(id) {
 
 }
 
+function renderDummyPersonal() {
+    const personalCard = document.createElement('div')
+    personalCard.classList.add('personal-task')
+    personalCard.id = "dummy"
+
+    personalCard.innerHTML = `
+        <div class="dummy-add-icon">
+            <span class="material-symbols-rounded">add</span>
+        </div>
+        <div class="personal-main">
+            <div class="personal-content">
+                <div class="personal-title">
+                    <div class="title-text">
+                        <input type="text" placeholder="What do you want to do?">
+                    </div>
+                </div>
+            </div>
+            <div class="text-button blue save disabled">
+                <div class="button-text">
+                    Save
+                </div>
+            </div>
+        </div>
+    `
+
+    activeList.prepend(personalCard);
+
+    const titleInput = personalCard.querySelector('.title-text input')
+    titleInput.focus()
+    titleInput.addEventListener('input', (e) => {
+        if (e.target.value === "") {
+            personalCard.querySelector('.save').classList.add('disabled')
+        } else {
+            personalCard.querySelector('.save').classList.remove('disabled')
+        }
+    })
+    
+    titleInput.addEventListener('keydown', (e) => {
+        if (!(e.key === 'Enter')) {
+            return
+        }
+
+        e.preventDefault()
+
+
+        if (titleInput.value === "") {
+            return
+        }
+
+        unrenderDummyPersonal()
+        createPersonal(titleInput.value).then(() => {
+            renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
+        })
+
+    })
+
+    personalCard.querySelector('.save').addEventListener('click', () => {
+        unrenderDummyPersonal()
+        createPersonal(titleInput.value).then(() => {
+            renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
+        })
+    })
+
+}
+
+function unrenderDummyPersonal() {
+    const dummy = document.getElementById('dummy')
+    dummy.remove()
+}
+
+
+
+
 function getPersonalCardById(id) {
     //personal checkbox has the ID so we can do idElement.value, but this means we have to travel 2 parent elements up to find the personal card.
     const checkbox = document.getElementById(id)
@@ -200,6 +273,7 @@ function getPersonalCardById(id) {
     }
     return personal;
 }
+
 function unrenderPersonal(id) {
     const personal = getPersonalCardById(id)
     personal.remove()
@@ -341,16 +415,8 @@ function personalCardEditMode(id) {
 
 
 //event listeners
-document.getElementById('new-personal').addEventListener('click', () => {
-    const title = "poctavian"
-    if (title === null) {
-        return
-    }
-    createPersonal(title).then(() => {
-        renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
-    })
 
-})
+document.getElementById('new-personal').addEventListener('click', renderDummyPersonal)
 
 titleChevrons.forEach((chevron) => {
     chevron.addEventListener('click', () => {

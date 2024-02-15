@@ -13,7 +13,7 @@ const nameInput = document.getElementById('name');
 const registerButton = document.getElementById('register');
 const statusElement = document.getElementById('status');
 const passwordCriteria = document.querySelector('div.password-criteria');
-const eightChars = document.getElementById('eight-chars');
+const tenChars = document.getElementById('ten-chars');
 const uppercaseLetter = document.getElementById('uppercase-letter');
 const number = document.getElementById('number');
 const specialChar = document.getElementById('special-char');
@@ -42,7 +42,7 @@ function updateCriteriaHints() {
 
     const passwordValue = passwordInput.value;
     if (passwordValue.length === 0) {
-        resetCriteria(eightChars);
+        resetCriteria(tenChars);
         resetCriteria(uppercaseLetter);
         resetCriteria(number);
         resetCriteria(specialChar);
@@ -54,11 +54,10 @@ function updateCriteriaHints() {
     const passwordLength = passwordValue.length;
     const passwordHasUppercase = /[A-Z]/.test(passwordValue);
     const passwordHasNumber = /\d/.test(passwordValue);
-    const passwordHasSpecialChar = /[!@#$%^&*()\-_=+{};:,<.>'`\"\ ]/.test(passwordValue);
-    console.log(passwordHasSpecialChar)
+    const passwordHasSpecialChar = /[!@#$%^&*()\-_=+{};:,<.>'`\"\ ]/.test(passwordValue); //same regex as in the backend
 
     let results = []
-    results[0] = showCriteriaResult(passwordLength >= 8, eightChars);
+    results[0] = showCriteriaResult(passwordLength >= 10, tenChars);
     results[1] = showCriteriaResult(passwordHasUppercase && passwordLength !== 0, uppercaseLetter);
     results[2] = showCriteriaResult(passwordHasNumber && passwordLength !== 0, number);
     results[3] = showCriteriaResult(passwordHasSpecialChar, specialChar);
