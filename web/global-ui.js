@@ -270,10 +270,6 @@ class PreferenceStore {
         // rolling timeout to save 2s after no changes
         this.saver = new ReusableRollingTimeout(() => {this.save()}, 2000);
 
-        window.addEventListener('beforeunload', () => {
-        this.saver.executeNow();
-    });
-
     }
 
     async save() {
