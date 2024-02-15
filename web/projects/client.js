@@ -309,7 +309,7 @@ function showTaskInExplainer(taskCard) {
 
     explainerTaskDescription.innerHTML = globalCurrentTask.description ? globalCurrentTask.description : "<i>No description...</i>";
 
-    let dueDate = new Date(globalCurrentTask.dueDate);
+    let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
     explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "No due date";
 
     let statusElement = document.querySelector(".status");

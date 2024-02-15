@@ -972,7 +972,6 @@
 
     .disabled {
         color: rgba(0, 0, 0, 0.3);
-        pointer-events: none;
     }
 }
 
@@ -1762,7 +1761,6 @@
 
     .disabled {
         color: rgba(0,0,0,0.4);
-        pointer-events: none;
     }
 
 }
