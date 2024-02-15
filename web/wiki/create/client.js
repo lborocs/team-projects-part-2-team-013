@@ -24,34 +24,35 @@ class Tag {
 
     removeTag(tag) {
         document.querySelector("#listOfTags").removeChild(tag);
-        console.log(currentTags);
-        this.checkTemp();
-        console.log(currentTags);
         currentTags = currentTags.filter(a => a.name !== this.name);
         if (currentTags.length == 0){
             document.querySelector("#placeholderTag").classList.remove("norender")
         }
     }
 
-    checkTemp(){
+    async checkTemp(){
         if (this.tagID != 0){
             return
         }
         try {
-            this.createTag(this.name);
+            this.tagID = await this.createTag(this.name);
         } catch (error) {
             console.log("Error creating tag: ", error);
         }
     }
 
     async createTag(tag){
-        console.log(tag);
-        const result = await post_api(`/wiki/post.php/tag`, tag);
+        console.log("Creating tag: ", tag);
+        var data = {
+            "name": tag,
+            "colour": 0
+        }
+        const result = await post_api(`/wiki/post.php/tag`, data);
         if (!result.success) {
             console.error("[getPostData] error making tag: ", result.data);
             return;
         }
-        return result.data;
+        return result.data.tagID;
     }
 
 }
@@ -147,16 +148,6 @@ if (event.key === "Enter") {
 });
 
 
-function getTagList() {
-    const tags = document.querySelectorAll(".tag");
-    const tagList = [];
-    for (let i = 0; i < tags.children.length; i++) {
-    const tagText = tags.children[i].childNodes[0].nodeValue.trim();
-    tagList.push(tagText);
-    }
-    return tagList;
-}
-
 async function createPost(data) {
     const response = await post_api("/wiki/post.php/post", data);
     console.log(response);
@@ -171,11 +162,15 @@ function submitPost(){
     var body = quill.root.innerHTML;
     //THIS CAN BE DONE WHEN TAGS ARE USED                          
     var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
+    currentTags.forEach((tag) => {
+        tag.checkTemp();
+    });
 
     var data = {
         "isTechnical": isTechnical+0,
         "title": title,
         "content": body,
+        "tags": currentTags.map(a => a.tagID).join(",")
     }
     console.log(data);
     if (editing) {
