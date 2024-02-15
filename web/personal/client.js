@@ -427,13 +427,14 @@ function sortPersonals() {
 //works like a modal promise but its inline editing instead
 function personalCardEditMode(id) {
     return new Promise((resolve, reject) => {
-        const personal = globalPersonalsList.find(personal => personal.itemID === id)
         const personalCard = getPersonalCardById(id)
         const saveButton = personalCard.querySelector('.save')
+        const personalIcons = personalCard.querySelector('.personal-icons')
 
 
         personalCard.classList.add('edit-mode')
         saveButton.classList.remove('norender')
+        personalIcons.classList.add('norender')
 
         const title = personalCard.querySelector('.title-text')
         var newTitle = title.innerHTML
@@ -442,6 +443,14 @@ function personalCardEditMode(id) {
         
         title.setAttribute('contenteditable', 'true')
         title.focus()
+        
+        const range = document.createRange()
+        const sel = window.getSelection()
+        range.setStart(title.childNodes[0], title.innerHTML.length)
+        range.collapse(true)
+        sel.removeAllRanges()
+        sel.addRange(range)
+
         title.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault()
@@ -471,6 +480,7 @@ function personalCardEditMode(id) {
             editPersonal(id, newTitle, newDescription)
             personalCard.classList.remove('edit-mode')
             saveButton.classList.add('norender')
+            personalIcons.classList.remove('norender')
             resolve()
         })
 
