@@ -53,6 +53,7 @@ const explainerTaskManhours = document.querySelector(".manhours-container")
 const dashboardRedirect = document.getElementById('dashboard-redirect');
 const listViewButton = document.getElementById('list-view-button');
 const boardViewButton = document.getElementById('board-view-button');
+const lastAccessedButton = document.getElementById('project-last-accessed');
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -827,7 +828,7 @@ async function fetchAndRenderAllProjects() {
                     });
                     header.classList.add("sorting-by");
                 }
-                searchAndRenderProjects('', sortAttribute, sortDirection);
+                searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection);
             });
         }
     });
@@ -2565,8 +2566,7 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 
 
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
-    projectSearchInput.value = "";
-    searchAndRenderProjects()
+    searchAndRenderProjects(projectSearchInput.value = "");
     startOrRollProjectSearchTimeout();
 
 })
@@ -2581,6 +2581,12 @@ const sleep = (ms) => {
         setTimeout(resolve, ms);
     });
 };
+
+lastAccessedButton.addEventListener('click', function(event) {
+    if (event.button === 0) {
+        searchAndRenderProjects(projectSearchInput.value, 'lastAccessed', 'desc');
+    }
+});
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
