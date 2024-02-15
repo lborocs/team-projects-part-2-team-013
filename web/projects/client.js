@@ -2651,3 +2651,6 @@ async function applySortingPreferences() {
         }
     }
 }
+window.onload = function() {
+    applySortingPreferences();
+};
