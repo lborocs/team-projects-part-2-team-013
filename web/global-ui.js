@@ -346,6 +346,10 @@ class PreferenceStore {
         return new PreferenceValue(value, DEFAULT_PREFERENCES[key]);
     }
 
+    async get_or_default(key) {
+        return (await this.get(key)).or_default();
+    }
+
     async set(key, value) {
         key = key.toLowerCase();
     
