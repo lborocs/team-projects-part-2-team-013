@@ -31,6 +31,8 @@ class Tag {
     }
 
     async checkTemp(){
+        console.log("Checking tag: ", this.name);
+        console.log("Tag ID: ", this.tagID);
         if (this.tagID != 0){
             return
         }
@@ -52,7 +54,10 @@ class Tag {
             console.error("[getPostData] error making tag: ", result.data);
             return;
         }
+        result.then((result) => {
+            console.log("Tag created: ", result.data.tagID);
         return result.data.tagID;
+        });
     }
 
 }
@@ -151,9 +156,14 @@ if (event.key === "Enter") {
 async function createPost(data) {
     const response = await post_api("/wiki/post.php/post", data);
     console.log(response);
+    return response.postID
 }
-async function updatePost(data) {
+async function updatePost(postID, data) {
     const response = await patch_api("/wiki/post.php/post/" + postID, data);
+    console.log(response);
+}
+async function updateTags(postID, data) {
+    const response = await put_api("/wiki/post.php/post/" + postID, data);
     console.log(response);
 }
 
@@ -162,24 +172,41 @@ function submitPost(){
     var body = quill.root.innerHTML;
     //THIS CAN BE DONE WHEN TAGS ARE USED                          
     var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
-    currentTags.forEach((tag) => {
-        tag.checkTemp();
-    });
+    tagsToSubmit = [];
 
-    var data = {
-        "isTechnical": isTechnical+0,
-        "title": title,
-        "content": body,
-        "tags": currentTags.map(a => a.tagID).join(",")
-    }
-    console.log(data);
-    if (editing) {
-        updatePost(data);
-    }
-    else{
-        createPost(data);
-    }
-    window.location.href = "../";
+    // Create an array of promises for each tag's checkTemp() method
+    const checkTempPromises = currentTags.map((tag) => tag.checkTemp());
+
+    // Wait for all the promises to resolve
+    Promise.all(checkTempPromises)
+        .then(() => {
+            currentTags.forEach((tag) => {
+                tagsToSubmit.push(tag.tagID);
+            });
+
+            var data = {
+                "isTechnical": isTechnical + 0,
+                "title": title,
+                "content": body,
+            };
+            var data2 = {
+                "tags": tagsToSubmit,
+            };
+            console.log(data2);
+            console.log(data);
+            if (editing) {
+                let postID = getQueryParam();
+                updatePost(postID, data);
+                updateTags(postID, data2);
+            } else {
+                let postID = createPost(data);
+                postID.then((postID) => {
+                    console.log(postID);
+                    updateTags(postID, data2);
+                });
+            }
+            //window.location.href = "../";
+        });
 }
 
 document.querySelector(".search-input").addEventListener("focus", function() {
