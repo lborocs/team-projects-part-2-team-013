@@ -14,9 +14,10 @@ var explainerTask = null // the currently selected task in the explaner, NOT AN 
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
 let statusButton = document.getElementById("status-column");
+let assigneesButton = document.getElementById("assignees-column")
 
 
-let sortArray = [titleButton, dateButton, statusButton];
+let sortArray = [titleButton, dateButton, statusButton, assigneesButton];
 
 //single things
 const taskGrid = document.querySelector(".taskgrid")
@@ -652,11 +653,13 @@ async function fetchTasks(projID) {
  * @param {Array} tasks 
  */
 async function renderTasks(tasks) {
+    console.error(tasks)
     clearRenderedTasks();
     await Promise.all(tasks.map((task) => {
         taskObjectRenderAll(task)
     }));
     setUpTaskEventListeners();
+    console.error(globalAssignments)
     await renderAssignments(globalAssignments);
 }
 
@@ -1008,6 +1011,8 @@ sortArray.forEach((sortObject) => {
             sortByDueDate(tasks, sortDirection);
         } else if (sortBy == "status-column") {
             sortByState(tasks, sortDirection);
+        } else if (sortBy == "assignees-column") {
+            sortByAssignees(tasks, sortDirection);
         } else {
             console.error("invalid sort criteria");
         }
@@ -1015,9 +1020,16 @@ sortArray.forEach((sortObject) => {
         taskRows.forEach((task) => {
             task.remove();
         });
-        tasks.forEach((task) => {
-            taskObjectRenderAll(task, RENDER_LIST);
+        tasks.forEach(async (task) => {
+            await new Promise((resolve) => {
+                taskObjectRenderAll(task, RENDER_LIST);
+                resolve();
+            })
+            
         });
+        setUpTaskEventListeners();
+        renderAssignments(globalAssignments);
+        animate(document.querySelector(".tasktable-body"), "flash");
     })
 })
 
@@ -1057,6 +1069,15 @@ function sortByState(tasks, descending) {
         let aState = a.state;
         let bState = b.state;
         return descending ? aState - bState : bState - aState;
+    });
+    return tasks;
+}
+
+function sortByAssignees(tasks, descending) {
+    tasks.sort((a, b) => {
+        let aAssignees = a.assignments.length;
+        let bAssignees = b.assignments.length;
+        return descending ? aAssignees - bAssignees : bAssignees - aAssignees;
     });
     return tasks;
 }
