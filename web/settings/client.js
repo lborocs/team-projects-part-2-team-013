@@ -69,11 +69,11 @@ let menus = [
     { selector: '.avatar-option', textId: '#avatar-text', preferenceKey: 'avatar', optionsId: '#avatar-options' },
     { selector: '.posting-option', textId: '#posting-text', preferenceKey: 'posting', optionsId: '#posting-options' },
     { selector: '.tags-option', textId: '#tags-text', preferenceKey: 'tags', optionsId: '#tags-options' },
-    { selector: '.list-option', textId: '#list-text', preferenceKey: 'list', optionsId: '#list-options' },
-    { selector: '.sort-projects-type', textId: '#sort-projects-type-text', preferenceKey: 'sortProjectsType', optionsId: '#sort-projects-type' },
-    { selector: '.sort-projects-direction-option', textId: '#sort-projects-direction-text', preferenceKey: 'sortProjectsDirection', optionsId: '#sort-projects-direction' },
-    { selector: '.sort-tasks-type', textId: '#sort-tasks-type-text', preferenceKey: 'sortTasksType', optionsId: '#sort-tasks-type' },
-    { selector: '.sort-tasks-direction-option', textId: '#sort-tasks-direction-text', preferenceKey: 'sortTasksDirection', optionsId: '#sort-tasks-direction' },
+    { selector: '.list-option', textId: '#list-text', preferenceKey: 'taskview', optionsId: '#list-options' },
+    { selector: '.sort-projects-type', textId: '#sort-projects-type-text', preferenceKey: 'projectsort', optionsId: '#sort-projects-type' },
+    { selector: '.sort-projects-direction-option', textId: '#sort-projects-direction-text', preferenceKey: 'projectorder', optionsId: '#sort-projects-direction' },
+    { selector: '.sort-tasks-type', textId: '#sort-tasks-type-text', preferenceKey: 'tasksort', optionsId: '#sort-tasks-type' },
+    { selector: '.sort-tasks-direction-option', textId: '#sort-tasks-direction-text', preferenceKey: 'taskorder', optionsId: '#sort-tasks-direction' },
 ];
 
 

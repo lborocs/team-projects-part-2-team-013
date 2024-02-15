@@ -265,9 +265,9 @@ class GlobalEmployeeRequest {
 
 const DEFAULT_PREFERENCES = {
     "sidebarisopen": false,
-    "taskview": "board",
-    "tasksort": "none",
-    "taskorder": "desc",
+    "taskview": "Never",
+    "tasksort": "None",
+    "taskorder": "Desc",
     "taskfilters.managermine": false,
     "taskfilters.group": false,
     "taskfilters.single": false,
@@ -276,16 +276,13 @@ const DEFAULT_PREFERENCES = {
     "taskfilters.notstarted": false,
     "taskfilters.overdue": false,
     "taskfilters.notoverdue": false,
-    "projectsort": "none",
-    "projectorder": "desc",
+    "projectsort": "None",
+    "projectorder": "Desc",
     "projectfilters.managermine": false,
     "projectfilters.teamleader": false,
     "projectfilters.overdue": false,
     "projectfilters.notoverdue": false,
     "notificationslastreadat": 0,
-    "avatar": "For Everybody",
-    "tags": "For Everybody",
-    "posting": "For Everybody"
 }
 
 class PreferenceValue {
