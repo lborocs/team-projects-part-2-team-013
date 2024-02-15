@@ -57,7 +57,7 @@ function updateCriteriaHints() {
     const passwordHasSpecialChar = /[!@#$%^&*()\-_=+{};:,<.>'`\"\ ]/.test(passwordValue); //same regex as in the backend
 
     let results = []
-    results[0] = showCriteriaResult(passwordLength >= 10, eightChars);
+    results[0] = showCriteriaResult(passwordLength >= 10, tenChars);
     results[1] = showCriteriaResult(passwordHasUppercase && passwordLength !== 0, uppercaseLetter);
     results[2] = showCriteriaResult(passwordHasNumber && passwordLength !== 0, number);
     results[3] = showCriteriaResult(passwordHasSpecialChar, specialChar);
