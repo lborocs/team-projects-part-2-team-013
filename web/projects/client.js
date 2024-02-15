@@ -2586,6 +2586,10 @@ lastAccessedButton.addEventListener('click', function(event) {
     if (event.button === 0) {
         searchAndRenderProjects(projectSearchInput.value, 'lastAccessed', 'desc');
     }
+    let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
+    projectTableHeaders.forEach((header) => {
+        header.classList.remove("sorting-by", "reverse");
+    });
 });
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
