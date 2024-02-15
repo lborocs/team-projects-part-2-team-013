@@ -26,10 +26,11 @@ window.addEventListener("breadcrumbnavigate", async (event) => {
 });
 
 const projectID = window.location.hash.substring(1);
+var projectData;
 if (projectID !== "") {
     console.log("[client.js] projectID: ", projectID);
-    const projectData = await getProjectData(projectID);
-    global.setBreadcrumb(["Manager's Dashboard", projectData.project.name], ["/dashboard", "/dashboard/#" + projectData.project.projID]);
+    projectData = await getProjectData(projectID);
+    global.setBreadcrumb(["Manager's Dashboard", projectData.project.name], ["/dashboard/", "/dashboard/#" + projectData.project.projID]);
 } else {
     emptyDashboard()
 }
