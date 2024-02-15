@@ -300,6 +300,17 @@ class PreferenceValue {
     }
 }
 
+function preferenceAlert() {
+    let main = document.querySelector('.main');
+    let alertDiv = document.createElement('div');
+    alertDiv.classList.add('preference-alert');
+    alertDiv.innerText = 'Preferences Saved';
+    main.appendChild(alertDiv);
+    console.log("[preferenceAlert] alert triggered");
+    setTimeout(() => {
+        alertDiv.classList.add('fade-1000ms');
+    }, 200);
+}
 
 class PreferenceStore {
 
@@ -322,6 +333,7 @@ class PreferenceStore {
 
     async save() {
         await put_api("/employee/meta.php/preferences", {preferences: Object.fromEntries(this.store)});
+        preferenceAlert()
     }
 
     async _fill() {
