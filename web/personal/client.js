@@ -199,12 +199,11 @@ function renderDummyPersonal() {
             <div class="personal-content">
                 <div class="personal-title">
                     <div class="title-text">
-                        <input type="text" placeholder="Click to add title">
+                        <input type="text" placeholder="What do you want to do?">
                     </div>
                 </div>
             </div>
-            <div class="small-icon add-description"><span class="material-symbols-rounded">docs_add_on</span></div>
-            <div class="text-button blue save norender">
+            <div class="text-button blue save disabled">
                 <div class="button-text">
                     Save
                 </div>
@@ -218,9 +217,9 @@ function renderDummyPersonal() {
     titleInput.focus()
     titleInput.addEventListener('input', (e) => {
         if (e.target.value === "") {
-            personalCard.querySelector('.save').classList.add('norender')
+            personalCard.querySelector('.save').classList.add('disabled')
         } else {
-            personalCard.querySelector('.save').classList.remove('norender')
+            personalCard.querySelector('.save').classList.remove('disabled')
         }
     })
     
@@ -244,7 +243,7 @@ function renderDummyPersonal() {
     })
 
     personalCard.querySelector('.save').addEventListener('click', () => {
-        unrenderPersonal('dummy')
+        unrenderDummyPersonal()
         createPersonal(titleInput.value).then(() => {
             renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
         })
