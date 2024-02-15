@@ -14,9 +14,10 @@ var explainerTask = null // the currently selected task in the explaner, NOT AN 
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
 let statusButton = document.getElementById("status-column");
+let assigneesButton = document.getElementById("assignees-column")
 
 
-let sortArray = [titleButton, dateButton, statusButton];
+let sortArray = [titleButton, dateButton, statusButton, assigneesButton];
 
 //single things
 const taskGrid = document.querySelector(".taskgrid")
@@ -43,8 +44,8 @@ const notStartedColumn = document.querySelector("#notstarted")
 const inProgressColumn = document.querySelector("#inprogress")
 const finishedColumn = document.querySelector("#finished")
 const notStartedAddButton = document.querySelector("#notstarted-add")
-const listAddButtonRow = document.querySelector("#list-add-row")
-const listAddButton = document.querySelector("#list-add")
+const listAddRow = document.querySelector("#list-add-row")
+
 const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
 const taskSearchInput = document.querySelector("#task-search")
@@ -309,7 +310,7 @@ function showTaskInExplainer(taskCard) {
 
     explainerTaskDescription.innerHTML = globalCurrentTask.description ? globalCurrentTask.description : "<i>No description...</i>";
 
-    let dueDate = new Date(globalCurrentTask.dueDate);
+    let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
     explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "No due date";
 
     let statusElement = document.querySelector(".status");
@@ -652,11 +653,13 @@ async function fetchTasks(projID) {
  * @param {Array} tasks 
  */
 async function renderTasks(tasks) {
+    console.error(tasks)
     clearRenderedTasks();
     await Promise.all(tasks.map((task) => {
         taskObjectRenderAll(task)
     }));
     setUpTaskEventListeners();
+    console.error(globalAssignments)
     await renderAssignments(globalAssignments);
 }
 
@@ -968,45 +971,48 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 
     taskTableBody.appendChild(taskRow);
     //move the add task button to the bottom
-    taskTableBody.appendChild(listAddButtonRow);
+    taskTableBody.appendChild(listAddRow);
     calculateTaskCount();
 }
 
 sortArray.forEach((sortObject) => {
-    sortObject.addEventListener("pointerup", () => {
+    sortObject.addEventListener("click", () => {
         //sort out what criteria to sort by
         const cl = sortObject.classList;
         const symbol = sortObject.querySelector('.material-symbols-rounded');
-        if (cl.contains("selected")) {
-            if(cl.contains("asc")) {
-                cl.remove("asc");
-                cl.add("desc");
-                if (symbol) symbol.innerHTML = "arrow_drop_down";
-            } else {
+        if (cl.contains("sorting-by")) {
+            if(cl.contains("desc")) {
                 cl.remove("desc");
                 cl.add("asc");
-                if (symbol) symbol.innerHTML = "arrow_drop_up";
+                if (symbol) symbol.innerHTML = "arrow_upward";
+            } else {
+                cl.remove("asc");
+                cl.add("desc");
+                if (symbol) symbol.innerHTML = "arrow_downward";
             }
         } else  {
             sortArray.forEach((sortObject) => {
-                sortObject.classList.remove("selected", "asc", "desc");
+                sortObject.classList.remove("sorting-by", "asc", "desc");
                 const otherSymbol = sortObject.querySelector('.material-symbols-rounded');
-                if (otherSymbol) otherSymbol.innerHTML = "arrow_drop_down";
+                if (otherSymbol) otherSymbol.innerHTML = "swap_vert";
             });
-            cl.add("selected", "asc");
-            if (symbol) symbol.innerHTML = "arrow_drop_up";
+            cl.add("sorting-by", "desc");
+            if (symbol) symbol.innerHTML = "arrow_downward";
         }
         
-        let ascending = cl.contains("asc");
-        let descending = cl.contains("desc");
+        let sortDirection = !(cl.contains("asc"));
+        console.error(sortDirection)
+        
         let sortBy = sortObject.id;
         let tasks = globalTasksList;
         if (sortBy == "title-column") {
-            sortByTitle(tasks, ascending);
+            sortByTitle(tasks, sortDirection);
         } else if (sortBy == "date-column") {
-            sortByDueDate(tasks, ascending);
+            sortByDueDate(tasks, sortDirection);
         } else if (sortBy == "status-column") {
-            sortByState(tasks, ascending);
+            sortByState(tasks, sortDirection);
+        } else if (sortBy == "assignees-column") {
+            sortByAssignees(tasks, sortDirection);
         } else {
             console.error("invalid sort criteria");
         }
@@ -1014,48 +1020,64 @@ sortArray.forEach((sortObject) => {
         taskRows.forEach((task) => {
             task.remove();
         });
-        tasks.forEach((task) => {
-            taskObjectRenderAll(task, RENDER_LIST);
+        tasks.forEach(async (task) => {
+            await new Promise((resolve) => {
+                taskObjectRenderAll(task, RENDER_LIST);
+                resolve();
+            })
+            
         });
+        setUpTaskEventListeners();
+        renderAssignments(globalAssignments);
+        animate(document.querySelector(".tasktable-body"), "flash");
     })
 })
 
 
 
-function sortByCreatedAt(tasks, ascending) {
+function sortByCreatedAt(tasks, descending) {
     tasks.sort((a, b) => {
         let aDate = new Date(a.createdAt);
         let bDate = new Date(b.createdAt);
-        return ascending ? aDate - bDate : bDate - aDate;
+        return descending ? aDate - bDate : bDate - aDate;
     });
     return tasks;
 }
 
-function sortByDueDate(tasks, ascending) {
+function sortByDueDate(tasks, descending) {
     tasks.sort((a, b) => {
         if (a.dueDate === null) return 1;
         if (b.dueDate === null) return -1;
         let aDate = new Date(a.dueDate);
         let bDate = new Date(b.dueDate);
-        return ascending ? aDate - bDate : bDate - aDate;
+        return descending ? aDate - bDate : bDate - aDate;
     });
     return tasks;
 }
 
-function sortByTitle(tasks, ascending) {
+function sortByTitle(tasks, descending) {
     tasks.sort((a, b) => {
         let aTitle = a.title;
         let bTitle = b.title;
-        return ascending ? aTitle.localeCompare(bTitle) : bTitle.localeCompare(aTitle);
+        return descending ? aTitle.localeCompare(bTitle) : bTitle.localeCompare(aTitle);
     });
     return tasks;
 }
 
-function sortByState(tasks, ascending) {
+function sortByState(tasks, descending) {
     tasks.sort((a, b) => {
         let aState = a.state;
         let bState = b.state;
-        return ascending ? aState - bState : bState - aState;
+        return descending ? aState - bState : bState - aState;
+    });
+    return tasks;
+}
+
+function sortByAssignees(tasks, descending) {
+    tasks.sort((a, b) => {
+        let aAssignees = a.assignments.length;
+        let bAssignees = b.assignments.length;
+        return descending ? aAssignees - bAssignees : bAssignees - aAssignees;
     });
     return tasks;
 }
@@ -1865,13 +1887,13 @@ addButtonArray.forEach((button) => {
     });
 });
 
-let listAddTaskButton = document.getElementById("list-add");
-listAddTaskButton.addEventListener("pointerup", async () => {
+
+listAddRow.addEventListener("click", async () => {
     await addTask();
 });
 
 let boardAddTaskButton = document.getElementById("add-task-button");
-boardAddTaskButton.addEventListener("pointerup", async () => {
+boardAddTaskButton.addEventListener("click", async () => {
     await addTask();
 });
 
