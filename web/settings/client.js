@@ -103,9 +103,11 @@ menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
 });
 
 window.addEventListener('load', async () => {
-    menus.forEach(async (menu) => {
-            document.querySelector(menu.textId).innerHTML = "ahwyfgvaihwfvahiw";
-
+    menus.forEach(async ({ textId, preferenceKey }) => {
+        let preferenceValue = await global.preferences.get(preferenceKey);
+        if (preferenceValue) {
+            document.querySelector(textId).innerHTML = preferenceValue;
+        }
     });
 });
 
