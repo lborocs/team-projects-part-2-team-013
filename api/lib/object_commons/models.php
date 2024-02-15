@@ -661,5 +661,17 @@ const UNION_NOTIFICATIONS = new Union(
     "body"
 );
 
+const TABLE_GLOBAL_SETTINGS = new Table(
+    "`GLOBAL_SETTINGS`",
+    [],
+    [
+        new Column("tagsEnabled", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("postsEnabled", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("avatarsEnabled", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+    ],
+    "setting",
+    null
+);
+
 
 ?>
