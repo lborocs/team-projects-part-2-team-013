@@ -263,6 +263,44 @@ class GlobalEmployeeRequest {
 }
 
 
+const DEFAULT_PREFERENCES = {
+    "sidebarisopen": false,
+    "taskview": "Never",
+    "tasksort": "None",
+    "taskorder": "Desc",
+    "taskfilters.managermine": false,
+    "taskfilters.group": false,
+    "taskfilters.single": false,
+    "taskfilters.finished": false,
+    "taskfilters.inprogress": false,
+    "taskfilters.notstarted": false,
+    "taskfilters.overdue": false,
+    "taskfilters.notoverdue": false,
+    "projectsort": "None",
+    "projectorder": "Desc",
+    "projectfilters.managermine": false,
+    "projectfilters.teamleader": false,
+    "projectfilters.overdue": false,
+    "projectfilters.notoverdue": false,
+    "notificationslastreadat": 0,
+}
+
+class PreferenceValue {
+    
+    inner;
+    default;
+
+    constructor(real, defaultv) {
+        this.default = defaultv;
+        this.inner = real;
+    }
+
+    or_default() {
+        return this.inner ?? this.default;
+    }
+}
+
+
 class PreferenceStore {
 
     store;
@@ -289,7 +327,9 @@ class PreferenceStore {
     async _fill() {
         const res = await get_api("/employee/meta.php/preferences");
         if (res.success) {
+            console.log("[PreferenceStore] preferences fetched successfully")
             this.store = new Map(Object.entries(res.data.preferences))
+            this._lazy = false;
         } else {
             throw Error(`failed to get preferences (${res.error.code}) ${res.error.message}`)
         }
@@ -302,7 +342,12 @@ class PreferenceStore {
             await this._fill();
         }
 
-        return this.store.get(key);
+        const value =  this.store.get(key);
+        return new PreferenceValue(value, DEFAULT_PREFERENCES[key]);
+    }
+
+    async get_or_default(key) {
+        return (await this.get(key)).or_default();
     }
 
     async set(key, value) {
@@ -704,7 +749,9 @@ export async function renderNotifications(notifications) {
     //getting data needed for rendering
     let employees = await getEmployeesById(empIDs);
     const session = await getCurrentSession();
-    const notifsLastReadAt = new Date(await preferences.get("notificationsLastReadAt") ?? 0);
+    const notifsLastReadAt = new Date(
+        (await preferences.get("notificationsLastReadAt")).or_default()
+    );
     //no longer need to get projects because they are returned in the notification body
     
 

@@ -97,18 +97,46 @@
                                 <span class="material-symbols-rounded">expand_less</span>
                             </div>
                         </div>
-                        <div class="dropdown no-box" id="personals-sort" tabindex="0">
+                        <div class="dropdown no-box open" id="personals-sort" tabindex="0">
                             <div class="dropdown-text">
-                                <span class="dropdown-text-title">Sort</span>
+                                <span class="dropdown-text-title">Alphabetical</span>
                             </div>
                             <div class="dropdown-chevron">
                                 <span class="material-symbols-rounded">
-                                    swap_vert
+                                    expand_more
                                 </span>
                             </div>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-option" id="view-week">Alphabetically</div>
-                                <div class="dropdown-option" id="view-month">Time Created</div>
+                            <div class="dropdown-menu right-align">
+                                <div class="dropdown-option" id="sort-alphabetic">
+                                    <div class="option-icon">
+                                        <span class="material-symbols-rounded">sort_by_alpha</span>
+                                    </div>
+                                    <div class="option-text">
+                                        Alphabetical
+                                    </div>
+                                </div>
+                                <div class="dropdown-option" id="sort-time-created">
+                                    <div class="option-icon">
+                                        <span class="material-symbols-rounded">schedule</span>
+                                    </div>
+                                    
+                                    <div class="option-text">
+                                        Time created
+                                    </div>
+                                </div>
+                                <div class="dropdown-option" id="sort-due-date">
+                                    <div class="option-icon">
+                                        <span class="material-symbols-rounded">event_upcoming</span>
+                                    </div>
+                                    <div class="option-text">
+                                        Due date
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="icon-button" id="personals-sort-direction">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">swap_vert</span>
                             </div>
                         </div>
                     </div>

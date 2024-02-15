@@ -555,10 +555,10 @@ const TABLE_PERSONALS = new Table(
             "personalState", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new RestrictedDomainConstraint(TASK_VALID_STATES)]
         ),
-        new Column("pesronalDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column("personalDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
         new Column(
             "personalTitle", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
-            constraints:[new ContentLengthConstraint(4, 254)]
+            constraints:[new ContentLengthConstraint(2, 254)]
         ),
         new Column(
             "personalContent", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false,
@@ -659,6 +659,18 @@ const UNION_NOTIFICATIONS = new Union(
     ],
     "notificationType",
     "body"
+);
+
+const TABLE_GLOBAL_SETTINGS = new Table(
+    "`GLOBAL_SETTINGS`",
+    [],
+    [
+        new Column("tagsEnabled", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("postsEnabled", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+        new Column("avatarsEnabled", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
+    ],
+    "setting",
+    null
 );
 
 

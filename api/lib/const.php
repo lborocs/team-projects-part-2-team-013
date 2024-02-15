@@ -88,29 +88,9 @@ const ACCOUNT_PASSWORD_MIN_LENGTH = 10;
 const ACCOUNT_EMAIL_MAX_LENGTH = 255;
 const PASSWORD_SPECIAL_CHARS_REGEX = "/[!@#$%^&*()\-_=+{};:,<.>'`\"\ ]/";
 const PASSWORD_BANNED_PHRASES = ["password","makeitall"];
+const EMAIL_DOMAIN_REGEX = "/(([a-z]*\.)*lboro\.ac\.uk)|(013\.team)/";
 
 
 // preferences
 const PREFERENCES_MAX_LENGTH = 1024; // 1KB
-const DEFAULT_EMPLOYEE_PREFERENCES = [
-    'sidebarIsOpen' => false,
-    'taskView' => 'board',
-    'taskSort' => 'none',
-    'taskOrder' => 'desc', 
-        'taskFilters.managerMine' => false,
-        'taskFilters.group' => false,
-        'taskFilters.single' => false,
-        'taskFilters.finished' => false,
-        'taskFilters.inProgress' => false,
-        'taskFilters.notStarted' => false,
-        'taskFilters.overdue' => false,
-        'taskFilters.notOverdue' => false,
-    'projectSort' => 'none',
-    'projectOrder' => 'desc',
-        'projectFilters.managerMine' => false,
-        'projectFilters.teamLeader' => false,
-        'projectFilters.overdue' => false,
-        'projectFilters.notOverdue' => false,
-];
-
 ?>

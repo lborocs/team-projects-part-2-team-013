@@ -116,8 +116,8 @@ class Session {
             $this->to_unencrypted_bytes(),
             SESSION_ENCRYPTION_KEY_HEX,
             SESSION_ENCRYPTION_ALGO,
-            SESSION_HMAC_KEY_HEX,
-            SESSION_HMAC_ALGO
+            SESSION_SIGNING_KEY_HEX,
+            SESSION_SIGNING_ALGO
         );
     
         return $this->hex_associated_user_id . '.' . $encrypted;
@@ -136,8 +136,8 @@ class Session {
             $encrypted_bytes,
             SESSION_ENCRYPTION_KEY_HEX,
             SESSION_ENCRYPTION_ALGO,
-            SESSION_HMAC_KEY_HEX,
-            SESSION_HMAC_ALGO
+            SESSION_SIGNING_KEY_HEX,
+            SESSION_SIGNING_ALGO
         );
 
 
@@ -245,8 +245,8 @@ function auth_password_reset_create_token(string $emp_id) {
         $plaintext,
         PASSWORD_RESET_ENCRYPTION_KEY_HEX,
         PASSWORD_RESET_ENCRYPTION_ALGO,
-        PASSWORD_RESET_HMAC_KEY_HEX,
-        PASSWORD_RESET_HMAC_ALGO
+        PASSWORD_RESET_SIGNING_KEY_HEX,
+        PASSWORD_RESET_SIGNING_ALGO
     );
     
     return $ciphertext;
@@ -268,8 +268,8 @@ function auth_password_validate_token(string $token) {
         $token,
         PASSWORD_RESET_ENCRYPTION_KEY_HEX,
         PASSWORD_RESET_ENCRYPTION_ALGO,
-        PASSWORD_RESET_HMAC_KEY_HEX,
-        PASSWORD_RESET_HMAC_ALGO
+        PASSWORD_RESET_SIGNING_KEY_HEX,
+        PASSWORD_RESET_SIGNING_ALGO
     );
 
     $data = @unpack("a16token_id/a16emp_id/Qissued", $plaintext);

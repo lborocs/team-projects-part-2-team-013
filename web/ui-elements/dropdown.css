@@ -75,6 +75,7 @@
     margin: 2px 8px;
 }
 
+
 .dropdown-option {
     display: flex;
     flex-direction: row;
@@ -82,7 +83,7 @@
     align-items: center;
     height: 32px;
     color: #172b4d;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 14px;
     border-radius: 3px;
     cursor: pointer;
@@ -117,6 +118,12 @@
     gap: 0.25rem;
 
     box-shadow: 0 0 0 1px rgba(16,22,26,.1), 0 2px 4px rgba(16,22,26,.2);
+
+}
+
+.dropdown-menu.right-align {
+    right: 0;
+    left: auto;
 
 }
 
