@@ -435,6 +435,11 @@
         width: 280px;
         transition: width 0.1s ease-in-out;
     }
+
+    & a {
+        text-decoration: none;
+    
+    }
 }
 
 .views > :last-child {
@@ -448,12 +453,13 @@
     padding-left: 0.25em;
     padding-right: 0.5em;
     height: 28px;
-    font-weight: 700;
+    font-weight: 600;
     gap: 0.25em;
     border-radius: 4px;
     transition: 0.1s ease-out;
     cursor: pointer;
     user-select: none;
+    color: #555555;
 
     & span {
         font-size: 20px;
