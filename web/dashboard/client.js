@@ -20,6 +20,11 @@ let gridActionsQueue = []
 
 global.setBreadcrumb(["Manager's Dashboard", "Mobile App Development"], [window.location.pathname, window.location.pathname]);
 
+window.addEventListener("breadcrumbnavigate", async (event) => {
+    console.log("[breadcrumbnavigate] event received" + event.locations);
+    await renderFromBreadcrumb(event.locations);
+});
+
 class Dashboard {
     constructor() {
         //maps screen width to default column count

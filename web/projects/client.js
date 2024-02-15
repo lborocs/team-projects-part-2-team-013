@@ -15,6 +15,7 @@ let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
 let statusButton = document.getElementById("status-column");
 
+
 let sortArray = [titleButton, dateButton, statusButton];
 
 //single things
@@ -48,6 +49,9 @@ const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
 const taskSearchInput = document.querySelector("#task-search")
 const explainerTaskManhours = document.querySelector(".manhours-container")
+const dashboardRedirect = document.getElementById('dashboard-redirect');
+const listViewButton = document.getElementById('list-view-button');
+const boardViewButton = document.getElementById('board-view-button');
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -84,7 +88,7 @@ async function projectSwitchToOnClick(projectRow, setBreadcrumb = true) {
 async function renderIndividualProject(id, setBreadcrumb = true) {
     let project = await getProjectById(id);
     if (!project) {
-        console.error(`[projectSwitchToOnClick] Error fetching project`);
+        console.error(`[renderIndividualProject] Error fetching project`);
         return false;
     }
 
@@ -92,7 +96,7 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
 
     let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
     if (!teamLeader) {
-        console.error(`[projectSwitchToOnClick] Error fetching team leader`);
+        console.error(`[renderIndividualProject] Error fetching team leader`);
         return false;
     }
     teamLeader = teamLeader.get(project.teamLeader.empID);
@@ -105,23 +109,25 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     }) 
     let tasks = await fetchTasks(id);
     if (!tasks) {
-        console.error(`[projectSwitchToOnClick] Error fetching tasks`);
+        console.error(`[renderIndividualProject] Error fetching tasks`);
         return false;
     }
     
     await renderTasks(tasks);
-    console.log("[projectSwitchToOnClick] fetched & rendered tasks for " + project.name)
+    console.log("[renderIndividualProject] fetched & rendered tasks for " + project.name)
     globalTasksList = tasks;
     console.log("global tasks list:")
     console.log(globalTasksList)
 
     
     // unselect not this project
-    console.log("[projectSwitchToOnClick] selected " + project.name)
+    console.log("[renderIndividualProject] selected " + project.name)
     //update the breadcrumb with the project name
     if (setBreadcrumb) {
         global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
+        dashboardRedirect.href = `/dashboard/#${id}`
     }
+
     projectTitle.innerText = project.name;
     explainerTitle.innerText = project.name;
     explainerDescription.innerHTML = project.description;
@@ -177,7 +183,8 @@ views.forEach((view, i) => {
 
         if (session.auth_level >= 2) {
 
-            view.classList.toggle("selected");
+            boardViewButton.classList.remove("selected");
+            listViewButton.classList.add("selected");
             taskGridWrapper.classList.add("fade");
             taskGridWrapper.classList.add("norender");
             taskList.classList.remove("fade");
@@ -832,7 +839,6 @@ async function fetchAndRenderAllProjects() {
 window.addEventListener("breadcrumbnavigate", async (event) => {
     console.log("[breadcrumbnavigate] event received" + event.locations);
     await renderFromBreadcrumb(event.locations);
-
 });
 
 console.log("[dashboard/client.js] rendering from breadcrumb INITIAL.")
