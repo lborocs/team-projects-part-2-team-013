@@ -81,117 +81,45 @@ document.addEventListener('click', function(event) {
     }
 });
 
-let avatarOptions = document.querySelector('#avatar-options');
-avatarOptions.addEventListener('click', () => {
-    avatarOptions.classList.toggle('open');
+let menus = [
+    { selector: '.avatar-option', textId: '#avatar-text', preferenceKey: 'avatar', optionsId: '#avatar-options' },
+    { selector: '.posting-option', textId: '#posting-text', preferenceKey: 'posting', optionsId: '#posting-options' },
+    { selector: '.tags-option', textId: '#tags-text', preferenceKey: 'tags', optionsId: '#tags-options' },
+    { selector: '.list-option', textId: '#list-text', preferenceKey: 'list', optionsId: '#list-options' },
+    { selector: '.sort-projects-type', textId: '#sort-projects-type-text', preferenceKey: 'sortProjectsType', optionsId: '#sort-projects-type' },
+    { selector: '.sort-projects-direction-option', textId: '#sort-projects-direction-text', preferenceKey: 'sortProjectsDirection', optionsId: '#sort-projects-direction' },
+    { selector: '.sort-tasks-type', textId: '#sort-tasks-type-text', preferenceKey: 'sortTasksType', optionsId: '#sort-tasks-type' },
+    { selector: '.sort-tasks-direction-option', textId: '#sort-tasks-direction-text', preferenceKey: 'sortTasksDirection', optionsId: '#sort-tasks-direction' },
+];
+
+menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
+    let menuOptions = document.querySelectorAll(selector);
+    menuOptions.forEach((option) => {
+        option.addEventListener('click', async (event) => {
+            let selectedOption = option.textContent;
+            await global.preferences.set(preferenceKey, selectedOption);
+            document.querySelector(textId).innerHTML = selectedOption;
+            document.querySelector(optionsId).classList.remove('open');
+            event.stopPropagation();
+        });
+    });
+
+    let options = document.querySelector(optionsId);
+    options.addEventListener('click', (event) => {
+        options.classList.toggle('open');
+        event.stopPropagation();
+    });
 });
 
-let avatarMenu = document.querySelectorAll('.avatar-option');
-avatarMenu.forEach((option) => {
-    option.addEventListener('click', (event) => {
-        document.querySelector('#avatar-text').innerHTML = option.innerHTML;
-        avatarOptions.classList.remove('open');
-        event.stopPropagation();
-    })
-})
-
-let postingOptions = document.querySelector('#posting-options');
-postingOptions.addEventListener('click', () => {
-    postingOptions.classList.toggle('open');
+window.addEventListener('load', async () => {
+    await global.preferences.fill();
+    menus.forEach(async ({ textId, preferenceKey }) => {
+        let savedOption = await global.preferences.get(preferenceKey);
+        if (savedOption) {
+            document.querySelector(textId).innerHTML = savedOption;
+        }
+    });
 });
-
-let postingMenu = document.querySelectorAll('.posting-option');
-postingMenu.forEach((option) => {
-    option.addEventListener('click', (event) => {
-        document.querySelector('#posting-text').innerHTML = option.innerHTML;
-        postingOptions.classList.remove('open');
-        event.stopPropagation();
-    })
-})
-
-let tagsOptions = document.querySelector('#tags-options');
-tagsOptions.addEventListener('click', () => {
-    tagsOptions.classList.toggle('open');
-});
-
-let tagsMenu = document.querySelectorAll('.tags-option');
-tagsMenu.forEach((option) => {
-    option.addEventListener('click', (event) => {
-        document.querySelector('#tags-text').innerHTML = option.innerHTML;
-        tagsOptions.classList.remove('open');
-        event.stopPropagation();
-    })
-})
-
-let listOptions = document.querySelector('#list-options');
-listOptions.addEventListener('click', () => {
-    listOptions.classList.toggle('open');
-});
-
-let listMenu = document.querySelectorAll('.list-option');
-listMenu.forEach((option) => {
-    option.addEventListener('click', (event) => {
-        document.querySelector('#list-text').innerHTML = option.innerHTML;
-        listOptions.classList.remove('open');
-        event.stopPropagation();
-    })
-})
-
-let sortProjectsType = document.querySelector('#sort-projects-type');
-sortProjectsType.addEventListener('click', () => {
-    sortProjectsType.classList.toggle('open');
-});
-
-let sortProjectsMenu = document.querySelectorAll('.sort-projects-type');
-sortProjectsMenu.forEach((option) => {
-    option.addEventListener('click', (event) => {
-        document.querySelector('#sort-projects-type-text').innerHTML = option.innerHTML;
-        sortProjectsType.classList.remove('open');
-        event.stopPropagation();
-    })
-})
-
-let sortProjectsDirection = document.querySelector('#sort-projects-direction');
-sortProjectsDirection.addEventListener('click', () => {
-    sortProjectsDirection.classList.toggle('open');
-});
-
-let sortProjectsDirectionMenu = document.querySelectorAll('.sort-projects-direction-option');
-sortProjectsDirectionMenu.forEach((option) => {
-    option.addEventListener('click', (event) => {
-        document.querySelector('#sort-projects-direction-text').innerHTML = option.innerHTML;
-        sortProjectsDirection.classList.remove('open');
-        event.stopPropagation();
-    })
-})
-
-let sortTasksType = document.querySelector('#sort-tasks-type');
-sortTasksType.addEventListener('click', () => {
-    sortTasksType.classList.toggle('open');
-});
-
-let sortTasksMenu = document.querySelectorAll('.sort-tasks-type');
-sortTasksMenu.forEach((option) => {
-    option.addEventListener('click', (event) => {
-        document.querySelector('#sort-tasks-type-text').innerHTML = option.innerHTML;
-        sortTasksType.classList.remove('open');
-        event.stopPropagation();
-    })
-})
-
-let sortTasksDirection = document.querySelector('#sort-tasks-direction');
-sortTasksDirection.addEventListener('click', () => {
-    sortTasksDirection.classList.toggle('open');
-});
-
-let sortTasksDirectionMenu = document.querySelectorAll('.sort-tasks-direction-option');
-sortTasksDirectionMenu.forEach((option) => {
-    option.addEventListener('click', (event) => {
-        document.querySelector('#sort-tasks-direction-text').innerHTML = option.innerHTML;
-        sortTasksDirection.classList.remove('open');
-        event.stopPropagation();
-    })
-})
 
 let deleteAccountButton = document.querySelector('.delete-account');
 deleteAccountButton.addEventListener('click', () => {
@@ -271,10 +199,10 @@ function confirmDelete() {
     });
 }
 
-async function getEmployee(empID="@me") {
-    const res = await get_api(`/employee/employee.php/employee/${empID}`);
+async function getEmployee() {
+    const res = await get_api(`/employee/employee.php/employee/@me`);
     if (res.success) {
-        return res.employee;
+        return res.data;
     } else {
     console.error("[getEmployee] failed to get employee", empID)
 }
@@ -282,12 +210,16 @@ async function getEmployee(empID="@me") {
 
 async function setUserData() {
     let employeeData = await getEmployee();
-    let employeeName = employeeData.first_name + " " + employeeData.last_name;
-    let employeeEmail = employeeData.email;
-    let employeeAvatar = employeeData.avatar;
+    console.log(employeeData);
+    
+    let employeeName = global.employeeToName(employeeData.employee);
+    let employeeEmail = employeeData.employee.email;
+    let employeeAvatar = employeeData.employee.avatar;
 
     document.querySelector('.current-name').innerHTML = employeeName;
+    document.querySelector('#current-name').value = employeeName;
     document.querySelector('.email').innerHTML = employeeEmail;
+    document.querySelector('.avatar').src = employeeAvatar;
 };
 
 setUserData();
