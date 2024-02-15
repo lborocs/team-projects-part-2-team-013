@@ -53,6 +53,7 @@ const explainerTaskManhours = document.querySelector(".manhours-container")
 const dashboardRedirect = document.getElementById('dashboard-redirect');
 const listViewButton = document.getElementById('list-view-button');
 const boardViewButton = document.getElementById('board-view-button');
+const lastAccessedButton = document.getElementById('project-last-accessed');
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -2581,6 +2582,12 @@ const sleep = (ms) => {
         setTimeout(resolve, ms);
     });
 };
+
+lastAccessedButton.addEventListener('click', function(event) {
+    if (event.button === 0) {
+        searchAndRenderProjects(projectSearchInput.value, 'lastAccessed', 'desc');
+    }
+});
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
