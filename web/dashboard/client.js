@@ -25,6 +25,16 @@ window.addEventListener("breadcrumbnavigate", async (event) => {
     await renderFromBreadcrumb(event.locations);
 });
 
+const projectID = window.location.hash.substring(1);
+if (projectID !== "") {
+    console.log("[client.js] projectID: ", projectID);
+    const projectData = await getProjectData(projectID);
+    global.setBreadcrumb(["Manager's Dashboard", projectData.project.name], ["/dashboard", "/dashboard/#" + projectData.project.projID]);
+} else {
+    emptyDashboard()
+}
+
+
 class Dashboard {
     constructor() {
         //maps screen width to default column count
@@ -148,9 +158,7 @@ async function getProjectData(id) {
     }
 }
 
-const projectID = window.location.hash.substring(1);
-const projectData = await getProjectData(projectID);
-global.setBreadcrumb(["Manager's Dashboard", projectData.project.name], ["/dashboard", "/dashboard/#" + projectData.project.projID]);
+
 
 
 
@@ -262,6 +270,20 @@ async function getManHoursPerEmployee(projectData) {
     };
 
 
+}
+
+function emptyDashboard() {
+    dashboardContainer.classList.add("empty");
+    dashboardContainer.innerHTML = `
+        <div class="empty-dashboard">
+            <div class="empty-dashboard-icon">
+                <span class="material-symbols-rounded">dashboard</span>
+            </div>
+            <div class="empty-dashboard-text">
+                We couldn't find this project :/
+            </div>
+        </div>
+    `;
 }
 
 
