@@ -870,6 +870,42 @@ function db_employee_fetch(string $user_id) { //checks if employee_id is in EMPL
     return parse_database_row($row, TABLE_EMPLOYEES);
 }
 
+function db_employee_fetch_with_email(string $emp_id) {
+
+    global $db;
+
+    $bin_e_id = hex2bin($emp_id);
+
+    $query = $db->prepare(
+        "SELECT `EMPLOYEES`.*, `ACCOUNTS`.email, `ASSETS`.contentType
+        FROM `EMPLOYEES`
+        LEFT JOIN `ASSETS`
+            ON `EMPLOYEES`.avatar = `ASSETS`.assetID
+        JOIN `ACCOUNTS`
+            ON `EMPLOYEES`.empID = `ACCOUNTS`.empID
+        WHERE `EMPLOYEES`.empID = ?
+        "
+    );
+
+    $query->bind_param("s", $bin_e_id);
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+
+    if ($res->num_rows == 0) {
+        return false;
+    }
+
+    $row = $res->fetch_assoc();
+    return parse_database_row($row, TABLE_EMPLOYEES, ["email"=>"string"]);
+
+
+}
+
+
 function db_employee_in_project(string $user_id, string $project_id) {
     global $db;
 
