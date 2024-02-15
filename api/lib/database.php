@@ -1848,5 +1848,53 @@ function db_preferences_delete(string $user_id) {
 }
 
 
+function db_global_settings_get() {
+    global $db;
+
+    $query = $db->prepare(
+        "SELECT * FROM `GLOBAL_SETTINGS`"
+    );
+    $query->execute();
+    $res = $query->get_result();
+
+    if (!$res) {
+        respond_database_failure();
+    }
+    
+    if ($res->num_rows == 0) {
+        return false;
+    }
+    
+    $row = $res->fetch_assoc();
+
+    return parse_database_row($row, TABLE_GLOBAL_SETTINGS);
+}
+
+function db_global_settings_set(int $avatars, int $posts, int $tags) {
+    global $db;
+
+    $query = $db->prepare(
+        "INSERT INTO `GLOBAL_SETTINGS` VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE avatarsEnabled = ?, postsEnabled = ?, tagsEnabled = ?"
+    );
+
+    $query->bind_param(
+        "iiiiii",
+        $avatars,
+        $posts,
+        $tags,
+        $avatars,
+        $posts,
+        $tags,
+    );
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+}
+
 
 ?>

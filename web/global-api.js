@@ -123,14 +123,14 @@ async function api_request(route, method, body, options={}) {
         case 3003:
 
         case 1004: // session expired
+            msg = msg ?? "&sessionexpired"
         case 1005: // session revoked
-            // notice the important lack of break.
-            msg = "&sessionexpired"
+            msg = msg ?? "&sessionrevoked"
+        case 1007: // session renewed too many times
+            msg = msg ?? "&renewlimit"
         case 1000: // not authenticated
 
-            if (!msg) {
-                msg = "&authrequired"
-            }
+            msg = msg ?? "&authrequired"
 
             localStorage.clear();
             await caches.delete("employees");

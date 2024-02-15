@@ -54,6 +54,9 @@ const dashboardRedirect = document.getElementById('dashboard-redirect');
 const listViewButton = document.getElementById('list-view-button');
 const boardViewButton = document.getElementById('board-view-button');
 const lastAccessedButton = document.getElementById('project-last-accessed');
+const pageBackButton = document.getElementById('page-back-button');
+const pageForwardButton = document.getElementById('page-forward-button');
+const pageNumberElement = document.querySelector('.page-number');
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -799,8 +802,6 @@ async function teamLeaderEnableElementsIfTeamLeader() {
         }
     })
 }
-
-
 
 async function getProjectById(projID) {
     let res = await get_api(`/project/project.php/project/${projID}`);
@@ -2603,12 +2604,30 @@ lastAccessedButton.addEventListener('click', function(event) {
     });
 });
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
+let currentPage = 1;
+pageBackButton.addEventListener('click', function() {
+    if (currentPage > 1) {
+        currentPage--;
+        pageNumberElement.textContent = currentPage;
+        searchAndRenderProjects(projectSearchInput.value, undefined, undefined, currentPage);
+        console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+    }
+});
+
+pageForwardButton.addEventListener('click', function() {
+    currentPage++;
+    pageNumberElement.textContent = currentPage;
+    searchAndRenderProjects(projectSearchInput.value, undefined, undefined, currentPage);
+    console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+});
+
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc', page = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
-    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}`);
+    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=10&page=${page}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
+    console.log(`[searchAndRenderProjects(${page})] page`);
     console.log(data);
     console.log('.project-row.selected');
 
