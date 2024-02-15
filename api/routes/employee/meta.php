@@ -24,7 +24,7 @@ function r_employee_preferences(RequestContext $ctx, string $args) {
 
         $preferences = $ctx->request_body["preferences"];
 
-        if ($preferences === null || count($preferences) === 0 || $preferences == DEFAULT_EMPLOYEE_PREFERENCES) {
+        if ($preferences === null || count($preferences) === 0) {
             db_preferences_delete($author);
             respond_no_content();
         } else {
@@ -58,7 +58,7 @@ function r_employee_preferences(RequestContext $ctx, string $args) {
         $preferences = db_preferences_fetch($author);
 
         if ($preferences === false) {
-            $preferences = DEFAULT_EMPLOYEE_PREFERENCES;
+            $preferences = [];
         } else {
             $preferences = json_decode($preferences, true);
         }

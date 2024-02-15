@@ -92,25 +92,4 @@ const PASSWORD_BANNED_PHRASES = ["password","makeitall"];
 
 // preferences
 const PREFERENCES_MAX_LENGTH = 1024; // 1KB
-const DEFAULT_EMPLOYEE_PREFERENCES = [
-    'sidebarIsOpen' => false,
-    'taskView' => 'board',
-    'taskSort' => 'none',
-    'taskOrder' => 'desc', 
-        'taskFilters.managerMine' => false,
-        'taskFilters.group' => false,
-        'taskFilters.single' => false,
-        'taskFilters.finished' => false,
-        'taskFilters.inProgress' => false,
-        'taskFilters.notStarted' => false,
-        'taskFilters.overdue' => false,
-        'taskFilters.notOverdue' => false,
-    'projectSort' => 'none',
-    'projectOrder' => 'desc',
-        'projectFilters.managerMine' => false,
-        'projectFilters.teamLeader' => false,
-        'projectFilters.overdue' => false,
-        'projectFilters.notOverdue' => false,
-];
-
 ?>

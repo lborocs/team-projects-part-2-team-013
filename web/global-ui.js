@@ -263,6 +263,43 @@ class GlobalEmployeeRequest {
 }
 
 
+const DEFAULT_PREFERENCES = {
+    "sidebarisopen": false,
+    "taskview": "board",
+    "tasksort": "none",
+    "taskorder": "desc",
+    "taskfilters.managermine": false,
+    "taskfilters.group": false,
+    "taskfilters.single": false,
+    "taskfilters.finished": false,
+    "taskfilters.inprogress": false,
+    "taskfilters.notstarted": false,
+    "taskfilters.overdue": false,
+    "taskfilters.notoverdue": false,
+    "projectsort": "none",
+    "projectorder": "desc",
+    "projectfilters.managermine": false,
+    "projectfilters.teamleader": false,
+    "projectfilters.overdue": false,
+    "projectfilters.notoverdue": false
+}
+
+class PreferenceValue {
+    
+    inner;
+    default;
+
+    constructor(real, defaultv) {
+        this.default = defaultv;
+        this.inner = real;
+    }
+
+    or_default() {
+        return this.inner ?? this.default;
+    }
+}
+
+
 class PreferenceStore {
 
     store;
@@ -302,7 +339,8 @@ class PreferenceStore {
             await this._fill();
         }
 
-        return this.store.get(key);
+        const value =  this.store.get(key);
+        return new PreferenceValue(value, DEFAULT_PREFERENCES[key]);
     }
 
     async set(key, value) {
