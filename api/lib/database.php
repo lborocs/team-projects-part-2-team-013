@@ -1039,6 +1039,29 @@ function db_employee_fetch_projects_in(string $user_id, SearchParams $search) {
     return $data;
 }
 
+function db_employee_delete_associated_data(string $emp_id) {
+
+    global $db;
+
+    $queries = [
+        "DELETE FROM `EMPLOYEE_PREFERENCES` WHERE empID = ?",
+        "DELETE FROM `EMPLOYEE_PERSONALS` WHERE personalAssignedTo = ?",
+        "UPDATE `EMPLOYEES` SET firstName = null, lastName = 'ghost', employeeDeleted = 1 WHERE empID = ?"
+    ];
+
+    $bin_id = hex2bin($emp_id);
+
+    $final = true;
+    
+    foreach ($queries as $query) {
+        $query = $db->prepare($query);
+        $query->bind_param("s", $bin_id);
+        $final &= $query->execute();
+    }
+
+    return $final;
+}
+
 // account
 
 function db_account_fetch(string $email) {
@@ -1063,6 +1086,20 @@ function db_account_fetch(string $email) {
         return false;
     }
     return parse_database_row($res->fetch_assoc(), TABLE_ACCOUNTS,["isManager"=>"boolean"]); // row 0
+}
+
+function db_account_delete(string $emp_id) {
+    global $db;
+
+    $bin_id = hex2bin($emp_id);
+
+    $query = $db->prepare(
+        "DELETE FROM `ACCOUNTS` WHERE empID = ?"
+    );
+    $query->bind_param("s", $bin_id);
+    $result = $query->execute();
+
+    return $query->affected_rows > 0;
 }
 
 function db_account_fetch_by_id(string $hex_id) {
