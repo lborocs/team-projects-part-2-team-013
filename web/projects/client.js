@@ -653,11 +653,11 @@ async function fetchTasks(projID) {
  * Renders all tasks from a given list of tasks
  * @param {Array} tasks 
  */
-async function renderTasks(tasks) {
+async function renderTasks(tasks, update = RENDER_BOTH) {
     console.error(tasks)
     clearRenderedTasks();
     await Promise.all(tasks.map((task) => {
-        taskObjectRenderAll(task)
+        taskObjectRenderAll(task, update)
     }));
     setUpTaskEventListeners();
     console.error(globalAssignments)
@@ -688,7 +688,7 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
 }
 
 
-async function renderAssignments(assignments) {
+async function renderAssignments(assignments, update = RENDER_BOTH) {
 
     if (assignments.length == 0) {
         console.log("[renderAssignments] assignments is empty")
@@ -732,8 +732,14 @@ async function renderAssignments(assignments) {
             if (count < 3) {
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
-                usersAssigned.appendChild(assignmentElem);
-                usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+
+                if (update & RENDER_COLUMN) {
+                    usersAssigned.appendChild(assignmentElem);
+                }
+                if (update & RENDER_LIST) {
+                    usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                }
+
             } else if (count === 3) {
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
 
@@ -742,8 +748,13 @@ async function renderAssignments(assignments) {
             
                 assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
                 <img src="${url}" class="task-avatar">`
-                usersAssigned.appendChild(assignmentElem);
-                usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+
+                if (update & RENDER_COLUMN) {
+                    usersAssigned.appendChild(assignmentElem);
+                }
+                if (update & RENDER_LIST) {
+                    usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                }
             }
             taskUserCount.set(assignment.task.taskID, count + 1);
         }
@@ -1029,7 +1040,7 @@ sortArray.forEach((sortObject) => {
             
         });
         setUpTaskEventListeners();
-        renderAssignments(globalAssignments);
+        renderAssignments(globalAssignments, RENDER_LIST);
         animate(document.querySelector(".tasktable-body"), "flash");
     })
 })
