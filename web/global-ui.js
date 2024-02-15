@@ -281,7 +281,8 @@ const DEFAULT_PREFERENCES = {
     "projectfilters.managermine": false,
     "projectfilters.teamleader": false,
     "projectfilters.overdue": false,
-    "projectfilters.notoverdue": false
+    "projectfilters.notoverdue": false,
+    "notificationslastreadat": 0,
 }
 
 class PreferenceValue {
@@ -742,7 +743,9 @@ export async function renderNotifications(notifications) {
     //getting data needed for rendering
     let employees = await getEmployeesById(empIDs);
     const session = await getCurrentSession();
-    const notifsLastReadAt = new Date(await preferences.get("notificationsLastReadAt") ?? 0);
+    const notifsLastReadAt = new Date(
+        (await preferences.get("notificationsLastReadAt")).or_default()
+    );
     //no longer need to get projects because they are returned in the notification body
     
 
