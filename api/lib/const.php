@@ -7,7 +7,7 @@ const ERROR_INSUFFICIENT_AUTHORIZATION = 1001;
 const ERROR_SESSION_EXPIRED = 1004;
 const ERROR_SESSION_REVOKED = 1005;
 const ERROR_LOGIN_DETAILS_INCORRECT = 1006;
-const ERROR_ONE_TIME_PIN_REQUIRED = 1007;
+const ERROR_SESSION_RENEW_LIMIT_REACHED = 1007;
 
 
 // 400 bad request (405 method not allowed)
@@ -88,6 +88,7 @@ const ACCOUNT_PASSWORD_MIN_LENGTH = 10;
 const ACCOUNT_EMAIL_MAX_LENGTH = 255;
 const PASSWORD_SPECIAL_CHARS_REGEX = "/[!@#$%^&*()\-_=+{};:,<.>'`\"\ ]/";
 const PASSWORD_BANNED_PHRASES = ["password","makeitall"];
+const EMAIL_DOMAIN_REGEX = "/(([a-z]*\.)*lboro\.ac\.uk)|(013\.team)/";
 
 
 // preferences

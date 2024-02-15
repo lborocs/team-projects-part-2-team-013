@@ -17,7 +17,7 @@ const MYSQL_SERVER = "localhost";
 const SESSION_VALIDATION_BASE = "http://localhost:4231/";
 
 // encryption
-const SESSION_HMAC_ALGO = "sha3-256";
+const SESSION_SIGNING_ALGO = "sha3-256";
 const SESSION_ENCRYPTION_ALGO = "aes-256-cbc";
 const PASSWORD_RESET_ENCRYPTION_ALGO = "aes-256-cbc";
 const PASSWORD_RESET_HMAC_ALGO = "sha3-256";
@@ -25,7 +25,7 @@ const PASSWORD_RESET_HMAC_ALGO = "sha3-256";
 
 // both 256 bit keys
 const SESSION_ENCRYPTION_KEY_HEX = "session encryption key";
-const SESSION_HMAC_KEY_HEX = "session signing key";
+const SESSION_SIGNING_KEY_HEX = "session signing key";
 const PASSWORD_RESET_ENCRYPTION_KEY_HEX = "forgot password key";
 const PASSWORD_RESET_HMAC_KEY_HEX = "forgot password signing key";
 

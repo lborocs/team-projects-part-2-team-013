@@ -50,6 +50,7 @@ function r_employee_manage(RequestContext $ctx, string $args) {
     }
 
     $employee = db_employee_fetch_with_email($emp_id);
+    $is_manager = $ctx->session->auth_level > AUTH_LEVEL_USER;
 
     if (!$employee) {
         respond_resource_not_found(
@@ -78,7 +79,7 @@ function r_employee_manage(RequestContext $ctx, string $args) {
         }
 
         $editing_self = $emp_id == $ctx->session->hex_associated_user_id;
-        $is_manager = $ctx->session->auth_level > AUTH_LEVEL_USER;
+        
 
 
         // only managers can edit others
@@ -153,10 +154,42 @@ function r_employee_manage(RequestContext $ctx, string $args) {
 
 
     } elseif ($ctx->request_method == "DELETE") {
-        respond_not_implemented();
+
+        if ($emp_id == $ctx->session->hex_associated_user_id) {
+            respond_bad_request(
+                "You cannot delete your own account",
+                ERROR_BODY_FIELD_INVALID_DATA
+            );
+        }
+
+        if (!$is_manager) {
+            respond_insufficient_authorization();
+        }
+
+        db_account_delete($emp_id);
+        delete_employee($employee);
+        respond_no_content();
     } else {
         respond_not_implemented();
     }
+}
+
+function delete_employee(Array $emp) {
+    // delete avatar
+    // delete personals
+    // delete preferences
+    // no need to delete post_feedback (anonymised) or employee_tasks
+
+    if ($emp["avatar"]) {
+        $av = db_asset_fetch($emp["avatar"]["assetID"]);
+        if ($av) {
+            Asset::from_db($av)->delete();
+        }
+    }
+
+    db_employee_delete_associated_data($emp["empID"]);
+
+
 }
 
 
