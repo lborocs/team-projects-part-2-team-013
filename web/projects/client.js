@@ -54,6 +54,8 @@ const dashboardRedirect = document.getElementById('dashboard-redirect');
 const listViewButton = document.getElementById('list-view-button');
 const boardViewButton = document.getElementById('board-view-button');
 const lastAccessedButton = document.getElementById('project-last-accessed');
+const pageBackButton = document.getElementById('page-back-button');
+const pageForwardButton = document.getElementById('page-forward-button');
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -2603,12 +2605,15 @@ lastAccessedButton.addEventListener('click', function(event) {
     });
 });
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
+
+
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc', page = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
-    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}`);
+    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=10&page=${page}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
+    console.log(`[searchAndRenderProjects(${page})] page`);
     console.log(data);
     console.log('.project-row.selected');
 
