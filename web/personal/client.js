@@ -224,21 +224,23 @@ function renderDummyPersonal() {
     })
     
     titleInput.addEventListener('keydown', (e) => {
-        if (!(e.key === 'Enter')) {
-            return
+
+        if (e.key === 'Enter') {
+            e.preventDefault()
+            if (titleInput.value === "") {
+                return
+            }
+
+            unrenderDummyPersonal()
+            createPersonal(titleInput.value).then(() => {
+                renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
+            })
         }
 
-        e.preventDefault()
-
-
-        if (titleInput.value === "") {
-            return
+        if (e.key === 'Escape' && titleInput.value === "") {
+            e.preventDefault()
+            unrenderDummyPersonal()
         }
-
-        unrenderDummyPersonal()
-        createPersonal(titleInput.value).then(() => {
-            renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
-        })
 
     })
 

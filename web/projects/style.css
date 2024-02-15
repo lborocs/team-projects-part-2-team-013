@@ -1239,9 +1239,7 @@
     margin-right: -0.7em;
 }
 
-#title-column.selected .header-cell,
-#date-column.selected .header-cell,
-#status-column.selected .header-cell {
+.selected .header-cell {
     background-color: rgba(104, 104, 104, 0.7);
     box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
     color: #ffffff;
