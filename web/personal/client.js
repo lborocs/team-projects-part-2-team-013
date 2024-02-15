@@ -212,7 +212,7 @@ function renderDummyPersonal() {
         </div>
     `
 
-    activeList.appendChild(personalCard)
+    activeList.prepend(personalCard);
 
     const titleInput = personalCard.querySelector('.title-text input')
     titleInput.focus()
