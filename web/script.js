@@ -85,7 +85,8 @@ const schema = window.location.hash.substring(1).split("&")[1];
 if (schema) {
     const msg = {
         "sessionexpired": "Your session expired and you have been logged out",
-        "authrequired": "You must be logged in to access this page"
+        "authrequired": "You must be logged in to access this page",
+        "renewlimit": "Your session has been renewed too many times, for security please log in again."
     }[schema]
 
     if (msg) {

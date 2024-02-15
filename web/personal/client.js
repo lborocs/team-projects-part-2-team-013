@@ -13,7 +13,6 @@ import * as global from "../global-ui.js";
 
 
 var globalPersonalsList = []
-var globalCreatingPersonal = false
 var globalPersonalsSort = {
     alphabetic: false,
     timeCreated: false,
@@ -197,84 +196,92 @@ function renderPersonal(id) {
 }
 
 function renderDummyPersonal() {
-    //record locking so they cant be making more than one at once
-    if (globalCreatingPersonal) {
-        console.log("Another task is already being created.")
-        return false
-    }
 
-    globalCreatingPersonal = true //activates the lock
+    return new Promise((resolve, reject) => {
+
+        if (global.checkMutex("renderDummyPersonal")) {
+            console.log("[renderDummyPersonal] Mutex is locked, skipping modal")
+            reject();
+            return;
+        }
+        
+        const handle = global.takeMutex("renderDummyPersonal");
+        newPersonalButton.classList.add('disabled');
 
 
+        const resolveAndUnlock = () => {
+            console.log("[renderDummyPersonal] Resolving and releasing mutex")
+            newPersonalButton.classList.remove('disabled');
+            global.releaseMutex("renderDummyPersonal", handle);
+            resolve(true);
+        };
 
-    const personalCard = document.createElement('div')
-    personalCard.classList.add('personal-task')
-    personalCard.id = "dummy"
 
-    personalCard.innerHTML = `
-        <div class="dummy-add-icon">
-            <span class="material-symbols-rounded">add</span>
-        </div>
-        <div class="personal-main">
-            <div class="personal-content">
-                <div class="personal-title">
-                    <div class="title-text">
-                        <input type="text" placeholder="What do you want to do?">
+        const personalCard = document.createElement('div')
+        personalCard.classList.add('personal-task')
+        personalCard.id = "dummy"
+
+        personalCard.innerHTML = `
+            <div class="dummy-add-icon">
+                <span class="material-symbols-rounded">add</span>
+            </div>
+            <div class="personal-main">
+                <div class="personal-content">
+                    <div class="personal-title">
+                        <div class="title-text">
+                            <input type="text" placeholder="What do you want to do?">
+                        </div>
+                    </div>
+                </div>
+                <div class="text-button blue save disabled">
+                    <div class="button-text">
+                        Save
                     </div>
                 </div>
             </div>
-            <div class="text-button blue save disabled">
-                <div class="button-text">
-                    Save
-                </div>
-            </div>
-        </div>
-    `
+        `
 
-    activeList.prepend(personalCard);
+        activeList.prepend(personalCard);
 
-    const titleInput = personalCard.querySelector('.title-text input')
-    titleInput.focus()
-    titleInput.addEventListener('input', (e) => {
-        if (e.target.value === "") {
-            personalCard.querySelector('.save').classList.add('disabled')
-        } else {
-            personalCard.querySelector('.save').classList.remove('disabled')
-        }
-    })
-    
-    titleInput.addEventListener('keydown', (e) => {
+        const titleInput = personalCard.querySelector('.title-text input')
+        titleInput.focus()
+        titleInput.addEventListener('input', (e) => {
+            if (e.target.value === "") {
+                personalCard.querySelector('.save').classList.add('disabled')
+            } else {
+                personalCard.querySelector('.save').classList.remove('disabled')
+            }
+        })
+        
+        titleInput.addEventListener('keydown', (e) => {
 
-        if (e.key === 'Enter') {
-            e.preventDefault()
-            if (titleInput.value === "") {
-                return
+            if (e.key === 'Enter') {
+                e.preventDefault()
+                if (titleInput.value === "") {
+                    return
+                }
+
+                unrenderDummyPersonal()
+                createPersonal(titleInput.value).then(() => {
+                    renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
+                    resolveAndUnlock();
+                })
+            } else if (e.key === 'Escape' && titleInput.value === "") {
+                e.preventDefault()
+                unrenderDummyPersonal()
+                resolveAndUnlock();
             }
 
+        })
+
+        personalCard.querySelector('.save').addEventListener('click', () => {
             unrenderDummyPersonal()
             createPersonal(titleInput.value).then(() => {
                 renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
+                resolveAndUnlock();
             })
-        }
-
-        if (e.key === 'Escape' && titleInput.value === "") {
-            e.preventDefault()
-            unrenderDummyPersonal()
-        }
-
-    })
-
-    personalCard.querySelector('.save').addEventListener('click', () => {
-        unrenderDummyPersonal()
-        createPersonal(titleInput.value).then(() => {
-            renderPersonal(globalPersonalsList[globalPersonalsList.length - 1].itemID)
         })
-    })
-
-    globalCreatingPersonal = false //releases the lock
-
-    return true
-
+    });
 }
 
 function unrenderDummyPersonal() {
@@ -494,12 +501,7 @@ function personalCardEditMode(id) {
 //event listeners
 
 newPersonalButton.addEventListener('click', () => {
-    let creationAvailable = renderDummyPersonal()
-    if (!creationAvailable) {
-        return
-    }
-
-    newPersonalButton.classList.add('disabled')
+    renderDummyPersonal();
 
 })
 

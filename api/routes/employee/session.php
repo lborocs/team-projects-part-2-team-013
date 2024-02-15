@@ -223,7 +223,7 @@ function r_session_session(RequestContext $ctx, string $args) {
         if ($ctx->session->generation >= SESSION_RENEW_LIMIT) {
             respond_not_authenticated(
                 "Session has been renewed too many times",
-                ERROR_SESSION_EXPIRED
+                ERROR_SESSION_RENEW_LIMIT_REACHED
             );
         }
 
