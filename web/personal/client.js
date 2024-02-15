@@ -13,9 +13,26 @@ import * as global from "../global-ui.js";
 
 
 var globalPersonalsList = []
+var globalCreatingPersonal = false
+var globalPersonalsSort = {
+    alphabetic: false,
+    timeCreated: false,
+    dueDate: false,
+    descending: true
+}
+
+const newPersonalButton = document.getElementById('new-personal')
 const activeList = document.getElementById('active-list')
 const completedList = document.getElementById('completed-list')
 const titleChevrons = document.querySelectorAll('.title-chevron')
+const personalsSearch = document.getElementById('personals-search')
+const personalsSortDropdown = document.getElementById('personals-sort')
+const dropdownMenus = document.querySelectorAll('.dropdown-menu')
+const sortAlphabetic = document.getElementById('sort-alphabetic')
+const sortTimeCreated = document.getElementById('sort-time-created')
+const sortDueDate = document.getElementById('sort-due-date')
+const personalsSortDirection = document.getElementById('personals-sort-direction')
+
 
 async function getAllPersonals() {
     const res = await get_api(`/employee/employee.php/personals`)
@@ -180,6 +197,16 @@ function renderPersonal(id) {
 }
 
 function renderDummyPersonal() {
+    //record locking so they cant be making more than one at once
+    if (globalCreatingPersonal) {
+        console.log("Another task is already being created.")
+        return false
+    }
+
+    globalCreatingPersonal = true //activates the lock
+
+
+
     const personalCard = document.createElement('div')
     personalCard.classList.add('personal-task')
     personalCard.id = "dummy"
@@ -244,6 +271,10 @@ function renderDummyPersonal() {
         })
     })
 
+    globalCreatingPersonal = false //releases the lock
+
+    return true
+
 }
 
 function unrenderDummyPersonal() {
@@ -272,6 +303,13 @@ function getPersonalCardById(id) {
 function unrenderPersonal(id) {
     const personal = getPersonalCardById(id)
     personal.remove()
+}
+
+function unrenderAllPersonals() {
+    const personals = document.querySelectorAll('.personal-task')
+    personals.forEach(personal => {
+        personal.remove()
+    })
 }
 
 async function togglePersonalState(id) {
@@ -352,6 +390,40 @@ async function deletePersonal(id) {
 
 }
 
+function searchPersonals(query) {
+    const searchResults = globalPersonalsList.filter(personal => personal.title.includes(query))
+    unrenderAllPersonals()
+    searchResults.forEach(personal => renderPersonal(personal.itemID))
+}
+
+function sortPersonals() {
+    if (globalPersonalsSort.alphabetic) {
+        globalPersonalsList.sort((a, b) => {
+            if (globalPersonalsSort.descending) {
+                return a.title.localeCompare(b.title)
+            } else {
+                return b.title.localeCompare(a.title)
+            }
+        })
+    } else if (globalPersonalsSort.timeCreated) {
+        globalPersonalsList.sort((a, b) => {
+            if (globalPersonalsSort.descending) {
+                return a.created - b.created
+            } else {
+                return b.created - a.created
+            }
+        })
+    } else if (globalPersonalsSort.dueDate) {
+        globalPersonalsList.sort((a, b) => {
+            if (globalPersonalsSort.descending) {
+                return a.due - b.due
+            } else {
+                return b.due - a.due
+            }
+        })
+    }
+}
+
 //works like a modal promise but its inline editing instead
 function personalCardEditMode(id) {
     return new Promise((resolve, reject) => {
@@ -411,7 +483,15 @@ function personalCardEditMode(id) {
 
 //event listeners
 
-document.getElementById('new-personal').addEventListener('click', renderDummyPersonal)
+newPersonalButton.addEventListener('click', () => {
+    let creationAvailable = renderDummyPersonal()
+    if (!creationAvailable) {
+        return
+    }
+
+    newPersonalButton.classList.add('disabled')
+
+})
 
 titleChevrons.forEach((chevron) => {
     chevron.addEventListener('click', () => {
@@ -421,6 +501,112 @@ titleChevrons.forEach((chevron) => {
         chevron.innerHTML = (list.classList.contains('collapsed')) ? '<span class="material-symbols-rounded">expand_more</span>' : '<span class="material-symbols-rounded">expand_less</span>'
     })
 })
+
+personalsSearch.addEventListener('input', (e) => {
+    searchPersonals(e.target.value)
+})
+
+personalsSortDropdown.addEventListener("click", () => {
+    personalsSortDropdown.classList.toggle("open")
+})
+
+document.addEventListener("click", (e) => {
+    if (!personalsSortDropdown.contains(e.target)) {
+        personalsSortDropdown.classList.remove("open")
+    }
+});
+
+
+//below is a very long and terrible way of handling dropdowns, it will be refactored.
+
+sortAlphabetic.addEventListener("click", () => {
+
+    personalsSortDropdown.querySelector('.dropdown-text').textContent = "Alphabetical"
+    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = "arrow_downward"
+
+    if(globalPersonalsSort.alphabetic === true) {
+        console.log(globalPersonalsSort)
+        globalPersonalsSort.descending = !globalPersonalsSort.descending
+        console.log(globalPersonalsSort)
+        sortPersonals()
+        return
+    }
+
+    globalPersonalsSort.descending = true
+
+    sortAlphabetic.classList.add("selected")
+    sortTimeCreated.classList.remove("selected")
+    sortDueDate.classList.remove("selected")
+
+    globalPersonalsSort.alphabetic = true
+    globalPersonalsSort.timeCreated = false
+    globalPersonalsSort.dueDate = false
+
+    console.log(globalPersonalsSort)
+    sortPersonals()
+})
+sortTimeCreated.addEventListener("click", () => {
+
+    personalsSortDropdown.querySelector('.dropdown-text').textContent = "Time created"
+    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = "arrow_downward"
+
+    if(globalPersonalsSort.timeCreated === true) {
+        globalPersonalsSort.descending = !globalPersonalsSort.descending
+        console.log(globalPersonalsSort)
+        sortPersonals()
+        return
+    }
+
+    globalPersonalsSort.descending = true
+
+    sortTimeCreated.classList.add("selected")
+    sortAlphabetic.classList.remove("selected")
+    sortDueDate.classList.remove("selected")
+
+    globalPersonalsSort.alphabetic = false
+    globalPersonalsSort.timeCreated = true
+    globalPersonalsSort.dueDate = false
+    
+    console.log(globalPersonalsSort)
+    sortPersonals()
+})
+sortDueDate.addEventListener("click", () => {
+    
+    personalsSortDropdown.querySelector('.dropdown-text').textContent = "Due date"
+    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = "arrow_downward"
+
+    if(globalPersonalsSort.dueDate === true) {
+        globalPersonalsSort.descending = !globalPersonalsSort.descending
+        console.log(globalPersonalsSort)
+        sortPersonals()
+        return
+    }
+
+    globalPersonalsSort.descending = true
+
+    sortDueDate.classList.add("selected")
+    sortAlphabetic.classList.remove("selected")
+    sortTimeCreated.classList.remove("selected")
+
+
+    globalPersonalsSort.alphabetic = false
+    globalPersonalsSort.timeCreated = false
+    globalPersonalsSort.dueDate = true
+    
+    console.log(globalPersonalsSort)
+    sortPersonals()
+})
+
+personalsSortDirection.addEventListener("click", () => {
+    globalPersonalsSort.descending = !globalPersonalsSort.descending
+    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = (globalPersonalsSort.descending) ? "arrow_downward" : "arrow_upward"
+    console.log(globalPersonalsSort)
+    sortPersonals()
+})
+
+
+
+
 
 
 
