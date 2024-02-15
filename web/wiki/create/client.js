@@ -17,6 +17,7 @@ async function fetchTags() {
     console.log(data);
     if (data.success == true) {
         console.log("Tags have been fetched")
+        console.log(data.data.tags);
         return data.data.tags;
     } else {
         console.log("Tags failed to be fetched")
