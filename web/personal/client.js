@@ -23,7 +23,7 @@ var globalPersonalsSort = {
 const newPersonalButton = document.getElementById('new-personal')
 const activeList = document.getElementById('active-list')
 const completedList = document.getElementById('completed-list')
-const titleChevrons = document.querySelectorAll('.title-chevron')
+const titleHeaders = document.querySelectorAll('.header > .title')
 const personalsSearch = document.getElementById('personals-search')
 const personalsSortDropdown = document.getElementById('personals-sort')
 const dropdownMenus = document.querySelectorAll('.dropdown-menu')
@@ -505,12 +505,13 @@ newPersonalButton.addEventListener('click', () => {
 
 })
 
-titleChevrons.forEach((chevron) => {
-    chevron.addEventListener('click', () => {
-        const header = chevron.parentNode.parentNode
+titleHeaders.forEach((title) => {
+    title.addEventListener('click', () => {
+        const header = title.parentNode
         const list = header.nextElementSibling
+        const chevron = title.querySelector('.material-symbols-rounded')
         list.classList.toggle('collapsed')
-        chevron.innerHTML = (list.classList.contains('collapsed')) ? '<span class="material-symbols-rounded">expand_more</span>' : '<span class="material-symbols-rounded">expand_less</span>'
+        chevron.innerHTML = (list.classList.contains('collapsed')) ? '<span class="material-symbols-rounded">expand_less</span>' : '<span class="material-symbols-rounded">expand_more</span>'
     })
 })
 
