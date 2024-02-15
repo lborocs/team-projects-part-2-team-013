@@ -828,7 +828,7 @@ async function fetchAndRenderAllProjects() {
                     });
                     header.classList.add("sorting-by");
                 }
-                searchAndRenderProjects('', sortAttribute, sortDirection);
+                searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection);
             });
         }
     });
