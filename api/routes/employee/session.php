@@ -71,6 +71,30 @@ function validate_password_constraints(string $password, Array $banned_words) {
 
 }
 
+
+function validate_email(string $email) {
+
+    $filtered = filter_var($email, FILTER_VALIDATE_EMAIL);
+    if ($filtered != $email) {
+        respond_bad_request(
+            "Expected field email to be a valid email",
+            ERROR_BODY_FIELD_INVALID_DATA
+        );
+    }
+
+    [$local, $domain] = explode("@", $email);
+
+    $out = [];
+
+    if (!preg_match(EMAIL_DOMAIN_REGEX, $domain, $out) || $out[0] != $domain) {
+        respond_bad_request(
+            "Email is not from a trusted domain",
+            ERROR_BODY_FIELD_INVALID_DATA
+        );
+    }
+
+}
+
 function r_session_login(RequestContext $ctx, string $args) {
     $ctx->body_require_fields_as_types(
         [
@@ -139,17 +163,17 @@ function r_session_register(RequestContext $ctx, string $args) {
 
     // input validation
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        respond_bad_request(
-            "Expected field email to be a valid email",
-            ERROR_BODY_FIELD_INVALID_TYPE
-        );
-    }
+    validate_email($email);
 
     $banned_words = array_merge(PASSWORD_BANNED_PHRASES, [$first_name, $last_name, explode($email, "@")[0]]);
     validate_password_constraints($password, $banned_words);
 
     // insertion
+
+
+    // verify email
+
+
 
     // here we are safe to check if the account already exists as we have validated the token
     // and know the user is signing up with the correct email
