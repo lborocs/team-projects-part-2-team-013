@@ -2,6 +2,62 @@ const tags = document.getElementById("tags");
 const input = document.getElementById("input-tag");
 const submitButton = document.getElementById("submitButton");
 var editing = false;
+var currentTags = [];
+
+class Tag {
+    constructor(name, tagID) {
+        this.tagID = tagID;
+        this.name = name;
+    }
+    addTag() {
+        const newTag = document.createElement("div");
+        document.querySelector("#placeholderTag").classList.add("norender")
+        newTag.className = "tag";
+        newTag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + this.name + '<span class="material-symbols-rounded" id="tagCloseButton">close</span>';
+        document.querySelector("#listOfTags").appendChild(newTag);
+        this.addDeleteListener(newTag);
+    }
+
+    addDeleteListener(tag) {
+        tag.addEventListener("click", (event) => this.removeTag(tag));
+    }
+
+    removeTag(tag) {
+        document.querySelector("#listOfTags").removeChild(tag);
+        console.log(currentTags);
+        this.checkTemp();
+        console.log(currentTags);
+        currentTags = currentTags.filter(a => a.name !== this.name);
+        if (currentTags.length == 0){
+            document.querySelector("#placeholderTag").classList.remove("norender")
+        }
+    }
+
+    checkTemp(){
+        if (this.tagID != 0){
+            return
+        }
+        try {
+            this.createTag(this.name);
+        } catch (error) {
+            console.log("Error creating tag: ", error);
+        }
+    }
+
+    async createTag(tag){
+        console.log(tag);
+        const result = await post_api(`/wiki/post.php/tag`, tag);
+        if (!result.success) {
+            console.error("[getPostData] error making tag: ", result.data);
+            return;
+        }
+        return result.data;
+    }
+
+}
+
+
+
 function getQueryParam() {
     return window.location.hash.substring(1);
 }
@@ -55,19 +111,6 @@ tagsList.then((tagsList) => {
     }
 });
 
-async function createTag(tag){
-    console.log(tag);
-    var data = {
-        "body": tag
-    }
-    const result = await post_api(`/wiki/post.php/tag`, data);
-    if (!result.success) {
-        console.error("[getPostData] error making tag: ", result.data);
-        return;
-    }
-    console.log(data.data);
-}
-
 
 
 async function getPostData(postID){
@@ -91,37 +134,18 @@ var quill = new Quill('#editor', {
     theme: 'snow'
 });
 
-function createVisualTag(tagName){
-    const tag = document.createElement("div");
-    console.log(tagContent);
-    if (tagContent !== "") {
-        //createTag(tagContent);
-    document.querySelector("#placeholderTag").classList.add("norender")
-    tag.className = "tag";
-    tag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + tagContent + '<span class="material-symbols-rounded" id="tagCloseButton">close</span>';
-    document.querySelector("#listOfTags").appendChild(tag);
-    addDeleteListener(tag);
-    }
-}
+
 input.addEventListener("keydown", function(event) {
 if (event.key === "Enter") {
     event.preventDefault();
     tagContent = input.value.trim();
-    createVisualTag(tagContent);
+    tempTag = new Tag(tagContent, 0);
+    currentTags.push(tempTag);
+    tempTag.addTag();
     input.value = "";
     }
 });
 
-function addDeleteListener(thisTag, tags){
-    thisTag.addEventListener("click", function(event) {
-    if (event.target.classList.contains("material-symbols-rounded")) {
-        event.target.parentNode.remove();
-        var tags = document.querySelectorAll(".tag");
-        if (tags.length == 0){
-        document.querySelector("#placeholderTag").classList.remove("norender")}
-        }
-    });
-}
 
 function getTagList() {
     const tags = document.querySelectorAll(".tag");
