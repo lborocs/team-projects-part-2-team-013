@@ -76,6 +76,8 @@ let menus = [
     { selector: '.sort-tasks-direction-option', textId: '#sort-tasks-direction-text', preferenceKey: 'sortTasksDirection', optionsId: '#sort-tasks-direction' },
 ];
 
+
+
 menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
     let menuOptions = document.querySelectorAll(selector);
     menuOptions.forEach((option) => {
@@ -101,8 +103,8 @@ menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
 });
 
 window.addEventListener('load', async () => {
-    menus.forEach(async (textId) => {
-            document.querySelector(textId).innerHTML = "ahwyfgvaihwfvahiw";
+    menus.forEach(async (menu) => {
+            document.querySelector(menu.textId).innerHTML = "ahwyfgvaihwfvahiw";
 
     });
 });
