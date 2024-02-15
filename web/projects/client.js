@@ -2633,25 +2633,32 @@ async function applySortingPreferences() {
     const sortTasksType = await global.preferences.get('sortTasksType');
     const sortTasksDirection = await global.preferences.get('sortTasksDirection');
 
-    const typeToIdMap = {
-        'By Name': 'name-column',
-        'By Title': 'title-column',
-        'By Date': 'date-column'
-    };
-
-    const elementId = typeToIdMap[sortTasksType];
-    const element = document.getElementById(elementId);
-
-    if (element) {
-        element.classList.add('sorting-by');
-
-        if (sortTasksDirection === 'Ascending') {
-            element.classList.add('asc');
-        } else if (sortTasksDirection === 'Descending') {
-            element.classList.add('desc');
-        }
-    }
+    return { sortTasksType, sortTasksDirection };
 }
-window.onload = function() {
-    applySortingPreferences();
-};
+
+// const projectRows = document.querySelectorAll('.project-row');
+
+// projectRows.forEach(row => {
+//     row.addEventListener('click', async () => {
+//         const { sortTasksType, sortTasksDirection } = await applySortingPreferences();
+
+//         const typeToIdMap = {
+//             'By Name': 'name-column',
+//             'By Title': 'title-column',
+//             'By Date': 'date-column'
+//         };
+
+//         const elementId = typeToIdMap[sortTasksType];
+//         const element = document.getElementById(elementId);
+
+//         if (element) {
+//             element.classList.add('sorting-by');
+
+//             if (sortTasksDirection === 'Ascending') {
+//                 element.classList.add('asc');
+//             } else if (sortTasksDirection === 'Descending') {
+//                 element.classList.add('desc');
+//             }
+//         }
+//     });
+// });
