@@ -311,8 +311,13 @@ class PreferenceStore {
         this.store = new Map();
         // rolling timeout to save 2s after no changes
         this.saver = new ReusableRollingTimeout(() => {this.save()}, 2000);
-    }
 
+        window.addEventListener('beforeunload', async () => {
+            this.saver.inner.cancel();
+            await this.save();
+        });
+
+    }
 
     async save() {
         await put_api("/employee/meta.php/preferences", {preferences: Object.fromEntries(this.store)});
@@ -346,7 +351,7 @@ class PreferenceStore {
         }
     
         this.store.set(key, value);
-        await this.save();
+        this.saver.roll();
     }
 
     async delete(key) {
