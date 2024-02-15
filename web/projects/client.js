@@ -53,6 +53,7 @@ const explainerTaskManhours = document.querySelector(".manhours-container")
 const dashboardRedirect = document.getElementById('dashboard-redirect');
 const listViewButton = document.getElementById('list-view-button');
 const boardViewButton = document.getElementById('board-view-button');
+const lastAccessedButton = document.getElementById('project-last-accessed');
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -827,7 +828,7 @@ async function fetchAndRenderAllProjects() {
                     });
                     header.classList.add("sorting-by");
                 }
-                searchAndRenderProjects('', sortAttribute, sortDirection);
+                searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection);
             });
         }
     });
@@ -2565,8 +2566,7 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 
 
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
-    projectSearchInput.value = "";
-    searchAndRenderProjects()
+    searchAndRenderProjects(projectSearchInput.value = "");
     startOrRollProjectSearchTimeout();
 
 })
@@ -2582,9 +2582,16 @@ const sleep = (ms) => {
     });
 };
 
+lastAccessedButton.addEventListener('click', function(event) {
+    if (event.button === 0) {
+        searchAndRenderProjects(projectSearchInput.value, 'lastAccessed', 'desc');
+    }
+});
+
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
-    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&direction=${sortDirection}`);
+    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}`);
+    console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
     console.log(data);
@@ -2632,22 +2639,32 @@ async function applySortingPreferences() {
     const sortTasksType = await global.preferences.get('sortTasksType');
     const sortTasksDirection = await global.preferences.get('sortTasksDirection');
 
-    const typeToIdMap = {
-        'By Name': 'name-column',
-        'By Title': 'title-column',
-        'By Date': 'date-column'
-    };
-
-    const elementId = typeToIdMap[sortTasksType];
-    const element = document.getElementById(elementId);
-
-    if (element) {
-        element.classList.add('sorting-by');
-
-        if (sortTasksDirection === 'Ascending') {
-            element.classList.add('asc');
-        } else if (sortTasksDirection === 'Descending') {
-            element.classList.add('desc');
-        }
-    }
+    return { sortTasksType, sortTasksDirection };
 }
+
+// const projectRows = document.querySelectorAll('.project-row');
+
+// projectRows.forEach(row => {
+//     row.addEventListener('click', async () => {
+//         const { sortTasksType, sortTasksDirection } = await applySortingPreferences();
+
+//         const typeToIdMap = {
+//             'By Name': 'name-column',
+//             'By Title': 'title-column',
+//             'By Date': 'date-column'
+//         };
+
+//         const elementId = typeToIdMap[sortTasksType];
+//         const element = document.getElementById(elementId);
+
+//         if (element) {
+//             element.classList.add('sorting-by');
+
+//             if (sortTasksDirection === 'Ascending') {
+//                 element.classList.add('asc');
+//             } else if (sortTasksDirection === 'Descending') {
+//                 element.classList.add('desc');
+//             }
+//         }
+//     });
+// });
