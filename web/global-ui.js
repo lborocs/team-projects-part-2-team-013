@@ -283,6 +283,9 @@ const DEFAULT_PREFERENCES = {
     "projectfilters.overdue": false,
     "projectfilters.notoverdue": false,
     "notificationslastreadat": 0,
+    "avatar": "For Everybody",
+    "tags": "For Everybody",
+    "posting": "For Everybody"
 }
 
 class PreferenceValue {

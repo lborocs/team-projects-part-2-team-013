@@ -101,33 +101,12 @@ menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
         event.stopPropagation();
     });
 });
-window.addEventListener('load', async () => {
-    const defaultPreferences = new Map([
-        ['avatar', 'For Everybody'],
-        ['posting', 'For Everybody'],
-        ['tags', 'For Everybody'],
-        ['list', 'Never'],
-        ['sortProjectsType', 'By Name'],
-        ['sortProjectsDirection', 'Ascending'],
-        ['sortTasksType', 'By Name'],
-        ['sortTasksDirection', 'Ascending'],
-    ]);
 
-    for (let [key, defaultValue] of defaultPreferences) {
-        let preferenceValue = await global.preferences.get(key);
-        console.log(`Initial value of ${key}:`, preferenceValue);
-        if (!preferenceValue) {
-            await global.preferences.set(key, defaultValue);
-            preferenceValue = await global.preferences.get(key);
-            console.log(`Value of ${key} after setting default value:`, preferenceValue);
-        }
-    }
+window.addEventListener('load', async () => {
 
     menus.forEach(async ({ textId, preferenceKey }) => {
-        let preferenceValue = await global.preferences.get(preferenceKey);
-        if (preferenceValue) {
-            document.querySelector(textId).innerHTML = preferenceValue;
-        }
+        const pref = await global.preferences.get(preferenceKey);
+        document.querySelector(textId).innerHTML = pref.or_default();
     });
 });
 

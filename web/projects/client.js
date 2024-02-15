@@ -2627,3 +2627,27 @@ async function searchAndRenderTasks() {
     clearRenderedTasks()
     renderTasks(tasks);
 }
+
+async function applySortingPreferences() {
+    const sortTasksType = await global.preferences.get('sortTasksType');
+    const sortTasksDirection = await global.preferences.get('sortTasksDirection');
+
+    const typeToIdMap = {
+        'By Name': 'name-column',
+        'By Title': 'title-column',
+        'By Date': 'date-column'
+    };
+
+    const elementId = typeToIdMap[sortTasksType];
+    const element = document.getElementById(elementId);
+
+    if (element) {
+        element.classList.add('sorting-by');
+
+        if (sortTasksDirection === 'Ascending') {
+            element.classList.add('asc');
+        } else if (sortTasksDirection === 'Descending') {
+            element.classList.add('desc');
+        }
+    }
+}
