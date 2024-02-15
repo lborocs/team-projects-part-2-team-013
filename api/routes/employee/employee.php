@@ -49,9 +49,18 @@ function r_employee_manage(RequestContext $ctx, string $args) {
         }
     }
 
+    $employee = db_employee_fetch_with_email($emp_id);
+
+    if (!$employee) {
+        respond_resource_not_found(
+            "Employee " . $emp_id
+        );
+    }
+
 
     if ($ctx->request_method == "GET") {
-        $employee = db_employee_fetch($emp_id);
+
+
         respond_ok(
             array(
                 "employee"=>$employee
