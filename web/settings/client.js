@@ -76,6 +76,8 @@ let menus = [
     { selector: '.sort-tasks-direction-option', textId: '#sort-tasks-direction-text', preferenceKey: 'sortTasksDirection', optionsId: '#sort-tasks-direction' },
 ];
 
+
+
 menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
     let menuOptions = document.querySelectorAll(selector);
     menuOptions.forEach((option) => {

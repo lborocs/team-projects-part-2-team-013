@@ -88,13 +88,19 @@
                                 </div>
                             </div>
                             
-                            <div class="view selected">
+                            <div class="view selected" id="board-view-button">
                                 <span class="material-symbols-rounded">view_kanban</span> Board
                             </div>
-                            <div class="view">
+                            <div class="view" id="list-view-button">
                                 <span class="material-symbols-rounded">table_rows</span> List
                             </div>
-                            <div class="text-button blue team-leader-only norender" id="add-task-button" tabindex="0">
+
+                            <a class="view team-leader-only manager-only norender" id="dashboard-redirect" href="/dashboard/">
+                                <span class="material-symbols-rounded">speed</span> Dashboard
+                            </a>
+
+                            
+                            <div class="text-button blue team-leader-only manager-only norender" id="add-task-button" tabindex="0">
                                 <div class="button-icon">
                                     <span class="material-symbols-rounded">
                                         add
@@ -247,7 +253,7 @@
                                 </div>
                                 <div class="manhours-container">
                                     <span class="material-symbols-rounded">
-                                        hourglass_empty
+                                        timer
                                         </span>
                                     <div class="manhours">
                                         No Manhours Set

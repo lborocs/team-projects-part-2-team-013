@@ -18,7 +18,23 @@ const viewAll = document.querySelector("#view-all")
 
 let gridActionsQueue = []
 
-global.setBreadcrumb(["Manager's Dashboard", "Mobile App Development"], [window.location.pathname, window.location.pathname]);
+
+
+window.addEventListener("breadcrumbnavigate", async (event) => {
+    console.log("[breadcrumbnavigate] event received" + event.locations);
+    await renderFromBreadcrumb(event.locations);
+});
+
+const projectID = window.location.hash.substring(1);
+var projectData;
+if (projectID !== "") {
+    console.log("[client.js] projectID: ", projectID);
+    projectData = await getProjectData(projectID);
+    global.setBreadcrumb(["Manager's Dashboard", projectData.project.name], ["/dashboard/", "/dashboard/#" + projectData.project.projID]);
+} else {
+    emptyDashboard()
+}
+
 
 class Dashboard {
     constructor() {
@@ -120,15 +136,12 @@ class Dashboard {
 
 
 
-async function getProjectData() {
+async function getProjectData(id) {
 
-    const res = await get_api("/project/project.php/projects?q=todo", {no_track: true});
+    const res = await get_api(`/project/project.php/project/${id}`, {no_track: true});
 
-    // pick a random project
+    const project = res.data;
 
-    const projects = res.data.projects;
-
-    const project = projects[Math.floor(Math.random() * projects.length)];
     console.log("[getProjectData] project: ", project);
     const tasks = await get_api(`/project/task.php/tasks/${project.projID}`, {no_track: true});
 
@@ -140,13 +153,14 @@ async function getProjectData() {
     document.getElementById("project-name").innerText = project.name;
 
     return {
-        project: project.data,
+        project: project,
         tasks: tasks.data,
         employees: employees,
     }
 }
 
-const randData = await getProjectData();
+
+
 
 
 async function getTaskCompletion(projectData) {
@@ -259,6 +273,20 @@ async function getManHoursPerEmployee(projectData) {
 
 }
 
+function emptyDashboard() {
+    dashboardContainer.classList.add("empty");
+    dashboardContainer.innerHTML = `
+        <div class="empty-dashboard">
+            <div class="empty-dashboard-icon">
+                <span class="material-symbols-rounded">dashboard</span>
+            </div>
+            <div class="empty-dashboard-text">
+                We couldn't find this project :/
+            </div>
+        </div>
+    `;
+}
+
 
 //chartjs styling
 Chart.defaults.font.family = 'Open Sans, sans-serif';
@@ -280,7 +308,7 @@ Chart.defaults.animations = false;
 let charts = [];
 
 
-const completionData = await getTaskCompletion(randData);
+const completionData = await getTaskCompletion(projectData);
 
 charts.push(new Chart(document.getElementById("completionChart"), {
     type: 'pie',
@@ -338,7 +366,7 @@ charts.push(new Chart(document.getElementById("manHoursChart"), {
 
 
 
-const tasksPerEmployeeData = await getTasksPerEmployee(randData);
+const tasksPerEmployeeData = await getTasksPerEmployee(projectData);
 
 charts.push(new Chart(document.getElementById("tasksPerEmployeeChart"), {
     type: 'bar',
@@ -431,7 +459,7 @@ charts.push(new Chart(document.getElementById("taskProgressChart"), {
     }
 }));
 
-const workloadData = await getManHoursPerEmployee(randData);
+const workloadData = await getManHoursPerEmployee(projectData);
 
 charts.push(new Chart(document.getElementById("workloadChart"), {
     type: 'bar',

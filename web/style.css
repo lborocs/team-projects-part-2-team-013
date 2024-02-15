@@ -27,6 +27,7 @@ body {
 .register-prompt{
     text-align: center;
     font-weight: 600;
+    font-size: 14px;
 }
 
 .forgot-password {
