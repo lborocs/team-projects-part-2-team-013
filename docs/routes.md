@@ -171,6 +171,12 @@ Written/designed by aidan F223129
     ```
   - [x] PUT overwrite preferences {"preferences":{...}}
   - [x] DELETE reset preferences to default
+
+- [x] **/employee/meta.php/globalsettings**
+  - [x] GET (get global settings)
+  - [x] PUT {avatarsEnabled:int, postsEnabled:int, tagsEnabled:int}
+      0 - everyone, 1 - mgr only, 2 - nobody
+
 # project
 
 ## task.php
