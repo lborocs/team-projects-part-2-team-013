@@ -305,7 +305,7 @@ function r_session_reset_password(RequestContext $ctx, string $args) {
 
         $token = auth_password_reset_create_token($emp_id);
 
-        $message = "Click here to reset your password: " . "https://013.team/reset-password#$token";
+        $message = "Click here to reset your password, this link is valid for 30 minutes: " . "https://013.team/reset-password#$token";
 
         send_email($email, "$email ($emp_id)", "Password Reset", $message);
 
