@@ -105,9 +105,15 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
             }
 
             $field = $column->name;
-            $common = _get_common_name($column, $field);
             
-            if (!array_key_exists($field ,$ctx->request_body) && !$column->is_nullable) {
+            if (!array_key_exists($field ,$ctx->request_body)) {
+
+                if ($column->is_nullable) {
+                    $ctx->request_body[$field] = null;
+                    continue;
+                }
+
+                $common = _get_common_name($column, $field);
                 respond_bad_request(
                     "Expected field $common to be set",
                     ERROR_BODY_MISSING_REQUIRED_FIELD

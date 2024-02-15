@@ -330,7 +330,9 @@ class PreferenceStore {
     async _fill() {
         const res = await get_api("/employee/meta.php/preferences");
         if (res.success) {
+            console.log("[PreferenceStore] preferences fetched successfully")
             this.store = new Map(Object.entries(res.data.preferences))
+            this._lazy = false;
         } else {
             throw Error(`failed to get preferences (${res.error.code}) ${res.error.message}`)
         }
@@ -345,6 +347,10 @@ class PreferenceStore {
 
         const value =  this.store.get(key);
         return new PreferenceValue(value, DEFAULT_PREFERENCES[key]);
+    }
+
+    async get_or_default(key) {
+        return (await this.get(key)).or_default();
     }
 
     async set(key, value) {

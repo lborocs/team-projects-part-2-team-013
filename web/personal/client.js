@@ -83,15 +83,8 @@ async function createPersonal(title) {
 }
 
 function selectPersonal(id) {
-    const personalCheckbox = document.getElementById(id)
-    
     const personal = getPersonalCardById(id)
-
-    const personalCards = document.querySelectorAll('.personal-task')
-    personalCards.forEach((card) => {
-        card.classList.remove('selected')
-    })
-
+    deselectAllPersonals()
     personal.classList.add('selected')
 }
 
