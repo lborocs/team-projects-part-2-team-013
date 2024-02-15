@@ -55,32 +55,16 @@ systemTab.addEventListener('click', () => {
 //dropdown menu event listeners
 
 document.addEventListener('click', function(event) {
-    if (!avatarOptions.contains(event.target)) {
-        avatarOptions.classList.remove('open');
-    }
-    if (!postingOptions.contains(event.target)) {
-        postingOptions.classList.remove('open');
-    }
-    if (!tagsOptions.contains(event.target)) {
-        tagsOptions.classList.remove('open');
-    }
-    if (!listOptions.contains(event.target)) {
-        listOptions.classList.remove('open');
-    }
-    if (!sortProjectsType.contains(event.target)) {
-        sortProjectsType.classList.remove('open');
-    }
-    if (!sortTasksType.contains(event.target)) {
-        sortTasksType.classList.remove('open');
-    }
-    if (!sortTasksDirection.contains(event.target)) {
-        sortTasksDirection.classList.remove('open');
-    }
-    if (!sortProjectsDirection.contains(event.target)) {
-        sortProjectsDirection.classList.remove('open');
-    }
+    menus.forEach(({ optionsId }) => {
+        let options = document.querySelector(optionsId);
+        if (!options.contains(event.target)) {
+            options.classList.remove('open');
+        }
+    });
 });
 
+
+//Array to recursively add event listeners to dropdown menus
 let menus = [
     { selector: '.avatar-option', textId: '#avatar-text', preferenceKey: 'avatar', optionsId: '#avatar-options' },
     { selector: '.posting-option', textId: '#posting-text', preferenceKey: 'posting', optionsId: '#posting-options' },
@@ -91,6 +75,8 @@ let menus = [
     { selector: '.sort-tasks-type', textId: '#sort-tasks-type-text', preferenceKey: 'sortTasksType', optionsId: '#sort-tasks-type' },
     { selector: '.sort-tasks-direction-option', textId: '#sort-tasks-direction-text', preferenceKey: 'sortTasksDirection', optionsId: '#sort-tasks-direction' },
 ];
+
+
 
 menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
     let menuOptions = document.querySelectorAll(selector);
@@ -106,17 +92,41 @@ menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
 
     let options = document.querySelector(optionsId);
     options.addEventListener('click', (event) => {
+        menus.forEach(({ optionsId: otherOptionsId }) => {
+            if (optionsId !== otherOptionsId) {
+                document.querySelector(otherOptionsId).classList.remove('open');
+            }
+        });
         options.classList.toggle('open');
         event.stopPropagation();
     });
 });
-
 window.addEventListener('load', async () => {
-    await global.preferences.fill();
+    const defaultPreferences = new Map([
+        ['avatar', 'For Everybody'],
+        ['posting', 'For Everybody'],
+        ['tags', 'For Everybody'],
+        ['list', 'Never'],
+        ['sortProjectsType', 'By Name'],
+        ['sortProjectsDirection', 'Ascending'],
+        ['sortTasksType', 'By Name'],
+        ['sortTasksDirection', 'Ascending'],
+    ]);
+
+    for (let [key, defaultValue] of defaultPreferences) {
+        let preferenceValue = await global.preferences.get(key);
+        console.log(`Initial value of ${key}:`, preferenceValue);
+        if (!preferenceValue) {
+            await global.preferences.set(key, defaultValue);
+            preferenceValue = await global.preferences.get(key);
+            console.log(`Value of ${key} after setting default value:`, preferenceValue);
+        }
+    }
+
     menus.forEach(async ({ textId, preferenceKey }) => {
-        let savedOption = await global.preferences.get(preferenceKey);
-        if (savedOption) {
-            document.querySelector(textId).innerHTML = savedOption;
+        let preferenceValue = await global.preferences.get(preferenceKey);
+        if (preferenceValue) {
+            document.querySelector(textId).innerHTML = preferenceValue;
         }
     });
 });

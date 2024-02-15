@@ -114,71 +114,7 @@
         box-shadow: none;
         border-collapse: separate;
         border-spacing: 0;
-        & th {
-            font-size: 14px;
-            font-weight: 600;
-            padding: 4px 8px;
-            line-height: 1.5;
-            vertical-align: middle;
-            text-align: left;
-            outline-color: #388bff22;
-            transition-duration: 0.05s;
-        }
-
-        & th:not(:last-child):hover {
-            background-color: #f8faff;
-            transition-duration: 0.05s;
-            outline: solid 1px #e2eaff;
-            outline-offset: -1px;
-        }
-
-        & th:hover > .header-td .icon {
-            opacity: 1;
-            transition: 0.05s ease-out;
-        }
-
-
-        .header-td {
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: center;
-            gap: 0.25em;
-            white-space: nowrap;
-            user-select: none;
-
-            .icon {
-                opacity: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
-                width: auto;
-                aspect-ratio: 1;
-                user-select: none;
-                color: var(--icon-clr, #777777);
-                transition: 0.1s ease-out;
-
-                & span {
-                    font-size: 24px;
-                }
-                
-            }
-        }
-
-        .sorting-by {
-            color: var(--sorting-color);
-            background-color: #f8faff;
-            transition-duration: 0.05s;
-            outline: solid 1px #e2eaff;
-            outline-offset: -1px;
-
-            .icon {
-                opacity: 1;
-                color: var(--sorting-color);
-            }
-        }
-        
+   
         & td {
             padding: 6px 8px;
             line-height: 1.5;
@@ -199,7 +135,6 @@
             }
         }
 
-
         & tr {
             background-color: transparent;
             transition: 0.1s ease-out;
@@ -207,7 +142,6 @@
 
         }
 
-        
         & tr:last-child {
             border-bottom: solid 2px var(--border-clr, #e0e0e0);
             & td {
@@ -229,10 +163,6 @@
             transition-duration: 0.05s;
         }
 
-        .disabled {
-            color: rgba(0,0,0,0.4);
-            pointer-events: none;
-        }
     }
     
     #projects-table thead th {
@@ -256,6 +186,8 @@
         transition: 0.1s ease-out;
     }
 }
+
+
 
 #new-project {
     margin-left: auto;
@@ -435,6 +367,11 @@
         width: 280px;
         transition: width 0.1s ease-in-out;
     }
+
+    & a {
+        text-decoration: none;
+    
+    }
 }
 
 .views > :last-child {
@@ -448,12 +385,13 @@
     padding-left: 0.25em;
     padding-right: 0.5em;
     height: 28px;
-    font-weight: 700;
+    font-weight: 600;
     gap: 0.25em;
     border-radius: 4px;
     transition: 0.1s ease-out;
     cursor: pointer;
     user-select: none;
+    color: #555555;
 
     & span {
         font-size: 20px;
@@ -940,30 +878,7 @@
         padding-left: 1em;
         padding-right: 1em;
         border-bottom: solid 2px var(--border-clr);
-    }
-
-    & th span {
-        font-size: 22px;
-        color: var(--icon-clr, #777777);
-        transition: 0.2s ease-out;
-        margin-left: 0.25em;
-        margin-right: 0.25em;
-        text-align: center;
-        border-radius: 8px;
-        cursor: pointer;
-        user-select: none;
-    
-        .selected {
-            color: var(--text-off-black, #0f0f0f);
-            background-color: var(--light-grey-bg);   
-        }
-    }
-
-    & th span:hover {
-        color: var(--text-off-black, #0f0f0f);
-        transition-duration: 0.08s;
-        background-color: var(--light-grey-bg);
-    }
+    } 
 
     .header-td {
         display: flex;
@@ -1032,12 +947,14 @@
     }
 
     
-    & tr:last-child {
+    & tr:nth-last-child(2) {
         border-bottom: solid 2px var(--border-clr, #e0e0e0);
         & td {
             border-bottom: solid 2px var(--border-clr, #e0e0e0);
         }
     }
+
+
 
     & tbody tr:hover {
         background-color: #388bff11;
@@ -1055,7 +972,6 @@
 
     .disabled {
         color: rgba(0, 0, 0, 0.3);
-        pointer-events: none;
     }
 }
 
@@ -1063,31 +979,35 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 0.25em;
+    gap: 0.25rem;
     white-space: nowrap;
     width: min-content;
-    background-color: rgba(255,255,255,0);
     border: none;
     color: var(--icon-clr, #777777);
-    font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s ease-out;
     border-radius: 3px;
-    user-select: none;
-    padding-top: 0.25em;
-    padding-bottom: 0.25em;
-    padding-left: 0.5em;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    padding-left: 0.5rem;
 }
 
-#list-add:hover {
-    color: var(--text-off-black, #0f0f0f);
-    transition-duration: 0.08s;
-    background-color: #f0f0f0;
+
+#list-add-row {
+    border-bottom: none;
+    & td {
+        border-bottom: none;
+    }
 }
 
 #list-add-row:hover {
     background-color: white;
+    cursor: pointer;
+
+    color: var(--text-off-black, #0f0f0f);
+    transition-duration: 0.08s;
+    background-color: #f0f0f0;
 }
 
 .not-started {
@@ -1233,14 +1153,12 @@
     margin-right: -0.7em;
 }
 
-#title-column.selected .header-cell,
-#date-column.selected .header-cell,
-#status-column.selected .header-cell {
+/* .selected .header-cell {
     background-color: rgba(104, 104, 104, 0.7);
     box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
     color: #ffffff;
     transition: 0.1s ease-out;
-}
+} */
 
 .selected.asc i {
     background: linear-gradient(to bottom, var(--white, white) 50%, transparent 50%);
@@ -1766,5 +1684,83 @@
     height: 1.5em;
     aspect-ratio: 1;
     width: 100%;
+
+}
+
+
+
+/* given we have 2 tables that should look very similar, this generic table class is for all shared styling */
+.table {
+
+    & th {
+        font-size: 14px;
+        font-weight: 600;
+        padding: 4px 8px;
+        line-height: 1.5;
+        vertical-align: middle;
+        text-align: left;
+        outline-color: #388bff22;
+        transition-duration: 0.05s;
+    }
+
+    & th:not(:last-child):hover {
+        background-color: #f8faff;
+        transition-duration: 0.05s;
+        outline: solid 1px #e2eaff;
+        outline-offset: -1px;
+    }
+
+    & th:hover > .header-td .icon {
+        opacity: 1;
+        transition: 0.05s ease-out;
+    }
+
+
+    .header-td {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.25em;
+        white-space: nowrap;
+        user-select: none;
+
+        .icon {
+            opacity: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: auto;
+            aspect-ratio: 1;
+            user-select: none;
+            color: var(--icon-clr, #777777);
+            transition: 0.1s ease-out;
+
+            & span {
+                font-size: 20px;
+            }
+            
+        }
+
+    }
+
+    .sorting-by {
+        color: var(--sorting-color);
+        background-color: #f8faff;
+        transition-duration: 0.05s;
+        outline: solid 1px #e2eaff;
+        outline-offset: -1px;
+    
+        .icon {
+            opacity: 1;
+            color: var(--sorting-color);
+        }
+
+    }
+
+    .disabled {
+        color: rgba(0,0,0,0.4);
+    }
 
 }

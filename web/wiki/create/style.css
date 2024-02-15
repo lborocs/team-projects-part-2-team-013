@@ -5,22 +5,21 @@
 
 @media (max-height: 850px) {
     .popover {
-        position: absolute;
-        top: unset;
-        bottom: 100%;
+        top: -60px;
+        left: -1px;
     }
 }
 
 @media (min-height: 850px) {
     .popover {
-        position: absolute;
-        bottom: unset;
+        top: 63px;
+        left: -1px;
     }
 }
 
 
 .popover {
-    position: relative;
+    position: absolute;
     width: 25.1em;
     border: solid 1px rgba(105,112,125, 0.1);
     border-radius: 5px;
@@ -317,7 +316,7 @@ input[type="radio"] + label {
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    height: 4em;
+    height: 165px;
     padding: 0.5em;
     margin-top: 1em;
     margin-bottom: 0;
