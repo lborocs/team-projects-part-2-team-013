@@ -794,6 +794,10 @@ function clearRenderedTasks() {
 
 async function teamLeaderEnableElementsIfTeamLeader() {
 
+    if (!globalCurrentProject) {
+        return
+    }
+
 
     let session = await global.getCurrentSession();
     let isTeamLeader = session.employee.empID == globalCurrentProject.teamLeader.empID;
