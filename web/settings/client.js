@@ -101,10 +101,41 @@ preferencesMenus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
     });
 });
 
+globalSettingsMenus.forEach(({ selector, textId, settingKey, optionsId }) => {
+    let menuOptions = document.querySelectorAll(selector);
+    menuOptions.forEach((option) => {
+        option.addEventListener('click', async (event) => {
+            let selectedOption = option.textContent;
+            await global.settings.set(settingKey, selectedOption);
+            document.querySelector(textId).innerHTML = selectedOption;
+            document.querySelector(optionsId).classList.remove('open');
+            event.stopPropagation();
+        });
+    });
+
+    let options = document.querySelector(optionsId);
+    options.addEventListener('click', (event) => {
+        globalSettingsMenus.forEach(({ optionsId: otherOptionsId }) => {
+            if (optionsId !== otherOptionsId) {
+                document.querySelector(otherOptionsId).classList.remove('open');
+            }
+        });
+        options.classList.toggle('open');
+        event.stopPropagation();
+    });
+});
+
+
+
 window.addEventListener('load', async () => {
     preferencesMenus.forEach(async ({ textId, preferenceKey }) => {
         const pref = await global.preferences.get(preferenceKey);
         document.querySelector(textId).innerHTML = pref.or_default();
+    });
+
+    globalSettingsMenus.forEach(async ({ textId, settingKey }) => {
+        const setting = await global.settings.get(settingKey);
+        document.querySelector(textId).innerHTML = setting
     });
 });
 
