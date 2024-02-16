@@ -27,6 +27,8 @@ body {
     height: 3em;
     align-items: center;
     color: #555555;
+    padding: 6px;
+    background-color: #eeeeee;
 }
 
 .left-nav {
@@ -349,7 +351,7 @@ input[type="text"] {
     height: 3.5em;
     align-items: center;
     color: #555555;
-    background-color: var(--light-grey-bg);
+    background-color: #eeeeee;
     border-radius: 8px;
     border: solid 1px #e0e0e0;
     transition: 0.1s ease-out;
@@ -373,7 +375,7 @@ label {
     align-items: center;
     cursor: pointer;
     transition: 0.1s ease-out;
-    background-color: var(--light-grey-bg);
+    background-color: #eeeeee;
 }
 
 
