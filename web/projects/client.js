@@ -13,6 +13,7 @@ var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
 let sortAttribute = 'lastAccessed'
 let sortDirection = 'asc';
+let currentPage = 1;
 let pageLimit = 10;
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
@@ -850,7 +851,7 @@ async function fetchAndRenderAllProjects() {
                 currentPage = 1;
                 pageBackButton.classList.add("disabled");
                 pageNumberElement.textContent = currentPage;
-                searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection);
+                searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
             });
         }
     });
@@ -2638,7 +2639,7 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 
 
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
-    searchAndRenderProjects(projectSearchInput.value = "");
+    searchAndRenderProjects(projectSearchInput.value = "", sortAttribute, sortDirection, pageLimit, currentPage);
     startOrRollProjectSearchTimeout();
 
 })
@@ -2656,7 +2657,7 @@ const sleep = (ms) => {
 
 lastAccessedButton.addEventListener('click', function(event) {
     if (event.button === 0) {
-        searchAndRenderProjects(projectSearchInput.value, 'lastAccessed', 'desc');
+        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     }
     let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
     projectTableHeaders.forEach((header) => {
@@ -2664,12 +2665,12 @@ lastAccessedButton.addEventListener('click', function(event) {
     });
 });
 
-let currentPage = 1;
+
 pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
         pageNumberElement.textContent = currentPage;
-        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage);
+        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
         console.log(`[pageForwardButton] currentPage: ${currentPage}`);
     }
     if (currentPage === 1) {
@@ -2683,11 +2684,11 @@ pageForwardButton.addEventListener('click', function() {
     pageBackButton.classList.remove('disabled');
     currentPage++;
     pageNumberElement.textContent = currentPage;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage);
+    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[pageForwardButton] currentPage: ${currentPage}`);
 });
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc', page = 1, limit = 10) {
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',limit = 10, page = 1, ) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
     const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${limit}&page=${page}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
@@ -2783,27 +2784,27 @@ document.addEventListener("click", (e) => {
 view10.addEventListener("click", () => {
     projectsPerPageDropdown.querySelector(".dropdown-text").innerText = "10";
     pageLimit = 10;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage, pageLimit);
+    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[view10] limit: ${pageLimit}`);
 })
 
 view25.addEventListener("click", () => {
     projectsPerPageDropdown.querySelector(".dropdown-text").innerText = "25";
     pageLimit = 25;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage, pageLimit);
+    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[view25] limit: ${pageLimit}`);
 })
 
 view50.addEventListener("click", () => {
     projectsPerPageDropdown.querySelector(".dropdown-text").innerText = "50";
     pageLimit = 50;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage, pageLimit);
+    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[view50] limit: ${pageLimit}`);
 })
 
 view100.addEventListener("click", () => {
     projectsPerPageDropdown.querySelector(".dropdown-text").innerText = "100";
     pageLimit = 100;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage, pageLimit);
+    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[view100] limit: ${pageLimit}`);
 })
