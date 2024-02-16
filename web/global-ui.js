@@ -371,6 +371,55 @@ class PreferenceStore {
 export const preferences = new PreferenceStore();
 document.preferences = preferences;
 
+
+export const SETTING_NOBODY = 2;
+export const SETTING_MANAGERS_ONLY = 1;
+export const SETTING_EVERYONE = 0;
+
+
+
+class GlobalSettings {
+    
+    _inner;
+    _lazy;
+
+    constructor() {
+        this._lazy = true;
+    }
+
+
+    async fill() {
+        const res = await get_api("/employee/meta.php/globalsettings");
+        if (res.success) {
+            console.log("[GlobalSettings] settings fetched successfully")
+            this._inner = res.data.settings;
+            this._lazy = false;
+        } else {
+            throw Error(`failed to get settings (${res.error.code}) ${res.error.message}`)
+        }
+    }
+
+    async get(key) {
+        if (this._lazy) {
+            await this.fill();
+        }
+        return this._inner[key];
+    }
+
+    async set(key, value) {
+        if (this._lazy) {
+            await this.fill();
+        }
+        this._inner[key] = value;
+        await put_api("/employee/meta.php/globalsettings", this._inner);
+    }
+}
+
+export const siteSettings = new GlobalSettings();
+document.siteSettings = siteSettings;
+
+
+
 //utility functions
 
 /**
