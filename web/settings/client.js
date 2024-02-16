@@ -6,6 +6,7 @@ const systemTab = document.querySelector('.system');
 
 const tabs = document.querySelectorAll('.tab');
 
+const accountCard = document.querySelector('.account-card');
 const accountOptions = document.querySelector('.account-options');
 const preferencesOptions = document.querySelector('.preferences-options');
 const systemOptions = document.querySelector('.system-options');
@@ -231,16 +232,18 @@ async function getEmployee() {
 
 async function setUserData() {
     let employeeData = await getEmployee();
-    console.log(employeeData);
+    console.log("[setUserData] got employee", employeeData);
+    let emp = employeeData.employee;
     
-    let employeeName = global.employeeToName(employeeData.employee);
-    let employeeEmail = employeeData.employee.email;
-    let employeeAvatar = employeeData.employee.avatar;
+    let employeeName = global.employeeToName(emp);
+    let employeeEmail = emp.email;
+    let employeeAvatar = global.employeeAvatarOrFallback(emp);
 
-    document.querySelector('.current-name').innerHTML = employeeName;
-    document.querySelector('#current-name').value = employeeName;
-    document.querySelector('.email').innerHTML = employeeEmail;
-    document.querySelector('.avatar').src = employeeAvatar;
+    accountCard.querySelectorAll('.current-name').forEach((e) => {e.innerHTML = employeeName});
+    accountCard.querySelector('.email').innerHTML = employeeEmail;
+    accountCard.querySelector('.avatar').src = employeeAvatar;
+    accountCard.querySelector('.role').innerText = employeeData.isManager ? "Manager" : "Employee";
+    accountCard.querySelector('.icon span').innerHTML = employeeData.isManager ? "admin_panel_settings" : "person";
 };
 
 setUserData();
