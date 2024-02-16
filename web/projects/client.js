@@ -11,6 +11,8 @@ var globalAssignments = [];
 var globalCurrentProject;
 var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
+let sortAttribute = 'lastAccessed'
+let sortDirection = 'asc';
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
 let statusButton = document.getElementById("status-column");
@@ -827,10 +829,10 @@ async function fetchAndRenderAllProjects() {
 
     let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
     projectTableHeaders.forEach((header) => {
-        let sortAttribute = header.getAttribute('data-attribute');
+        
         if (sortAttribute) { 
             header.addEventListener("click", (e) => {
-                let sortDirection = 'asc';
+                sortAttribute = header.getAttribute('data-attribute');
                 if (header.classList.contains("sorting-by")) {
                     header.classList.toggle("reverse");
                     sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
