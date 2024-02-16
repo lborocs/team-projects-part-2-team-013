@@ -2889,19 +2889,21 @@ pageBackButton.addEventListener('click', function() {
 });
 
 pageForwardButton.addEventListener('click', async function() {
-    const data = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
-    if (data.data.projects.length !== 0) {
-        pageBackButton.classList.remove('disabled');
-        currentPage++;
-        pageNumberElement.textContent = currentPage;
-        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-        console.log(`[pageForwardButton] currentPage: ${currentPage}`);
-        const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
-    }
+
+    pageBackButton.classList.remove('disabled');
+    currentPage++;
+    pageNumberElement.textContent = currentPage;
+    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+    console.log(`[pageForwardButton] currentPage: ${currentPage}`);
     await checkNextPage();
 });
 
 async function checkNextPage() {
+
+    if (pageBackButton.classList.contains('disabled')) {
+        return; // someone already cooked for us and we dont need the unneccesary api call
+    }
+
     const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
     if (nextData.data.projects.length === 0) {
         pageForwardButton.classList.add('disabled');
@@ -2910,7 +2912,7 @@ async function checkNextPage() {
     }
 }
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 10, currentPage = 1) {
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 25, currentPage = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
     const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
@@ -2926,6 +2928,13 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
     }
     
     clearProjectList();
+
+    if (data.data.projects.length < pageLimit) {
+        pageForwardButton.classList.add('disabled');
+    } else {
+        pageForwardButton.classList.remove('disabled');
+    }
+
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
     await Promise.all(data.data.projects.map(async (project) => {
         await projectObjectRenderAndListeners(project);
