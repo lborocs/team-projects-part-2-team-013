@@ -373,6 +373,9 @@
     outline: solid 2px #388bffaa;
 }
 
+.no-results {
+    margin-right: auto;
+}
 
 
 /* popup css modified from wiki. */

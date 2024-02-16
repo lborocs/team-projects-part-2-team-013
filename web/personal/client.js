@@ -401,7 +401,10 @@ async function deletePersonal(id) {
 function searchPersonals(query) {
     const searchResults = globalPersonalsList.filter(personal => personal.title.includes(query))
     unrenderAllPersonals()
+    activeList.innerHTML = ""
+    completedList.innerHTML = ""
     searchResults.forEach(personal => renderPersonal(personal.itemID))
+    return searchResults
 }
 
 function sortPersonals() {
@@ -517,7 +520,19 @@ titleHeaders.forEach((title) => {
 })
 
 personalsSearch.addEventListener('input', (e) => {
-    searchPersonals(e.target.value)
+    const result = searchPersonals(e.target.value)
+
+    const completed = result.filter(personal => personal.state === 1).length
+    const active = result.length - completed
+
+    if (active === 0) {
+        activeList.innerHTML = `<div class="no-results">We couldn't find any matches.</div>`
+    }
+    if (completed === 0) {
+        completedList.innerHTML = `<div class="no-results">We couldn't find any matches.</div>`
+    }
+
+
 })
 
 personalsSortDropdown.addEventListener("click", () => {
