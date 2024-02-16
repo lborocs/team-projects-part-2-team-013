@@ -262,31 +262,6 @@ class GlobalEmployeeRequest {
 
 }
 
-// const settings = {
-//     async get() {
-//         const response = await fetch('/employee/meta.php/globalsettings');
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-//         return await response.json();
-//     },
-
-//     async put(settings) {
-//         const response = await fetch('/employee/meta.php/globalsettings', {
-//             method: 'PUT',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(settings)
-//         });
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-//     }
-// };
-
-// export default globalSettings;
-
 const DEFAULT_PREFERENCES = {
     "sidebarisopen": false,
     "taskview": "Never",
