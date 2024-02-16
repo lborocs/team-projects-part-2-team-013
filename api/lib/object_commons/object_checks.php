@@ -152,7 +152,7 @@ function object_check_task_edit_validation(RequestContext $ctx, array $resource_
 
     // check if we are only editing state
 
-    if (count($data) == 1 && array_key_exists("status", $data)) {
+    if (count($data) == 1 && array_key_exists("taskStatus", $data)) {
 
         // if we are only editing state then they only need to be a user
         if ($ctx->task->assignedTo == $bin_id) {
