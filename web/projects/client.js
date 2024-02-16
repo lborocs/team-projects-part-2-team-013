@@ -822,7 +822,7 @@ async function getProjectById(projID) {
 async function fetchAndRenderAllProjects() {
     setActivePane("select-projects-pane");
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
-    const data = await get_api('/project/project.php/projects');
+    const data = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log("[fetchAndRenderAllProjects] fetched projects");
 
     if (data.success == false) {
@@ -831,6 +831,7 @@ async function fetchAndRenderAllProjects() {
 
     clearProjectList();
     console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
+    console.log("[fetchAndRenderAllProjects] pageLimit is " + pageLimit)
 
     let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
     projectTableHeaders.forEach((header) => {
@@ -2623,7 +2624,7 @@ const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
     () => {
         let search = projectSearchInput.value;
         console.log("[RollingProjectSearch] starting search for", search);
-        searchAndRenderProjects(search);
+        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     },
     150
 );
@@ -2688,14 +2689,14 @@ pageForwardButton.addEventListener('click', function() {
     console.log(`[pageForwardButton] currentPage: ${currentPage}`);
 });
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',limit = 10, page = 1, ) {
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 10, currentPage = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
-    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${limit}&page=${page}`);
+    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
-    console.log(`[searchAndRenderProjects(${page})] page`);
-    console.log(`[searchAndRenderProjects(${limit})] limit`);
+    console.log(`[searchAndRenderProjects(${currentPage})] page`);
+    console.log(`[searchAndRenderProjects(${pageLimit})] limit`);
     console.log(data);
     console.log('.project-row.selected');
 
