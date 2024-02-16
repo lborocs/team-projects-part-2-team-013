@@ -947,7 +947,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     }
 
     taskRow.innerHTML = `
-        <td class="${stateClass}">
+        <td class="${stateClass} td-class">
             <div class="dropdown status-cell" id="list-task-status" tabindex="0">
                 <span class="material-symbols-rounded">${icon}</span>
                 <div class="dropdown-text">${statusText}</div>
@@ -957,9 +957,9 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
                     </span>
                 </div>
                 <div class="dropdown-menu">
-                    <div class="dropdown-option" id="list-not-started">Not Started</div>
-                    <div class="dropdown-option" id="list-in-progress">In Progress</div>
-                    <div class="dropdown-option" id="list-finished">Finished</div>
+                    <div class="dropdown-option" id="dropdown-not-started">Not Started</div>
+                    <div class="dropdown-option" id="dropdown-in-progress">In Progress</div>
+                    <div class="dropdown-option" id="dropdown-finished">Finished</div>
                 </div>
             </div>
         </td>
@@ -1001,45 +1001,59 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         `;
     }
 
+    taskTableBody.appendChild(taskRow);
+    taskTableBody.appendChild(listAddRow);
+    calculateTaskCount();
+    setupDropdownEventListeners(taskRow);
+}
+
+function setupDropdownEventListeners(taskRow) {
     let listTaskStatus = taskRow.querySelector("#list-task-status");
-    let listNotStarted = taskRow.querySelector("#list-not-started");
-    let listInProgress = taskRow.querySelector("#list-in-progress");
-    let listFinished = taskRow.querySelector("#list-finished");
-    let projID = globalCurrentProject.projID;
+    let dropdownNotStarted = taskRow.querySelector("#dropdown-not-started");
+    let dropdownInProgress = taskRow.querySelector("#dropdown-in-progress");
+    let dropdownFinished = taskRow.querySelector("#dropdown-finished");
 
     listTaskStatus.addEventListener("click", () => {
         listTaskStatus.classList.toggle("open")
-    })
-    
+    });
+
     document.addEventListener("click", (e) => {
         if (!listTaskStatus.contains(e.target)) {
             listTaskStatus.classList.remove("open")
         }
     });
-    
-    listNotStarted.addEventListener("click", () => {
+
+    dropdownNotStarted.addEventListener("click", () => {
         listTaskStatus.querySelector(".dropdown-text").innerText = "Not Started";
         taskRow.setAttribute("data-state", 0);
-        taskRow.classList.remove("in-progress", "finished");
-        taskRow.classList.add("not-started");
-    })
-    
-    listInProgress.addEventListener("click", () => {
+        let tdElement = taskRow.querySelector(".td-class");
+        tdElement.classList.remove("in-progress", "finished");
+        tdElement.classList.add("not-started");
+
+        let icon = taskRow.querySelector(".material-symbols-rounded");
+        icon.innerHTML = "push_pin";
+    });
+
+    dropdownInProgress.addEventListener("click", () => {
         listTaskStatus.querySelector(".dropdown-text").innerText = "In Progress";
         taskRow.setAttribute("data-state", 1);
-        taskRow.classList.remove("not-started", "finished");
-        taskRow.classList.add("in-progress");
-    })
-    
-    listFinished.addEventListener("click", () => {
+        let tdElement = taskRow.querySelector(".td-class");
+        tdElement.classList.remove("not-started", "finished");
+        tdElement.classList.add("in-progress");
+        let icon = taskRow.querySelector(".material-symbols-rounded");
+        icon.innerHTML = "timeline";
+    });
+
+    dropdownFinished.addEventListener("click", () => {
         listTaskStatus.querySelector(".dropdown-text").innerText = "Finished";
         taskRow.setAttribute("data-state", 2);
-        taskRow.classList.remove("not-started", "in-progress");
-        taskRow.classList.add("finished");
-    })
-    taskTableBody.appendChild(taskRow);
-    taskTableBody.appendChild(listAddRow);
-    calculateTaskCount();
+        let tdElement = taskRow.querySelector(".td-class");
+        tdElement.classList.remove("not-started", "in-progress");
+        tdElement.classList.add("finished");
+
+        let icon = taskRow.querySelector(".material-symbols-rounded");
+        icon.innerHTML = "check_circle";
+    });
 }
 
 sortArray.forEach((sortObject) => {
@@ -1098,7 +1112,6 @@ sortArray.forEach((sortObject) => {
         animate(document.querySelector(".tasktable-body"), "flash");
     })
 })
-
 
 
 function sortByCreatedAt(tasks, descending) {
