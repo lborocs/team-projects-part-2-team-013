@@ -1,3 +1,4 @@
+import { search } from "../global-topbar.js";
 import * as global from "../global-ui.js";
 import { animate, getEmployeesById } from "../global-ui.js";
 
@@ -813,47 +814,32 @@ async function getProjectById(projID) {
 async function fetchAndRenderAllProjects() {
     setActivePane("select-projects-pane");
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
-    const data = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
-    console.log("[fetchAndRenderAllProjects] fetched projects");
-
-    if (data.success == false) {
-        return
-    }
-
-    clearProjectList();
-    console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
-    console.log("[fetchAndRenderAllProjects] pageLimit is " + pageLimit)
-
-    await checkNextPage();
+    
 
     let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
     projectTableHeaders.forEach((header) => {
         
-        if (sortAttribute) { 
-            header.addEventListener("click", (e) => {
-                sortAttribute = header.getAttribute('data-attribute');
-                if (header.classList.contains("sorting-by")) {
-                    header.classList.toggle("reverse");
-                    sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
-                } else {
-                    projectTableHeaders.forEach((header) => {
-                        header.classList.remove("sorting-by", "reverse");
-                    });
-                    header.classList.add("sorting-by");
-                    sortDirection = 'asc';
-                }
-                currentPage = 1;
-                pageBackButton.classList.add("disabled");
-                pageNumberElement.textContent = currentPage;
-                searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-            });
-        }
+        header.addEventListener("click", (e) => {
+            sortAttribute = header.getAttribute('data-attribute');
+            if (header.classList.contains("sorting-by")) {
+                header.classList.toggle("reverse");
+                sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
+            } else {
+                projectTableHeaders.forEach((header) => {
+                    header.classList.remove("sorting-by", "reverse");
+                });
+                header.classList.add("sorting-by");
+                sortDirection = 'asc';
+            }
+            currentPage = 1;
+            pageBackButton.classList.add("disabled");
+            pageNumberElement.textContent = currentPage;
+            searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+        });
     });
 
-    await Promise.all(data.data.projects.map( async (project) => {
-        await projectObjectRenderAndListeners(project);
-    }));
-    return data.data.projects
+    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+
 }
 
 
@@ -2859,7 +2845,7 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 
 
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
-    searchAndRenderProjects(projectSearchInput.value = "", sortAttribute, sortDirection, pageLimit, currentPage);
+    searchAndRenderProjects(projectSearchInput, sortAttribute, sortDirection, pageLimit, currentPage);
     startOrRollProjectSearchTimeout();
 
 })
@@ -3061,8 +3047,8 @@ view100.addEventListener("click", () => {
 async function getProjectPreferences() {
     const prefSort = await global.preferences.get('projectSort');
     const prefDirection = await global.preferences.get('projectOrder');
-    const attributeSearch = prefSort.or_default();
-    const sortDirection = prefDirection.or_default();
+    sortAttribute = prefSort.or_default();
+    sortDirection = prefDirection.or_default();
     let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
     sortColumn.classList.add('sorting-by');
     if (sortDirection === 'asc') {
@@ -3070,8 +3056,8 @@ async function getProjectPreferences() {
     } else {
         sortColumn.classList.add('desc');
     }
-    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${projectSort}`);
-    console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${projectOrder}`);
+    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${attributeSearch}`);
+    console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
 }
 
 getProjectPreferences();
