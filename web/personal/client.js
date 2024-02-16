@@ -6,6 +6,7 @@ import * as global from "../global-ui.js";
     }
     content: null
     itemID: "530cc2b4e29490c2a2244bc2b4e29490"
+    dueDate: timestamp
     state: 0
     title: "Meet Linda for coffee"
 }
@@ -246,7 +247,7 @@ function renderDummyPersonal() {
         const titleInput = personalCard.querySelector('.title-text input')
         titleInput.focus()
         titleInput.addEventListener('input', (e) => {
-            if (e.target.value === "") {
+            if (e.target.value === "" || e.target.value.length > 250) {
                 personalCard.querySelector('.save').classList.add('disabled')
             } else {
                 personalCard.querySelector('.save').classList.remove('disabled')

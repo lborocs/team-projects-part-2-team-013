@@ -211,8 +211,11 @@
     .page-number {
         font-weight: 600;
         font-size: 14px;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
         color: var(--text-off-black, #0f0f0f);
         white-space: nowrap;
+        user-select: none;
     }
 }
 

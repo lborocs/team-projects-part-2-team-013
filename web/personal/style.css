@@ -333,6 +333,11 @@
 }
 
 #dummy {
+
+    .personal-content {
+        flex-grow: 1;
+    }
+    
     .dummy-add-icon {
         display: flex;
         flex-direction: row;
