@@ -117,10 +117,11 @@
 .list-container {
     display: flex;
     flex-direction: column;
-
     height: 100%;
+    width: calc(100% - 10px);
+    margin-left: auto;
     overflow-y: scroll;
-
+    
     .header {
         margin-left: 1rem;
         width: calc(100% - 2rem);
