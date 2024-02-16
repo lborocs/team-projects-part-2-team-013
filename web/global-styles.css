@@ -19,6 +19,7 @@
 
     --not-started-status-cell:  rgba(245,205,188,0.7);
     --not-started-status-cell-hover: rgba(245,205,188,1);
+    --not-started-status-cell-active: #ffcda8;
     --not-started-bg: rgba(252,245,242,0.7);
     --not-started-title-bg: rgb(250,222,201);
     --not-started-title-clr: rgb(33, 29, 26);
@@ -26,6 +27,7 @@
 
     --in-progress-status-cell: rgba(188,219,245,0.7);
     --in-progress-status-cell-hover: rgba(188,219,245,1);
+    --in-progress-status-cell-active: #a9d0fc;
     --in-progress-bg: rgba(241,248,251,0.7);
     --in-progress-title-bg: rgb(211,229,239);
     --in-progress-title-clr: rgb(24,51,71);
@@ -33,6 +35,7 @@
 
     --finished-status-cell: rgba(188,245,188,0.7);
     --finished-status-cell-hover: rgba(188,245,188,1);
+    --finished-status-cell-active: #adf0a9;
     --finished-bg: rgba(244,248,243,0.7);
     --finished-title-bg: rgb(219,237,219);
     --finished-title-clr: rgb(28,56,41);
@@ -801,4 +804,16 @@ button:hover {
 
 sup {
     line-height: 0;
+}
+
+.preference-alert {
+    color: white;
+    background-color: black;
+    border-radius: 5px;
+    padding: 8px;
+    display: inline-block;
+    font-size: 0.8em;
+    position: absolute;
+    bottom: 10px;
+    align-self: center;
 }

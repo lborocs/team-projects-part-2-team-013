@@ -262,11 +262,35 @@ class GlobalEmployeeRequest {
 
 }
 
+// const settings = {
+//     async get() {
+//         const response = await fetch('/employee/meta.php/globalsettings');
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+//         return await response.json();
+//     },
+
+//     async put(settings) {
+//         const response = await fetch('/employee/meta.php/globalsettings', {
+//             method: 'PUT',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(settings)
+//         });
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+//     }
+// };
+
+// export default globalSettings;
 
 const DEFAULT_PREFERENCES = {
     "sidebarisopen": false,
     "taskview": "Never",
-    "tasksort": "None",
+    "tasksort": "By Name",
     "taskorder": "Desc",
     "taskfilters.managermine": false,
     "taskfilters.group": false,
@@ -276,7 +300,7 @@ const DEFAULT_PREFERENCES = {
     "taskfilters.notstarted": false,
     "taskfilters.overdue": false,
     "taskfilters.notoverdue": false,
-    "projectsort": "None",
+    "projectsort": "By Name",
     "projectorder": "Desc",
     "projectfilters.managermine": false,
     "projectfilters.teamleader": false,
@@ -300,6 +324,17 @@ class PreferenceValue {
     }
 }
 
+function preferenceAlert() {
+    let main = document.querySelector('.main');
+    let alertDiv = document.createElement('div');
+    alertDiv.classList.add('preference-alert');
+    alertDiv.innerText = 'Preferences Saved';
+    main.appendChild(alertDiv);
+    console.log("[preferenceAlert] alert triggered");
+    setTimeout(() => {
+        alertDiv.classList.add('fade-1000ms');
+    }, 200);
+}
 
 class PreferenceStore {
 
@@ -322,6 +357,7 @@ class PreferenceStore {
 
     async save() {
         await put_api("/employee/meta.php/preferences", {preferences: Object.fromEntries(this.store)});
+        preferenceAlert()
     }
 
     async _fill() {

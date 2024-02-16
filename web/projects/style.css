@@ -336,6 +336,7 @@
     width: calc(100% - 2em);
     align-items: center;
     gap: 1em;
+    margin-bottom: 0.75em;
     position: sticky;
     top: 0;
     color: #555555;
@@ -775,7 +776,7 @@
     overflow-x: hidden;
     display: grid;
     padding: 1em;
-    padding-top: 0.75em;
+    padding-top: 0;
     border-radius: 5px;
     &::-webkit-scrollbar-track {
         background-color: rgba(0,0,0,0);
@@ -1017,7 +1018,24 @@
     padding-bottom: 0.25em;
     .status-cell{
         background-color: var(--not-started-status-cell, rgba(245, 205, 188, 0.7));
-    }    
+        border: none;
+        border-radius: 4px;
+        
+        .dropdown-chevron {
+            color: var(--not-started-title-clr);
+        }
+    }
+    
+    .status-cell:hover {
+        background-color: var(--not-started-status-cell-hover, rgba(245, 205, 188, 0.9));
+        transition-duration: 0.1s;
+    }
+
+    .status-cell:active {
+        background-color: var(--not-started-status-cell-active);
+        transition-duration: 0.05s;
+    }
+
 }
 
 .in-progress {
@@ -1027,6 +1045,22 @@
     padding-bottom: 0.25em;
     .status-cell{
         background-color: var(--in-progress-status-cell, rgba(188, 219, 245, 0.7));
+        border: none;
+        border-radius: 4px;
+
+        .dropdown-chevron {
+            color: var(--in-progress-title-clr);
+        }
+    }
+
+    .status-cell:hover {
+        background-color: var(--in-progress-status-cell-hover, rgba(188, 219, 245, 0.9));
+        transition-duration: 0.1s;
+    }
+
+    .status-cell:active {
+        background-color: var(--in-progress-status-cell-active);
+        transition-duration: 0.05s;
     }
     
 }
@@ -1038,7 +1072,24 @@
     padding-bottom: 0.25em;
     .status-cell{
         background-color: var(--finished-status-cell, rgba(188, 245, 188, 0.7));
+        border: none;
+        border-radius: 4px;
+
+        .dropdown-chevron {
+            color: var(--finished-title-clr);
+        }
     }
+
+    .status-cell:hover {
+        background-color: var(--finished-status-cell-hover, rgba(188, 245, 188, 0.9));
+        transition-duration: 0.1s;
+    }
+
+    .status-cell:active {
+        background-color: var(--finished-status-cell-active);
+        transition-duration: 0.05s;
+    }
+
 }
 
 .status-cell {
@@ -1046,16 +1097,17 @@
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
-    gap: 0.25em;
+    /* gap: 0.25em; */
     white-space: nowrap;
     height: 100%;
-    width: 8rem;
+    width: 10rem;
     padding: 0.25em;
     border-radius: 4px;
     font-weight: 500;
 
     & span {
         font-size: 18px;
+        user-select: none;
     }
 }
 

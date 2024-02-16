@@ -899,15 +899,14 @@ function calculateTaskCount() {
 }
 
 function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours, assignments = []) {
-    console.log("[renderTaskInList] renering task in list")
-    
+    console.log("[renderTaskInList] rendering task in list")
 
     let taskRow = document.createElement("tr");
     taskRow.classList.add("taskRow");
 
-    //set id to the task id
+    // set id to the task id
     taskRow.setAttribute("id", ID);
-    //add the parameters as html data attributes
+    // add the parameters as html data attributes
     taskRow.setAttribute("data-desc", desc);
     taskRow.setAttribute("data-date", dueDate);
     taskRow.setAttribute("data-assignee", assignee);
@@ -937,10 +936,19 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 
     taskRow.innerHTML = `
         <td class="${stateClass}">
-            <div class="status-cell">
-                <span class="material-symbols-rounded">
-                    ${icon}
-                </span> ${statusText}
+            <div class="dropdown status-cell" id="list-task-status" tabindex="0">
+                <span class="material-symbols-rounded">${icon}</span>
+                <div class="dropdown-text">${statusText}</div>
+                <div class="dropdown-chevron">
+                    <span class="material-symbols-rounded">
+                        expand_more
+                    </span>
+                </div>
+                <div class="dropdown-menu">
+                    <div class="dropdown-option" id="list-not-started">Not Started</div>
+                    <div class="dropdown-option" id="list-in-progress">In Progress</div>
+                    <div class="dropdown-option" id="list-finished">Finished</div>
+                </div>
             </div>
         </td>
     `;
@@ -949,7 +957,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         <td class="title">
             ${title}
         </td>
-    `; 
+    `;
 
     if (dueDate === "") {
         taskRow.innerHTML += `
@@ -973,7 +981,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         `;
     } else {
         console.log("[renderTaskInList] assignments:" + assignments)
-        
 
         taskRow.innerHTML += `
             <td>
@@ -983,7 +990,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     }
 
     taskTableBody.appendChild(taskRow);
-    //move the add task button to the bottom
+    // move the add task button to the bottom
     taskTableBody.appendChild(listAddRow);
     calculateTaskCount();
 }

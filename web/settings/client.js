@@ -55,7 +55,7 @@ systemTab.addEventListener('click', () => {
 //dropdown menu event listeners
 
 document.addEventListener('click', function(event) {
-    menus.forEach(({ optionsId }) => {
+    [...preferencesMenus, ...globalSettingsMenus].forEach(({ optionsId }) => {
         let options = document.querySelector(optionsId);
         if (!options.contains(event.target)) {
             options.classList.remove('open');
@@ -63,12 +63,13 @@ document.addEventListener('click', function(event) {
     });
 });
 
+let globalSettingsMenus = [
+    { selector: '.avatar-option', textId: '#avatar-text', settingKey: 'avatar', optionsId: '#avatar-options' },
+    { selector: '.posting-option', textId: '#posting-text', settingKey: 'posting', optionsId: '#posting-options' },
+    { selector: '.tags-option', textId: '#tags-text', settingKey: 'tags', optionsId: '#tags-options' },
+];
 
-//Array to recursively add event listeners to dropdown menus
-let menus = [
-    { selector: '.avatar-option', textId: '#avatar-text', preferenceKey: 'avatar', optionsId: '#avatar-options' },
-    { selector: '.posting-option', textId: '#posting-text', preferenceKey: 'posting', optionsId: '#posting-options' },
-    { selector: '.tags-option', textId: '#tags-text', preferenceKey: 'tags', optionsId: '#tags-options' },
+let preferencesMenus = [
     { selector: '.list-option', textId: '#list-text', preferenceKey: 'taskview', optionsId: '#list-options' },
     { selector: '.sort-projects-type', textId: '#sort-projects-type-text', preferenceKey: 'projectsort', optionsId: '#sort-projects-type' },
     { selector: '.sort-projects-direction-option', textId: '#sort-projects-direction-text', preferenceKey: 'projectorder', optionsId: '#sort-projects-direction' },
@@ -76,9 +77,7 @@ let menus = [
     { selector: '.sort-tasks-direction-option', textId: '#sort-tasks-direction-text', preferenceKey: 'taskorder', optionsId: '#sort-tasks-direction' },
 ];
 
-
-
-menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
+preferencesMenus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
     let menuOptions = document.querySelectorAll(selector);
     menuOptions.forEach((option) => {
         option.addEventListener('click', async (event) => {
@@ -92,7 +91,7 @@ menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
 
     let options = document.querySelector(optionsId);
     options.addEventListener('click', (event) => {
-        menus.forEach(({ optionsId: otherOptionsId }) => {
+        preferencesMenus.forEach(({ optionsId: otherOptionsId }) => {
             if (optionsId !== otherOptionsId) {
                 document.querySelector(otherOptionsId).classList.remove('open');
             }
@@ -103,8 +102,7 @@ menus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
 });
 
 window.addEventListener('load', async () => {
-
-    menus.forEach(async ({ textId, preferenceKey }) => {
+    preferencesMenus.forEach(async ({ textId, preferenceKey }) => {
         const pref = await global.preferences.get(preferenceKey);
         document.querySelector(textId).innerHTML = pref.or_default();
     });
@@ -119,6 +117,9 @@ deleteAccountButton.addEventListener('click', () => {
             console.log('Delete account cancelled');
         })
 });
+
+
+
 
 
 
