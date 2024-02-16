@@ -3027,6 +3027,19 @@ async function applySortingPreferences() {
 //     });
 // });
 
+async function handleViewClick(limit) {
+    projectsPerPageDropdown.querySelector(".dropdown-text").innerText = limit.toString();
+    pageLimit = limit;
+    currentPage = 1;
+    console.log(`[view${limit}] limit: ${pageLimit}`);
+    await checkNextPage();
+}
+
+view10.addEventListener("click", () => handleViewClick(10));
+view25.addEventListener("click", () => handleViewClick(25));
+view50.addEventListener("click", () => handleViewClick(50));
+view100.addEventListener("click", () => handleViewClick(100));
+
 projectsPerPageDropdown.addEventListener("click", () => {
     projectsPerPageDropdown.classList.toggle("open")
 })
