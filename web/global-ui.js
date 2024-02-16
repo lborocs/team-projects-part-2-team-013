@@ -7,7 +7,6 @@ import * as topbar from "./global-topbar.js";
 //global variables
 export var notifications = []
 export var GLOBAL_LAST_ACTIVE = new Date();
-var globalMutexes = new Map();
 
 export const sidebarContainer = document.querySelector('.sidebar-container');
 export const topbarContainer = document.querySelector('.topbar-container');
@@ -44,6 +43,10 @@ export function setSetting(key, value) {
 
 caches.open("employees");
 
+
+var globalMutexes = new Map();
+var waiters = new Map();
+
 export function takeMutex(mutex) {
     const id = Math.random().toString(16).substring(2);
     if (globalMutexes.has(mutex)) {
@@ -54,9 +57,35 @@ export function takeMutex(mutex) {
     return id;
 }
 
+
+export function waitMutex(scope) {
+
+    return new Promise((resolve) => {
+       if (!globalMutexes.has(scope) || globalMutexes.get(scope).size == 0) {
+           resolve();
+       }
+
+       else {
+           if (waiters.has(scope)) {
+               waiters.get(scope).push(resolve);
+           } else {
+               waiters.set(scope, [resolve]);
+           }
+       }
+        
+    });
+
+}
+
 export function releaseMutex(mutex, id) {
     if (globalMutexes.has(mutex)) {
         globalMutexes.get(mutex).delete(id);
+    }
+
+    if (waiters.has(mutex) && globalMutexes.get(mutex).size == 0) {
+        waiters.get(mutex).forEach((resolve) => {
+            resolve();
+        });
     }
 }
 
@@ -262,30 +291,7 @@ class GlobalEmployeeRequest {
 
 }
 
-// const settings = {
-//     async get() {
-//         const response = await fetch('/employee/meta.php/globalsettings');
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-//         return await response.json();
-//     },
 
-//     async put(settings) {
-//         const response = await fetch('/employee/meta.php/globalsettings', {
-//             method: 'PUT',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(settings)
-//         });
-//         if (!response.ok) {
-//             throw new Error(`HTTP error! status: ${response.status}`);
-//         }
-//     }
-// };
-
-// export default globalSettings;
 
 const DEFAULT_PREFERENCES = {
     "sidebarisopen": false,
@@ -324,18 +330,6 @@ class PreferenceValue {
     }
 }
 
-function preferenceAlert() {
-    let main = document.querySelector('.main');
-    let alertDiv = document.createElement('div');
-    alertDiv.classList.add('preference-alert');
-    alertDiv.innerText = 'Preferences Saved';
-    main.appendChild(alertDiv);
-    console.log("[preferenceAlert] alert triggered");
-    setTimeout(() => {
-        alertDiv.classList.add('fade-1000ms');
-    }, 200);
-}
-
 class PreferenceStore {
 
     store;
@@ -346,7 +340,7 @@ class PreferenceStore {
         this._lazy = true;
         this.store = new Map();
         // rolling timeout to save 2s after no changes
-        this.saver = new ReusableRollingTimeout(() => {this.save()}, 2000);
+        this.saver = new ReusableRollingTimeout(() => {this.save()}, 1000);
 
         window.addEventListener('beforeunload', async () => {
             this.saver.inner.cancel();
@@ -357,16 +351,27 @@ class PreferenceStore {
 
     async save() {
         await put_api("/employee/meta.php/preferences", {preferences: Object.fromEntries(this.store)});
-        preferenceAlert()
+        document.dispatchEvent(new Event("preferencesave"));
     }
 
     async _fill() {
+
+        if (checkMutex("preferenceFill")) {
+            console.log("[PreferenceStore] someone else is filling the preferences, waiting...")
+            await waitMutex("preferenceFill");
+            return;
+        }
+        const handle = takeMutex("preferenceFill");
+
+
         const res = await get_api("/employee/meta.php/preferences");
         if (res.success) {
             console.log("[PreferenceStore] preferences fetched successfully")
             this.store = new Map(Object.entries(res.data.preferences))
             this._lazy = false;
+            releaseMutex("preferenceFill", handle);
         } else {
+            releaseMutex("preferenceFill", handle);
             throw Error(`failed to get preferences (${res.error.code}) ${res.error.message}`)
         }
     }
@@ -425,12 +430,25 @@ class GlobalSettings {
 
 
     async fill() {
+
+        if (checkMutex("globalSettingsFill")) {
+            console.log("[GlobalSettings] someone else is filling the settings, waiting...")
+            await waitMutex("globalSettingsFill");
+            return;
+        }
+        const handle = takeMutex("globalSettingsFill");
+        console.log("[GlobalSettings] taking mutex")
+
+
+
         const res = await get_api("/employee/meta.php/globalsettings");
         if (res.success) {
             console.log("[GlobalSettings] settings fetched successfully")
             this._inner = res.data.settings;
             this._lazy = false;
+            releaseMutex("globalSettingsFill", handle);
         } else {
+            releaseMutex("globalSettingsFill", handle);
             throw Error(`failed to get settings (${res.error.code}) ${res.error.message}`)
         }
     }

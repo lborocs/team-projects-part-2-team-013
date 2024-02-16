@@ -6,6 +6,7 @@ const systemTab = document.querySelector('.system');
 
 const tabs = document.querySelectorAll('.tab');
 
+const accountCard = document.querySelector('.account-card');
 const accountOptions = document.querySelector('.account-options');
 const preferencesOptions = document.querySelector('.preferences-options');
 const systemOptions = document.querySelector('.system-options');
@@ -64,9 +65,9 @@ document.addEventListener('click', function(event) {
 });
 
 let globalSettingsMenus = [
-    { selector: '.avatar-option', textId: '#avatar-text', settingKey: 'avatar', optionsId: '#avatar-options' },
-    { selector: '.posting-option', textId: '#posting-text', settingKey: 'posting', optionsId: '#posting-options' },
-    { selector: '.tags-option', textId: '#tags-text', settingKey: 'tags', optionsId: '#tags-options' },
+    { selector: '.avatar-option', textId: '#avatar-text', settingKey: 'avatarsEnabled', optionsId: '#avatar-options' },
+    { selector: '.posting-option', textId: '#posting-text', settingKey: 'postsEnabled', optionsId: '#posting-options' },
+    { selector: '.tags-option', textId: '#tags-text', settingKey: 'tagsEnabled', optionsId: '#tags-options' },
 ];
 
 let preferencesMenus = [
@@ -101,12 +102,26 @@ preferencesMenus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
     });
 });
 
+const settingsMap = {
+    'For Nobody': 2,
+    'For Managers Only': 1,
+    'For Everybody': 0
+};
+
+const reversedSettingsMap = {
+    2 : 'For Nobody',
+    1 : 'For Managers Only',
+    0 : 'For Everybody'
+}
+
 globalSettingsMenus.forEach(({ selector, textId, settingKey, optionsId }) => {
     let menuOptions = document.querySelectorAll(selector);
     menuOptions.forEach((option) => {
         option.addEventListener('click', async (event) => {
+
             let selectedOption = option.textContent;
-            await global.settings.set(settingKey, selectedOption);
+            let settingValue = settingsMap[selectedOption];
+            await global.siteSettings.set(settingKey, settingValue);
             document.querySelector(textId).innerHTML = selectedOption;
             document.querySelector(optionsId).classList.remove('open');
             event.stopPropagation();
@@ -134,8 +149,11 @@ window.addEventListener('load', async () => {
     });
 
     globalSettingsMenus.forEach(async ({ textId, settingKey }) => {
-        const setting = await global.settings.get(settingKey);
-        document.querySelector(textId).innerHTML = setting
+        const setting = await global.siteSettings.get(settingKey);
+        console.log('setting:', setting);
+        const settingValue = reversedSettingsMap[setting];
+        console.log('settingValue:', settingValue);
+        document.querySelector(textId).innerHTML = settingValue;
     });
 });
 
@@ -231,23 +249,44 @@ async function getEmployee() {
 
 async function setUserData() {
     let employeeData = await getEmployee();
-    console.log(employeeData);
+    console.log("[setUserData] got employee", employeeData);
+    let emp = employeeData.employee;
     
-    let employeeName = global.employeeToName(employeeData.employee);
-    let employeeEmail = employeeData.employee.email;
-    let employeeAvatar = employeeData.employee.avatar;
+    let employeeName = global.employeeToName(emp);
+    let employeeEmail = emp.email;
+    let employeeAvatar = global.employeeAvatarOrFallback(emp);
 
-    document.querySelector('.current-name').innerHTML = employeeName;
-    document.querySelector('#current-name').value = employeeName;
-    document.querySelector('.email').innerHTML = employeeEmail;
-    document.querySelector('.avatar').src = employeeAvatar;
+    const isManager = employeeData.isManager != 0;
+
+    accountOptions.querySelectorAll('.current-name').forEach((e) => {e.innerHTML = employeeName});
+    accountCard.querySelector('.email').innerHTML = employeeEmail;
+    accountCard.querySelector('.avatar').src = employeeAvatar;
+    accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
+    accountCard.querySelector('.icon span').innerHTML = isManager ? "admin_panel_settings" : "person";
 };
 
 setUserData();
 
 
+document.addEventListener("preferencesave", async (event) => {
+    preferenceAlert();
+});
+    
+
+function preferenceAlert() {
+    let main = document.querySelector('.main');
+    let alertDiv = document.createElement('div');
+    alertDiv.classList.add('preference-alert');
+    alertDiv.innerText = 'Preferences Saved';
+    main.appendChild(alertDiv);
+    console.log("[preferenceAlert] alert triggered");
+    setTimeout(() => {
+        alertDiv.classList.add('fade-1000ms');
+    }, 200);
+}
 
 
 
-global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
+
+global.setBreadcrumb(["Settings", "Account"], ["./", '#' + "account"])
 

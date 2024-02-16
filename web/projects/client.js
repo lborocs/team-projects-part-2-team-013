@@ -841,7 +841,11 @@ async function fetchAndRenderAllProjects() {
                         header.classList.remove("sorting-by", "reverse");
                     });
                     header.classList.add("sorting-by");
+                    sortDirection = 'asc';
                 }
+                currentPage = 1;
+                pageBackButton.classList.add("disabled");
+                pageNumberElement.textContent = currentPage;
                 searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection);
             });
         }
@@ -2652,9 +2656,15 @@ pageBackButton.addEventListener('click', function() {
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage);
         console.log(`[pageForwardButton] currentPage: ${currentPage}`);
     }
+    if (currentPage === 1) {
+        pageBackButton.classList.add('disabled');
+    } else {
+        pageBackButton.classList.remove('disabled');
+    }
 });
 
 pageForwardButton.addEventListener('click', function() {
+    pageBackButton.classList.remove('disabled');
     currentPage++;
     pageNumberElement.textContent = currentPage;
     searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage);
