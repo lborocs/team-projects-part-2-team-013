@@ -92,7 +92,12 @@ Written/designed by aidan F223129
         }
       ]
     }
-    ``` 
+    ```
+- [x] **/employee/manager.php/employeeprojects/:EMP_ID:**
+  - GET (get another users projects they are in)
+      @me for your own projects, not all,
+      this route also supports the same searching as projects
+
 
 ## session.php
 
