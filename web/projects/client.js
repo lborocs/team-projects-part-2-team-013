@@ -841,7 +841,10 @@ async function fetchAndRenderAllProjects() {
                         header.classList.remove("sorting-by", "reverse");
                     });
                     header.classList.add("sorting-by");
+                    sortDirection = 'asc';
                 }
+                currentPage = 1;
+                pageNumberElement.textContent = currentPage;
                 searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection);
             });
         }
@@ -2618,7 +2621,7 @@ pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
         pageNumberElement.textContent = currentPage;
-        searchAndRenderProjects(projectSearchInput.value, undefined, undefined, currentPage);
+        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage);
         console.log(`[pageForwardButton] currentPage: ${currentPage}`);
     }
 });
@@ -2626,7 +2629,7 @@ pageBackButton.addEventListener('click', function() {
 pageForwardButton.addEventListener('click', function() {
     currentPage++;
     pageNumberElement.textContent = currentPage;
-    searchAndRenderProjects(projectSearchInput.value, undefined, undefined, currentPage);
+    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage);
     console.log(`[pageForwardButton] currentPage: ${currentPage}`);
 });
 
