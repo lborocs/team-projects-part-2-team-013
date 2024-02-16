@@ -16,6 +16,7 @@ const viewWeek = document.querySelector("#view-week")
 const viewMonth = document.querySelector("#view-month")
 const viewAll = document.querySelector("#view-all")
 
+
 let gridActionsQueue = []
 
 
@@ -741,6 +742,176 @@ async function addMetric() {
         console.log("[addTaskCloseButton] rejecting")
     });
 }
+
+
+//the amount of innerHTML here is crazy, will be refactored.
+function renderTableMetric() {
+
+    //first makes the card and table header and body
+    let metricCard = document.createElement("div");
+    metricCard.classList.add("metric-card");
+    metricCard.classList.add("non-canvas");
+
+    let metricTitle = document.createElement("div");
+    metricTitle.classList.add("metric-title");
+    metricTitle.innerHTML = `
+        <div class="title-text">
+            Task List
+        </div>
+        <div class="icon-button no-box context-menu">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    more_horiz
+                </span>
+            </div>
+        </div> 
+    `
+
+    let taskList = document.createElement("div");
+    taskList.classList.add("task-list");
+    let tasksTable = document.createElement("table");
+    tasksTable.id = "tasks-table";
+    tasksTable.innerHTML = `
+        <thead>
+            <tr>
+                <th>
+                    <div class="header-td">
+                        <div class="name">
+                            Name
+                        </div>
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                arrow_drop_down
+                            </span>
+                        </div>
+                    </div>
+                </th>
+                <th>
+                    <div class="header-td">
+                        <div class="name">
+                            Assignees
+                        </div>
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                arrow_drop_down
+                            </span>
+                        </div>
+                    </div>
+                </th>
+                <th class="status-column">
+                    <div class="header-td">
+                        <div class="name">
+                            Status
+                        </div>
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                arrow_drop_down
+                            </span>
+                        </div>
+                    </div>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+    `
+
+    let tasksTableBody = document.createElement("tbody");
+    tasksTable.appendChild(tasksTableBody);
+
+
+    //here is where the data actually comes in
+    let tasks = projectData.tasks.tasks;
+    let assignments = projectData.tasks.assignments;
+    console.log(assignments)
+    tasks.forEach(task => {
+        console.log(task)
+
+        let avatars = "";
+        assignments.forEach(assignment => {
+            if (assignment.task.taskID === task.taskID) {
+                let emp = projectData.employees.get(assignment.employee.empID);
+                avatars += `
+                    <div class="assignment">
+                        <img class="avatar" src="${global.employeeAvatarOrFallback(emp)}" alt="avatar">
+                    </div>
+                `
+            }
+        })
+
+        //this could be a function in global-ui.js
+        let statusClassName = "";
+        let statusIcon = "";
+        let statusText = "";
+        switch (task.state) {
+            case 0:
+                statusClassName = "not-started";
+                statusIcon = "push_pin";
+                statusText = "Not Started";
+                break;
+            case 1:
+                statusClassName = "in-progress";
+                statusIcon = "timeline";
+                statusText = "In Progress";
+                break;
+            case 2:
+                statusClassName = "finished";
+                statusIcon = "check_circle";
+                statusText = "Finished";
+                break;
+        }
+
+        let statusCell = `
+            <div class="status-cell">
+                <div class="icon">
+                    <span class="material-symbols-rounded">
+                        ${statusIcon}
+                    </span>
+                </div>
+                <div class="text">
+                    ${statusText}
+                </div>
+            </div>
+        `
+
+        let row = document.createElement("tr");
+        row.classList.add("task-row");
+        row.innerHTML = `
+            <td>
+                <span class="task-name">
+                    ${task.title}
+                </span>
+            </td>
+            <td>
+                <div class="task-assignees">
+                    ${avatars}
+                </div>
+            </td>
+            <td class=${statusClassName}>
+                <div class="${statusClassName}">
+                    ${statusCell}
+                </div>
+            </td>
+            <td>
+                <div class="icon-button no-box context-menu">
+                    <div class="button-icon">
+                        <span class="material-symbols-rounded">
+                            more_horiz
+                        </span>
+                    </div>
+                </div>
+            </td>
+        `
+        tasksTableBody.appendChild(row);
+    })
+
+    metricCard.appendChild(metricTitle);
+    taskList.appendChild(tasksTable);
+    metricCard.appendChild(taskList);
+    dashboardContainer.appendChild(metricCard);
+
+}
+
+renderTableMetric();
 
 
 
