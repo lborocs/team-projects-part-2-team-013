@@ -451,11 +451,21 @@
         color: var(--text-off-black, #0f0f0f);
         overflow-wrap: anywhere;
     }
+
+    .description-header {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
     .description {
         font-size: 1em;
         font-weight: 500;
         color: var(--text-off-black, #0f0f0f);
         overflow-wrap: anywhere;
+
+        & p {
+            margin-top: 0;
+        }
     }
     .team-leader {
         font-size: 1em;
@@ -540,15 +550,15 @@
     gap: 1em;
     padding: 0em;
     .title {
-        font-size: 1.25em;
+        font-size: 18px;
         font-weight: 700;
         color: var(--text-off-black, #0f0f0f);
         display: flex;
-        gap: 0.25em;
+        gap: 0.25rem;
     }
     .description {
-        font-size: 1em;
-        font-weight: 500;
+        font-size: 16px;
+        font-weight: 400;
         color: var(--text-off-black, #0f0f0f);
     }
     .date {
@@ -1643,10 +1653,6 @@
     padding-right: 0.3em;
 }
 
-#task-date {
-    padding-left: 0.4em;
-}
-
 .sidebar {
     box-shadow: 0 0 4px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
 }
@@ -1739,8 +1745,8 @@
 
 .explainer-description-container{
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.5em;
     height: 100%;
 }
