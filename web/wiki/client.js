@@ -6,6 +6,7 @@ var selectedTags = document.querySelectorAll('.tag.selected');
 var posts = document.querySelectorAll('.post');
 var selectedCategory = document.querySelector('input[name="category"]:checked');
 var selectedValue = selectedCategory.value;
+const searchInput = document.getElementById("inputField")
 
 var postsMap = new Map();
 
@@ -243,7 +244,7 @@ const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
     300
 );
 
-addEventListener("keydown", filterFromSearch)
+searchInput.addEventListener("input", filterFromSearch)
 
 function filterFromSearch() {
     projectSearchRollingTimeout.roll();
