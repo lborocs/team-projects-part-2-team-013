@@ -2822,3 +2822,28 @@ view100.addEventListener("click", () => {
     searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[view100] limit: ${pageLimit}`);
 })
+
+async function getProjectPreferences() {
+    try {
+        const prefSort = await global.preferences.get('projectSort');
+        const prefDirection = await global.preferences.get('projectOrder');
+        const attributeSearch = prefSort.or_default();
+        const sortDirection = prefDirection.or_default();
+
+        let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
+        sortColumn.classList.add('sorting-by');
+        if (sortDirection === 'asc') {
+            sortColumn.classList.add('asc');
+        } else {
+            sortColumn.classList.add('desc');
+        }
+
+
+        console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${projectSort}`);
+        console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${projectOrder}`);
+    } catch (error) {
+        console.error(`Failed to get preferences: ${error}`);
+    }
+}
+
+getProjectPreferences();
