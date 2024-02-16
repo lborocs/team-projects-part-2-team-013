@@ -3,6 +3,7 @@ import * as global from "../global-ui.js";
 const accountTab = document.querySelector('.account');
 const preferencesTab = document.querySelector('.preferences');
 const systemTab = document.querySelector('.system');
+const manageUsersTab = document.querySelector('.manage-users');
 
 const tabs = document.querySelectorAll('.tab');
 
@@ -10,11 +11,13 @@ const accountCard = document.querySelector('.account-card');
 const accountOptions = document.querySelector('.account-options');
 const preferencesOptions = document.querySelector('.preferences-options');
 const systemOptions = document.querySelector('.system-options');
+const manageUsersOptions = document.querySelector('.manage-users-options');
 
 accountTab.addEventListener('click', () => {
     accountOptions.classList.remove('norender');
     preferencesOptions.classList.add('norender');
     systemOptions.classList.add('norender');
+    manageUsersOptions.classList.add('norender');
 
     tabs.forEach(tab => {
         tab.classList.remove('active-tab');
@@ -29,6 +32,7 @@ preferencesTab.addEventListener('click', () => {
     accountOptions.classList.add('norender');
     preferencesOptions.classList.remove('norender');
     systemOptions.classList.add('norender');
+    manageUsersOptions.classList.add('norender');
 
     tabs.forEach(tab => {
         tab.classList.remove('active-tab');
@@ -43,6 +47,7 @@ systemTab.addEventListener('click', () => {
     accountOptions.classList.add('norender');
     preferencesOptions.classList.add('norender');
     systemOptions.classList.remove('norender');
+    manageUsersOptions.classList.add('norender');
 
     tabs.forEach(tab => {
         tab.classList.remove('active-tab');
@@ -51,6 +56,21 @@ systemTab.addEventListener('click', () => {
     systemTab.classList.add('active-tab');
 
     global.setBreadcrumb(["Settings", "System"], ["../", '#' + "system"])
+})
+
+manageUsersTab.addEventListener('click', () => {
+    accountOptions.classList.add('norender');
+    preferencesOptions.classList.add('norender');
+    systemOptions.classList.add('norender');
+    manageUsersOptions.classList.remove('norender');
+
+    tabs.forEach(tab => {
+        tab.classList.remove('active-tab');
+    })
+
+    manageUsersTab.classList.add('active-tab');
+
+    global.setBreadcrumb(["Settings", "Manage Users"], ["../", '#' + "manage-users"])
 })
 
 //dropdown menu event listeners
