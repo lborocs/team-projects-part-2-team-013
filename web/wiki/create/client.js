@@ -36,11 +36,7 @@ class Tag {
         if (this.tagID != 0){
             return
         }
-        try {
-            this.tagID = await this.createTag(this.name);
-        } catch (error) {
-            console.log("Error creating tag: ", error);
-        }
+        this.tagID = await this.createTag(this.name);
     }
 
     async createTag(tag){
@@ -54,10 +50,7 @@ class Tag {
             console.error("[getPostData] error making tag: ", result.data);
             return;
         }
-        result.then((result) => {
-            console.log("Tag created: ", result.data.tagID);
         return result.data.tagID;
-        });
     }
 
 }
@@ -91,7 +84,7 @@ tagsList.then((tagsList) => {
     let postID = getQueryParam();
     if (postID != "") {
         editing = true;
-        document.querySelector("#submitPostButton").innerHTML = 'Update post &nbsp <span class="material-symbols-rounded">done</span>';
+        document.querySelector("#submitButton").innerHTML = 'Update post &nbsp <span class="material-symbols-rounded">done</span>';
         document.querySelector("#title").innerHTML = "Edit Post";
         getPostData(postID).then((post) => {
             console.log(post);
@@ -109,8 +102,9 @@ tagsList.then((tagsList) => {
             else {
                 document.querySelector("#placeholderTag").classList.add("norender")
                 post.tags.forEach((tag) => {
-                    document.querySelector("#listOfTags").innerHTML += `<div class="tag" id="${tag}"><span class="material-symbols-rounded">sell</span>${tagsList.find(findTag(tag)).name}<span class="material-symbols-rounded" id="tagCloseButton">close</span></div>`
-                    addDeleteListener(document.getElementById(tag));
+                    temp = new Tag(tagsList.find(findTag(tag)).name, tag);
+                    currentTags.push(temp);
+                    temp.addTag();
                 });
             }
         });
@@ -156,34 +150,29 @@ if (event.key === "Enter") {
 async function createPost(data) {
     const response = await post_api("/wiki/post.php/post", data);
     console.log(response);
-    return response.postID
+    return response.data.postID
 }
 async function updatePost(postID, data) {
     const response = await patch_api("/wiki/post.php/post/" + postID, data);
     console.log(response);
 }
-async function updateTags(postID, data) {
-    const response = await put_api("/wiki/post.php/post/" + postID, data);
+async function updateTags(postID, data2) {
+    const response = await put_api("/wiki/post.php/post/" + postID + "/tags", data2);
     console.log(response);
 }
 
 function submitPost(){
     var title = document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value;
-    var body = quill.root.innerHTML;
-    //THIS CAN BE DONE WHEN TAGS ARE USED                          
+    var body = quill.root.innerHTML;                       
     var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
-    tagsToSubmit = [];
-
-    // Create an array of promises for each tag's checkTemp() method
     const checkTempPromises = currentTags.map((tag) => tag.checkTemp());
-
-    // Wait for all the promises to resolve
     Promise.all(checkTempPromises)
         .then(() => {
+            var tagsToSubmit = [];
             currentTags.forEach((tag) => {
                 tagsToSubmit.push(tag.tagID);
             });
-
+            console.log(tagsToSubmit);
             var data = {
                 "isTechnical": isTechnical + 0,
                 "title": title,
@@ -191,21 +180,28 @@ function submitPost(){
             };
             var data2 = {
                 "tags": tagsToSubmit,
-            };
+            }; 
+            console.log("Next bit is data2")
             console.log(data2);
-            console.log(data);
             if (editing) {
                 let postID = getQueryParam();
-                updatePost(postID, data);
-                updateTags(postID, data2);
+                updatePost(postID, data).then(() => {
+                updateTags(postID, data2).then(() => {
+                    window.location.href = "../";
+                });
+            });
             } else {
                 let postID = createPost(data);
                 postID.then((postID) => {
                     console.log(postID);
-                    updateTags(postID, data2);
+                    console.log("This is the post ID")
+                    console.log(data2);
+                    console.log("This is the data2")
+                    updateTags(postID, data2).then(() => {
+                        window.location.href = "../";
+                    });
                 });
             }
-            //window.location.href = "../";
         });
 }
 
