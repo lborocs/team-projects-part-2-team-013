@@ -2618,7 +2618,7 @@ pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
         pageNumberElement.textContent = currentPage;
-        searchAndRenderProjects(projectSearchInput.value, undefined, undefined, currentPage);
+        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage);
         console.log(`[pageForwardButton] currentPage: ${currentPage}`);
     }
 });
@@ -2626,7 +2626,7 @@ pageBackButton.addEventListener('click', function() {
 pageForwardButton.addEventListener('click', function() {
     currentPage++;
     pageNumberElement.textContent = currentPage;
-    searchAndRenderProjects(projectSearchInput.value, undefined, undefined, currentPage);
+    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, currentPage);
     console.log(`[pageForwardButton] currentPage: ${currentPage}`);
 });
 
