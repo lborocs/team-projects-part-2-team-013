@@ -241,7 +241,6 @@ if (event.key === "Enter") {
         tagExists.addTag();
         selectTags = selectTags.filter(tag => tag.tagID !== tagExists.tagID);
         tagExists.removeFromSelect();
-        organiseSelect();
     }
     else{
         tempTag = new Tag(tagContent, 0);
@@ -249,6 +248,7 @@ if (event.key === "Enter") {
         tempTag.addTag();
     }
     input.value = "";
+    organiseSelect();
     }
     else if (event.key === "Backspace" && input.value === "") {
         currentTags.pop().removeTag();
