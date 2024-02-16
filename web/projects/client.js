@@ -12,9 +12,9 @@ var globalCurrentProject;
 var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
 let sortAttribute = 'lastAccessed'
-let sortDirection = 'asc';
+let sortDirection = 'desc';
 let currentPage = 1;
-let pageLimit = 10;
+let pageLimit = 25;
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
 let statusButton = document.getElementById("status-column");
@@ -1564,13 +1564,11 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
             </a>
         </td>
         <td>
-            <a href="/projects/#${ID}">
-                <div class="icon-button no-box project-actions">
-                    <span class="material-symbols-rounded">
-                        more_horiz
-                    </span>
-                </div>
-            </a>
+            <div class="icon-button no-box project-actions context-menu">
+                <span class="material-symbols-rounded">
+                    more_horiz
+                </span>
+            </div>
         </td>
     `;
 
