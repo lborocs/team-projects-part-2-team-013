@@ -659,13 +659,11 @@ async function fetchTasks(projID) {
  * @param {Array} tasks 
  */
 async function renderTasks(tasks, update = RENDER_BOTH) {
-    console.error(tasks)
     clearRenderedTasks();
     await Promise.all(tasks.map((task) => {
         taskObjectRenderAll(task, update)
     }));
     setUpTaskEventListeners();
-    console.error(globalAssignments)
     await renderAssignments(globalAssignments);
 }
 
