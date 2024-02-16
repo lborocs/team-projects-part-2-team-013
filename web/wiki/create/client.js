@@ -3,6 +3,7 @@ const input = document.getElementById("input-tag");
 const submitButton = document.getElementById("submitButton");
 var editing = false;
 var currentTags = [];
+var selectTags = [];
 
 class Tag {
     constructor(name, tagID) {
@@ -53,6 +54,30 @@ class Tag {
         return result.data.tagID;
     }
 
+    addToSelect(){
+        const newSelectTag = document.createElement("div");
+        newTag.className = "name-card";
+        newTag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}`;
+        document.querySelector(".employee-list").appendChild(newSelectTag);
+        this.addSelectListener(newSelectTag);
+    }
+
+    addSelectListener(tag) {
+        tag.addEventListener("click", (event) => this.removeFromSelect(tag));
+    }
+
+    removeFromSelect(tag) {
+        document.querySelector(".employee-list").removeChild(tag);
+        selectTags = selectTags.filter(a => a.name !== this.name);
+    }
+
+    deRender(tag) {
+        tag.classList.add("norender");
+    }
+
+    render(tag) {
+        tag.classList.remove("norender");
+    }
 }
 
 
@@ -81,6 +106,9 @@ async function fetchTags() {
 
 let tagsList = fetchTags();
 tagsList.then((tagsList) => {
+    tagsList.forEach((tag) => {
+        selectTags.push(new Tag(tag.name, tag.tagID));
+    });
     let postID = getQueryParam();
     if (postID != "") {
         editing = true;
