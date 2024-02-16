@@ -1,3 +1,4 @@
+import { search } from "../global-topbar.js";
 import * as global from "../global-ui.js";
 import { animate, getEmployeesById } from "../global-ui.js";
 
@@ -632,29 +633,9 @@ function findNext(container, y) {
  */
 async function fetchTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
-    console.log("[fetchTasks] fetched tasks for " + projID);
-    // if (data.success != true) {
-    //     return
-    // }
-    // console.log(`tasks have been fetched for ${projID}`)
-    // if (!data.data.contains_assignments) {
-    //     return
-    // }
-    // globalAssignments = data.data.assignments;
-
-    //     data.data.tasks.forEach((task) => {
-    //         task.assignments = [];
-    //         data.data.assignments.forEach((assignment) => {
-    //             if (assignment.task.taskID === task.taskID) {
-    //                 task.assignments.push(assignment.employee.empID);
-    //             }
-    //         });
-    //     });
-    // globalTasksList = data.data.tasks;
-    // return data.data.tasks
 
     if (data.success == true) {
-        console.log(`tasks have been fetched for ${projID}`)
+        console.log(`[fetchTasks] tasks have been fetched for ${projID}`)
         if (data.data.contains_assignments) {
             globalAssignments = data.data.assignments;
 
@@ -833,45 +814,32 @@ async function getProjectById(projID) {
 async function fetchAndRenderAllProjects() {
     setActivePane("select-projects-pane");
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
-    const data = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
-    console.log("[fetchAndRenderAllProjects] fetched projects");
-
-    if (data.success == false) {
-        return
-    }
-
-    clearProjectList();
-    console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
-    console.log("[fetchAndRenderAllProjects] pageLimit is " + pageLimit)
+    
 
     let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
     projectTableHeaders.forEach((header) => {
         
-        if (sortAttribute) { 
-            header.addEventListener("click", (e) => {
-                sortAttribute = header.getAttribute('data-attribute');
-                if (header.classList.contains("sorting-by")) {
-                    header.classList.toggle("reverse");
-                    sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
-                } else {
-                    projectTableHeaders.forEach((header) => {
-                        header.classList.remove("sorting-by", "reverse");
-                    });
-                    header.classList.add("sorting-by");
-                    sortDirection = 'asc';
-                }
-                currentPage = 1;
-                pageBackButton.classList.add("disabled");
-                pageNumberElement.textContent = currentPage;
-                searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-            });
-        }
+        header.addEventListener("click", (e) => {
+            sortAttribute = header.getAttribute('data-attribute');
+            if (header.classList.contains("sorting-by")) {
+                header.classList.toggle("reverse");
+                sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
+            } else {
+                projectTableHeaders.forEach((header) => {
+                    header.classList.remove("sorting-by", "reverse");
+                });
+                header.classList.add("sorting-by");
+                sortDirection = 'asc';
+            }
+            currentPage = 1;
+            pageBackButton.classList.add("disabled");
+            pageNumberElement.textContent = currentPage;
+            searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+        });
     });
 
-    await Promise.all(data.data.projects.map( async (project) => {
-        await projectObjectRenderAndListeners(project);
-    }));
-    return data.data.projects
+    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+
 }
 
 
@@ -2883,7 +2851,7 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 
 
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
-    searchAndRenderProjects(projectSearchInput.value = "", sortAttribute, sortDirection, pageLimit, currentPage);
+    searchAndRenderProjects(projectSearchInput, sortAttribute, sortDirection, pageLimit, currentPage);
     startOrRollProjectSearchTimeout();
 
 })
@@ -2913,7 +2881,7 @@ lastAccessedButton.addEventListener('click', function(event) {
 pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
-        pageBackButton.classList.remove('disabled');
+        pageForwardButton.classList.remove('disabled');
         pageNumberElement.textContent = currentPage;
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
         console.log(`[pageBackButton] currentPage: ${currentPage}`);
@@ -2935,13 +2903,18 @@ pageForwardButton.addEventListener('click', async function() {
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
         console.log(`[pageForwardButton] currentPage: ${currentPage}`);
         const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
-        if (nextData.data.projects.length === 0) {
-            pageForwardButton.classList.add('disabled');
-        }
-    } else {
-        pageForwardButton.classList.add('disabled');
     }
+    await checkNextPage();
 });
+
+async function checkNextPage() {
+    const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
+    if (nextData.data.projects.length === 0) {
+        pageForwardButton.classList.add('disabled');
+    } else {
+        pageForwardButton.classList.remove('disabled');
+    }
+}
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 10, currentPage = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
@@ -3026,6 +2999,19 @@ async function applySortingPreferences() {
 //     });
 // });
 
+async function handleViewClick(limit) {
+    projectsPerPageDropdown.querySelector(".dropdown-text").innerText = limit.toString();
+    pageLimit = limit;
+    currentPage = 1;
+    console.log(`[view${limit}] limit: ${pageLimit}`);
+    await checkNextPage();
+}
+
+view10.addEventListener("click", () => handleViewClick(10));
+view25.addEventListener("click", () => handleViewClick(25));
+view50.addEventListener("click", () => handleViewClick(50));
+view100.addEventListener("click", () => handleViewClick(100));
+
 projectsPerPageDropdown.addEventListener("click", () => {
     projectsPerPageDropdown.classList.toggle("open")
 })
@@ -3065,26 +3051,19 @@ view100.addEventListener("click", () => {
 })
 
 async function getProjectPreferences() {
-    try {
-        const prefSort = await global.preferences.get('projectSort');
-        const prefDirection = await global.preferences.get('projectOrder');
-        const attributeSearch = prefSort.or_default();
-        const sortDirection = prefDirection.or_default();
-
-        let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
-        sortColumn.classList.add('sorting-by');
-        if (sortDirection === 'asc') {
-            sortColumn.classList.add('asc');
-        } else {
-            sortColumn.classList.add('desc');
-        }
-
-
-        console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${projectSort}`);
-        console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${projectOrder}`);
-    } catch (error) {
-        console.error(`Failed to get preferences: ${error}`);
+    const prefSort = await global.preferences.get('projectSort');
+    const prefDirection = await global.preferences.get('projectOrder');
+    sortAttribute = prefSort.or_default();
+    sortDirection = prefDirection.or_default();
+    let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
+    sortColumn.classList.add('sorting-by');
+    if (sortDirection === 'asc') {
+        sortColumn.classList.add('asc');
+    } else {
+        sortColumn.classList.add('desc');
     }
+    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${attributeSearch}`);
+    console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
 }
 
 getProjectPreferences();
