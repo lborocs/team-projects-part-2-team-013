@@ -445,6 +445,7 @@
             align-items: center;
             padding-left: 0.25rem;
             box-shadow: 0 0 4px rgba(0,0,0,0.1);
+            user-select: none;
 
             .icon {
                 display: flex;
@@ -481,7 +482,9 @@
         }
 
         .task-name {
-            padding-left: 0.25rem;
+            padding: 0.25rem;
+            display: flex;
+            line-height: 1.5;
         }
 
         .task-assignees {
