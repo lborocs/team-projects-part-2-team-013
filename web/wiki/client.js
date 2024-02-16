@@ -1,24 +1,50 @@
+import { search } from "../global-topbar.js";
 import * as global from "../global-ui.js"
 import { animate } from "../global-ui.js"
 
 var postsContainer = document.querySelector('.posts');
-var selectedTags = document.querySelectorAll('.tag.selected');
 var posts = document.querySelectorAll('.post');
-var selectedCategory = document.querySelector('input[name="category"]:checked');
-var selectedValue = selectedCategory.value;
 const searchInput = document.getElementById("inputField")
 
 var postsMap = new Map();
 
-async function fetchPosts(tagsList) {
+
+async function searchPosts() {
+    let search = searchInput.value;
+    let tags = [];
+
+    var selectedTags = document.querySelectorAll('.tag.selected');
+
+    selectedTags.forEach((tag) => {
+        tags.push(tag.getAttribute("tagID"));
+    });
+    var selectedCategory = document.querySelector('input[name="category"]:checked');
+    await fetchPosts(tagsList, selectedCategory.value, search, tags);
+}
+
+
+const roller = new global.ReusableRollingTimeout(() => {
+    searchPosts();
+}, 150);
+
+async function updatePosts() {
+    roller.roll();
+}
+
+
+async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
     global.setBreadcrumb(["Wiki"], ["./"]);
-    const data = await get_api("/wiki/post.php/posts");
+
+    const tagParam = tags.length ? `&tags=${tags.join(",")}` : "";
+    const data = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical}&q=${search}${tagParam}`);
     console.log(data);
 
     if (data.success !== true) {
         console.log("Posts failed to be fetched");
         return;
     }
+
+    document.querySelectorAll('.post').forEach((post) => { post.remove() });    
 
     console.log("Posts have been fetched");
     data.data.posts.forEach(post => {
@@ -59,13 +85,13 @@ async function fetchTags() {
 
     console.log("Tags have been fetched");
     data.data.tags.forEach(tag => {
-        document.querySelector('.tag-selection').innerHTML += `<div class="tag" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
+        document.querySelector('.tag-selection').innerHTML += `<div class="tag" tagID="${tag.tagID}" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
     });
     return data.data.tags;
 }
 
-let tagsList = fetchTags();
-tagsList.then((tagsList) => {
+let tagsList;
+fetchTags().then((tags) => {
     document.querySelectorAll('.tag').forEach((tag) => {
         tag.addEventListener('click', () => {
             tag.classList.toggle('selected');
@@ -73,18 +99,8 @@ tagsList.then((tagsList) => {
         })
     });
 
-    // Move the fetchPosts call inside the then block
-    fetchPosts(tagsList).then(() => {
-        posts.forEach((post) => {
-            selectedCategory = document.querySelector('input[name="category"]:checked')
-            selectedValue = selectedCategory.value
-            if (post.getAttribute("data-isTechnical") != selectedValue) {
-                post.classList.add("norender");
-            } else {
-                post.classList.remove("norender"); 
-            }
-        })
-    });
+    fetchPosts(tags);
+    tagsList = tags;
 });
 
 
@@ -180,75 +196,10 @@ function renderPost(postID, title, author, isTechnical, tags) {
         postsContainer.appendChild(post)
     }
 
-const sleep = (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-};
 
-function updatePosts() {
-    sleep(10).then(() => {
-        console.log("updating posts")
-        let search = document.getElementById("inputField");
-        selectedCategory = document.querySelector('input[name="category"]:checked');
-        selectedValue = selectedCategory.value;
-        selectedTags = [];
-        document.querySelectorAll('.tag.selected').forEach((tagElement) => {
-            console.log("TAG SELECTED")
-            selectedTags.push(tagElement.getAttribute("name"));
-        });
-        console.log(selectedTags);
-        console.log(selectedTags.length)
-        var isTechnical = document.getElementById('technical').checked;
-        let searchValue = search.value.toUpperCase();
-        posts.forEach((post) => {
-            if (post.dataset.istechnical !== '0' && isTechnical === false) {
-                post.classList.add("norender");
-                return;
-            }
-            if (post.dataset.istechnical !== '1' && isTechnical === true) {
-                post.classList.add("norender");
-                return;
-            }
-            if (!post.querySelector('.title').innerText.toUpperCase().includes(searchValue) && searchValue !== "") {
-                post.classList.add("norender");
-                return;
-            }
-            if (selectedTags.length > 0) {
-                let postTags = post.querySelectorAll(".tag");
-                let postTagNames = [];
-                postTags.forEach((tag) => {
-                    postTagNames.push(tag.getAttribute("name"));
-                })
-                let containsTag = selectedTags.some(tag => postTagNames.includes(tag));
-                if (!containsTag) {
-                    post.classList.add("norender");
-                    return;
-                }
-            }
-            post.classList.remove("norender");
-        });
-    })
-}
 
-const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
-    () => {
-        console.log("searching")
-        let justPosts = document.querySelectorAll('.post')
-        console.log(document.getElementById("inputField").value)
-        updatePosts()
-        justPosts.forEach((post) => {
-            animate(post, "flash")
-        })
-    },
-    300
-);
+searchInput.addEventListener("input", updatePosts)
 
-searchInput.addEventListener("input", filterFromSearch)
-
-function filterFromSearch() {
-    projectSearchRollingTimeout.roll();
-}
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
     radio.addEventListener('change', () => {
