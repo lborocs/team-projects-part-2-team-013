@@ -256,11 +256,13 @@ async function setUserData() {
     let employeeEmail = emp.email;
     let employeeAvatar = global.employeeAvatarOrFallback(emp);
 
+    const isManager = employeeData.isManager != 0;
+
     accountOptions.querySelectorAll('.current-name').forEach((e) => {e.innerHTML = employeeName});
     accountCard.querySelector('.email').innerHTML = employeeEmail;
     accountCard.querySelector('.avatar').src = employeeAvatar;
-    accountCard.querySelector('.role').innerText = employeeData.isManager ? "Manager" : "Employee";
-    accountCard.querySelector('.icon span').innerHTML = employeeData.isManager ? "admin_panel_settings" : "person";
+    accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
+    accountCard.querySelector('.icon span').innerHTML = isManager ? "admin_panel_settings" : "person";
 };
 
 setUserData();
