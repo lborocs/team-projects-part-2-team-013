@@ -1553,13 +1553,11 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
             </a>
         </td>
         <td>
-            <a href="/projects/#${ID}">
-                <div class="icon-button no-box project-actions">
-                    <span class="material-symbols-rounded">
-                        more_horiz
-                    </span>
-                </div>
-            </a>
+            <div class="icon-button no-box project-actions context-menu">
+                <span class="material-symbols-rounded">
+                    more_horiz
+                </span>
+            </div>
         </td>
     `;
 
