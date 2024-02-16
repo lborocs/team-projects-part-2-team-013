@@ -77,9 +77,13 @@
 
 #personals-sort-direction:hover {
     background-color: #f1f2f4;
-    transition: background-color 0.1s ease-out, border-color 0.1s ease-out;
+    transition: background-color 0.1s ease-out, border-color 0.05s ease-out;
 }
 
+#personals-sort-direction:active {
+    background-color: #dcdfe4;
+    transition: background-color 0.05s ease-out, border-color 0.05s ease-out;
+}
 
 
 .modal-buttons-and-tip {
