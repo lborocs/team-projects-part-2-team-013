@@ -1874,15 +1874,11 @@ function db_global_settings_set(int $avatars, int $posts, int $tags) {
     global $db;
 
     $query = $db->prepare(
-        "INSERT INTO `GLOBAL_SETTINGS` VALUES (?, ?, ?)
-        ON DUPLICATE KEY UPDATE avatarsEnabled = ?, postsEnabled = ?, tagsEnabled = ?"
+        "UPDATE `GLOBAL_SETTINGS` SET avatarsEnabled = ?, postsEnabled = ?, tagsEnabled = ?"
     );
 
     $query->bind_param(
-        "iiiiii",
-        $avatars,
-        $posts,
-        $tags,
+        "iii",
         $avatars,
         $posts,
         $tags,

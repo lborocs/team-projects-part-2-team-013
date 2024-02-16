@@ -20,6 +20,7 @@ const POST_METHOD_CHECKS = [
     ],
     "POST"=>[
         "no_arg",
+        "user_can_create_posts"
     ]
 ];
 
@@ -29,6 +30,7 @@ const TAG_METHOD_CHECKS = [
     ],
     "POST"=>[
         "no_arg",
+        "user_can_create_tags"
     ],
     "PATCH"=>[
         "not_implemented",
@@ -368,8 +370,10 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
         $body["postAuthor"] = $createdBy;
         $body["postCreatedAt"] = $createdAt;
 
-        if (!db_post_bind_assets($hex_id, $assets)) {
-            error_log("Failed to bind assets to post $hex_id");
+        if (count($assets) > 0) {
+            if (!db_post_bind_assets($hex_id, $assets)) {
+                error_log("Failed to bind assets to post $hex_id");
+            }
         }
 
 

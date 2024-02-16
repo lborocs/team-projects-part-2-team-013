@@ -92,8 +92,8 @@ function r_employee_globalsettings(RequestContext $ctx, string $args) {
         ]);
         db_global_settings_set(
             $ctx->request_body["avatarsEnabled"],
-            $ctx->request_body["tagsEnabled"],
-            $ctx->request_body["postsEnabled"]
+            $ctx->request_body["postsEnabled"],
+            $ctx->request_body["tagsEnabled"]
         );
         respond_no_content();
     } else if ($ctx->request_method == "GET") {

@@ -118,6 +118,10 @@ function respond_insufficient_authorization() {
     respond_error("Authorization not sufficient for this action", ERROR_INSUFFICIENT_AUTHORIZATION, 403);
 }
 
+function respond_functionality_disabled(string $message) {
+    respond_error($message, ERROR_FUNCTIONALITY_DISABLED, 403);
+}
+
 function respond_route_not_found(string $route) {
     respond_error("Route '". $route . "' not found", ERROR_ROUTE_NOT_FOUND, 404);
 }
