@@ -793,10 +793,6 @@ function clearRenderedTasks() {
 
 
 async function teamLeaderEnableElementsIfTeamLeader() {
-    let projectRow = document.querySelector(".project-row.selected");
-    if (projectRow == null) {
-        return
-    }
 
 
     let session = await global.getCurrentSession();
