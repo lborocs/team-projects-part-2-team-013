@@ -148,6 +148,17 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
+    const prefSort = await global.preferences.get('tasksort');
+    const prefDirection = await global.preferences.get('taskdirection');
+    const attributeSearch = await prefSort.or_default();
+    const sortDirection = await prefDirection.or_default();
+
+    let sortColumn = document.querySelector(`[data-value=${attributeSearch}]`);
+    sortColumn.classList.add("sorting-by");
+    if (sortDirection === 'desc') {
+        sortColumn.classList.add("reverse");
+    }
+
     teamLeaderEnableElementsIfTeamLeader()
 
     setActivePane("individual-project-pane");
@@ -782,10 +793,6 @@ function clearRenderedTasks() {
 
 
 async function teamLeaderEnableElementsIfTeamLeader() {
-    let projectRow = document.querySelector(".project-row.selected");
-    if (projectRow == null) {
-        return
-    }
 
 
     let session = await global.getCurrentSession();
