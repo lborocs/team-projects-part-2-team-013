@@ -203,4 +203,32 @@ function object_check_personal_exists(RequestContext $ctx, array $resource_ids) 
     $ctx->personal = $personal;
 
 }
+
+function object_check_user_can_create_posts(RequestContext $ctx, array $resource_ids) {
+    $settings = db_global_settings_get($ctx->session->hex_associated_user_id);
+
+    $level = $settings["postsEnabled"];
+
+    if ($level == 1 && $ctx->session->auth_level > AUTH_LEVEL_MANAGER) {
+        respond_functionality_disabled("Creatings posts is currently disabled");
+    }
+    if ($level == 2) {
+        respond_functionality_disabled("Creatings posts is currently disabled");
+    }
+}
+
+function object_check_user_can_create_tags(RequestContext $ctx, array $resource_ids) {
+    $settings = db_global_settings_get($ctx->session->hex_associated_user_id);
+
+    $level = $settings["tagsEnabled"];
+
+    if ($level == 1 && $ctx->session->auth_level > AUTH_LEVEL_MANAGER) {
+        respond_functionality_disabled("Creating tags is currently disabled");
+    }
+    if ($level == 2) {
+        respond_functionality_disabled("Creating tags is currently disabled");
+    }
+}
+
+
 ?>

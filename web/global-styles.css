@@ -727,7 +727,7 @@ button:hover {
     background: #999;
 }
 
-[contenteditable]:empty:after {
+/* [contenteditable]:empty:after {
     content: attr(placeholder);
     color: #aaaaaa;
     font-weight: 400;
@@ -743,7 +743,7 @@ button:hover {
     background-color: rgba(0,0,0,0);
     outline: 1px solid #77b2eb;
     box-shadow: 0 0 0px 2px #a0bfff;
-}
+} */
 
 #global-search {
     width: min(30vw, 400px);
@@ -801,4 +801,16 @@ button:hover {
 
 sup {
     line-height: 0;
+}
+
+.preference-alert {
+    color: white;
+    background-color: black;
+    border-radius: 5px;
+    padding: 8px;
+    display: inline-block;
+    font-size: 0.8em;
+    position: absolute;
+    bottom: 10px;
+    align-self: center;
 }

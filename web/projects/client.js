@@ -54,6 +54,9 @@ const dashboardRedirect = document.getElementById('dashboard-redirect');
 const listViewButton = document.getElementById('list-view-button');
 const boardViewButton = document.getElementById('board-view-button');
 const lastAccessedButton = document.getElementById('project-last-accessed');
+const pageBackButton = document.getElementById('page-back-button');
+const pageForwardButton = document.getElementById('page-forward-button');
+const pageNumberElement = document.querySelector('.page-number');
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -653,11 +656,11 @@ async function fetchTasks(projID) {
  * Renders all tasks from a given list of tasks
  * @param {Array} tasks 
  */
-async function renderTasks(tasks) {
+async function renderTasks(tasks, update = RENDER_BOTH) {
     console.error(tasks)
     clearRenderedTasks();
     await Promise.all(tasks.map((task) => {
-        taskObjectRenderAll(task)
+        taskObjectRenderAll(task, update)
     }));
     setUpTaskEventListeners();
     console.error(globalAssignments)
@@ -688,7 +691,7 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
 }
 
 
-async function renderAssignments(assignments) {
+async function renderAssignments(assignments, update = RENDER_BOTH) {
 
     if (assignments.length == 0) {
         console.log("[renderAssignments] assignments is empty")
@@ -732,8 +735,14 @@ async function renderAssignments(assignments) {
             if (count < 3) {
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
-                usersAssigned.appendChild(assignmentElem);
-                usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+
+                if (update & RENDER_COLUMN) {
+                    usersAssigned.appendChild(assignmentElem);
+                }
+                if (update & RENDER_LIST) {
+                    usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                }
+
             } else if (count === 3) {
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
 
@@ -742,8 +751,13 @@ async function renderAssignments(assignments) {
             
                 assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
                 <img src="${url}" class="task-avatar">`
-                usersAssigned.appendChild(assignmentElem);
-                usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+
+                if (update & RENDER_COLUMN) {
+                    usersAssigned.appendChild(assignmentElem);
+                }
+                if (update & RENDER_LIST) {
+                    usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                }
             }
             taskUserCount.set(assignment.task.taskID, count + 1);
         }
@@ -788,8 +802,6 @@ async function teamLeaderEnableElementsIfTeamLeader() {
         }
     })
 }
-
-
 
 async function getProjectById(projID) {
     let res = await get_api(`/project/project.php/project/${projID}`);
@@ -1036,7 +1048,7 @@ sortArray.forEach((sortObject) => {
             
         });
         setUpTaskEventListeners();
-        renderAssignments(globalAssignments);
+        renderAssignments(globalAssignments, RENDER_LIST);
         animate(document.querySelector(".tasktable-body"), "flash");
     })
 })
@@ -2593,14 +2605,36 @@ lastAccessedButton.addEventListener('click', function(event) {
     if (event.button === 0) {
         searchAndRenderProjects(projectSearchInput.value, 'lastAccessed', 'desc');
     }
+    let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
+    projectTableHeaders.forEach((header) => {
+        header.classList.remove("sorting-by", "reverse");
+    });
 });
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc') {
+let currentPage = 1;
+pageBackButton.addEventListener('click', function() {
+    if (currentPage > 1) {
+        currentPage--;
+        pageNumberElement.textContent = currentPage;
+        searchAndRenderProjects(projectSearchInput.value, undefined, undefined, currentPage);
+        console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+    }
+});
+
+pageForwardButton.addEventListener('click', function() {
+    currentPage++;
+    pageNumberElement.textContent = currentPage;
+    searchAndRenderProjects(projectSearchInput.value, undefined, undefined, currentPage);
+    console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+});
+
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc', page = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
-    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}`);
+    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=10&page=${page}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
+    console.log(`[searchAndRenderProjects(${page})] page`);
     console.log(data);
     console.log('.project-row.selected');
 

@@ -84,8 +84,10 @@ global.renewCurrentSession().then((session) => {
 const schema = window.location.hash.substring(1).split("&")[1];
 if (schema) {
     const msg = {
-        "sessionexpired": "Your session expired and you have been logged out",
-        "authrequired": "You must be logged in to access this page"
+        "sessionexpired": "Your session has expired, please log in to continue.",
+        "sessionrevoked": "Your session has been revoked, please log in to continue.",
+        "authrequired": "Please log in to continue.",
+        "renewlimit": "Your session has expired, please log in to continue."
     }[schema]
 
     if (msg) {

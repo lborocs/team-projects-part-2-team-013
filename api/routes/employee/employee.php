@@ -105,6 +105,28 @@ function r_employee_manage(RequestContext $ctx, string $args) {
         $employee = db_employee_fetch($emp_id);
 
         if (array_key_exists("avatar", $body)) {
+
+            $global_settings = db_global_settings_get();
+
+            $av_enabled = $global_settings["avatarEnabled"];
+
+            // 0 = enabled
+            // 1 = mgr only
+            // 2 = nobody
+
+            if ($av_enabled == 2) {
+                respond_functionality_disabled(
+                    "Avatars are currently disabled",
+                );
+            }
+
+            if ($av_enabled == 1 && !$is_manager) {
+                respond_functionality_disabled(
+                    "Avatars are currently disabled",
+                );
+            }
+
+
             // check if the avatar is a valid asset
 
             if ($body["avatar"] !== null) {
