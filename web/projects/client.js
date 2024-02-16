@@ -841,6 +841,7 @@ async function fetchAndRenderAllProjects() {
                         header.classList.remove("sorting-by", "reverse");
                     });
                     header.classList.add("sorting-by");
+                    sortDirection = 'asc';
                 }
                 searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection);
             });
