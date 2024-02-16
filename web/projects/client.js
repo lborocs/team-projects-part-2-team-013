@@ -323,24 +323,62 @@ function showTaskInExplainer(taskCard) {
     explainerTask = globalCurrentTask
     explainerTaskTitle.innerHTML = globalCurrentTask.title;
     explainerTaskTitle.classList.remove("norender");
-    
+
+
+    //Task description
+    let description = globalCurrentTask.description;
+    if (!description || description === "<p><br></p>") {
+        description = "None set";
+    }
+    if (description && description.endsWith("<p><br></p>")) {
+        description = description.replace(/<p><br><\/p>$/, "");
+    }
+    explainerTaskDescription.innerHTML = description;
+
+    //Task date
+    let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
+    explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "None set";
+
+    //Task manhours
+    let manHours = globalCurrentTask.expectedManHours;
+    let timeDisplay = "";
+
+    if (manHours < 3600) {
+        // Convert to minutes and display
+        let minutes = manHours / 60;
+        timeDisplay = `${minutes.toFixed(0)} Minute${minutes !== 1 ? 's' : ''}`;
+    } else {
+        // Convert to hours and display
+        let hours = manHours / 3600;
+        timeDisplay = `${hours.toFixed(0)} Hour${hours !== 1 ? 's' : ''}`;
+    }
+
     explainerTaskManhours.innerHTML = `
-    <span class="material-symbols-rounded">
-        timer
-    </span>
-    <div class="manhours">
-        ${globalCurrentTask.expectedManHours/3600} Manhour${globalCurrentTask.expectedManHours !== 3600 ? 's' : ''}
-    </div>
+        <div class="description-header">Man hours</div>
+        <div class="man-hours">
+            <div class="manhours">
+                ${timeDisplay}
+            </div>
+        </div>
     `;
 
-    explainerTaskDescription.innerHTML = globalCurrentTask.description ? globalCurrentTask.description : "<i>No description...</i>";
-
-    let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
-    explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "No due date";
-
+    //Task status
     let statusElement = document.querySelector(".status");
+    let explainerTaskStatusElement = document.querySelector(".explainer-task-status");
     statusElement.innerHTML = globalCurrentTask.state == 0 ? "Not Started" : globalCurrentTask.state == 1 ? "In Progress" : "Finished";
-    animate(document.querySelector(".task-overview"), "flash")
+    explainerTaskStatusElement.classList.remove("not-started", "in-progress", "finished");
+    if (globalCurrentTask.state == 0) {
+        explainerTaskStatusElement.classList.add("not-started");
+    } else if (globalCurrentTask.state == 1) {
+        explainerTaskStatusElement.classList.add("in-progress");
+    } else {
+        explainerTaskStatusElement.classList.add("finished");
+    }
+    
+    animate(document.querySelector(".task-overview"), "flash");
+
+    //Task assignments
+    //yet to be made
 
     global.setBreadcrumb(["Projects", globalCurrentProject.name, globalCurrentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + globalCurrentTask.taskID])
 }
@@ -2895,19 +2933,21 @@ pageBackButton.addEventListener('click', function() {
 });
 
 pageForwardButton.addEventListener('click', async function() {
-    const data = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
-    if (data.data.projects.length !== 0) {
-        pageBackButton.classList.remove('disabled');
-        currentPage++;
-        pageNumberElement.textContent = currentPage;
-        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-        console.log(`[pageForwardButton] currentPage: ${currentPage}`);
-        const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
-    }
+
+    pageBackButton.classList.remove('disabled');
+    currentPage++;
+    pageNumberElement.textContent = currentPage;
+    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+    console.log(`[pageForwardButton] currentPage: ${currentPage}`);
     await checkNextPage();
 });
 
 async function checkNextPage() {
+
+    if (pageBackButton.classList.contains('disabled')) {
+        return; // someone already cooked for us and we dont need the unneccesary api call
+    }
+
     const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
     if (nextData.data.projects.length === 0) {
         pageForwardButton.classList.add('disabled');
@@ -2916,7 +2956,7 @@ async function checkNextPage() {
     }
 }
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 10, currentPage = 1) {
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 25, currentPage = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
     const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
@@ -2932,6 +2972,13 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
     }
     
     clearProjectList();
+
+    if (data.data.projects.length < pageLimit) {
+        pageForwardButton.classList.add('disabled');
+    } else {
+        pageForwardButton.classList.remove('disabled');
+    }
+
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
     await Promise.all(data.data.projects.map(async (project) => {
         await projectObjectRenderAndListeners(project);
