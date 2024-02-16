@@ -73,6 +73,14 @@
         align-content: space-between;
         margin: 1em;
         gap: 0;
+
+        .search {
+            width: 100%;
+        }
+    
+        .search:focus-within {
+            width: 100%;
+        }
     }
 
     .view {
@@ -82,9 +90,7 @@
         margin-bottom: 0.5em;
     }
 
-    .search {
-        width: 100%;
-    }
+    
 
     .container {
         display: flex;
@@ -179,15 +185,9 @@
         align-items: flex-start;
         flex-wrap: nowrap;
         overflow-x: scroll;
-        width: 100vw;
+        width: 150vw;
 
-        scroll-snap-type: x mandatory;
-        scroll-padding: 0 1em;
-
-        padding-left: 1rem;
-        padding-right: 1rem;
-
-        margin-left: 0;
+        
         margin-right: 0;
 
     }
@@ -210,7 +210,6 @@
     }
 
     .tasklist {
-        align-items: start;
         width: 100%;
         height: 100%;
     }
@@ -276,8 +275,13 @@
         height: 100%;
     }
 
-    #add-task-button {
+
+    .button-text.desktop {
         display: none;
+   }
+
+    .button-text.mobile {
+        display: block;
     }
 
 
