@@ -249,6 +249,23 @@ async function setUserData() {
 setUserData();
 
 
+document.addEventListener("preferencesave", async (event) => {
+    preferenceAlert();
+});
+    
+
+function preferenceAlert() {
+    let main = document.querySelector('.main');
+    let alertDiv = document.createElement('div');
+    alertDiv.classList.add('preference-alert');
+    alertDiv.innerText = 'Preferences Saved';
+    main.appendChild(alertDiv);
+    console.log("[preferenceAlert] alert triggered");
+    setTimeout(() => {
+        alertDiv.classList.add('fade-1000ms');
+    }, 200);
+}
+
 
 
 
