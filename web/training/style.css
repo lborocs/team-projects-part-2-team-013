@@ -1,0 +1,164 @@
+#personals-sort {
+    min-width: 10rem;
+    margin-left: auto;
+    .dropdown-menu {
+        border: none;
+        border-radius: 3px;
+        width: 100%;
+        
+    }
+
+    .dropdown-option {
+        font-weight: 400;
+        
+        .option-icon {
+            margin-right: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            & span {
+                font-size: 18px;
+                color: #686a6e;
+            }
+        }
+    }
+
+    .selected {
+        background-color: #f1f2f4;
+        color: #172d5b;
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .dropdown-chevron {
+        & span {
+            color: #686a6e
+        }
+    }
+    
+}
+
+#personals-sort-direction {
+    border: none;
+    border-bottom: solid 2px #dcdfe4;
+    background-color: white;
+}
+
+#personals-sort-direction:hover {
+    background-color: #f1f2f4;
+    transition: background-color 0.1s ease-out, border-color 0.05s ease-out;
+}
+
+#personals-sort-direction:active {
+    background-color: #dcdfe4;
+    transition: background-color 0.05s ease-out, border-color 0.05s ease-out;
+}
+
+
+.modal-buttons-and-tip {
+    display: flex;
+    justify-content: space-between;
+
+    .modal-tip-text {
+        opacity: 0.5;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-off-black);
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .modal-tip-text kbd {
+        margin: 0 0.25rem;
+        padding: 2px 4px;
+        font-size: 11px;
+        line-height: 10px;
+        color: #555;
+        vertical-align: middle;
+        background-color: #fcfcfc;
+        border: solid 1px #ccc;
+        border-bottom-color: #bbb;
+        border-radius: 3px;
+        box-shadow: inset 0 -1px 0 #bbb;
+    }
+}
+
+
+
+/* popup css modified from wiki. */
+
+.popup-dialog {
+    top: 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    background-color: #fff;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));
+    padding: 18px;
+    padding-top: 14px;
+    max-width: 600px;
+    width: calc(100% - 2.5em);
+    gap: 0.75em;
+
+    .popup-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--text-off-black, #0f0f0f);
+        width: 100%;
+        .small-icon {
+            margin-left: auto;
+        }
+    }
+
+    .popup-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+}
+
+#delete-button {
+    background-color: #ff4b5c;
+    color: white;
+    transition: background-color 0.1s ease;
+}
+
+#delete-button:hover {
+    background-color: #cc3946;
+    color: white;
+}
+
+
+[contenteditable]:empty:after {
+    content: attr(placeholder);
+    color: #aaaaaa;
+    font-weight: 400;
+}
+
+[contenteditable]:focus {
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+}
+
+[contenteditable]:focus:hover {
+    background-color: transparent;
+    outline: none;
+    box-shadow: none;
+}
+
+
+.icon-button.modal-skippable-active:hover {
+    background-color: #ffe4dd !important;
+    transition: background-color 0.05s ease-out;
+}
