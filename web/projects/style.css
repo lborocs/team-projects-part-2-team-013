@@ -1,6 +1,6 @@
 .selection-screen {
-    gap: 0.5em;
-    padding: 0.5em 2em;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
     background-color: var(--light-grey-bg);
 
     .project-bar {
@@ -17,7 +17,7 @@
         flex-direction: column;
         justify-content: flex-start;
         width: 100%;
-        padding: 0.5em;
+        padding: 0.5rem;
         padding-right: 0;
         margin: 0;
         background-color: white;
@@ -31,9 +31,9 @@
         flex-direction: row;
         justify-content: flex-start;
         align-items: center;
-        gap: 1em;
-        padding-right: 0.5em;
-        padding-bottom: 0.5em;
+        gap: 1rem;
+        padding-right: 0.5rem;
+        padding-bottom: 0.5rem;
 
         .filters {
             display: flex;
@@ -451,11 +451,21 @@
         color: var(--text-off-black, #0f0f0f);
         overflow-wrap: anywhere;
     }
+
+    .description-header {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
     .description {
         font-size: 1em;
         font-weight: 500;
         color: var(--text-off-black, #0f0f0f);
         overflow-wrap: anywhere;
+
+        & p {
+            margin-top: 0;
+        }
     }
     .team-leader {
         font-size: 1em;
@@ -540,15 +550,15 @@
     gap: 1em;
     padding: 0em;
     .title {
-        font-size: 1.25em;
+        font-size: 18px;
         font-weight: 700;
         color: var(--text-off-black, #0f0f0f);
         display: flex;
-        gap: 0.25em;
+        gap: 0.25rem;
     }
     .description {
-        font-size: 1em;
-        font-weight: 500;
+        font-size: 16px;
+        font-weight: 400;
         color: var(--text-off-black, #0f0f0f);
     }
     .date {
@@ -781,6 +791,7 @@
     padding: 1em;
     padding-top: 0;
     border-radius: 5px;
+    align-items: start;
     &::-webkit-scrollbar-track {
         background-color: rgba(0,0,0,0);
     }
@@ -1642,10 +1653,6 @@
     padding-right: 0.3em;
 }
 
-#task-date {
-    padding-left: 0.4em;
-}
-
 .sidebar {
     box-shadow: 0 0 4px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
 }
@@ -1738,8 +1745,8 @@
 
 .explainer-description-container{
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 0.5em;
     height: 100%;
 }
