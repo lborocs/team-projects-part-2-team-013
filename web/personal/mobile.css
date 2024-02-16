@@ -99,6 +99,41 @@
     ::-webkit-scrollbar {
         display: none;
     }
+
+    .personal-task {
+
+        .personal-main {
+            justify-content: space-between;
+        }
+
+        .personal-icons {
+            display: none;
+        }
+
+    }
+
+    #personals-search {
+        height: 3rem;
+        border-radius: 5px;
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #new-personal {
+        display: none;
+    }
+
+    .title {
+        white-space: nowrap;
+        
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
     
     
 
