@@ -130,9 +130,9 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option list-option" id="list-always">Always</div>
-                                    <div class="dropdown-option list-option" id="list-never">Never</div>
-                                    <div class="dropdown-option list-option" id="list-manager">For Projects I Manage</div>
+                                    <div class="dropdown-option list-option" id="list-never" data-value="2">Never</div>
+                                    <div class="dropdown-option list-option" id="list-manager" data-value="1">For Projects I Manage</div>
+                                    <div class="dropdown-option list-option" id="list-always" data-value="0">Always</div>
                                 </div>
                             </div>
                         </div>
@@ -150,9 +150,9 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-tasks-type" id="sort-name">By Name</div>
-                                    <div class="dropdown-option sort-tasks-type" id="sort-date">By Date</div>
-                                    <div class="dropdown-option sort-tasks-type" id="sort-status">By Status</div>
+                                    <div class="dropdown-option sort-tasks-type" id="sort-name" data-value="name">By Name</div>
+                                    <div class="dropdown-option sort-tasks-type" id="sort-date" data-value="date">By Date</div>
+                                    <div class="dropdown-option sort-tasks-type" id="sort-status" data-value="status">By Status</div>
                                 </div>
                             </div>
                             <div class="dropdown" id="sort-tasks-direction">
@@ -165,8 +165,8 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-tasks-direction-option" id="sort-tasks-asc">Ascending</div>
-                                    <div class="dropdown-option sort-tasks-direction-option" id="sort-tasks-desc">Descending</div>
+                                    <div class="dropdown-option sort-tasks-direction-option" id="sort-tasks-asc" data-value="asc">Ascending</div>
+                                    <div class="dropdown-option sort-tasks-direction-option" id="sort-tasks-desc" data-value="desc">Descending</div>
                                 </div>
                             </div>
                         </div>
@@ -183,9 +183,12 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-projects-type" id="sort-name-asc">By Name</div>
-                                    <div class="dropdown-option sort-projects-type" id="sort-date-asc">By Date</div>
-                                    <div class="dropdown-option sort-projects-type" id="sort-status-desc">By Status</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-name" data-value="name">By Name</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-teamLeader" data-value="teamLeader">By Team Leader</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-creationDate" data-value="creationDate">By Creation Date</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-dueDate" data-value="dueDate">By Due Date</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-lastAccessed" data-value="lastAccessed">By Last Accessed</div>
+
                                 </div>
                             </div>
                             <div class="dropdown" id="sort-projects-direction">
@@ -198,8 +201,8 @@
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option sort-projects-direction-option" id="sort-projects-asc">Ascending</div>
-                                    <div class="dropdown-option sort-projects-direction-option" id="sort-projects-desc">Descending</div>
+                                    <div class="dropdown-option sort-projects-direction-option" id="sort-projects-asc" data-value="asc">Ascending</div>
+                                    <div class="dropdown-option sort-projects-direction-option" id="sort-projects-desc" data-value="desc">Descending</div>
                                 </div>
                             </div>
                         </div>

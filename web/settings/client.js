@@ -83,7 +83,8 @@ preferencesMenus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
     menuOptions.forEach((option) => {
         option.addEventListener('click', async (event) => {
             let selectedOption = option.textContent;
-            await global.preferences.set(preferenceKey, selectedOption);
+            let storedValue = option.getAttribute('data-value');
+            await global.preferences.set(preferenceKey, storedValue);
             document.querySelector(textId).innerHTML = selectedOption;
             document.querySelector(optionsId).classList.remove('open');
             event.stopPropagation();
@@ -145,7 +146,9 @@ globalSettingsMenus.forEach(({ selector, textId, settingKey, optionsId }) => {
 window.addEventListener('load', async () => {
     preferencesMenus.forEach(async ({ textId, preferenceKey }) => {
         const pref = await global.preferences.get(preferenceKey);
-        document.querySelector(textId).innerHTML = pref.or_default();
+        const attributeSearch = pref.or_default();
+        const defaultElement = document.querySelector(`[data-value="${attributeSearch}"]`).innerHTML;
+        document.querySelector(textId).innerHTML = defaultElement;
     });
 
     globalSettingsMenus.forEach(async ({ textId, settingKey }) => {
