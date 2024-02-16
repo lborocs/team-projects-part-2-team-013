@@ -65,9 +65,9 @@ document.addEventListener('click', function(event) {
 });
 
 let globalSettingsMenus = [
-    { selector: '.avatar-option', textId: '#avatar-text', settingKey: 'avatar', optionsId: '#avatar-options' },
-    { selector: '.posting-option', textId: '#posting-text', settingKey: 'posting', optionsId: '#posting-options' },
-    { selector: '.tags-option', textId: '#tags-text', settingKey: 'tags', optionsId: '#tags-options' },
+    { selector: '.avatar-option', textId: '#avatar-text', settingKey: 'avatarsEnabled', optionsId: '#avatar-options' },
+    { selector: '.posting-option', textId: '#posting-text', settingKey: 'postsEnabled', optionsId: '#posting-options' },
+    { selector: '.tags-option', textId: '#tags-text', settingKey: 'tagsEnabled', optionsId: '#tags-options' },
 ];
 
 let preferencesMenus = [
@@ -102,12 +102,26 @@ preferencesMenus.forEach(({ selector, textId, preferenceKey, optionsId }) => {
     });
 });
 
+const settingsMap = {
+    'For Nobody': 2,
+    'For Managers Only': 1,
+    'For Everybody': 0
+};
+
+const reversedSettingsMap = {
+    2 : 'For Nobody',
+    1 : 'For Managers Only',
+    0 : 'For Everybody'
+}
+
 globalSettingsMenus.forEach(({ selector, textId, settingKey, optionsId }) => {
     let menuOptions = document.querySelectorAll(selector);
     menuOptions.forEach((option) => {
         option.addEventListener('click', async (event) => {
+
             let selectedOption = option.textContent;
-            await global.settings.set(settingKey, selectedOption);
+            let settingValue = settingsMap[selectedOption];
+            await global.siteSettings.set(settingKey, settingValue);
             document.querySelector(textId).innerHTML = selectedOption;
             document.querySelector(optionsId).classList.remove('open');
             event.stopPropagation();
@@ -135,8 +149,11 @@ window.addEventListener('load', async () => {
     });
 
     globalSettingsMenus.forEach(async ({ textId, settingKey }) => {
-        const setting = await global.settings.get(settingKey);
-        document.querySelector(textId).innerHTML = setting
+        const setting = await global.siteSettings.get(settingKey);
+        console.log('setting:', setting);
+        const settingValue = reversedSettingsMap[setting];
+        console.log('settingValue:', settingValue);
+        document.querySelector(textId).innerHTML = settingValue;
     });
 });
 
