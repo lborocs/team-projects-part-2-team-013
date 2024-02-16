@@ -288,5 +288,5 @@ function preferenceAlert() {
 
 
 
-global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
+global.setBreadcrumb(["Settings", "Account"], ["./", '#' + "account"])
 
