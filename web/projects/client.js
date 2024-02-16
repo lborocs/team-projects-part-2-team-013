@@ -1566,7 +1566,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
             </a>
         </td>
         <td>
-            <div class="icon-button no-box project-actions context-menu">
+            <div class="icon-button no-box project-actions">
                 <span class="material-symbols-rounded">
                     more_horiz
                 </span>
@@ -1576,12 +1576,21 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
 
     projectTitle.innerHTML = title;
 
-    //set id to the project id
+    //sets id to the project id
     project.setAttribute("data-ID", ID);
     project.setAttribute("data-title", title);
     project.setAttribute("data-description", desc);
     project.setAttribute("data-team-leader", JSON.stringify(teamLeader));
     projectsTable.querySelector("tbody").appendChild(project);
+
+
+    const projectActions = project.querySelector(".project-actions");
+    projectActions.addEventListener("click", (e) => {
+        e.stopPropagation()
+        projectPopup(ID)
+
+    });
+
     teamLeaderEnableElementsIfTeamLeader();
 
     return project;
@@ -2611,6 +2620,212 @@ async function editTaskPopup(task){
     });
 
     discardButton.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
+        dialog.style.display = 'none';
+        fullscreenDiv.style.filter = 'none';
+        console.log("[addTaskDiscardButton] rejecting")
+    });
+
+    dialog.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addTaskEscape] rejecting")
+        }
+    });
+
+}
+
+
+
+
+async function projectPopup(id){
+    console.log(`[projectPopup] Running editTaskPopup`)
+    let popupDiv = document.querySelector('.popup');
+    let fullscreenDiv = document.querySelector('.fullscreen');
+
+    let projectData = await get_api(`/project/project.php/project/${id}`);
+
+    let project = projectData.data;
+
+    // let teamLeader = global.employeeAvatarOrFallback(project.teamLeader);
+
+
+
+    popupDiv.innerHTML = `
+        <dialog open class='popupDialog' id="add-task-popup">
+            <div class="popup-title">
+            <span>${project.name}</span>
+            <div class="small-icon" id="close-button">
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+            </div>
+            </div>
+            <input type="text" placeholder="${project.name}" class="add-task-title-input">
+            
+            <div class="add-task-description-container">
+                <div id="description-editor"></div>
+            </div>
+            <div class="dropdown-and-employee-list">
+                <div class="search-dropdown" id="employee-select" tabindex="0">
+                    <div class="search">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+            
+                        
+                        <div class="search-icon">
+                            <span class="material-symbols-rounded">search</span>
+                        </div>
+                        <div class="search-icon clear-icon">
+                            <span class="material-symbols-rounded">close</span>
+                        </div>
+                    </div>
+                    <div class="popover">
+                        <div class="employee-list">
+                        </div>
+                        <div class="show-more text-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">
+                                    more_horiz
+                                </span>
+                            </div>
+                            <div class="button-text">
+                                Show More
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="assigned-employees">
+                    ${teamLeader}
+                </div>
+            </div>
+
+            <div class="date-picker" id="due-date">
+                <div class="date-picker-icon">
+                    <span class="material-symbols-rounded">event</span>
+                </div>
+                <input class="date-picker-input" type="text" placeholder="${project.dueDate}" tabindex="0"></input>
+            </div>
+            <div class="confirm-buttons-row">
+                <div class="text-button" id="close-button-bottom">
+                    <div class="button-text">
+                        Close
+                    </div>
+                </div>
+                <div class="text-button blue" id="save-button">
+                    <div class="button-text">
+                        Save
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    `;
+
+    //quill for description
+    var quill = new Quill('#description-editor', {
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                ['code-block']
+            ]
+        },
+        theme: 'snow'
+    });
+
+    quill.setText(`${project.description}`)
+
+    //flatpickr for date picker
+    let datePickerInput = popupDiv.querySelector('.date-picker-input')
+    let fp = flatpickr(datePickerInput, {
+        dateFormat: 'd/m/Y',
+        altInput: true,
+        altFormat: 'F j, Y',
+        disableMobile: true,
+        onChange: (selectedDates, dateStr, instance) => {
+            datePickerInput.dispatchEvent(new Event('change'))
+        }
+    })
+
+    let assignedEmployees = new Set();
+    let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
+
+    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
+    let res = await get_api(`/employee/employee.php/all`);
+    let employeeList = res.data.employees;
+    employeeList.forEach((emp) => {
+        let emp_name = global.employeeToName(emp);
+        let avatar = global.employeeAvatarOrFallback(emp);
+        let option = document.createElement("div");
+        option.classList.add("name-card");
+        option.innerHTML = `
+            <img src="${avatar}" class="avatar">
+            <span>${emp_name}</span>
+            <span class="material-symbols-rounded icon">
+                person_add
+            </span>
+        `
+        option.setAttribute("data-id", emp.empID);
+        empList.appendChild(option);
+    });
+
+    // turn employeelist into a map of id to employee
+    let employeeMap = new Map();
+    employeeList.forEach((emp) => {
+        employeeMap.set(emp.empID, emp);
+    });
+
+    // add event listeners to employee list
+    let employeeListOptions = empList.querySelectorAll(".name-card");
+    employeeListOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+
+            let empID = option.getAttribute("data-id");
+
+            if (!assignedEmployees.has(empID)) {
+
+                option.classList.add('selected');
+                option.querySelector('.icon').innerHTML = "check";
+
+                assignedEmployees.add(empID);
+
+            } else {
+
+                option.classList.remove('selected');
+                option.querySelector('.icon').innerHTML = "person_add";
+                assignedEmployees.delete(empID);
+
+            }
+
+            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+
+        })
+    })
+
+    fullscreenDiv.style.filter = 'brightness(0.75)';
+    let dialog = popupDiv.querySelector('.popupDialog');
+    dialog.style.transform = 'translateY(0px)'
+    dialog.style.opacity = '1';
+    
+    let saveButton = dialog.querySelector('#save-button');
+    let closeButton = dialog.querySelector('#close-button');
+    let closeButtonBottom = dialog.querySelector('#close-button-bottom');
+
+    closeButton.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
+        dialog.style.display = 'none';
+        
+        
+        fullscreenDiv.style.filter = 'none';
+        console.log("[addTaskCloseButton] rejecting")
+    });
+
+    closeButtonBottom.addEventListener('click', (event) => {
         event.preventDefault(); 
         dialog.style.transform = 'translateY(-1%)'
         dialog.style.opacity = '0';
