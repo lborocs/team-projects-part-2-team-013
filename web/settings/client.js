@@ -239,7 +239,7 @@ async function setUserData() {
     let employeeEmail = emp.email;
     let employeeAvatar = global.employeeAvatarOrFallback(emp);
 
-    accountCard.querySelectorAll('.current-name').forEach((e) => {e.innerHTML = employeeName});
+    accountOptions.querySelectorAll('.current-name').forEach((e) => {e.innerHTML = employeeName});
     accountCard.querySelector('.email').innerHTML = employeeEmail;
     accountCard.querySelector('.avatar').src = employeeAvatar;
     accountCard.querySelector('.role').innerText = employeeData.isManager ? "Manager" : "Employee";
