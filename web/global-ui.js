@@ -295,9 +295,9 @@ class GlobalEmployeeRequest {
 
 const DEFAULT_PREFERENCES = {
     "sidebarisopen": false,
-    "taskview": "Never",
-    "tasksort": "By Name",
-    "taskorder": "Desc",
+    "taskview": 0,
+    "tasksort": "name",
+    "taskorder": "desc",
     "taskfilters.managermine": false,
     "taskfilters.group": false,
     "taskfilters.single": false,
@@ -306,8 +306,8 @@ const DEFAULT_PREFERENCES = {
     "taskfilters.notstarted": false,
     "taskfilters.overdue": false,
     "taskfilters.notoverdue": false,
-    "projectsort": "By Name",
-    "projectorder": "Desc",
+    "projectsort": "name",
+    "projectorder": "desc",
     "projectfilters.managermine": false,
     "projectfilters.teamleader": false,
     "projectfilters.overdue": false,
