@@ -427,26 +427,28 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 1em;
-    margin: 0.75em;
-    margin-left: 0;
-    margin-top: 1em;
-    margin-bottom: 1em;
-    padding: 1em;
-    padding-left: 1.5em;
-    padding-right: 1.5em;
+
+    gap: 1rem;
+    padding: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+
     border-radius: 8px;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+
     background-color: white;
-    box-shadow: 0 4px 4px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
+    box-shadow: 0 4px 4px rgba(0,0,0,0.1),
+                0 0px 8px rgba(0,0,0,0.1);
+
     width: 100%;
-    height: calc(100% - 2em);
+    height: 100%;
     overflow-y: auto;
     flex: 0 0 330px;
     position: sticky;
-    top: 16px;
-    bottom: auto;
+
     .title {
-        font-size: 1.5em;
+        font-size: 1.5rem;
         font-weight: 700;
         color: var(--text-off-black, #0f0f0f);
         overflow-wrap: anywhere;
@@ -605,7 +607,7 @@
     min-height: calc(100% - 1.5em);
     display: flex;
     align-self: flex-start;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 1em;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -617,7 +619,7 @@
 
 .taskgrid-wrapper {
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: auto;
     width: 100%;
     height: 100%;
 }
@@ -679,6 +681,7 @@
     padding-bottom: 0.75em;
     gap: 0.85em;
     width: clamp(22em, 32%, 34em);
+    min-width: 330px;
     transition: 0.08s ease-out;
 }
 
@@ -785,6 +788,7 @@
 
 .tasklist {
     width: 100%;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     display: grid;
@@ -1866,4 +1870,8 @@
         color: rgba(0,0,0,0.4);
     }
 
+}
+
+.button-text.mobile {
+    display: none;
 }

@@ -22,10 +22,13 @@ var globalPersonalsSort = {
 }
 
 const newPersonalButton = document.getElementById('new-personal')
+const mobileNewPersonalButton = document.getElementById('mobile-new-personal')
 const activeList = document.getElementById('active-list')
 const completedList = document.getElementById('completed-list')
 const titleHeaders = document.querySelectorAll('.header > .title')
 const personalsSearch = document.getElementById('personals-search')
+const mobilePersonalsSearch = document.getElementById('mobile-search-icon')
+const mobilePersonalsSearchInput = document.getElementById('mobile-search-input')
 const personalsSortDropdown = document.getElementById('personals-sort')
 const dropdownMenus = document.querySelectorAll('.dropdown-menu')
 const sortAlphabetic = document.getElementById('sort-alphabetic')
@@ -208,11 +211,13 @@ function renderDummyPersonal() {
         
         const handle = global.takeMutex("renderDummyPersonal");
         newPersonalButton.classList.add('disabled');
+        mobileNewPersonalButton.classList.add('disabled');
 
 
         const resolveAndUnlock = () => {
             console.log("[renderDummyPersonal] Resolving and releasing mutex")
             newPersonalButton.classList.remove('disabled');
+            mobileNewPersonalButton.classList.remove('disabled');
             global.releaseMutex("renderDummyPersonal", handle);
             resolve(true);
         };
@@ -506,7 +511,10 @@ function personalCardEditMode(id) {
 
 newPersonalButton.addEventListener('click', () => {
     renderDummyPersonal();
+})
 
+mobileNewPersonalButton.addEventListener('click', () => {
+    renderDummyPersonal();
 })
 
 titleHeaders.forEach((title) => {
@@ -532,8 +540,43 @@ personalsSearch.addEventListener('input', (e) => {
         completedList.innerHTML = `<div class="no-results">We couldn't find any matches.</div>`
     }
 
+})
+
+mobilePersonalsSearch.addEventListener('click', () => {
+    if (mobilePersonalsSearchInput.classList.contains('open') === false) {
+        mobilePersonalsSearchInput.value = ""
+        mobilePersonalsSearchInput.focus()
+        mobilePersonalsSearchInput.classList.add('open')
+        document.querySelector('.controls>.title').classList.add('norender')
+    } else {
+        mobilePersonalsSearchInput.classList.remove('open')
+        mobilePersonalsSearchInput.blur()
+        document.querySelector('.controls>.title').classList.remove('norender')
+    }
 
 })
+
+mobilePersonalsSearchInput.addEventListener('input', (e) => {
+    if (mobilePersonalsSearch.classList.contains('open') === false) {
+        mobilePersonalsSearch.classList.add('open')
+    }
+    const result = searchPersonals(e.target.value)
+
+    const completed = result.filter(personal => personal.state === 1).length
+    const active = result.length - completed
+
+    if (active === 0) {
+        activeList.innerHTML = `<div class="no-results">We couldn't find any matches.</div>`
+    }
+    if (completed === 0) {
+        completedList.innerHTML = `<div class="no-results">We couldn't find any matches.</div>`
+    }
+
+})
+
+
+
+
 
 personalsSortDropdown.addEventListener("click", () => {
     personalsSortDropdown.classList.toggle("open")
