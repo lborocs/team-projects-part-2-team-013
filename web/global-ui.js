@@ -340,13 +340,7 @@ class PreferenceStore {
         this._lazy = true;
         this.store = new Map();
         // rolling timeout to save 2s after no changes
-        this.saver = new ReusableRollingTimeout(() => {this.save()}, 1000);
-
-        window.addEventListener('beforeunload', async () => {
-            this.saver.inner.cancel();
-            await this.save();
-        });
-
+        this.saver = new ReusableRollingTimeout(() => {this.save()}, 200);
     }
 
     async save() {
