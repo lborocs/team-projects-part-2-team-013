@@ -12,7 +12,7 @@ var globalCurrentProject;
 var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
 let sortAttribute = 'lastAccessed'
-let sortDirection = 'asc';
+let sortDirection = 'desc';
 let currentPage = 1;
 let pageLimit = 25;
 let titleButton = document.getElementById("title-column");
