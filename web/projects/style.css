@@ -467,6 +467,7 @@
 
         & p {
             margin-top: 0;
+            margin-bottom: 0;
         }
     }
     .team-leader {
@@ -491,6 +492,11 @@
 
     #project-description {
         overflow-wrap: anywhere;
+
+        & p {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
     }
 }
 
@@ -534,6 +540,43 @@
     padding-bottom: 0.25em;
 }
 
+.explainer-task-status {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    white-space: nowrap;
+    height: 100%;
+    padding: 0.25em;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.explainer-task-status:hover {
+    cursor: default;
+    transition: 0.1s ease-out;
+    background-color: var(--light-grey-bg);
+}
+
+.explainer-task-status.not-started {
+    background-color: var(--not-started-status-cell, rgba(245, 205, 188, 0.7));
+    border: none;
+    border-radius: 4px;
+}
+
+.explainer-task-status.in-progress {
+    background-color: var(--in-progress-status-cell, rgba(188, 219, 245, 0.7));
+    border: none;
+    border-radius: 4px;
+}
+
+.explainer-task-status.finished {
+    background-color: var(--finished-status-cell, rgba(188, 245, 188, 0.7));
+    border: none;
+    border-radius: 4px;
+}
+
 .avatar {
     width: 1.75rem;
     height: 1.75rem;
@@ -559,14 +602,16 @@
         gap: 0.25rem;
     }
     .description {
-        font-size: 16px;
-        font-weight: 400;
-        color: var(--text-off-black, #0f0f0f);
+        font-size: 0.85em;
+        font-weight: 600;
+        color: #0f0f0faa;
     }
     .date {
         font-size: 0.85em;
-        font-weight: 400;
-        color: var(--text-off-black, #0f0f0f);
+        text-wrap: nowrap;
+        font-weight: 600;
+        color: #0f0f0faa;
+        line-height: 24px;
     }
 }
 
@@ -1751,7 +1796,6 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5em;
     height: 100%;
 }
 
@@ -1874,4 +1918,28 @@
 
 .button-text.mobile {
     display: none;
+}
+
+#explainer-man-hours {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    .man-hours {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
+        align-items: center;
+        justify-content: flex-start;
+    }
+}
+
+#explainer-date {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: flex-start;
+    justify-content: flex-start;
 }
