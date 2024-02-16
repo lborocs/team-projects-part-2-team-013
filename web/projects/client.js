@@ -824,6 +824,8 @@ async function fetchAndRenderAllProjects() {
     console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
     console.log("[fetchAndRenderAllProjects] pageLimit is " + pageLimit)
 
+    await checkNextPage();
+
     let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
     projectTableHeaders.forEach((header) => {
         
@@ -2909,13 +2911,18 @@ pageForwardButton.addEventListener('click', async function() {
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
         console.log(`[pageForwardButton] currentPage: ${currentPage}`);
         const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
-        if (nextData.data.projects.length === 0) {
-            pageForwardButton.classList.add('disabled');
-        }
-    } else {
-        pageForwardButton.classList.add('disabled');
     }
+    await checkNextPage();
 });
+
+async function checkNextPage() {
+    const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
+    if (nextData.data.projects.length === 0) {
+        pageForwardButton.classList.add('disabled');
+    } else {
+        pageForwardButton.classList.remove('disabled');
+    }
+}
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 10, currentPage = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
