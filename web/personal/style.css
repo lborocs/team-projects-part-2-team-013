@@ -8,7 +8,7 @@
     gap: 0.5rem;
     margin: 1rem 0;
 
-    width: calc(100% - 2rem);
+    width: calc(100% - 3rem);
     align-self: center;
 
     .title {
@@ -126,7 +126,7 @@
         width: calc(100% - 2rem);
         display: flex;
         flex-direction: row;
-        align-items: flex-end;
+        align-items: center;
         justify-content: flex-start;
         gap: 0.5rem;
 
@@ -291,7 +291,13 @@
         gap: 0.5rem;
         margin-left: auto;
 
+        .icon-button:hover {
+            background-color: white;
+        }
+
     }
+
+    
 
     .personal-description {
         display: flex;
@@ -377,6 +383,11 @@
     margin-right: auto;
 }
 
+.mobile-search-icon {
+    display: none;
+
+}
+
 
 /* popup css modified from wiki. */
 
@@ -430,6 +441,14 @@
     color: white;
 }
 
+#mobile-search-icon {
+    display: none;
+}
+
+#mobile-new-personal {
+    display: none;
+}
+
 
 [contenteditable]:empty:after {
     content: attr(placeholder);
@@ -447,4 +466,10 @@
     background-color: transparent;
     outline: none;
     box-shadow: none;
+}
+
+
+.icon-button.modal-skippable-active:hover {
+    background-color: #ffe4dd !important;
+    transition: background-color 0.05s ease-out;
 }
