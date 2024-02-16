@@ -47,6 +47,11 @@ const inProgressColumn = document.querySelector("#inprogress")
 const finishedColumn = document.querySelector("#finished")
 const notStartedAddButton = document.querySelector("#notstarted-add")
 const listAddRow = document.querySelector("#list-add-row")
+const projectsPerPageDropdown = document.querySelector("#projects-per-page");
+const view10 = document.querySelector("#view-10");
+const view25 = document.querySelector("#view-25");
+const view50 = document.querySelector("#view-50");
+const view100 = document.querySelector("#view100");
 
 const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
@@ -2762,3 +2767,13 @@ async function applySortingPreferences() {
 //         }
 //     });
 // });
+
+projectsPerPageDropdown.addEventListener("click", () => {
+    projectsPerPageDropdown.classList.toggle("open")
+})
+
+document.addEventListener("click", (e) => {
+    if (!projectsPerPageDropdown.contains(e.target)) {
+        projectsPerPageDropdown.classList.remove("open")
+    }
+});
