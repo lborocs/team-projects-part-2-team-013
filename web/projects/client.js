@@ -995,6 +995,37 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         `;
     }
 
+    let listTaskStatus = taskRow.querySelector("#list-task-status");
+    let listNotStarted = taskRow.querySelector("#list-not-started");
+    let listInProgress = taskRow.querySelector("#list-in-progress");
+    let listFinished = taskRow.querySelector("#list-finished");
+    let projID = globalCurrentProject.projID;
+
+    listTaskStatus.addEventListener("click", () => {
+        listTaskStatus.classList.toggle("open")
+    })
+    
+    document.addEventListener("click", (e) => {
+        if (!listTaskStatus.contains(e.target)) {
+            listTaskStatus.classList.remove("open")
+        }
+    });
+    
+    listNotStarted.addEventListener("click", () => {
+        listTaskStatus.querySelector(".dropdown-text").innerText = "Not Started";
+        taskRow.setAttribute("data-state", 0); // Update task state
+    })
+    
+    listInProgress.addEventListener("click", () => {
+        listTaskStatus.querySelector(".dropdown-text").innerText = "In Progress";
+        taskRow.setAttribute("data-state", 1); // Update task state
+    })
+    
+    listFinished.addEventListener("click", () => {
+        listTaskStatus.querySelector(".dropdown-text").innerText = "Finished";
+        taskRow.setAttribute("data-state", 2); // Update task state
+    })
+
     taskTableBody.appendChild(taskRow);
     // move the add task button to the bottom
     taskTableBody.appendChild(listAddRow);
