@@ -632,29 +632,9 @@ function findNext(container, y) {
  */
 async function fetchTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
-    console.log("[fetchTasks] fetched tasks for " + projID);
-    // if (data.success != true) {
-    //     return
-    // }
-    // console.log(`tasks have been fetched for ${projID}`)
-    // if (!data.data.contains_assignments) {
-    //     return
-    // }
-    // globalAssignments = data.data.assignments;
-
-    //     data.data.tasks.forEach((task) => {
-    //         task.assignments = [];
-    //         data.data.assignments.forEach((assignment) => {
-    //             if (assignment.task.taskID === task.taskID) {
-    //                 task.assignments.push(assignment.employee.empID);
-    //             }
-    //         });
-    //     });
-    // globalTasksList = data.data.tasks;
-    // return data.data.tasks
 
     if (data.success == true) {
-        console.log(`tasks have been fetched for ${projID}`)
+        console.log(`[fetchTasks] tasks have been fetched for ${projID}`)
         if (data.data.contains_assignments) {
             globalAssignments = data.data.assignments;
 
@@ -2909,7 +2889,7 @@ lastAccessedButton.addEventListener('click', function(event) {
 pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
-        pageBackButton.classList.remove('disabled');
+        pageForwardButton.classList.remove('disabled');
         pageNumberElement.textContent = currentPage;
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
         console.log(`[pageBackButton] currentPage: ${currentPage}`);
@@ -3027,6 +3007,19 @@ async function applySortingPreferences() {
 //     });
 // });
 
+async function handleViewClick(limit) {
+    projectsPerPageDropdown.querySelector(".dropdown-text").innerText = limit.toString();
+    pageLimit = limit;
+    currentPage = 1;
+    console.log(`[view${limit}] limit: ${pageLimit}`);
+    await checkNextPage();
+}
+
+view10.addEventListener("click", () => handleViewClick(10));
+view25.addEventListener("click", () => handleViewClick(25));
+view50.addEventListener("click", () => handleViewClick(50));
+view100.addEventListener("click", () => handleViewClick(100));
+
 projectsPerPageDropdown.addEventListener("click", () => {
     projectsPerPageDropdown.classList.toggle("open")
 })
@@ -3066,26 +3059,19 @@ view100.addEventListener("click", () => {
 })
 
 async function getProjectPreferences() {
-    try {
-        const prefSort = await global.preferences.get('projectSort');
-        const prefDirection = await global.preferences.get('projectOrder');
-        const attributeSearch = prefSort.or_default();
-        const sortDirection = prefDirection.or_default();
-
-        let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
-        sortColumn.classList.add('sorting-by');
-        if (sortDirection === 'asc') {
-            sortColumn.classList.add('asc');
-        } else {
-            sortColumn.classList.add('desc');
-        }
-
-
-        console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${projectSort}`);
-        console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${projectOrder}`);
-    } catch (error) {
-        console.error(`Failed to get preferences: ${error}`);
+    const prefSort = await global.preferences.get('projectSort');
+    const prefDirection = await global.preferences.get('projectOrder');
+    const attributeSearch = prefSort.or_default();
+    const sortDirection = prefDirection.or_default();
+    let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
+    sortColumn.classList.add('sorting-by');
+    if (sortDirection === 'asc') {
+        sortColumn.classList.add('asc');
+    } else {
+        sortColumn.classList.add('desc');
     }
+    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${projectSort}`);
+    console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${projectOrder}`);
 }
 
 getProjectPreferences();
