@@ -2689,6 +2689,7 @@ pageForwardButton.addEventListener('click', function() {
 });
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',limit = 10, page = 1, ) {
+    
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
     const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${limit}&page=${page}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
