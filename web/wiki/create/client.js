@@ -9,6 +9,7 @@ class Tag {
     constructor(name, tagID) {
         this.tagID = tagID;
         this.name = name;
+        this.element = null;
     }
     addTag() {
         const newTag = document.createElement("div");
@@ -17,6 +18,7 @@ class Tag {
         newTag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + this.name + '<span class="material-symbols-rounded" id="tagCloseButton">close</span>';
         document.querySelector("#listOfTags").appendChild(newTag);
         this.addDeleteListener(newTag);
+        
     }
 
     addDeleteListener(tag) {
@@ -25,6 +27,9 @@ class Tag {
 
     removeTag(tag) {
         document.querySelector("#listOfTags").removeChild(tag);
+        if (tag.tagID != 0) {
+            selectTags.push(this);
+        }       
         currentTags = currentTags.filter(a => a.name !== this.name);
         if (currentTags.length == 0){
             document.querySelector("#placeholderTag").classList.remove("norender")
@@ -56,27 +61,35 @@ class Tag {
 
     addToSelect(){
         const newSelectTag = document.createElement("div");
-        newTag.className = "name-card";
-        newTag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}`;
+        newSelectTag.className = "name-card";
+        newSelectTag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}`;
         document.querySelector(".employee-list").appendChild(newSelectTag);
-        this.addSelectListener(newSelectTag);
+        this.element = newSelectTag;
+        this.addSelectListener();
     }
 
-    addSelectListener(tag) {
-        tag.addEventListener("click", (event) => this.removeFromSelect(tag));
+    addSelectListener() {
+        this.element.addEventListener("click", (event) => this.clickedSelect());
     }
 
-    removeFromSelect(tag) {
-        document.querySelector(".employee-list").removeChild(tag);
-        selectTags = selectTags.filter(a => a.name !== this.name);
+    clickedSelect() {
+        currentTags.push(this);
+        this.addTag();
+        this.removeFromSelect();
     }
 
-    deRender(tag) {
-        tag.classList.add("norender");
+    removeFromSelect() {
+        document.querySelector(".employee-list").removeChild(this.element);
+        selectTags = selectTags.filter(a => a.tagID !== this.tagID);
+        organiseSelect();
     }
 
-    render(tag) {
-        tag.classList.remove("norender");
+    deRender() {
+        this.element.classList.add("norender");
+    }
+
+    render() {
+        this.element.classList.remove("norender");
     }
 }
 
@@ -104,11 +117,44 @@ async function fetchTags() {
     }
 }
 
+function organiseSelect() {
+    selectTags.sort((a, b) => a.name.localeCompare(b.name));
+    sleep(10).then(() => {
+    var input = document.querySelector("#input-tag").value.trim();
+    if (input === "") {
+        var index = 0;
+        selectTags.forEach((tag) => {
+            if (index < 5) {
+                tag.render();
+                index++;
+            } else {
+                tag.deRender();
+            }
+        });
+    } else {
+        var count = 0;
+        selectTags.forEach((tag) => {
+            if (count < 5 && tag.name.includes(input)) {
+                tag.render();
+                count++;
+            } else {
+                tag.deRender();
+            }
+        });
+    }
+});
+}
+    
+
 let tagsList = fetchTags();
 tagsList.then((tagsList) => {
     tagsList.forEach((tag) => {
-        selectTags.push(new Tag(tag.name, tag.tagID));
+        temp = new Tag(tag.name, tag.tagID);
+        selectTags.push(temp);
+        temp.addToSelect();
+
     });
+    organiseSelect();
     let postID = getQueryParam();
     if (postID != "") {
         editing = true;
@@ -167,10 +213,34 @@ input.addEventListener("keydown", function(event) {
 if (event.key === "Enter") {
     event.preventDefault();
     tagContent = input.value.trim();
-    tempTag = new Tag(tagContent, 0);
-    currentTags.push(tempTag);
-    tempTag.addTag();
+    const tagExists = selectTags.find(tag => tag.name === tagContent);
+    console.log(tagExists);
+    console.log("This is tagExists")
+    if (tagExists) {
+        currentTags.push(tagExists);
+        tagExists.addTag();
+        selectTags = selectTags.filter(tag => tag.tagID !== tagExists.tagID);
+        tagExists.removeFromSelect();
+        organiseSelect();
+    }
+    else{
+        tempTag = new Tag(tagContent, 0);
+        currentTags.push(tempTag);
+        tempTag.addTag();
+    }
     input.value = "";
+    }
+    else if (event.key === "Backspace" && input.value === "") {
+        currentTags.pop().removeTag();//WORK IN PROGRESS
+    }
+    else if (event.key === "Tab") {
+        event.preventDefault();
+        if (selectTags.length > 0) {
+            selectTags.find(tag => !tag.element.classList.contains("norender")).clickedSelect();
+        }
+    }
+    else {
+        organiseSelect();
     }
 });
 
@@ -232,6 +302,12 @@ function submitPost(){
             }
         });
 }
+
+const sleep = (ms) => {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+};
 
 document.querySelector(".search-input").addEventListener("focus", function() {
    document.querySelector("#glass").classList.add("norender");
