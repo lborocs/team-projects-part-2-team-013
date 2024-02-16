@@ -123,7 +123,7 @@ function object_check_user_has_access_to_task(RequestContext $ctx, array $resour
 
 
 
-    if (!db_employee_assigned_to_task($ctx->session->hex_associated_user_id, $ctx->task["taskID"])) {
+    if (!db_employee_assigned_to_task($ctx->task["taskID"], $ctx->session->hex_associated_user_id)) {
         respond_insufficient_authorization();
     }
 }
@@ -151,8 +151,7 @@ function object_check_task_edit_validation(RequestContext $ctx, array $resource_
     $bin_id = hex2bin($ctx->session->hex_associated_user_id);
 
     // check if we are only editing state
-
-    if (count($data) == 1 && array_key_exists("taskStatus", $data)) {
+    if (count($data) == 1 && array_key_exists("taskState", $data)) {
 
         // if we are only editing state then they only need to be a user
         // the previous checks ensure they are assigned to the task
