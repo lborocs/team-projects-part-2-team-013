@@ -388,6 +388,13 @@
 
 }
 
+#mobile-search-input {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+
 
 /* popup css modified from wiki. */
 
