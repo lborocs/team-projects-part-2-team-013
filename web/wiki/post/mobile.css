@@ -1,5 +1,10 @@
 @media only screen and (max-width: 600px) {
 
+    body {
+        min-height: 100dvh;
+        background-color: var(--light-grey-bg);
+    }
+
     .fullscreen {
         height: auto;
     }
@@ -82,6 +87,8 @@
     .post {
         margin-left: 1em;
         margin-right: 1em;
+        padding-left: 1.25em;
+        padding-right: 1.25em;
     }
 
 

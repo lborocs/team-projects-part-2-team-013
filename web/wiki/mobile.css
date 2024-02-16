@@ -1,5 +1,10 @@
 @media only screen and (max-width: 600px) {
 
+    body {
+        min-height: 100dvh;
+        background-color: var(--light-grey-bg);
+    }
+
     .fullscreen {
         height: auto;
     }
