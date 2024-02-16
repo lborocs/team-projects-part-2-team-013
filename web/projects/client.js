@@ -2909,7 +2909,7 @@ lastAccessedButton.addEventListener('click', function(event) {
 pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
-        pageBackButton.classList.remove('disabled');
+        pageForwardButton.classList.remove('disabled');
         pageNumberElement.textContent = currentPage;
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
         console.log(`[pageBackButton] currentPage: ${currentPage}`);
