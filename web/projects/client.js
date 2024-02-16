@@ -2688,23 +2688,34 @@ lastAccessedButton.addEventListener('click', function(event) {
 pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
+        pageBackButton.classList.remove('disabled');
         pageNumberElement.textContent = currentPage;
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-        console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+        console.log(`[pageBackButton] currentPage: ${currentPage}`);
     }
     if (currentPage === 1) {
         pageBackButton.classList.add('disabled');
     } else {
         pageBackButton.classList.remove('disabled');
     }
+    pageForwardButton.classList.remove('disabled');
 });
 
-pageForwardButton.addEventListener('click', function() {
-    pageBackButton.classList.remove('disabled');
-    currentPage++;
-    pageNumberElement.textContent = currentPage;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-    console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+pageForwardButton.addEventListener('click', async function() {
+    const data = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
+    if (data.data.projects.length !== 0) {
+        pageBackButton.classList.remove('disabled');
+        currentPage++;
+        pageNumberElement.textContent = currentPage;
+        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+        console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+        const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
+        if (nextData.data.projects.length === 0) {
+            pageForwardButton.classList.add('disabled');
+        }
+    } else {
+        pageForwardButton.classList.add('disabled');
+    }
 });
 
 async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 10, currentPage = 1) {
