@@ -22,6 +22,7 @@ const TASK_METHOD_CHECKS = [
         "project_exists",
         "user_is_part_of_project",
         "task_exists",
+        "user_has_access_to_task",
         "task_edit_validation",
     ],
     "POST"=>[

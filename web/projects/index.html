@@ -97,12 +97,12 @@
                                 <span class="material-symbols-rounded">table_rows</span> List
                             </div>
 
-                            <a class="view team-leader-only manager-only norender" id="dashboard-redirect" href="/dashboard/">
+                            <a class="view team-leader-only norender" id="dashboard-redirect" href="/dashboard/">
                                 <span class="material-symbols-rounded">speed</span> Dashboard
                             </a>
 
                             
-                            <div class="text-button blue team-leader-only manager-only norender" id="add-task-button" tabindex="0">
+                            <div class="text-button blue team-leader-only norender" id="add-task-button" tabindex="0">
                                 <div class="button-icon">
                                     <span class="material-symbols-rounded">
                                         add
@@ -130,7 +130,7 @@
                                             3
                                         </div>
                                     </div>
-                                    <div class="add-task manager-only team-leader-only norender" id="notstarted-add">
+                                    <div class="add-task team-leader-only norender" id="notstarted-add">
                                         <i class="fa-solid fa-plus"></i> Create Task
                                     </div>
 
@@ -174,7 +174,7 @@
                             <table class="taskTable table">
                                 <thead>
                                     <tr>
-                                        <th id="status-column">
+                                        <th id="status-column" data-value="status">
                                             <div class="header-td">
                                                 <div class="name">
                                                     Status
@@ -187,7 +187,7 @@
                                                 
                                             </div>
                                         </th>
-                                        <th id="title-column">
+                                        <th id="title-column" data-value="name">
                                             <div class="header-td">
                                                 <div class="name">
                                                     Task
@@ -199,7 +199,7 @@
                                                 </div>
                                             </div>
                                         </th>
-                                        <th id="date-column">
+                                        <th id="date-column" data-value="date">
                                             <div class="header-td">
                                                 <div class="name">
                                                     Due Date
@@ -287,10 +287,10 @@
                             <div class="status explainer-task-status"></div>
                         </div>
                         <div class="edit-and-delete">
-                            <div class="edit-button manager-only team-leader-only norender">
+                            <div class="edit-button team-leader-only norender">
                             
                             </div>
-                            <div class="delete-button manager-only team-leader-only norender">
+                            <div class="delete-button team-leader-only norender">
                             
                             </div>
                         </div>
@@ -359,7 +359,7 @@
                         </div>
                         <div class="dropdown" id="projects-per-page" tabindex="0">
                             <div class="dropdown-text">
-                                10
+                                25
                             </div>
                             <div class="dropdown-chevron">
                                 <span class="material-symbols-rounded">expand_more</span>
@@ -441,7 +441,7 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th id="header-sortingBy" data-attribute="lastAccessed"  class="sorting-by">
+                                    <th id="header-sortingBy" data-attribute="lastAccessed">
                                         <div class="header-td">
                                             <div class="name">
                                                 Last Accessed

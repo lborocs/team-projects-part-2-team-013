@@ -64,6 +64,7 @@
                     <div class="account tab active-tab">Account</div>
                     <div class="preferences tab">Preferences</div>
                     <div class="system tab manager-only">System</div>
+                    <div class="manage-users tab manager-only">Manage Users</div>
                 </div>
                 <div class="content">
                     <div class="account-options options">
@@ -131,7 +132,7 @@
                                 </div>
                                 <div class="dropdown-menu">
                                     <div class="dropdown-option list-option" id="list-never" data-value="2">Never</div>
-                                    <div class="dropdown-option list-option" id="list-manager" data-value="1">For Projects I Manage</div>
+                                    <div class="dropdown-option list-option" id="list-leader" data-value="1">For Projects I Lead</div>
                                     <div class="dropdown-option list-option" id="list-always" data-value="0">Always</div>
                                 </div>
                             </div>
@@ -185,7 +186,7 @@
                                 <div class="dropdown-menu">
                                     <div class="dropdown-option sort-projects-type" id="sort-name" data-value="name">By Name</div>
                                     <div class="dropdown-option sort-projects-type" id="sort-teamLeader" data-value="teamLeader">By Team Leader</div>
-                                    <div class="dropdown-option sort-projects-type" id="sort-creationDate" data-value="creationDate">By Creation Date</div>
+                                    <div class="dropdown-option sort-projects-type" id="sort-creationDate" data-value="createdAt">By Creation Date</div>
                                     <div class="dropdown-option sort-projects-type" id="sort-dueDate" data-value="dueDate">By Due Date</div>
                                     <div class="dropdown-option sort-projects-type" id="sort-lastAccessed" data-value="lastAccessed">By Last Accessed</div>
 
@@ -265,6 +266,22 @@
                                     <div class="dropdown-option tags-option" id="enable-managers">For Managers Only</div>
                                     <div class="dropdown-option tags-option" id="enable-all">For Everybody</div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="manage-users-options options norender">
+                        <div class="option-title">
+                            Manage Users
+                        </div>
+                        <div class="search-container">
+                            <div class="user-search">
+                                <span class="material-symbols-rounded">
+                                    search
+                                </span>
+                                <input id="inputField" type="text" placeholder="Search users..."></div>
+                            </div>
+
                             </div>
                         </div>
                     </div>

@@ -1,3 +1,4 @@
+import { search } from "../global-topbar.js";
 import * as global from "../global-ui.js";
 import { animate, getEmployeesById } from "../global-ui.js";
 
@@ -12,9 +13,9 @@ var globalCurrentProject;
 var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
 let sortAttribute = 'lastAccessed'
-let sortDirection = 'asc';
+let sortDirection = 'desc';
 let currentPage = 1;
-let pageLimit = 10;
+let pageLimit = 25;
 let titleButton = document.getElementById("title-column");
 let dateButton = document.getElementById("date-column");
 let statusButton = document.getElementById("status-column");
@@ -147,6 +148,17 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     explainerDescription.innerHTML = project.description;
     explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
+
+    const prefSort = await global.preferences.get('tasksort');
+    const prefDirection = await global.preferences.get('taskdirection');
+    const attributeSearch = await prefSort.or_default();
+    const sortDirection = await prefDirection.or_default();
+
+    let sortColumn = document.querySelector(`[data-value=${attributeSearch}]`);
+    sortColumn.classList.add("sorting-by");
+    if (sortDirection === 'desc') {
+        sortColumn.classList.add("reverse");
+    }
 
     teamLeaderEnableElementsIfTeamLeader()
 
@@ -659,29 +671,9 @@ function findNext(container, y) {
  */
 async function fetchTasks(projID) {
     const data = await get_api(`/project/task.php/tasks/${projID}`);
-    console.log("[fetchTasks] fetched tasks for " + projID);
-    // if (data.success != true) {
-    //     return
-    // }
-    // console.log(`tasks have been fetched for ${projID}`)
-    // if (!data.data.contains_assignments) {
-    //     return
-    // }
-    // globalAssignments = data.data.assignments;
-
-    //     data.data.tasks.forEach((task) => {
-    //         task.assignments = [];
-    //         data.data.assignments.forEach((assignment) => {
-    //             if (assignment.task.taskID === task.taskID) {
-    //                 task.assignments.push(assignment.employee.empID);
-    //             }
-    //         });
-    //     });
-    // globalTasksList = data.data.tasks;
-    // return data.data.tasks
 
     if (data.success == true) {
-        console.log(`tasks have been fetched for ${projID}`)
+        console.log(`[fetchTasks] tasks have been fetched for ${projID}`)
         if (data.data.contains_assignments) {
             globalAssignments = data.data.assignments;
 
@@ -820,8 +812,8 @@ function clearRenderedTasks() {
 
 
 async function teamLeaderEnableElementsIfTeamLeader() {
-    let projectRow = document.querySelector(".project-row.selected");
-    if (projectRow == null) {
+
+    if (!globalCurrentProject) {
         return
     }
 
@@ -860,45 +852,32 @@ async function getProjectById(projID) {
 async function fetchAndRenderAllProjects() {
     setActivePane("select-projects-pane");
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
-    const data = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
-    console.log("[fetchAndRenderAllProjects] fetched projects");
-
-    if (data.success == false) {
-        return
-    }
-
-    clearProjectList();
-    console.log("[fetchAndRenderAllProjects] projects have been fetched successfully")
-    console.log("[fetchAndRenderAllProjects] pageLimit is " + pageLimit)
+    
 
     let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
     projectTableHeaders.forEach((header) => {
         
-        if (sortAttribute) { 
-            header.addEventListener("click", (e) => {
-                sortAttribute = header.getAttribute('data-attribute');
-                if (header.classList.contains("sorting-by")) {
-                    header.classList.toggle("reverse");
-                    sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
-                } else {
-                    projectTableHeaders.forEach((header) => {
-                        header.classList.remove("sorting-by", "reverse");
-                    });
-                    header.classList.add("sorting-by");
-                    sortDirection = 'asc';
-                }
-                currentPage = 1;
-                pageBackButton.classList.add("disabled");
-                pageNumberElement.textContent = currentPage;
-                searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-            });
-        }
+        header.addEventListener("click", (e) => {
+            sortAttribute = header.getAttribute('data-attribute');
+            if (header.classList.contains("sorting-by")) {
+                header.classList.toggle("reverse");
+                sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
+            } else {
+                projectTableHeaders.forEach((header) => {
+                    header.classList.remove("sorting-by", "reverse");
+                });
+                header.classList.add("sorting-by");
+                sortDirection = 'asc';
+            }
+            currentPage = 1;
+            pageBackButton.classList.add("disabled");
+            pageNumberElement.textContent = currentPage;
+            searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+        });
     });
 
-    await Promise.all(data.data.projects.map( async (project) => {
-        await projectObjectRenderAndListeners(project);
-    }));
-    return data.data.projects
+    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+
 }
 
 
@@ -1591,24 +1570,31 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
             </a>
         </td>
         <td>
-            <a href="/projects/#${ID}">
-                <div class="icon-button no-box project-actions">
-                    <span class="material-symbols-rounded">
-                        more_horiz
-                    </span>
-                </div>
-            </a>
+            <div class="icon-button no-box project-actions">
+                <span class="material-symbols-rounded">
+                    more_horiz
+                </span>
+            </div>
         </td>
     `;
 
     projectTitle.innerHTML = title;
 
-    //set id to the project id
+    //sets id to the project id
     project.setAttribute("data-ID", ID);
     project.setAttribute("data-title", title);
     project.setAttribute("data-description", desc);
     project.setAttribute("data-team-leader", JSON.stringify(teamLeader));
     projectsTable.querySelector("tbody").appendChild(project);
+
+
+    const projectActions = project.querySelector(".project-actions");
+    projectActions.addEventListener("click", (e) => {
+        e.stopPropagation()
+        projectPopup(ID)
+
+    });
+
     teamLeaderEnableElementsIfTeamLeader();
 
     return project;
@@ -2659,6 +2645,218 @@ async function editTaskPopup(task){
 }
 
 
+
+
+async function projectPopup(id){
+    console.log(`[projectPopup] Running editTaskPopup`)
+    let popupDiv = document.querySelector('.popup');
+    let fullscreenDiv = document.querySelector('.fullscreen');
+
+    let projectData = await get_api(`/project/project.php/project/${id}`);
+
+    let project = projectData.data;
+
+    let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
+    teamLeader = teamLeader.get(project.teamLeader.empID);
+    console.error(teamLeader)
+    let teamLeaderAvatar = global.employeeAvatarOrFallback(teamLeader);
+
+    let hasDueDate = project.dueDate ? new Date(project.dueDate) : "Not set";
+
+    popupDiv.innerHTML = `
+        <dialog open class='popupDialog' id="add-task-popup">
+            <div class="popup-title">
+            <span>${project.name}</span>
+            <div class="small-icon" id="close-button">
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+            </div>
+            </div>
+            <input type="text" placeholder="${project.name}" class="add-task-title-input">
+            
+            <div class="add-task-description-container">
+                <div id="description-editor"></div>
+            </div>
+            <div class="dropdown-and-employee-list">
+                <div class="search-dropdown" id="employee-select" tabindex="0">
+                    <div class="search">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+            
+                        
+                        <div class="search-icon">
+                            <span class="material-symbols-rounded">search</span>
+                        </div>
+                        <div class="search-icon clear-icon">
+                            <span class="material-symbols-rounded">close</span>
+                        </div>
+                    </div>
+                    <div class="popover">
+                        <div class="employee-list">
+                        </div>
+                        <div class="show-more text-button">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">
+                                    more_horiz
+                                </span>
+                            </div>
+                            <div class="button-text">
+                                Show More
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="assigned-employees">
+                    <img src="${teamLeaderAvatar}" class="avatar" ${global.employeeToName(teamLeader)}>
+                </div>
+            </div>
+
+            <div class="date-picker" id="due-date">
+                <div class="date-picker-icon">
+                    <span class="material-symbols-rounded">event</span>
+                </div>
+                <input class="date-picker-input" type="text" placeholder="${hasDueDate}" tabindex="0"></input>
+            </div>
+            <div class="confirm-buttons-row">
+                <div class="text-button" id="close-button-bottom">
+                    <div class="button-text">
+                        Close
+                    </div>
+                </div>
+                <div class="text-button blue" id="save-button">
+                    <div class="button-text">
+                        Save
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    `;
+
+    const titleInput = popupDiv.querySelector('.add-task-title-input');
+    titleInput.value = project.name;
+
+    //quill for description
+    var quill = new Quill('#description-editor', {
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                ['code-block']
+            ]
+        },
+        theme: 'snow'
+    });
+
+    quill.setText(`${project.description}`)
+
+    //flatpickr for date picker
+    let datePickerInput = popupDiv.querySelector('.date-picker-input')
+    let fp = flatpickr(datePickerInput, {
+        dateFormat: 'd/m/Y',
+        altInput: true,
+        altFormat: 'F j, Y',
+        disableMobile: true,
+        onChange: (selectedDates, dateStr, instance) => {
+            datePickerInput.dispatchEvent(new Event('change'))
+        }
+    })
+
+    let assignedEmployees = new Set();
+    let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
+
+    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
+    let res = await get_api(`/employee/employee.php/all`);
+    let employeeList = res.data.employees;
+    employeeList.forEach((emp) => {
+        let emp_name = global.employeeToName(emp);
+        let avatar = global.employeeAvatarOrFallback(emp);
+        let option = document.createElement("div");
+        option.classList.add("name-card");
+        option.innerHTML = `
+            <img src="${avatar}" class="avatar">
+            <span>${emp_name}</span>
+            <span class="material-symbols-rounded icon">
+                person_add
+            </span>
+        `
+        option.setAttribute("data-id", emp.empID);
+        empList.appendChild(option);
+    });
+
+    // turn employeelist into a map of id to employee
+    let employeeMap = new Map();
+    employeeList.forEach((emp) => {
+        employeeMap.set(emp.empID, emp);
+    });
+
+    // add event listeners to employee list
+    let employeeListOptions = empList.querySelectorAll(".name-card");
+    employeeListOptions.forEach((option) => {
+        option.addEventListener("click", () => {
+
+            let empID = option.getAttribute("data-id");
+
+            if (!assignedEmployees.has(empID)) {
+
+                option.classList.add('selected');
+                option.querySelector('.icon').innerHTML = "check";
+
+                assignedEmployees.add(empID);
+
+            } else {
+
+                option.classList.remove('selected');
+                option.querySelector('.icon').innerHTML = "person_add";
+                assignedEmployees.delete(empID);
+
+            }
+
+            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+
+        })
+    })
+
+    fullscreenDiv.style.filter = 'brightness(0.75)';
+    let dialog = popupDiv.querySelector('.popupDialog');
+    dialog.style.transform = 'translateY(0px)'
+    dialog.style.opacity = '1';
+    
+    let saveButton = dialog.querySelector('#save-button');
+    let closeButton = dialog.querySelector('#close-button');
+    let closeButtonBottom = dialog.querySelector('#close-button-bottom');
+
+    closeButton.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
+        dialog.style.display = 'none';
+        
+        
+        fullscreenDiv.style.filter = 'none';
+        console.log("[addTaskCloseButton] rejecting")
+    });
+
+    closeButtonBottom.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
+        dialog.style.display = 'none';
+        fullscreenDiv.style.filter = 'none';
+        console.log("[addTaskDiscardButton] rejecting")
+    });
+
+    dialog.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addTaskEscape] rejecting")
+        }
+    });
+
+}
+
+
 document.querySelector(".edit-button").addEventListener("pointerup", async () => {
     let taskID = explainerTaskContainer.getAttribute("task-id");
     //get task from globalTasksList
@@ -2691,7 +2889,7 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 
 
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
-    searchAndRenderProjects(projectSearchInput.value = "", sortAttribute, sortDirection, pageLimit, currentPage);
+    searchAndRenderProjects(projectSearchInput, sortAttribute, sortDirection, pageLimit, currentPage);
     startOrRollProjectSearchTimeout();
 
 })
@@ -2721,26 +2919,44 @@ lastAccessedButton.addEventListener('click', function(event) {
 pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
+        pageForwardButton.classList.remove('disabled');
         pageNumberElement.textContent = currentPage;
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-        console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+        console.log(`[pageBackButton] currentPage: ${currentPage}`);
     }
     if (currentPage === 1) {
         pageBackButton.classList.add('disabled');
     } else {
         pageBackButton.classList.remove('disabled');
     }
+    pageForwardButton.classList.remove('disabled');
 });
 
-pageForwardButton.addEventListener('click', function() {
+pageForwardButton.addEventListener('click', async function() {
+
     pageBackButton.classList.remove('disabled');
     currentPage++;
     pageNumberElement.textContent = currentPage;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[pageForwardButton] currentPage: ${currentPage}`);
+    await checkNextPage();
 });
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 10, currentPage = 1) {
+async function checkNextPage() {
+
+    if (pageBackButton.classList.contains('disabled')) {
+        return; // someone already cooked for us and we dont need the unneccesary api call
+    }
+
+    const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
+    if (nextData.data.projects.length === 0) {
+        pageForwardButton.classList.add('disabled');
+    } else {
+        pageForwardButton.classList.remove('disabled');
+    }
+}
+
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 25, currentPage = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
     const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
@@ -2756,6 +2972,13 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
     }
     
     clearProjectList();
+
+    if (data.data.projects.length < pageLimit) {
+        pageForwardButton.classList.add('disabled');
+    } else {
+        pageForwardButton.classList.remove('disabled');
+    }
+
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
     await Promise.all(data.data.projects.map(async (project) => {
         await projectObjectRenderAndListeners(project);
@@ -2823,6 +3046,19 @@ async function applySortingPreferences() {
 //     });
 // });
 
+async function handleViewClick(limit) {
+    projectsPerPageDropdown.querySelector(".dropdown-text").innerText = limit.toString();
+    pageLimit = limit;
+    currentPage = 1;
+    console.log(`[view${limit}] limit: ${pageLimit}`);
+    await checkNextPage();
+}
+
+view10.addEventListener("click", () => handleViewClick(10));
+view25.addEventListener("click", () => handleViewClick(25));
+view50.addEventListener("click", () => handleViewClick(50));
+view100.addEventListener("click", () => handleViewClick(100));
+
 projectsPerPageDropdown.addEventListener("click", () => {
     projectsPerPageDropdown.classList.toggle("open")
 })
@@ -2860,3 +3096,21 @@ view100.addEventListener("click", () => {
     searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[view100] limit: ${pageLimit}`);
 })
+
+async function getProjectPreferences() {
+    const prefSort = await global.preferences.get('projectSort');
+    const prefDirection = await global.preferences.get('projectOrder');
+    sortAttribute = prefSort.or_default();
+    sortDirection = prefDirection.or_default();
+    let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
+    sortColumn.classList.add('sorting-by');
+    if (sortDirection === 'asc') {
+        sortColumn.classList.add('asc');
+    } else {
+        sortColumn.classList.add('desc');
+    }
+    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${attributeSearch}`);
+    console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
+}
+
+getProjectPreferences();

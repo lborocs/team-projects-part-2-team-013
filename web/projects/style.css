@@ -177,7 +177,7 @@
         opacity: 0.5;
         transition: 0.05s ease-out;
         &span {
-            font-size: 24px;
+            font-size: 26px;
         }
     }
 
