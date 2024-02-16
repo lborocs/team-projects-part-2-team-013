@@ -80,7 +80,12 @@ async function api_request(route, method, body, options={}) {
             data: null
         }
     } else {
-        raw_res = await raw_response.json();
+        try {
+            raw_res = await raw_response.json();
+        } catch (e) {
+            console.error(`[API] ${method} ${route} JSON ERROR: ${raw_response.status} - ${raw_response.statusText}`);
+            return new APIResponse(raw_response.status, {success: false, data: {code: 3000, message: "UNKOWN"}}, raw_response.headers);
+        }
     }
 
 
