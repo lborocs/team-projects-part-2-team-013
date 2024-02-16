@@ -10,27 +10,36 @@ class Tag {
         this.tagID = tagID;
         this.name = name;
         this.element = null;
+        this.newTag = null;
     }
     addTag() {
-        const newTag = document.createElement("div");
+        const newElement = document.createElement("div");
         document.querySelector("#placeholderTag").classList.add("norender")
-        newTag.className = "tag";
-        newTag.innerHTML = '<span class="material-symbols-rounded">sell</span>' + this.name + '<span class="material-symbols-rounded" id="tagCloseButton">close</span>';
-        document.querySelector("#listOfTags").appendChild(newTag);
-        this.addDeleteListener(newTag);
+        newElement.className = "tag";
+        newElement.innerHTML = '<span class="material-symbols-rounded">sell</span>' + this.name + '<span class="material-symbols-rounded" id="tagCloseButton">close</span>';
+        document.querySelector("#listOfTags").appendChild(newElement);
+        this.newTag = newElement;
+        this.addDeleteListener();
         
     }
 
-    addDeleteListener(tag) {
-        tag.addEventListener("click", (event) => this.removeTag(tag));
+    addDeleteListener() {
+        this.newTag.addEventListener("click", (event) => this.removeTag());
     }
 
-    removeTag(tag) {
-        document.querySelector("#listOfTags").removeChild(tag);
-        if (tag.tagID != 0) {
+    removeTag() {
+        document.querySelector("#listOfTags").removeChild(this.newTag);
+        if (this.tagID != 0) {
             selectTags.push(this);
+            this.addToSelect();
+            organiseSelect();
         }       
-        currentTags = currentTags.filter(a => a.name !== this.name);
+        const index = currentTags.indexOf(this);
+        if (index !== -1) {
+            currentTags.splice(index, 1);
+        }
+        console.log(currentTags);
+        console.log("This is currentTags")
         if (currentTags.length == 0){
             document.querySelector("#placeholderTag").classList.remove("norender")
         }
@@ -65,14 +74,20 @@ class Tag {
         newSelectTag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}`;
         document.querySelector(".employee-list").appendChild(newSelectTag);
         this.element = newSelectTag;
+        console.log('Added to select: ', this.name);
         this.addSelectListener();
     }
 
     addSelectListener() {
-        this.element.addEventListener("click", (event) => this.clickedSelect());
+        console.log('Adding click listener to: ', this.element);
+        this.element.addEventListener("mousedown", (event) => {
+            event.stopPropagation();
+            this.clickedSelect();
+        });
     }
 
     clickedSelect() {
+        console.log('Tag clicked: ', this.name);
         currentTags.push(this);
         this.addTag();
         this.removeFromSelect();
@@ -118,6 +133,8 @@ async function fetchTags() {
 }
 
 function organiseSelect() {
+    console.log("Organising select");
+    console.log(currentTags);
     selectTags.sort((a, b) => a.name.localeCompare(b.name));
     sleep(10).then(() => {
     var input = document.querySelector("#input-tag").value.trim();
@@ -213,6 +230,9 @@ input.addEventListener("keydown", function(event) {
 if (event.key === "Enter") {
     event.preventDefault();
     tagContent = input.value.trim();
+    if (tagContent === "") {
+        return;
+    }
     const tagExists = selectTags.find(tag => tag.name === tagContent);
     console.log(tagExists);
     console.log("This is tagExists")
@@ -231,12 +251,13 @@ if (event.key === "Enter") {
     input.value = "";
     }
     else if (event.key === "Backspace" && input.value === "") {
-        currentTags.pop().removeTag();//WORK IN PROGRESS
+        currentTags.pop().removeTag();
     }
     else if (event.key === "Tab") {
         event.preventDefault();
         if (selectTags.length > 0) {
             selectTags.find(tag => !tag.element.classList.contains("norender")).clickedSelect();
+            input.value = "";
         }
     }
     else {
@@ -311,19 +332,10 @@ const sleep = (ms) => {
 
 document.querySelector(".search-input").addEventListener("focus", function() {
    document.querySelector("#glass").classList.add("norender");
-   document.querySelector("#ex").classList.remove("norender");
 });
 
 document.querySelector(".search-input").addEventListener("blur", function() {
     document.querySelector("#glass").classList.remove("norender");
-    document.querySelector("#ex").classList.add("norender");
 });
-
-document.querySelector("#ex").addEventListener("click", function() {
-    document.querySelector(".search-input").value = "";
-    document.querySelector("#glass").classList.remove("norerender");
-});
-
-document.querySelector("#ex").classList.add("norender");
 
 submitButton.addEventListener("click", submitPost);
