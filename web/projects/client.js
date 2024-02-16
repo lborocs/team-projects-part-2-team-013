@@ -2650,9 +2650,12 @@ async function projectPopup(id){
 
     let project = projectData.data;
 
-    // let teamLeader = global.employeeAvatarOrFallback(project.teamLeader);
+    let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
+    teamLeader = teamLeader.get(project.teamLeader.empID);
+    console.error(teamLeader)
+    let teamLeaderAvatar = global.employeeAvatarOrFallback(teamLeader);
 
-
+    let hasDueDate = project.dueDate ? new Date(project.dueDate) : "Not set";
 
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
@@ -2698,7 +2701,7 @@ async function projectPopup(id){
                     </div>
                 </div>
                 <div class="assigned-employees">
-                    ${teamLeader}
+                    <img src="${teamLeaderAvatar}" class="avatar" ${global.employeeToName(teamLeader)}>
                 </div>
             </div>
 
@@ -2706,7 +2709,7 @@ async function projectPopup(id){
                 <div class="date-picker-icon">
                     <span class="material-symbols-rounded">event</span>
                 </div>
-                <input class="date-picker-input" type="text" placeholder="${project.dueDate}" tabindex="0"></input>
+                <input class="date-picker-input" type="text" placeholder="${hasDueDate}" tabindex="0"></input>
             </div>
             <div class="confirm-buttons-row">
                 <div class="text-button" id="close-button-bottom">
@@ -2722,6 +2725,9 @@ async function projectPopup(id){
             </div>
         </dialog>
     `;
+
+    const titleInput = popupDiv.querySelector('.add-task-title-input');
+    titleInput.value = project.name;
 
     //quill for description
     var quill = new Quill('#description-editor', {
