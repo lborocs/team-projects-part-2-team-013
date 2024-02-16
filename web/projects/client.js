@@ -1744,57 +1744,66 @@ async function addTask() {
     let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
 
     let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
-    let res = await get_api(`/employee/employee.php/all`);
-    let employeeList = res.data.employees;
-    console.log(employeeList)
-    employeeList.forEach((emp) => {
-        let emp_name = global.employeeToName(emp);
-        let avatar = global.employeeAvatarOrFallback(emp);
-        let option = document.createElement("div");
-        option.classList.add("name-card");
-        option.innerHTML = `
-            <img src="${avatar}" class="avatar">
-            <span>${emp_name}</span>
-            <span class="material-symbols-rounded icon">
-                person_add
-            </span>
-        `
-        option.setAttribute("data-id", emp.empID);
-        empList.appendChild(option);
-    });
 
-    // turn employeelist into a map of id to employee
-    let employeeMap = new Map();
-    employeeList.forEach((emp) => {
-        employeeMap.set(emp.empID, emp);
-    });
+    const searchEmployees = async (q) => {
+        let res = await get_api(`/employee/employee.php/all?q=${q}`);
+        let employeeList = res.data.employees;
+        console.log(employeeList)
+        empList.innerHTML = "";
+        employeeList.forEach((emp) => {
+            let emp_name = global.employeeToName(emp);
+            let avatar = global.employeeAvatarOrFallback(emp);
+            let option = document.createElement("div");
+            option.classList.add("name-card");
+            option.innerHTML = `
+                <img src="${avatar}" class="avatar">
+                <span>${emp_name}</span>
+                <span class="material-symbols-rounded icon">
+                    person_add
+                </span>
+            `
+            option.setAttribute("data-id", emp.empID);
+            empList.appendChild(option);
+        });
 
-    // add event listeners to employee list
-    let employeeListOptions = empList.querySelectorAll(".name-card");
-    employeeListOptions.forEach((option) => {
-        option.addEventListener("click", () => {
+            // turn employeelist into a map of id to employee
+        let employeeMap = new Map();
+        employeeList.forEach((emp) => {
+            employeeMap.set(emp.empID, emp);
+        });
 
-            let empID = option.getAttribute("data-id");
+        // add event listeners to employee list
+        let employeeListOptions = empList.querySelectorAll(".name-card");
+        employeeListOptions.forEach((option) => {
+            option.addEventListener("click", () => {
 
-            if (!assignedEmployees.has(empID)) {
+                let empID = option.getAttribute("data-id");
 
-                option.classList.add('selected');
-                option.querySelector('.icon').innerHTML = "check";
+                if (!assignedEmployees.has(empID)) {
 
-                assignedEmployees.add(empID);
+                    option.classList.add('selected');
+                    option.querySelector('.icon').innerHTML = "check";
 
-            } else {
+                    assignedEmployees.add(empID);
 
-                option.classList.remove('selected');
-                option.querySelector('.icon').innerHTML = "person_add";
-                assignedEmployees.delete(empID);
+                } else {
 
-            }
+                    option.classList.remove('selected');
+                    option.querySelector('.icon').innerHTML = "person_add";
+                    assignedEmployees.delete(empID);
 
-            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+                }
 
+                updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+
+            })
         })
-    })
+        
+    }
+
+    popupDiv.querySelector(".search").addEventListener("input", (e) => {
+        searchEmployees(e.target.value);
+    });
 
     fullscreenDiv.style.filter = 'brightness(0.75)';
     let dialog = popupDiv.querySelector('.popupDialog');
