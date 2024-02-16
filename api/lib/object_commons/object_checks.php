@@ -155,9 +155,9 @@ function object_check_task_edit_validation(RequestContext $ctx, array $resource_
     if (count($data) == 1 && array_key_exists("taskStatus", $data)) {
 
         // if we are only editing state then they only need to be a user
-        if ($ctx->task->assignedTo == $bin_id) {
-            return;
-        }
+        // the previous checks ensure they are assigned to the task
+
+        return;
     }
     // we are not editing only state so check admin of project
 
