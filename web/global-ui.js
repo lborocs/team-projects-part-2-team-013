@@ -306,7 +306,7 @@ const DEFAULT_PREFERENCES = {
     "taskfilters.notstarted": false,
     "taskfilters.overdue": false,
     "taskfilters.notoverdue": false,
-    "projectsort": "name",
+    "projectsort": "lastAccessed",
     "projectorder": "desc",
     "projectfilters.managermine": false,
     "projectfilters.teamleader": false,
