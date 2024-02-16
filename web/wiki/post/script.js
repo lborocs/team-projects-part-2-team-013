@@ -1,8 +1,5 @@
 import * as global from "../../global-ui.js";
 
-var nonTechnicalTags = ["Printer", "Stationary", "Meeting Rooms", "Office Supplies", "Filing", "Cleaning", "Mail", "Reception"]
-var technicalTags = ["HTML", "CSS", "JavaScript", "Python", "Java", "C++", "Ruby", "PHP", "Swift", "Kotlin", "TypeScript", "Go"]
-
 function getQueryParam() {
     return window.location.hash.substring(1);
 }
@@ -40,7 +37,8 @@ tagsList.then((tagsList) => {
         }
         else {
             for (let i = 0; i < postData.tags.length; i++) {
-                document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tagsList[i].name}</div>`
+                let currentTag = tagsList.find(findTag(postData.tags[i]));
+                document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${currentTag.name} &nbsp </div>`
             }
         }
         console.log(postData.author.userID);
