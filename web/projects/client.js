@@ -1774,6 +1774,8 @@ async function addTask() {
 
     let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
 
+    let employeeMap = new Map();
+
     const searchEmployees = async (q) => {
         let res = await get_api(`/employee/employee.php/all?q=${q}`);
         let employeeList = res.data.employees;
@@ -1796,7 +1798,6 @@ async function addTask() {
         });
 
             // turn employeelist into a map of id to employee
-        let employeeMap = new Map();
         employeeList.forEach((emp) => {
             employeeMap.set(emp.empID, emp);
         });
