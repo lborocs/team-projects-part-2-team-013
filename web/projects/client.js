@@ -843,6 +843,8 @@ async function fetchAndRenderAllProjects() {
                     header.classList.add("sorting-by");
                     sortDirection = 'asc';
                 }
+                currentPage = 1;
+                pageNumberElement.textContent = currentPage;
                 searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection);
             });
         }
