@@ -1013,28 +1013,31 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     
     listNotStarted.addEventListener("click", () => {
         listTaskStatus.querySelector(".dropdown-text").innerText = "Not Started";
-        taskRow.setAttribute("data-state", 0); // Update task state
+        taskRow.setAttribute("data-state", 0);
+        taskRow.classList.remove("in-progress", "finished");
+        taskRow.classList.add("not-started");
     })
     
     listInProgress.addEventListener("click", () => {
         listTaskStatus.querySelector(".dropdown-text").innerText = "In Progress";
-        taskRow.setAttribute("data-state", 1); // Update task state
+        taskRow.setAttribute("data-state", 1);
+        taskRow.classList.remove("not-started", "finished");
+        taskRow.classList.add("in-progress");
     })
     
     listFinished.addEventListener("click", () => {
         listTaskStatus.querySelector(".dropdown-text").innerText = "Finished";
-        taskRow.setAttribute("data-state", 2); // Update task state
+        taskRow.setAttribute("data-state", 2);
+        taskRow.classList.remove("not-started", "in-progress");
+        taskRow.classList.add("finished");
     })
-
     taskTableBody.appendChild(taskRow);
-    // move the add task button to the bottom
     taskTableBody.appendChild(listAddRow);
     calculateTaskCount();
 }
 
 sortArray.forEach((sortObject) => {
     sortObject.addEventListener("click", () => {
-        //sort out what criteria to sort by
         const cl = sortObject.classList;
         const symbol = sortObject.querySelector('.material-symbols-rounded');
         if (cl.contains("sorting-by")) {
@@ -1141,7 +1144,6 @@ function sortByAssignees(tasks, descending) {
 
 //TODO: render the context menu
 async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours, assignments = []) {
-    //check for null values and set default values (null doesnt count as undefined)
     state = state === null ? 0 : state;
     ID = ID === null ? "" : ID;
     desc = desc === null ? "" : desc;
