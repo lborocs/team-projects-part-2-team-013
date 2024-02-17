@@ -2,6 +2,25 @@ import { search } from "../global-topbar.js";
 import * as global from "../global-ui.js"
 import { animate } from "../global-ui.js"
 
+class Tag {
+    constructor(name, tagID) {
+        this.tagID = tagID;
+        this.name = name;
+        this.content = null
+    }
+    renderTag() {
+        const tag = document.createElement('div');
+        tag.classList.add('tag');
+        tag.setAttribute('id', "delTag")
+        tag.setAttribute('tagID', this.tagID);
+        tag.innerHTML =`<span class="material-symbols-rounded">sell</span>${this.name}`;
+        document.querySelector('.tagsContainer').appendChild(tag);
+        this.content = tag;
+        //this.addEventListeners();
+    }
+}
+var deleteTagsDisplay = [];
+var tagsToDelete = [];
 var postsContainer = document.querySelector('.posts');
 var posts = document.querySelectorAll('.post');
 const searchInput = document.getElementById("inputField")
@@ -85,17 +104,64 @@ async function fetchTags() {
 
     console.log("Tags have been fetched");
     data.data.tags.forEach(tag => {
-        document.querySelector('.tag-selection').innerHTML += `<div class="tag" tagID="${tag.tagID}" name="${tag.name}"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
+        document.querySelector('.tag-selection').innerHTML += `<div class="tag" tagID="${tag.tagID}" name="${tag.name}" id="normal"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
+        let tempTag = new Tag(tag.name, tag.tagID);
+        deleteTagsDisplay.push(tempTag);
+        tempTag.renderTag();
     });
     return data.data.tags;
 }
+
+async function deleteTag(tagID) {
+    let result = await delete_api(`/wiki/post.php/tag/${tagID}`);
+    console.log(result);
+    if (result.success !== true) {
+        console.log("Tags failed to be deleted");
+        return;
+    }
+}
+
+document.querySelector('#create-button').addEventListener('click', () => {
+    if (tagsToDelete.length > 0) {
+        const deleteSelectedTags = tagsToDelete.map((tag) => deleteTag(tag));
+        Promise.all(deleteSelectedTags).then(() => {
+            console.log("Tags have been deleted");
+            tagsToDelete = [];
+            document.querySelectorAll(".tag.selectedDel").forEach((tag) => {
+                tag.classList.remove("selectedDel");
+                tag.remove();
+            });
+            document.getElementById("create-button").classList.add("disabled");
+            fetchTags().then((tags) => {
+                fetchPosts(tags);
+            });
+        });
+    }
+});
 
 let tagsList;
 fetchTags().then((tags) => {
     document.querySelectorAll('.tag').forEach((tag) => {
         tag.addEventListener('click', () => {
+            if (tag.attributes.getNamedItem('id').value === "delTag") {
+                if (tag.classList.contains('selectedDel')) {
+                    tag.classList.toggle('selectedDel');
+                    tagsToDelete = tagsToDelete.filter((e) => e !== tag.getAttribute("tagID"));
+                } else {
+                tag.classList.toggle('selectedDel');
+                tagsToDelete.push(tag.getAttribute("tagID"));
+                }
+                if (tagsToDelete.length > 0) {
+                    document.getElementById("create-button").classList.remove("disabled");
+                }
+                else{
+                    document.getElementById("create-button").classList.add("disabled");
+                }
+            } else {
             tag.classList.toggle('selected');
             updatePosts();
+            }
+            console.log(tagsToDelete);
         })
     });
 

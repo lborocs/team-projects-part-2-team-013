@@ -1,18 +1,67 @@
+.topRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+    width: 100%;
+    padding-left: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.tagsList {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5em;
+    flex-wrap: wrap;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    overflow: auto;   
+}
+
 .popup {
     display: flex;
     justify-content: center;
     align-items: center;  
 }
 
+.tagsContainer{
+    max-height: 44vh;
+    margin-top: 0.5em;
+    position: relative;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.9em;
+    font-size: 0.85em;
+    font-weight: 500;
+    color: #2d2e30;
+    margin-bottom: 0.5em;
+    overflow-y: scroll;
+    .tag:hover {
+        cursor: pointer;
+    }
+
+    .selectedDel {
+        transition: background-color 0.05s ease-out;
+        background-color: #fcefb4;
+    } 
+}
+
 .popupDialog {
-    top: 8%;
+    top: 18%;
     display: flex;
     opacity: 0;
     flex-direction: column;
     justify-content: center;
     align-items:flex-start;
-    width: fit-content;
-    max-height: 800px;
+    max-height: 60%;
     background-color: #fff;
     border: none;
     border-radius: 8px;
@@ -140,8 +189,9 @@ body {
 }
 
 .filters {
+    height: auto;
+    overflow: auto;
     display: flex;
-    justify-content: center;
     align-items: flex-start;
     flex-direction: column;
     width: 100%;
@@ -190,9 +240,11 @@ body {
 }
 
 .tag-selection{
+    height: 88%;
+    position: relative;
+    align-self: flex-start;
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.9em;
@@ -200,6 +252,7 @@ body {
     font-weight: 500;
     color: #2d2e30;
     margin-bottom: 0.5em;
+    overflow-y: scroll;
     
     .tag:hover {
         cursor: pointer;

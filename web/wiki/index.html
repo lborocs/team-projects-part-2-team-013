@@ -49,22 +49,24 @@
                                     <label for="non-technical">Non-Technical</label>
                                 </div>
                             </div>
-                            <div class="manageTagsButton">
-                                <div class="text-button" id="manage-tags">
-                                    <div class="button-icon">
-                                        <span class="material-symbols-rounded">
-                                            settings
-                                        </span>
-                                    </div>
-                                    <div class="button-text">
-                                        Manage Tags
-                                    </div>
-                                </div>
-                            </div>
                             <div class="divider"></div>
                             <div class="filters">
+                                <div class="topRow">
                                 <div class="title">
                                     Topics
+                                </div>
+                                <div class="manageTagsButton manager-only">
+                                    <div class="text-button" id="manage-tags">
+                                        <div class="button-icon">
+                                            <span class="material-symbols-rounded">
+                                                settings
+                                            </span>
+                                        </div>
+                                        <div class="button-text">
+                                            Manage Tags
+                                        </div>
+                                    </div>
+                                </div>
                                 </div>
                                 <div class="tag-selection">
                                 </div>
@@ -106,18 +108,12 @@
                 </span>
             </div>
             </div>
-            <div class="add-task-description-container">
-                <div id="description-editor"></div>
+            <div class="tagsContainer">
             </div>
             <div class="confirm-buttons-row">
-                <div class="text-button" id="discard-button">
+                <div class="text-button red disabled" id="create-button">
                     <div class="button-text">
-                        Discard
-                    </div>
-                </div>
-                <div class="text-button blue" id="create-button">
-                    <div class="button-text">
-                        Create
+                        Remove
                     </div>
                 </div>
             </div>
@@ -125,5 +121,3 @@
     </div>
 </body>
 </html>
-
-
