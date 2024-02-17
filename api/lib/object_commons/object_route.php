@@ -36,7 +36,8 @@ const OBJECT_GENERIC_DELETE_FUNCS = [
     "`TASKS`"=>"_delete_task",
     "`PROJECTS`"=>"_delete_project",
     "`POSTS`"=>"_delete_post",
-    "`EMPLOYEE_PERSONALS`"=>"_delete_personal"
+    "`EMPLOYEE_PERSONALS`"=>"_delete_personal",
+    "`TAGS`"=>"_delete_tag",
 ];
 
 
