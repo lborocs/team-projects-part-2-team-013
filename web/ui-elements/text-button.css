@@ -61,6 +61,15 @@
     color: white;
 }   
 
+.text-button.red {
+    background-color: #ff5c5c;
+    color: white;
+}
+
+.text-button.red.text-button.disabled {
+    background-color: #c4c9d2;
+    color: white;
+}
 
 
 .text-button.no-box {
