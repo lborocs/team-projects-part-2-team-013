@@ -41,7 +41,7 @@ search.autocomplete = "off"
 export const notificationPopover = document.createElement('div')
 notificationPopover.classList.add('notification-popover', 'item');
 notificationPopover.id = 'inbox-icon';
-notificationPopover.tabIndex = 0;
+notificationPopover.tabIndex = -1;
 
 export const userAvatar = document.createElement('div')
 userAvatar.classList.add('item');
@@ -89,7 +89,7 @@ notificationPopover.innerHTML = `
                 </span>
             </div>
             Activity
-            <div class="text-button no-box" id="read-all" tabindex="0">
+            <div class="text-button no-box" id="read-all" tabindex="-1">
                 <div class="button-text">
                     Read all
                 </div>
