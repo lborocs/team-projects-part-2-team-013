@@ -6,6 +6,7 @@ class Tag {
     constructor(name, tagID) {
         this.tagID = tagID;
         this.name = name;
+        this.numPosts = 0;
         this.content = null
     }
     renderTag() {
@@ -13,10 +14,31 @@ class Tag {
         tag.classList.add('tag');
         tag.setAttribute('id', "delTag")
         tag.setAttribute('tagID', this.tagID);
-        tag.innerHTML =`<span class="material-symbols-rounded">sell</span>${this.name}`;
+        tag.innerHTML =`<span class="material-symbols-rounded">sell</span>${this.name}&nbsp;<span class="numPosts">${this.numPosts}</span>`;
         document.querySelector('.tagsContainer').appendChild(tag);
         this.content = tag;
-        //this.addEventListeners();
+        this.addEventListeners();
+    }
+    addEventListeners() {
+        this.content.addEventListener('click', () => {
+            if (this.content.classList.contains('selectedDel')) {
+                this.content.classList.toggle('selectedDel');
+                tagsToDelete = tagsToDelete.filter((e) => e !== this.tagID);
+            } else {
+                this.content.classList.toggle('selectedDel');
+                tagsToDelete.push(this.tagID);
+            }
+            if (tagsToDelete.length > 0) {
+                document.getElementById("create-button").classList.remove("disabled");
+            }
+            else{
+                document.getElementById("create-button").classList.add("disabled");
+            }
+        });
+    }
+    addPostNum() {
+        this.numPosts++;
+        deleteTagsDisplay.sort((a, b) => b.numPosts - a.numPosts);
     }
 }
 var deleteTagsDisplay = [];
@@ -56,6 +78,7 @@ async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
 
     const tagParam = tags.length ? `&tags=${tags.join(",")}` : "";
     const data = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical}&q=${search}${tagParam}`);
+    const data2 = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ? 0 : 1}&q=${search}${tagParam}`);
     console.log(data);
 
     if (data.success !== true) {
@@ -74,6 +97,7 @@ async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
             console.log(post.tags);
             console.log("TAGS");
             post.tags.forEach((tag) => {
+                deleteTagsDisplay.find(findTag(tag)).addPostNum();  
                 newtags.push(tagsList.find(findTag(tag)).name);
                 console.log(tag);
                 console.log("REPLACING TAGS");
@@ -88,6 +112,16 @@ async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
         // Store the post in the Map using postID as the key
         postsMap.set(post.postID, post);
         console.log(post);
+    });
+    data2.data.posts.forEach(post => {
+        if (post.tags != null) {
+            post.tags.forEach((tag) => {
+                deleteTagsDisplay.find(findTag(tag)).addPostNum();
+            });
+        }
+    });
+    deleteTagsDisplay.forEach((tag) => {
+        tag.renderTag();
     });
     setUpPostsEventListeners();
     posts = document.querySelectorAll('.post');
@@ -107,7 +141,6 @@ async function fetchTags() {
         document.querySelector('.tag-selection').innerHTML += `<div class="tag" tagID="${tag.tagID}" name="${tag.name}" id="normal"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
         let tempTag = new Tag(tag.name, tag.tagID);
         deleteTagsDisplay.push(tempTag);
-        tempTag.renderTag();
     });
     return data.data.tags;
 }
@@ -144,6 +177,7 @@ fetchTags().then((tags) => {
     document.querySelectorAll('.tag').forEach((tag) => {
         tag.addEventListener('click', () => {
             if (tag.attributes.getNamedItem('id').value === "delTag") {
+                return;
                 if (tag.classList.contains('selectedDel')) {
                     tag.classList.toggle('selectedDel');
                     tagsToDelete = tagsToDelete.filter((e) => e !== tag.getAttribute("tagID"));
@@ -204,6 +238,12 @@ function setUpPostsEventListeners() {
 function findTag(tagID) {
     return function(tag) {
         return tag.tagID === tagID;
+    }
+}
+
+function findTagName(tagName) {
+    return function(tag) {
+        return tag.name === tagName;
     }
 }
 

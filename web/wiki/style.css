@@ -29,6 +29,22 @@
     align-items: center;  
 }
 
+.numPosts {
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+    background-color: #d4d4d4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+}
+
+#delTag{
+    padding-right: 0.4em;
+}
+
 .tagsContainer{
     max-height: 44vh;
     margin-top: 0.5em;
