@@ -61,9 +61,7 @@
                                     </div>
                                 </div>
                             </div>
-                            
                             <div class="divider"></div>
-
                             <div class="filters">
                                 <div class="title">
                                     Topics
@@ -99,6 +97,31 @@
     </div>
 
     <div class="popup">
+        <dialog open class='popupDialog' id="add-task-popup">
+            <div class="popup-title">
+            <span>Manage Tags</span>
+            <div class="small-icon" id="close-button">
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+            </div>
+            </div>
+            <div class="add-task-description-container">
+                <div id="description-editor"></div>
+            </div>
+            <div class="confirm-buttons-row">
+                <div class="text-button" id="discard-button">
+                    <div class="button-text">
+                        Discard
+                    </div>
+                </div>
+                <div class="text-button blue" id="create-button">
+                    <div class="button-text">
+                        Create
+                    </div>
+                </div>
+            </div>
+        </dialog>
     </div>
 </body>
 </html>
