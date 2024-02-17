@@ -333,6 +333,7 @@ inputField.addEventListener('input', async (event) => {
 
 async function renderEmployees(employees) {
     var employeeList = document.querySelector('.employee-list');
+    employeeList.innerHTML = '';
     employees.forEach((employee) => {
         employeeList.innerHTML += `
             <div class="employee-card">

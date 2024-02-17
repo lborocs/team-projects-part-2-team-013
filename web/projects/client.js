@@ -316,6 +316,7 @@ function updateTaskState(task) {
 function showTaskInExplainer(taskCard) {
 
     let taskID = taskCard.getAttribute("id");
+    let assignees = taskCard.getAttribute("data-assignments");
     explainerTaskContainer.setAttribute("task-id", taskID);
     //get the task from globalTasksList
     globalCurrentTask = globalTasksList.find((task) => {
@@ -380,11 +381,51 @@ function showTaskInExplainer(taskCard) {
     animate(document.querySelector(".task-overview"), "flash");
 
     //Task assignments
-    //yet to be made
+    renderAssignmentsInExplainer(taskID);
 
     global.setBreadcrumb(["Projects", globalCurrentProject.name, globalCurrentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + globalCurrentTask.taskID])
 }
 
+async function renderAssignmentsInExplainer(taskID) {
+    let task = globalTasksList.find(task => task.taskID === taskID);
+
+    if (!task) return;
+
+    let assignments = task.assignments;
+    console.log("[renderAssignmentsInExplainer] assignments: ", assignments);
+    let usersAssignedExplainer = document.querySelector(".users-assigned-explainer");
+
+    // This clears the explainer
+    usersAssignedExplainer.innerHTML = '';
+
+    if (assignments.length === 0) {
+        usersAssignedExplainer.innerHTML = 'None set';
+        return;
+    }
+
+    let unique_users = new Set();
+
+    assignments.forEach((assignment) => {
+        unique_users.add(assignment);
+    });
+    
+    let employees = await getEmployeesById([...unique_users]);
+
+    assignments.forEach((empID) => {
+        let emp = employees.get(empID); // Get employee from employees map
+        let emp_name = global.employeeToName(emp);
+        let emp_icon = global.employeeAvatarOrFallback(emp);
+
+        let assignmentElem = document.createElement("div");
+        assignmentElem.classList.add("assignment");
+        assignmentElem.classList.add("tooltip", "tooltip-under");
+
+        assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
+        <img src="${emp_icon}" class="task-avatar">`
+
+        usersAssignedExplainer.appendChild(assignmentElem);
+    });
+}
 
 function setUpTaskEventListeners() {
 
@@ -812,7 +853,6 @@ function clearRenderedTasks() {
     }) 
 }
 
-
 async function teamLeaderEnableElementsIfTeamLeader() {
 
     if (!globalCurrentProject) {
@@ -861,15 +901,20 @@ async function fetchAndRenderAllProjects() {
         
         header.addEventListener("click", (e) => {
             sortAttribute = header.getAttribute('data-attribute');
+            let symbol = header.querySelector('.material-symbols-rounded');
             if (header.classList.contains("sorting-by")) {
                 header.classList.toggle("reverse");
                 sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
+                if (symbol) symbol.textContent = sortDirection === 'asc' ? 'arrow_downward' : 'arrow_upward';
             } else {
                 projectTableHeaders.forEach((header) => {
                     header.classList.remove("sorting-by", "reverse");
+                    let symbol = header.querySelector('.material-symbols-rounded');
+                    if (symbol) symbol.textContent = '';
                 });
                 header.classList.add("sorting-by");
                 sortDirection = 'asc';
+                if (symbol) symbol.textContent = 'arrow_downward';
             }
             currentPage = 1;
             pageBackButton.classList.add("disabled");
