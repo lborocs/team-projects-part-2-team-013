@@ -137,7 +137,7 @@
 
         & tr {
             background-color: transparent;
-            transition: 0.1s ease-out;
+            transition: 0s ease-out;
             cursor: pointer;
 
         }
@@ -151,16 +151,21 @@
 
         & tbody tr:hover {
             background-color: #388bff11;
-            transition-duration: 0.05s;
+            transition-duration: 0s;
 
             .project-card .name {
                 text-decoration: underline;
+                transition: 0s;
             }
         }
 
         & tr:hover td:last-child {
             opacity: 1;
             transition-duration: 0.05s;
+            .project-actions {
+                opacity: 1;
+                color: black;
+            }
         }
 
     }
@@ -176,6 +181,8 @@
     .project-actions {
         opacity: 0.5;
         transition: 0.05s ease-out;
+        width: 100%;
+        outline: solid 1px transparent;
         &span {
             font-size: 26px;
         }
@@ -183,7 +190,10 @@
 
     .project-actions:hover {
         opacity: 1;
-        transition: 0.1s ease-out;
+        transition: 0.05s ease-out;
+        background-color: white !important;
+        outline: solid 1px var(--border-clr, #e0e0e0);
+        outline-offset: -1px;
     }
 
     .projects-table-empty-state {
@@ -1050,11 +1060,13 @@
         .project-card .name {
             text-decoration: underline;
         }
+
     }
 
     & tr:hover td:last-child {
         opacity: 1;
         transition-duration: 0.05s;
+
     }
 
     .disabled {
@@ -1403,6 +1415,7 @@
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
+        align-items: flex-end;
         width: 100%;
         gap: 0.5em;
     }
@@ -1508,7 +1521,7 @@
     display: flex;
     flex-direction: row;
     text-align: left; 
-    border: 1px solid #cacaca;
+    border: 1px solid #ccc;
     border-radius: 5px;
     font-family: 'Open Sans', sans-serif;
     padding: 0.5em;
