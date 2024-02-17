@@ -1,0 +1,27 @@
+.main {
+    align-items: center;
+}
+
+.main > .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    max-width: 800px;
+    margin-top: 1em;
+
+    background-color: white;
+    padding: 1rem;
+    border-radius: 6px;
+
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+}
