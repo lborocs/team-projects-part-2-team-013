@@ -306,6 +306,8 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     border-bottom: 1px solid var(--border-clr);
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 .table-headers{

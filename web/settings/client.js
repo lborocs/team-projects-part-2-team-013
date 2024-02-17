@@ -336,16 +336,24 @@ async function renderEmployees(employees) {
     employeeList.innerHTML = '';
     employees.forEach((employee) => {
         employeeList.innerHTML += `
-            <div class="employee-card">
+            <div class="employee-card" data-empID="${employee.empID}">
                 <div class="first-name">${employee.firstName}</div>
                 <div class="last-name">${employee.lastName}</div>
                 <div class="email">${employee.email}</div>
             </div>
         `;
     });
+    employeeCardEventListeners();
 }
 
-
+function employeeCardEventListeners(){
+    let employeeCards = document.querySelectorAll('.employee-card');
+    employeeCards.forEach((card) => {
+        card.addEventListener('click', (event) => {
+            window.location.href = `/settings/user/#${card.getAttribute('data-empID')}`;
+        });
+    });
+}
 
 global.setBreadcrumb(["Settings", "Account"], ["./", '#' + "account"])
 
