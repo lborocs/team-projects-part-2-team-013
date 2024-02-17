@@ -899,15 +899,20 @@ async function fetchAndRenderAllProjects() {
         
         header.addEventListener("click", (e) => {
             sortAttribute = header.getAttribute('data-attribute');
+            let symbol = header.querySelector('.material-symbols-rounded');
             if (header.classList.contains("sorting-by")) {
                 header.classList.toggle("reverse");
                 sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
+                if (symbol) symbol.textContent = sortDirection === 'asc' ? 'arrow_downward' : 'arrow_upward';
             } else {
                 projectTableHeaders.forEach((header) => {
                     header.classList.remove("sorting-by", "reverse");
+                    let symbol = header.querySelector('.material-symbols-rounded');
+                    if (symbol) symbol.textContent = '';
                 });
                 header.classList.add("sorting-by");
                 sortDirection = 'asc';
+                if (symbol) symbol.textContent = 'arrow_downward';
             }
             currentPage = 1;
             pageBackButton.classList.add("disabled");
