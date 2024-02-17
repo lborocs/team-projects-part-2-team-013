@@ -275,3 +275,27 @@ function confirmDelete() {
 document.getElementById("new-post").addEventListener("click", () => {
     window.location.href = "/wiki/create/";
 });
+
+document.getElementById("manage-tags").addEventListener("click", () => {
+    editTags();
+});
+
+function editTags() {
+    let popupDiv = document.querySelector('.popup');
+    let fullscreenDiv = document.querySelector('.fullscreen');
+    fullscreenDiv.style.filter = 'brightness(0.75)';
+    let dialog = popupDiv.querySelector('.popupDialog');
+    dialog.style.transform = 'translateY(0px)'
+    dialog.style.opacity = '1';
+    dialog.style.display = 'block';
+    let createButton = dialog.querySelector('#create-button');
+    let closeButton = dialog.querySelector('#close-button');
+
+    closeButton.addEventListener('click', (event) => {
+        event.preventDefault(); 
+        dialog.style.transform = 'translateY(-1%)'
+        dialog.style.opacity = '0';
+        dialog.style.display = 'none';
+        fullscreenDiv.style.filter = 'none';
+    });
+}

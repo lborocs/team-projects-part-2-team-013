@@ -1,3 +1,64 @@
+.topRow{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+    width: 100%;
+    padding-left: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.popup {
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+
+.popupDialog {
+    top: 8%;
+    display: flex;
+    opacity: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items:flex-start;
+    width: fit-content;
+    max-height: 800px;
+    background-color: #fff;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));
+    padding: 2em;
+    width: 510px;
+
+    transform: translateY(-1%);
+    transition: opacity 0.15s ease-out, transform 0.1s ease-out;
+
+    .popup-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    
+        font-weight: 700;
+        font-size: 20px;
+        color: var(--text-off-black, #0f0f0f);
+        width: 100%;
+        .small-icon {
+            margin-left: auto;
+        }
+    }
+
+    .confirm-buttons-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        width: 100%;
+        gap: 0.5em;
+    }
+
+    
+}
+
 body {
     display: flex;
     justify-content: center;

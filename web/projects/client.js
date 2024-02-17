@@ -3065,7 +3065,7 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
     if (data.data.projects.length === 0) {
         projectsTableEmptyState.classList.remove('norender');
     } else {
-        ProjectsTableEmptyState.classList.add('norender');
+        projectsTableEmptyState.classList.add('norender');
     }
     
     return data.data.projects;

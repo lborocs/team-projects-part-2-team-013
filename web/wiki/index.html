@@ -49,13 +49,24 @@
                                     <label for="non-technical">Non-Technical</label>
                                 </div>
                             </div>
-
-                            
                             <div class="divider"></div>
-
                             <div class="filters">
+                                <div class="topRow">
                                 <div class="title">
                                     Topics
+                                </div>
+                                <div class="manageTagsButton manager-only">
+                                    <div class="text-button" id="manage-tags">
+                                        <div class="button-icon">
+                                            <span class="material-symbols-rounded">
+                                                settings
+                                            </span>
+                                        </div>
+                                        <div class="button-text">
+                                            Manage Tags
+                                        </div>
+                                    </div>
+                                </div>
                                 </div>
                                 <div class="tag-selection">
                                 </div>
@@ -88,8 +99,26 @@
     </div>
 
     <div class="popup">
+        <dialog open class='popupDialog' id="add-task-popup">
+            <div class="popup-title">
+            <span>Manage Tags</span>
+            <div class="small-icon" id="close-button">
+                <span class="material-symbols-rounded">
+                    close
+                </span>
+            </div>
+            </div>
+            <div class="add-task-description-container">
+                <div id="description-editor"></div>
+            </div>
+            <div class="confirm-buttons-row">
+                <div class="text-button red disabled" id="create-button">
+                    <div class="button-text">
+                        Remove
+                    </div>
+                </div>
+            </div>
+        </dialog>
     </div>
 </body>
 </html>
-
-
