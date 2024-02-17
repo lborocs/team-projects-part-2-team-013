@@ -112,6 +112,33 @@ async function fetchTags() {
     return data.data.tags;
 }
 
+async function deleteTag(tagID) {
+    let result = await delete_api(`/wiki/post.php/tag/${tagID}`);
+    console.log(result);
+    if (result.success !== true) {
+        console.log("Tags failed to be deleted");
+        return;
+    }
+}
+
+document.querySelector('#create-button').addEventListener('click', () => {
+    if (tagsToDelete.length > 0) {
+        const deleteSelectedTags = tagsToDelete.map((tag) => deleteTag(tag));
+        Promise.all(deleteSelectedTags).then(() => {
+            console.log("Tags have been deleted");
+            tagsToDelete = [];
+            document.querySelectorAll(".tag.selectedDel").forEach((tag) => {
+                tag.classList.remove("selectedDel");
+                tag.remove();
+            });
+            document.getElementById("create-button").classList.add("disabled");
+            fetchTags().then((tags) => {
+                fetchPosts(tags);
+            });
+        });
+    }
+});
+
 let tagsList;
 fetchTags().then((tags) => {
     document.querySelectorAll('.tag').forEach((tag) => {
@@ -123,6 +150,12 @@ fetchTags().then((tags) => {
                 } else {
                 tag.classList.toggle('selectedDel');
                 tagsToDelete.push(tag.getAttribute("tagID"));
+                }
+                if (tagsToDelete.length > 0) {
+                    document.getElementById("create-button").classList.remove("disabled");
+                }
+                else{
+                    document.getElementById("create-button").classList.add("disabled");
                 }
             } else {
             tag.classList.toggle('selected');
