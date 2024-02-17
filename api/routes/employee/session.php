@@ -137,6 +137,7 @@ function r_session_register(RequestContext $ctx, string $args) {
         "password"=>"string",
         "email"=>"string",
         "lastName"=>"string",
+        "token"=>"string",
     ]);
 
     $ctx->body_require_fields_as_types([
@@ -172,6 +173,8 @@ function r_session_register(RequestContext $ctx, string $args) {
 
 
     // verify email
+
+
 
 
 
