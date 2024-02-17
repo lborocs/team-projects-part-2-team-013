@@ -136,4 +136,16 @@
         user-select: none;
     }
     
+    #add-metric-small,
+    #edit-metric-order {
+        .button-text {
+            display: none;
+        }
+    }
+
+    #view-scroll {
+        display: none;
+    }
+
+
 }
