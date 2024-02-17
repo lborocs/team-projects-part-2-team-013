@@ -67,6 +67,7 @@ const lastAccessedButton = document.getElementById('project-last-accessed');
 const pageBackButton = document.getElementById('page-back-button');
 const pageForwardButton = document.getElementById('page-forward-button');
 const pageNumberElement = document.querySelector('.page-number');
+const projectsTableEmptyState = document.querySelector('.projects-table-empty-state');
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -169,6 +170,7 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
 function clearProjectList() {
     let projectsTable = document.querySelector("#projects-table");
     projectsTable.querySelector("tbody").replaceChildren();
+    
 }
 
 function setActivePane(newPane) {
@@ -3014,6 +3016,12 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
     await Promise.all(data.data.projects.map(async (project) => {
         await projectObjectRenderAndListeners(project);
     }));
+
+    if (data.data.projects.length === 0) {
+        projectsTableEmptyState.classList.remove('norender');
+    } else {
+        ProjectsTableEmptyState.classList.add('norender');
+    }
     
     return data.data.projects;
 }

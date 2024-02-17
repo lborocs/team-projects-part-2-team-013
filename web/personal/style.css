@@ -194,6 +194,7 @@
 }
 
 .list.collapsed {
+    margin-bottom: 1.5rem;
     .personal-task:not(:first-child) {
         display: none;
     }
