@@ -300,3 +300,18 @@
     outline: none;
     box-shadow: none;
 }
+
+.employee-card {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    border-bottom: 1px solid var(--border-clr);
+}
+
+.table-headers{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    border-bottom: 3px solid black;
+    font-weight: 600;
+}

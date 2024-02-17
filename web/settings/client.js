@@ -308,6 +308,41 @@ function preferenceAlert() {
     }, 200);
 }
 
+async function fetchEmployees(query) {
+    console.log('fetching employees');
+    const res = await get_api(`/employee/employee.php/all?q=${query}`);
+    if (res.success) {
+        const employees = res.data.employees;
+        console.log("EMPLOYEES");
+        console.log(employees);
+        return employees;
+
+    } else {
+        console.error('Request failed');
+    }
+}
+const inputField = document.querySelector('#inputField');
+const inputValue = inputField.value;
+
+inputField.addEventListener('input', async (event) => {
+    const query = event.target.value;
+    const employees = await fetchEmployees(query);
+    console.log(employees);
+    renderEmployees(employees);
+});
+
+async function renderEmployees(employees) {
+    var employeeList = document.querySelector('.employee-list');
+    employees.forEach((employee) => {
+        employeeList.innerHTML += `
+            <div class="employee-card">
+                <div class="first-name">${employee.firstName}</div>
+                <div class="last-name">${employee.lastName}</div>
+                <div class="email">${employee.email}</div>
+            </div>
+        `;
+    });
+}
 
 
 
