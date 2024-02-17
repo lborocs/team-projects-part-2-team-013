@@ -2726,9 +2726,16 @@ async function editTaskPopup(task){
 
 
 async function projectPopup(id){
-    console.log(`[projectPopup] Running editTaskPopup`)
+    console.log(`[projectPopup] Running projectPopup`)
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
+
+    //stops the user being able click outside the popup
+    fullscreenDiv.style.pointerEvents = 'none';
+    Array.from(document.querySelectorAll('.main')).forEach((element) => {
+        element.style.pointerEvents = 'none';
+    })
+    
 
     let projectData = await get_api(`/project/project.php/project/${id}`);
 
@@ -2736,30 +2743,40 @@ async function projectPopup(id){
 
     let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
     teamLeader = teamLeader.get(project.teamLeader.empID);
-    console.error(teamLeader)
     let teamLeaderAvatar = global.employeeAvatarOrFallback(teamLeader);
 
-    let hasDueDate = project.dueDate ? new Date(project.dueDate) : "Not set";
+    let hasDueDate = project.dueDate ? new Date(project.createdAt).toLocaleDateString() : "Not set";
 
     popupDiv.innerHTML = `
-        <dialog open class='popupDialog' id="add-task-popup">
+        <dialog open class='popupDialog' id="project-popup">
             <div class="popup-title">
-            <span>${project.name}</span>
-            <div class="small-icon" id="close-button">
-                <span class="material-symbols-rounded">
-                    close
-                </span>
+                <span>Project Details</span>
+                <div class="small-icon" id="close-button">
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+                </div>
             </div>
+
+            <div class="popup-subtitle">
+                Title
             </div>
-            <input type="text" placeholder="${project.name}" class="add-task-title-input">
+            <input id="project-popup-title" type="text" placeholder="${project.name}" class="project-title-input" disabled>
             
-            <div class="add-task-description-container">
+            <div class="popup-subtitle">
+                Description
+            </div>
+            <div class="description-container">
                 <div id="description-editor"></div>
             </div>
-            <div class="dropdown-and-employee-list">
+
+            <div class="popup-subtitle">
+                Team Leader
+            </div>
+            <div class="dropdown-and-employee-list edit-only">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
                     <div class="search">
-                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Change Team Leader">
             
                         
                         <div class="search-icon">
@@ -2784,24 +2801,60 @@ async function projectPopup(id){
                         </div>
                     </div>
                 </div>
-                <div class="assigned-employees">
-                    <img src="${teamLeaderAvatar}" class="avatar" ${global.employeeToName(teamLeader)}>
+                <div class="assigned-team-leader name-card">
+                    <div class="icon">
+                        <img src="${teamLeaderAvatar}" class="avatar">
+                    </div>
+                    <div class="name">
+                        ${global.employeeToName(teamLeader)}
+                    </div>
                 </div>
             </div>
 
-            <div class="date-picker" id="due-date">
+            <div class="team-leader-display name-card view-only">
+                <div class="icon">
+                    <img src="${teamLeaderAvatar}" class="avatar">
+                </div>
+                <div class="name">
+                    ${global.employeeToName(teamLeader)}
+                </div>
+            </div>
+
+
+            <div class="popup-subtitle">
+                Due date
+            </div>
+            <div class="date-picker disabled" id="due-date">
                 <div class="date-picker-icon">
                     <span class="material-symbols-rounded">event</span>
                 </div>
                 <input class="date-picker-input" type="text" placeholder="${hasDueDate}" tabindex="0"></input>
             </div>
             <div class="confirm-buttons-row">
-                <div class="text-button" id="close-button-bottom">
+                <div class="created-at view-only">
+                    Project created ${new Date(project.createdAt).toLocaleDateString()}
+                </div>
+                <div class="text-button edit-only red" id="delete-button">
+                    <div class="button-icon">
+                        <span class="material-symbols-rounded">
+                            delete
+                        </span>
+                    </div>
                     <div class="button-text">
-                        Close
+                        Delete
                     </div>
                 </div>
-                <div class="text-button blue" id="save-button">
+                <div class="text-button edit-only" id="discard-button-bottom">
+                    <div class="button-text">
+                        Discard Changes
+                    </div>
+                </div>
+                <div class="text-button view-only" id="edit-button-bottom">
+                    <div class="button-text">
+                        Edit
+                    </div>
+                </div>
+                <div class="text-button blue edit-only" id="save-button-bottom">
                     <div class="button-text">
                         Save
                     </div>
@@ -2810,10 +2863,18 @@ async function projectPopup(id){
         </dialog>
     `;
 
-    const titleInput = popupDiv.querySelector('.add-task-title-input');
+
+    const editOnlyElements = popupDiv.querySelectorAll('.edit-only');
+    const viewOnlyElements = popupDiv.querySelectorAll('.view-only');
+    editOnlyElements.forEach((element) => {
+        element.classList.add('norender');
+    })
+
+    const titleInput = popupDiv.querySelector('.project-title-input');
     titleInput.value = project.name;
 
     //quill for description
+    const descriptionEditor = popupDiv.querySelector('#description-editor');
     var quill = new Quill('#description-editor', {
         modules: {
             toolbar: [
@@ -2824,24 +2885,36 @@ async function projectPopup(id){
         theme: 'snow'
     });
 
-    quill.setText(`${project.description}`)
+    descriptionEditor.querySelector('.ql-editor').innerHTML = project.description;
+
+    quill.disable()
+
+    let toolbar = document.querySelector('.ql-toolbar');
+    toolbar.classList.add('no-toolbar');
+
+    const flatpickrDate = project.dueDate ? project.dueDate : null;
 
     //flatpickr for date picker
+    let datePickerElement = popupDiv.querySelector('.date-picker');
     let datePickerInput = popupDiv.querySelector('.date-picker-input')
     let fp = flatpickr(datePickerInput, {
         dateFormat: 'd/m/Y',
         altInput: true,
         altFormat: 'F j, Y',
         disableMobile: true,
+        defaultDate: flatpickrDate,
         onChange: (selectedDates, dateStr, instance) => {
             datePickerInput.dispatchEvent(new Event('change'))
         }
     })
 
-    let assignedEmployees = new Set();
-    let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
+    fp.allowInput = false;
 
-    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
+
+    let assignedTeamLeader = teamLeader;
+    let assignedTeamLeaderDiv = popupDiv.querySelector('.assigned-team-leader');
+
+    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); 
     let res = await get_api(`/employee/employee.php/all`);
     let employeeList = res.data.employees;
     employeeList.forEach((emp) => {
@@ -2860,36 +2933,39 @@ async function projectPopup(id){
         empList.appendChild(option);
     });
 
-    // turn employeelist into a map of id to employee
+    // turns employeelist into a map of id to employee
     let employeeMap = new Map();
     employeeList.forEach((emp) => {
         employeeMap.set(emp.empID, emp);
     });
 
-    // add event listeners to employee list
+    // adds event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
         option.addEventListener("click", () => {
 
             let empID = option.getAttribute("data-id");
-
-            if (!assignedEmployees.has(empID)) {
-
-                option.classList.add('selected');
-                option.querySelector('.icon').innerHTML = "check";
-
-                assignedEmployees.add(empID);
-
-            } else {
-
+            employeeListOptions.forEach((option) => {
                 option.classList.remove('selected');
                 option.querySelector('.icon').innerHTML = "person_add";
-                assignedEmployees.delete(empID);
+            })
 
-            }
+            assignedTeamLeader = employeeMap.get(empID);
+            let avatar = global.employeeAvatarOrFallback(assignedTeamLeader);
+            let name = global.employeeToName(assignedTeamLeader);
+            assignedTeamLeaderDiv.innerHTML = `
+                <div class="icon">
+                    <img src="${avatar}" class="avatar">
+                </div>
+                <div class="name">
+                    ${name}
+                </div>
+            `;
+            
 
-            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
-
+            option.querySelector('.icon').innerHTML = "check";
+            option.classList.add('selected');
+        
         })
     })
 
@@ -2898,9 +2974,11 @@ async function projectPopup(id){
     dialog.style.transform = 'translateY(0px)'
     dialog.style.opacity = '1';
     
-    let saveButton = dialog.querySelector('#save-button');
+    let saveButton = dialog.querySelector('#save-button-bottom');
+    let editButton = dialog.querySelector('#edit-button-bottom');
     let closeButton = dialog.querySelector('#close-button');
-    let closeButtonBottom = dialog.querySelector('#close-button-bottom');
+    let discardButton = dialog.querySelector('#discard-button-bottom');
+    let deleteButton = dialog.querySelector('#delete-button');
 
     closeButton.addEventListener('click', (event) => {
         event.preventDefault(); 
@@ -2910,17 +2988,102 @@ async function projectPopup(id){
         
         
         fullscreenDiv.style.filter = 'none';
+
+        fullscreenDiv.style.pointerEvents = 'auto';
+        Array.from(document.querySelectorAll('.main')).forEach((element) => {
+            element.style.pointerEvents = 'auto';
+        })
+
         console.log("[addTaskCloseButton] rejecting")
     });
 
-    closeButtonBottom.addEventListener('click', (event) => {
+    discardButton.addEventListener('click', (event) => {
         event.preventDefault(); 
         dialog.style.transform = 'translateY(-1%)'
         dialog.style.opacity = '0';
         dialog.style.display = 'none';
         fullscreenDiv.style.filter = 'none';
+
+        fullscreenDiv.style.pointerEvents = 'auto';
+        Array.from(document.querySelectorAll('.main')).forEach((element) => {
+            element.style.pointerEvents = 'auto';
+        })
         console.log("[addTaskDiscardButton] rejecting")
     });
+
+
+    editButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        editOnlyElements.forEach((element) => {
+            element.classList.remove('norender');
+        })
+        viewOnlyElements.forEach((element) => {
+            element.classList.add('norender');
+        })
+        toolbar.classList.remove('no-toolbar');
+        quill.enable();
+        titleInput.removeAttribute('disabled');
+        fp.allowInput = true;
+        datePickerElement.classList.remove('disabled');
+    })
+
+    saveButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        editOnlyElements.forEach((element) => {
+            element.classList.add('norender');
+        })
+        viewOnlyElements.forEach((element) => {
+            element.classList.remove('norender');
+        })
+        quill.disable();
+        toolbar.classList.add('no-toolbar');
+        titleInput.setAttribute('disabled', true);
+        fp.allowInput = false;
+        datePickerElement.classList.add('disabled');
+
+        let name = titleInput.value;
+        let description = quill.root.innerHTML;
+        let dueDate = fp.selectedDates && fp.selectedDates[0] ? fp.selectedDates[0].getTime() : project.dueDate;
+
+        let res = await patch_api(`/project/project.php/project/${project.projID}`, {
+            name: name,
+            description: description,
+            dueDate: dueDate,
+            teamLeader: assignedTeamLeader.empID,
+        });
+
+        if (res.success) {
+            console.log("[projectPopup] project updated successfully")
+        } else {
+            console.error("[projectPopup] Couldn't update project")
+        }
+
+        //refreshes the site with the changes
+        await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+        await projectPopup(project.projID);
+
+
+    })
+
+    deleteButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        let confirmed = await confirmDelete();
+        if (confirmed) {
+            let res = await delete_api(`/project/project.php/project/${project.projID}`);
+            if (res.success) {
+                console.log("[projectPopup] project deleted successfully")
+                resolve();
+            } else {
+                console.error("[projectPopup] couldn't delete project")
+            }
+        }
+        
+    })
+
+
 
     dialog.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {

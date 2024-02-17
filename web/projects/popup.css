@@ -1,0 +1,124 @@
+.name-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5em;
+    border-radius: 4px;
+    line-height: 1.25;
+    color: black;
+    white-space: nowrap;
+
+    .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: auto;
+        aspect-ratio: 1;
+    }
+}
+
+.popup-subtitle {
+    font-size :14px;
+    font-weight: 600;
+    margin-top: 0.25rem;
+}
+
+.created-at {
+    opacity: 0.5;
+    font-size: 12px;
+    margin-right: auto;
+}
+
+
+
+.popupDialog {
+   & input:disabled {
+        background-color: white;
+   } 
+
+   .no-toolbar {
+        display: none; 
+   }
+
+   #delete-button {
+        margin-right: auto;
+   }
+
+   .description-container {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+   }
+
+    #description-editor {
+        width: 100%;
+        line-height: 1;
+    }
+
+    .description-container:focus-within {
+        outline: solid 2px #388bffaa;
+        outline-offset: -1px;
+        border-radius: 5px;
+    }
+
+    #description-editor.ql-disabled {
+        border-top: solid 1px #ccc;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+    }
+
+    /* quill override */
+    .ql-toolbar.ql-snow {
+        font-family: 'Open Sans', system-ui;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+    }
+
+    .project-title-input{
+        color: var(--text-off-black, #0f0f0f);
+        display: flex;
+        flex-direction: row;
+        text-align: left; 
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-family: 'Open Sans', sans-serif;
+        padding: 0.5em;
+        font-size: 18px;
+        font-weight: 500;
+        width: 100%;
+    
+    }
+    
+    .project-title-input:focus {
+        outline: solid 2px #388bffaa;
+        outline-offset: -1px;
+        border: solid 1px transparent;
+    }
+    
+    .project-title-input::placeholder {
+        color: rgba(0,0,0,0.5);
+    }
+
+    .assigned-team-leader {
+        margin-left: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0.5em;
+    }
+
+}
+
+#project-popup {
+    padding: 18px;
+    padding-top: 14px;
+    max-width: 840px;
+    width: calc(100% - 2.5em);
+    gap: 0.5em;
+
+}
+
+
+
