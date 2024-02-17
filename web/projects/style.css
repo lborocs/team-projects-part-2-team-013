@@ -1943,3 +1943,11 @@
     align-items: flex-start;
     justify-content: flex-start;
 }
+
+.users-assigned-explainer {
+    font-size: 0.85em;
+    text-wrap: nowrap;
+    font-weight: 600;
+    color: #0f0f0faa;
+    line-height: 24px;
+}
