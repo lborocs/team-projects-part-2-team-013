@@ -10,7 +10,8 @@
 
     font-size: 14px;
     color: rgb(23, 43, 77);
-    background-color: #f1f2f4;
+    background-color: white;
+    border: 2px solid #f1f2f4;
 
     cursor: pointer;
     user-select: none;
@@ -19,14 +20,21 @@
 
 }
 
+.date-picker.disabled {
+    pointer-events: none;
+    border: none;
+}
+
 .date-picker:hover {
-    background-color: #dcdfe4;
+    background-color: #f1f2f4;
     
 }
 
 .date-picker:focus-within {
     border-color: #388bffaa;
 }
+
+
 
 .date-picker-input {
     padding: 4px 6px;
@@ -46,6 +54,21 @@
     cursor: pointer;
     user-select: none;
 
+}
+
+.date-picker-input:hover {
+    outline: none;
+    box-shadow: none;
+}
+
+.date-picker-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.date-picker-input:focus-within {
+    outline: none;
+    box-shadow: none;
 }
 
 .date-picker-input::placeholder {
