@@ -207,10 +207,15 @@
 #dashboard-time-period {
 }
 
+a {
+    text-decoration: none;
+    color: var(--text-off-black, #0f0f0f);
+
+}
 
 
-
-#add-metric-small {
+#add-metric-small,
+#edit-metric-order {
     padding-right: 2px;
     padding-left: 6px;
 }

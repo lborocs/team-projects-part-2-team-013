@@ -323,24 +323,62 @@ function showTaskInExplainer(taskCard) {
     explainerTask = globalCurrentTask
     explainerTaskTitle.innerHTML = globalCurrentTask.title;
     explainerTaskTitle.classList.remove("norender");
-    
+
+
+    //Task description
+    let description = globalCurrentTask.description;
+    if (!description || description === "<p><br></p>") {
+        description = "None set";
+    }
+    if (description && description.endsWith("<p><br></p>")) {
+        description = description.replace(/<p><br><\/p>$/, "");
+    }
+    explainerTaskDescription.innerHTML = description;
+
+    //Task date
+    let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
+    explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "None set";
+
+    //Task manhours
+    let manHours = globalCurrentTask.expectedManHours;
+    let timeDisplay = "";
+
+    if (manHours < 3600) {
+        // Convert to minutes and display
+        let minutes = manHours / 60;
+        timeDisplay = `${minutes.toFixed(0)} Minute${minutes !== 1 ? 's' : ''}`;
+    } else {
+        // Convert to hours and display
+        let hours = manHours / 3600;
+        timeDisplay = `${hours.toFixed(0)} Hour${hours !== 1 ? 's' : ''}`;
+    }
+
     explainerTaskManhours.innerHTML = `
-    <span class="material-symbols-rounded">
-        timer
-    </span>
-    <div class="manhours">
-        ${globalCurrentTask.expectedManHours/3600} Manhour${globalCurrentTask.expectedManHours !== 3600 ? 's' : ''}
-    </div>
+        <div class="description-header">Man hours</div>
+        <div class="man-hours">
+            <div class="manhours">
+                ${timeDisplay}
+            </div>
+        </div>
     `;
 
-    explainerTaskDescription.innerHTML = globalCurrentTask.description ? globalCurrentTask.description : "<i>No description...</i>";
-
-    let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
-    explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "No due date";
-
+    //Task status
     let statusElement = document.querySelector(".status");
+    let explainerTaskStatusElement = document.querySelector(".explainer-task-status");
     statusElement.innerHTML = globalCurrentTask.state == 0 ? "Not Started" : globalCurrentTask.state == 1 ? "In Progress" : "Finished";
-    animate(document.querySelector(".task-overview"), "flash")
+    explainerTaskStatusElement.classList.remove("not-started", "in-progress", "finished");
+    if (globalCurrentTask.state == 0) {
+        explainerTaskStatusElement.classList.add("not-started");
+    } else if (globalCurrentTask.state == 1) {
+        explainerTaskStatusElement.classList.add("in-progress");
+    } else {
+        explainerTaskStatusElement.classList.add("finished");
+    }
+    
+    animate(document.querySelector(".task-overview"), "flash");
+
+    //Task assignments
+    //yet to be made
 
     global.setBreadcrumb(["Projects", globalCurrentProject.name, globalCurrentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + globalCurrentTask.taskID])
 }
@@ -1011,6 +1049,16 @@ function setupDropdownEventListeners(taskRow) {
 
         let icon = taskRow.querySelector(".material-symbols-rounded");
         icon.innerHTML = "push_pin";
+
+        let taskID = taskRow.getAttribute("id");
+        let projID = globalCurrentProject.projID;
+        patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 0}).then((res) => {
+            if (res.status == 204) {
+                console.log(`[setupDropdownEventListeners] updated task ${taskID} to state 0`);
+            } else {
+                console.error(`[setupDropdownEventListeners] failed to update task ${taskID} to state 0`);
+            }
+        });
     });
 
     dropdownInProgress.addEventListener("click", () => {
@@ -1019,8 +1067,19 @@ function setupDropdownEventListeners(taskRow) {
         let tdElement = taskRow.querySelector(".td-class");
         tdElement.classList.remove("not-started", "finished");
         tdElement.classList.add("in-progress");
+
         let icon = taskRow.querySelector(".material-symbols-rounded");
         icon.innerHTML = "timeline";
+
+        let taskID = taskRow.getAttribute("id");
+        let projID = globalCurrentProject.projID;
+        ppatch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 1}).then((res) => {
+            if (res.status == 204) {
+                console.log(`[setupDropdownEventListeners] Successfully updated task ${taskID} to state 1`);
+            } else {
+                console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 1`);
+            }
+        });
     });
 
     dropdownFinished.addEventListener("click", () => {
@@ -1032,6 +1091,16 @@ function setupDropdownEventListeners(taskRow) {
 
         let icon = taskRow.querySelector(".material-symbols-rounded");
         icon.innerHTML = "check_circle";
+
+        let taskID = taskRow.getAttribute("id");
+        let projID = globalCurrentProject.projID;
+        patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 2}).then((res) => {
+            if (res.status == 204) {
+                console.log(`[setupDropdownEventListeners] Successfully updated task ${taskID} to state 2`);
+            } else {
+                console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 2`);
+            }
+        });
     });
 }
 
@@ -2618,9 +2687,12 @@ async function projectPopup(id){
 
     let project = projectData.data;
 
-    // let teamLeader = global.employeeAvatarOrFallback(project.teamLeader);
+    let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
+    teamLeader = teamLeader.get(project.teamLeader.empID);
+    console.error(teamLeader)
+    let teamLeaderAvatar = global.employeeAvatarOrFallback(teamLeader);
 
-
+    let hasDueDate = project.dueDate ? new Date(project.dueDate) : "Not set";
 
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
@@ -2666,7 +2738,7 @@ async function projectPopup(id){
                     </div>
                 </div>
                 <div class="assigned-employees">
-                    ${teamLeader}
+                    <img src="${teamLeaderAvatar}" class="avatar" ${global.employeeToName(teamLeader)}>
                 </div>
             </div>
 
@@ -2674,7 +2746,7 @@ async function projectPopup(id){
                 <div class="date-picker-icon">
                     <span class="material-symbols-rounded">event</span>
                 </div>
-                <input class="date-picker-input" type="text" placeholder="${project.dueDate}" tabindex="0"></input>
+                <input class="date-picker-input" type="text" placeholder="${hasDueDate}" tabindex="0"></input>
             </div>
             <div class="confirm-buttons-row">
                 <div class="text-button" id="close-button-bottom">
@@ -2690,6 +2762,9 @@ async function projectPopup(id){
             </div>
         </dialog>
     `;
+
+    const titleInput = popupDiv.querySelector('.add-task-title-input');
+    titleInput.value = project.name;
 
     //quill for description
     var quill = new Quill('#description-editor', {
@@ -2880,28 +2955,24 @@ pageBackButton.addEventListener('click', function() {
         searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
         console.log(`[pageBackButton] currentPage: ${currentPage}`);
     }
-    if (currentPage === 1) {
-        pageBackButton.classList.add('disabled');
-    } else {
-        pageBackButton.classList.remove('disabled');
-    }
-    pageForwardButton.classList.remove('disabled');
 });
 
 pageForwardButton.addEventListener('click', async function() {
-    const data = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
-    if (data.data.projects.length !== 0) {
-        pageBackButton.classList.remove('disabled');
-        currentPage++;
-        pageNumberElement.textContent = currentPage;
-        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-        console.log(`[pageForwardButton] currentPage: ${currentPage}`);
-        const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
-    }
+
+    pageBackButton.classList.remove('disabled');
+    currentPage++;
+    pageNumberElement.textContent = currentPage;
+    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+    console.log(`[pageForwardButton] currentPage: ${currentPage}`);
     await checkNextPage();
 });
 
 async function checkNextPage() {
+
+    if (pageBackButton.classList.contains('disabled')) {
+        return; // someone already cooked for us and we dont need the unneccesary api call
+    }
+
     const nextData = await get_api(`/project/project.php/projects?q=${projectSearchInput.value}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage + 1}`);
     if (nextData.data.projects.length === 0) {
         pageForwardButton.classList.add('disabled');
@@ -2910,7 +2981,7 @@ async function checkNextPage() {
     }
 }
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 10, currentPage = 1) {
+async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 25, currentPage = 1) {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
     const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
@@ -2926,6 +2997,19 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
     }
     
     clearProjectList();
+
+    if (data.data.projects.length < pageLimit) {
+        pageForwardButton.classList.add('disabled');
+    } else {
+        pageForwardButton.classList.remove('disabled');
+    }
+    pageNumberElement.textContent = currentPage;
+    if (currentPage === 1) {
+        pageBackButton.classList.add('disabled');
+    } else {
+        pageBackButton.classList.remove('disabled');
+    }
+
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
     await Promise.all(data.data.projects.map(async (project) => {
         await projectObjectRenderAndListeners(project);
@@ -2997,6 +3081,7 @@ async function handleViewClick(limit) {
     projectsPerPageDropdown.querySelector(".dropdown-text").innerText = limit.toString();
     pageLimit = limit;
     currentPage = 1;
+    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
     console.log(`[view${limit}] limit: ${pageLimit}`);
     await checkNextPage();
 }
@@ -3016,33 +3101,6 @@ document.addEventListener("click", (e) => {
     }
 });
 
-view10.addEventListener("click", () => {
-    projectsPerPageDropdown.querySelector(".dropdown-text").innerText = "10";
-    pageLimit = 10;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-    console.log(`[view10] limit: ${pageLimit}`);
-})
-
-view25.addEventListener("click", () => {
-    projectsPerPageDropdown.querySelector(".dropdown-text").innerText = "25";
-    pageLimit = 25;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-    console.log(`[view25] limit: ${pageLimit}`);
-})
-
-view50.addEventListener("click", () => {
-    projectsPerPageDropdown.querySelector(".dropdown-text").innerText = "50";
-    pageLimit = 50;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-    console.log(`[view50] limit: ${pageLimit}`);
-})
-
-view100.addEventListener("click", () => {
-    projectsPerPageDropdown.querySelector(".dropdown-text").innerText = "100";
-    pageLimit = 100;
-    searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-    console.log(`[view100] limit: ${pageLimit}`);
-})
 
 async function getProjectPreferences() {
     const prefSort = await global.preferences.get('projectSort');

@@ -216,14 +216,6 @@
         
     }
 
-
-    #mobile-search-input {
-        width: 0;
-        padding: 0;
-        opacity: 0;
-        transition: opacity 0.2s ease-out;
-    }
-
     #mobile-search-input.open {
         width: 100%;
         height: 100%;
@@ -244,8 +236,13 @@
 
     .controls {
         justify-content: space-between;
+        width: calc(100% - 2rem);
     }
     
+    .list-container {
+        margin-left: 0;
+        width: 100%;
+    }
     
 
 
