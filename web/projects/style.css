@@ -1723,6 +1723,7 @@
     transform: translate(0, -50%);
     padding: 2em;
     text-align: center;
+    opacity: 1;
 }
 
 #task-overdue {
