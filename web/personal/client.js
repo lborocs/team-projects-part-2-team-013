@@ -470,7 +470,13 @@ function personalCardEditMode(id) {
         title.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault()
-                title.blur()
+                newTitle = title.innerHTML
+                newDescription = description.innerHTML
+                editPersonal(id, newTitle, newDescription)
+                personalCard.classList.remove('edit-mode')
+                saveButton.classList.add('norender')
+                personalIcons.classList.remove('norender')
+                resolve()
             }
         })
 

@@ -875,8 +875,9 @@ export async function renderNotifications(notifications) {
         //notification card
         let notificationCard = document.createElement("a");
         notificationCard.classList.add("notification-card");
+        notificationCard.tabindex = -1;
 
-        if (notificationTime > notifsLastReadAt) {
+        if (notificationTime >= notifsLastReadAt) {
             console.log("[renderNotifications] notification is unread")
             notificationCard.classList.add("unread");
             unreadIndicator.classList.add("unread");
@@ -891,6 +892,7 @@ export async function renderNotifications(notifications) {
                 icon = "checkbook";
                 link = `/wiki/post/#${post.postID}`;
                 notificationCard.href = link;
+                notificationCard.tabindex = -1;
                 
                 notificationCard.innerHTML = `
                     <div class="icon">
@@ -934,6 +936,7 @@ export async function renderNotifications(notifications) {
                 let project = task.project;
                 link = `/projects/#${project.projID}-${task.taskID}`;
                 notificationCard.href = link;
+                notificationCard.tabindex = -1;
 
                 switch(notification.body.detail) {
                     case 0: // task has been created

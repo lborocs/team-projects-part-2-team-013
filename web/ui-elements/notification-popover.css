@@ -152,6 +152,10 @@
         padding-left: 0;
     }
 
+    .name-card:hover {
+        background-color: transparent;
+    }
+
 }
 
 .notification-card:hover {

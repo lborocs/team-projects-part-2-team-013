@@ -286,12 +286,21 @@
                             </div>
                             <div class="status explainer-task-status"></div>
                         </div>
+                        <div class="divider"></div>
+                        <div class="users-assigned-container">
+                            <div class="description-header">Users Assigned</div>
+                            <div class="users-assigned-explainer">None set</div>
+                        </div>
                         <div class="edit-and-delete">
                             <div class="edit-button team-leader-only norender">
-                            
+                                <span class="material-symbols-rounded">
+                                    edit_note
+                                </span>
                             </div>
                             <div class="delete-button team-leader-only norender">
-                            
+                                <span class="material-symbols-rounded">
+                                    delete
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -398,6 +407,7 @@
                         
                     </div>
                     <div class="project-table-div">
+                        
                         <table id="projects-table" class="table">
                             <thead>
                                 <tr>
@@ -460,9 +470,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            
+                                
                             </tbody>
+                                
                         </table>
+                        <div class="projects-table-empty-state norender">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <span class="material-symbols-rounded">event_busy</span>
+                                </div>
+                                <div class="empty-state-text">
+                                    No projects found
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     
                 </div>
