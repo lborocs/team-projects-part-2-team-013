@@ -1,3 +1,5 @@
+import * as global from "../../global-ui.js"
+
 const tags = document.getElementById("tags");
 const input = document.getElementById("input-tag");
 const submitButton = document.getElementById("submitButton");
@@ -339,3 +341,12 @@ document.querySelector(".search-input").addEventListener("blur", function() {
 });
 
 submitButton.addEventListener("click", submitPost);
+
+
+//sets the breadcrumb to wiki/create
+if (editing) {
+    global.setBreadcrumb(["Wiki", "Edit Post"], ["/wiki/", "/wiki/create/"]);
+} else {
+    global.setBreadcrumb(["Wiki", "Create Post"], ["/wiki/", `/wiki/create/#${getQueryParam()}`]);
+}
+
