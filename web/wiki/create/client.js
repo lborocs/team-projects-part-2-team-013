@@ -168,7 +168,7 @@ function organiseSelect() {
 let tagsList = fetchTags();
 tagsList.then((tagsList) => {
     tagsList.forEach((tag) => {
-        temp = new Tag(tag.name, tag.tagID);
+        let temp = new Tag(tag.name, tag.tagID);
         selectTags.push(temp);
         temp.addToSelect();
 
@@ -195,7 +195,7 @@ tagsList.then((tagsList) => {
             else {
                 document.querySelector("#placeholderTag").classList.add("norender")
                 post.tags.forEach((tag) => {
-                    temp = new Tag(tagsList.find(findTag(tag)).name, tag);
+                    let temp = new Tag(tagsList.find(findTag(tag)).name, tag);
                     currentTags.push(temp);
                     temp.addTag();
                 });
