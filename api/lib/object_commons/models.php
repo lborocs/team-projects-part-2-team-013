@@ -564,6 +564,7 @@ const TABLE_PERSONALS = new Table(
             "personalContent", is_primary_key:false, type:"string", is_nullable:true, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 1024)]
         ),
+        new Column("personalCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
     "personal",
     "personal"
