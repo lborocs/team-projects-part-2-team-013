@@ -486,6 +486,10 @@
     flex: 0 0 330px;
     position: sticky;
 
+    #explainer-back {
+        display: none;
+    }
+
     .title {
         font-size: 1.5rem;
         font-weight: 700;
@@ -1989,12 +1993,20 @@ td:has(#more) {
 
 .explainer.popout {
     position: absolute;
-    top: 0.5rem;
+    top: 0;
     right: 0;
     width: 330px;
-    height: calc(100% - 1rem);
+    height: 100%;
     z-index: 9999;
-    transition-duration: 0;
     box-shadow: 0 4px 4px rgba(0,0,0,0.1), -2px -2px 20px rgba(0,0,0,0.15);
+
+    #explainer-back {
+        display: flex;
+    }
     
+}
+
+.explainer.popout.hidden {
+    width: 0;
+    transition: width 0.1s ease-out;
 }

@@ -46,6 +46,7 @@ const explainerTaskDescription = explainerTaskContainer.querySelector(".descript
 const explainerTaskDateContainer = explainerTaskContainer.querySelector(".date-container")
 const explainerTaskDate = explainerTaskContainer.querySelector(".date")
 const explainerShowHide = document.querySelector("#explainer-show-hide")
+const explainerPopoutBack = document.querySelector("#explainer-back")
 const notStartedColumn = document.querySelector("#notstarted")
 const inProgressColumn = document.querySelector("#inprogress")
 const finishedColumn = document.querySelector("#finished")
@@ -214,12 +215,12 @@ views.forEach((view, i) => {
 
 })
 
-projectBackButton.addEventListener("pointerup", () => {
+projectBackButton.addEventListener("click", () => {
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
     renderFromBreadcrumb([null, null]);
 })
 
-explainerShowHide.addEventListener("pointerup", () => {
+explainerShowHide.addEventListener("click", () => {
     explainer.classList.toggle("hidden")
 
     if (explainer.classList.contains("hidden")) {
@@ -228,6 +229,12 @@ explainerShowHide.addEventListener("pointerup", () => {
         explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_close</span>`
     }
     console.log("[ExplainerShowHide] clicked")
+})
+
+explainerPopoutBack.addEventListener("click", () => {
+    explainer.classList.add("hidden")
+    explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_open</span>`
+    console.log("[ExplainerPopoutBack] clicked")
 })
 
 function explainerTaskSetToDefault() {
