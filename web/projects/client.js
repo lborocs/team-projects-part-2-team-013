@@ -180,7 +180,12 @@ function setActivePane(newPane) {
         pane.classList.add("norender")
     })
 
-    document.getElementById(newPane).classList.remove("norender")
+    const elem = document.getElementById(newPane)
+    if (!elem) {
+        throw new Error(`[setActivePane] no element with id ${newPane}`);
+    }
+    elem.classList.remove("norender")
+    
 }
 
 
@@ -953,8 +958,10 @@ async function renderFromBreadcrumb(locations) {
     }
 
     try {
+        setActivePane("individual-project-pane");
         await renderIndividualProject(projID, true);
     } catch (e) {
+        setActivePane("select-projects-pane");
         await fetchAndRenderAllProjects();
     }
 
