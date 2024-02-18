@@ -126,6 +126,10 @@
     transition: opacity 0.15s ease-out;
 }
 
+.text-button:not(:has(.button-text)) {
+    padding: 0;
+}
+
 
 
 
