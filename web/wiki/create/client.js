@@ -243,7 +243,7 @@ document.editor = quill;
 input.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         event.preventDefault();
-        tagContent = input.value.trim();
+        let tagContent = input.value.trim();
         if (tagContent === "") {
             return;
         }
@@ -257,7 +257,7 @@ input.addEventListener("keydown", function (event) {
             tagExists.removeFromSelect();
         }
         else {
-            tempTag = new Tag(tagContent, 0);
+            let tempTag = new Tag(tagContent, 0);
             currentTags.push(tempTag);
             tempTag.addTag();
         }
