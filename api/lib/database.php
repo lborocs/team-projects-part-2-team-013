@@ -1563,7 +1563,12 @@ function db_tag_fetchall() {
     global $db;
 
     $query = $db->prepare(
-        "SELECT * FROM `TAGS`"
+        "SELECT `TAGS`.*, `POST_TAGS`.tagID IS NOT NULL AS hasPosts
+        FROM `TAGS`
+        LEFT JOIN `POST_TAGS`
+            ON `TAGS`.tagID = `POST_TAGS`.tagID
+        GROUP BY `TAGS`.tagID
+        "
     );
     $query->execute();
     $res = $query->get_result();
@@ -1574,7 +1579,7 @@ function db_tag_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_TAGS);
+        $encoded = parse_database_row($row, TABLE_TAGS, ["hasPosts"=>"integer"]);
         array_push($data, $encoded);
     }
     return $data;

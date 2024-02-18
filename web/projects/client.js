@@ -905,7 +905,10 @@ async function fetchAndRenderAllProjects() {
             if (header.classList.contains("sorting-by")) {
                 header.classList.toggle("reverse");
                 sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
-                if (symbol) symbol.textContent = sortDirection === 'asc' ? 'arrow_downward' : 'arrow_upward';
+                if (sortAttribute === 'lastAccessed') {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                }
+                if (symbol) symbol.textContent = (sortDirection === 'asc' ^ sortAttribute === 'lastAccessed') ? 'arrow_downward' : 'arrow_upward';
             } else {
                 projectTableHeaders.forEach((header) => {
                     header.classList.remove("sorting-by", "reverse");
@@ -914,7 +917,10 @@ async function fetchAndRenderAllProjects() {
                 });
                 header.classList.add("sorting-by");
                 sortDirection = 'asc';
-                if (symbol) symbol.textContent = 'arrow_downward';
+                if (sortAttribute === 'lastAccessed') {
+                    sortDirection = 'desc'; 
+                }
+                if (symbol) symbol.textContent = (sortDirection === 'asc' ^ sortAttribute === 'lastAccessed') ? 'arrow_downward' : 'arrow_upward';
             }
             currentPage = 1;
             pageBackButton.classList.add("disabled");
@@ -972,6 +978,7 @@ function calculateTaskCount() {
     document.querySelector("#notstarted-count").innerHTML = notStartedCount
     document.querySelector("#inprogress-count").innerHTML = inProgressCount
     document.querySelector("#finished-count").innerHTML = finishedCount
+    console.table(notStartedCount, inProgressCount, finishedCount)
 }
 
 function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours, assignments = []) {
@@ -1064,6 +1071,14 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
             </td>
         `;
     }
+
+    taskRow.innerHTML += `
+    <td>
+        <div id="more" class="small-icon more-icon-taskList">
+            <span class="material-symbols-rounded">more_horiz</span>
+        </div>
+    </td>
+    `;
 
     taskTableBody.appendChild(taskRow);
     taskTableBody.appendChild(listAddRow);
@@ -1567,55 +1582,48 @@ function correctContextMenus() {
 }
 
 
-// function renderProject(ID, title, desc, teamLeader, isTeamLeader, teamLeaderID) {
-//     let project = document.createElement("div")
-//     project.classList.add("project")
-//     if(isTeamLeader) {
-//         project.innerHTML = `
-//         <div class="tooltip tooltip-under">
-//             <p class="tooltiptext">You are the team leader for this project</p>
-//             <i class="fa-solid fa-user-gear"></i> ${title}
-//         </div>
-//     `
-//     } else {
-//     project.innerHTML = `
-//         <i class="fa-solid fa-users"></i> ${title}
-//     `
-//     }
-//     //set id to the project id
-//     project.setAttribute("data-ID", ID)
-//     project.setAttribute("data-title", title)
-//     project.setAttribute("data-description", desc)
-//     project.setAttribute("data-team-leader", teamLeader)
-//     project.setAttribute("data-team-leader-id", teamLeaderID)
-//     document.querySelector("#projects-table").appendChild(project)
-//     projectTabs = document.querySelectorAll(".project")
-//     teamLeaderEnableElementsIfTeamLeader()
-
-//     return project
-// }
- 
+/**
+ * fully renders a project in the projects table.
+ * 
+ * @param {Object} project 
+ * @param {string} project.projID
+ * @param {string} project.name 
+ * @param {Object} project.teamLeader
+ * @param {string} project.teamLeader.empID 
+ * @param {Object} project.createdBy
+ * @param {string} project.createdBy.empID 
+ * @param {string} project.createdAt 
+ * @param {string} [project.lastAccessed]
+ * @param {string} [project.dueDate]
+ * @param {string} [project.description]
+ * 
+ * @returns {HTMLElement} a <tr> of the rendered project.
+ */
 async function renderProject(project) {
+    console.log("[renderProject] rendering project: ", project.projID, project.name);
+
+    //gets the projects table and makes the project row
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
     let projectRow = document.createElement("tr");
     projectRow.setAttribute("tabindex", "0");
     projectRow.classList.add("project-row");
 
+    //checks if the current user is team leader, sets the icon accordingly
     let session = await global.getCurrentSession();
     let isTeamLeader = (project.teamLeader.empID === session.employee.empID);
     let emps = await global.getEmployeesById([project.teamLeader.empID, project.createdBy.empID]);
     let teamLeader = emps.get(project.teamLeader.empID);
-
-    let icon = isTeamLeader ? `bookmark_manager` : `folder`;
-
+    let icon = isTeamLeader ? `admin_panel_settings` : `folder`;
     let teamLeaderName = global.employeeToName(teamLeader);
 
+    //null checks and friendly formatting
     let date = project.createdAt ? global.formatDateFull(new Date(project.createdAt)) : "No creation date found";
     let lastAccessedFormatted = project.lastAccessed ? formatLastAccessed(new Date(project.lastAccessed)) : `<span class="disabled">Never</span>`;
     let lastAccessedTooltip = lastAccessedFormatted.includes("Never") ? "Never accessed" : new Date(project.lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'});
     let dueDateFormatted = project.dueDate ? global.formatDateFull(new Date(project.dueDate)) : `<span class="disabled">Not set</span>`;
 
+    //constructing the table row for the project
     projectRow.innerHTML = `
         <td>
             <a href="/projects/#${project.projID}">
@@ -1662,6 +1670,7 @@ async function renderProject(project) {
         </td>
     `;
 
+    //TODO: figure out if this is necessary
     projectTitle.innerHTML = project.name;
 
     //sets the data-attributes on the projectRow
@@ -1672,7 +1681,7 @@ async function renderProject(project) {
     projectRow.setAttribute("data-team-leader", JSON.stringify(teamLeader));
     projectsTable.querySelector("tbody").appendChild(projectRow);
 
-
+    //sets up the context menu event listener
     const projectActions = projectRow.querySelector(".project-actions");
     projectActions.addEventListener("click", (e) => {
         e.stopPropagation()
@@ -1680,6 +1689,7 @@ async function renderProject(project) {
 
     });
 
+    //enables the team leader UI elements if the current user is the team leader
     teamLeaderEnableElementsIfTeamLeader();
 
     return projectRow;
@@ -2174,8 +2184,12 @@ function confirmDelete() {
                 <div>Are you sure you want to delete this task?</div>
                 <div><strong>This change cannot be undone.</strong></div>
                 <form method="dialog" class = "buttonForm">
-                    <button class="closeButton">Cancel</button>
-                    <button class="deleteButton">Delete</button> 
+                    <div class="text-button" id="closeButton">
+                    <div class="button-text">Cancel</div>
+                    </div>
+                    <div class="text-button red" id="deleteButton">
+                    <div class="button-text">Delete</div> 
+                    </div>
                 </form>
             </dialog>
         `;
@@ -2184,8 +2198,8 @@ function confirmDelete() {
         fullscreenDiv.style.filter = 'brightness(0.6)';
 
         let dialog = popupDiv.querySelector('.popupDialog');
-        let closeButton = dialog.querySelector('.closeButton');
-        let deleteButton = dialog.querySelector('.deleteButton');
+        let closeButton = dialog.querySelector('#closeButton');
+        let deleteButton = dialog.querySelector('#deleteButton');
 
         closeButton.addEventListener('click', (event) => {
             event.preventDefault(); 
@@ -2463,7 +2477,7 @@ async function addProject() {
             fullscreenDiv.style.filter = 'none';
             console.log("[addprojectCreateButton] resolving")
             let newProject = res.data;
-            await projectObjectRenderAndListeners(newProject);
+            await renderProject(newProject);
         } else {
             let error = `${res.error.message} (${res.error.code})`
             console.log("Error creating new project: " + error);   
@@ -2472,22 +2486,6 @@ async function addProject() {
 
 
 
-}
-
-async function projectObjectRenderAndListeners(project) {
-    console.log("[projectObjectRenderAndListeners] rendering project: ", project.projID, project.name);
-    let session = await global.getCurrentSession();
-    let isTeamLeader = (project.teamLeader.empID === session.employee.empID);
-    let emps = await global.getEmployeesById([project.teamLeader.empID, project.createdBy.empID]);
-    let teamLeader = emps.get(project.teamLeader.empID);
-
-
-    let teamLeaderName = global.employeeToName(teamLeader);
-    let element = renderProject(project);
-
-    calculateTaskCount();
-    element.data = project;
-    return element;
 }
 
 let createProjectButton = document.querySelector("#new-project");
@@ -3229,8 +3227,7 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
 
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
     await Promise.all(data.data.projects.map(async (project) => {
-        console.error(project)
-        await projectObjectRenderAndListeners(project);
+        await renderProject(project);
     }));
 
     if (data.data.projects.length === 0) {

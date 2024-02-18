@@ -177,7 +177,7 @@ tagsList.then((tagsList) => {
     let postID = getQueryParam();
     if (postID != "") {
         editing = true;
-        document.querySelector("#submitButton").innerHTML = 'Update post &nbsp <span class="material-symbols-rounded">done</span>';
+        document.querySelector("#submitButton").innerHTML = '<div class="button-text">Update post </div> <div class="button-icon"> <span class="material-symbols-rounded">done</span> </div>';
         document.querySelector("#title").innerHTML = "Edit Post";
         getPostData(postID).then((post) => {
             console.log(post);
@@ -232,6 +232,7 @@ var quill = new Quill('#editor', {
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
             [{ 'header': '1' }, { 'header': '2' }, 'code-block'],
             ['link', 'image'],
+            ['clean'],
         ]
     },
     theme: 'snow'
@@ -243,7 +244,7 @@ document.editor = quill;
 input.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
         event.preventDefault();
-        tagContent = input.value.trim();
+        let tagContent = input.value.trim();
         if (tagContent === "") {
             return;
         }
@@ -257,7 +258,7 @@ input.addEventListener("keydown", function (event) {
             tagExists.removeFromSelect();
         }
         else {
-            tempTag = new Tag(tagContent, 0);
+            let tempTag = new Tag(tagContent, 0);
             currentTags.push(tempTag);
             tempTag.addTag();
         }

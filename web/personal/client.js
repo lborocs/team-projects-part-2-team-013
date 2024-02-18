@@ -9,6 +9,7 @@ import * as global from "../global-ui.js";
     dueDate: timestamp
     state: 0
     title: "Meet Linda for coffee"
+    createdAt: timestamp
 }
 */
 
@@ -16,7 +17,7 @@ import * as global from "../global-ui.js";
 var globalPersonalsList = []
 var globalPersonalsSort = {
     alphabetical: false,
-    timeCreated: false,
+    createdAt: false,
     dueDate: false,
     descending: true
 }
@@ -32,7 +33,7 @@ const mobilePersonalsSearchInput = document.getElementById('mobile-search-input'
 const personalsSortDropdown = document.getElementById('personals-sort')
 const dropdownMenus = document.querySelectorAll('.dropdown-menu')
 const sortAlphabetical = document.getElementById('sort-alphabetical')
-const sortTimeCreated = document.getElementById('sort-timeCreated')
+const sortCreatedAt = document.getElementById('sort-createdAt')
 const sortDueDate = document.getElementById('sort-dueDate')
 const personalsSortDirection = document.getElementById('personals-sort-direction')
 
@@ -426,7 +427,9 @@ function searchPersonals(query) {
 }
 
 function sortPersonals() {
+    console.log(globalPersonalsSort)
     if (globalPersonalsSort.alphabetical) {
+        console.log("sorting by alphabetical")
         globalPersonalsList.sort((a, b) => {
             if (globalPersonalsSort.descending) {
                 return a.title.localeCompare(b.title)
@@ -434,15 +437,17 @@ function sortPersonals() {
                 return b.title.localeCompare(a.title)
             }
         })
-    } else if (globalPersonalsSort.timeCreated) {
+    } else if (globalPersonalsSort.createdAt) {
+        console.log("sorting by createdAt")
         globalPersonalsList.sort((a, b) => {
             if (globalPersonalsSort.descending) {
-                return a.created - b.created
+                return a.createdAt - b.createdAt
             } else {
-                return b.created - a.created
+                return b.createdAt - a.createdAt
             }
         })
     } else if (globalPersonalsSort.dueDate) {
+        console.log("sorting by dueDate")
         globalPersonalsList.sort((a, b) => {
             if (globalPersonalsSort.descending) {
                 return a.due - b.due
@@ -603,15 +608,15 @@ function updateSortOption(sortOption) {
     const options = {
         'Alphabetical': {
             selected: 'alphabetical',
-            unselected: ['timeCreated', 'dueDate']
+            unselected: ['createdAt', 'dueDate']
         },
         'Time created': {
-            selected: 'timeCreated',
+            selected: 'createdAt',
             unselected: ['alphabetical', 'dueDate']
         },
         'Due date': {
             selected: 'dueDate',
-            unselected: ['alphabetical', 'timeCreated']                   
+            unselected: ['alphabetical', 'createdAt']                   
         }
     }
 
@@ -655,6 +660,7 @@ function reverseSortDirection() {
     globalPersonalsSort.descending = !globalPersonalsSort.descending
     personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = (globalPersonalsSort.descending) ? "arrow_downward" : "arrow_upward"
     sortPersonals()
+    console.log(globalPersonalsList)
     renderAllPersonals()
 }
 
@@ -664,7 +670,7 @@ sortAlphabetical.addEventListener('click', () => {
     updateSortOption('Alphabetical')
 })
 
-sortTimeCreated.addEventListener('click', () => {
+sortCreatedAt.addEventListener('click', () => {
     updateSortOption('Time created')
 })
 

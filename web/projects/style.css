@@ -855,19 +855,8 @@
 
 .delete-button {
     position: absolute;
-    bottom: 0.5em;
+    bottom: 0.5rem;
     right: 0.5em;
-    padding: 0.3em;
-    cursor: pointer;
-    transition: 0.2s ease-out;
-}
-
-.delete-button:hover {
-    color: var(--overdue-red, #c04646);
-    transition-duration: 0.1s;
-    background-color: #f0f0f0;
-    transition-duration: 0.1s;
-    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
 }
 
 .tasklist {
@@ -1433,16 +1422,9 @@
     display: flex;
     align-self: center;
     justify-content: center;
-}
-
-.editButton {
-    background-color: var(--confirm-button-colour, rgb(66, 116, 255));
-    color: var(--white, white);
-    border: none;
-}
-
-.editButton:hover {
-    border: none !important;
+    align-items: center;
+    width:  100%;
+    gap: 1em;
 }
 
 .addButton, .setButton {
@@ -1461,17 +1443,6 @@
     box-sizing: border-box;
 }
 
-.deleteButton {
-    background-color: rgb(218,55, 60);
-    color: var(--white, white);
-}
-
-.deleteButton:hover {
-    background-color: rgb(161, 40, 40);
-    color: var(--white, white);
-    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3));
-        border: none;
-}
 
 .createButton {
     background-color: var(--confirm-button-colour, rgb(66, 116, 255));
@@ -1480,20 +1451,8 @@
 
 .edit-button {
     position: absolute;
-    bottom: 0.5em;
-    border-radius: 4px;
-    padding: 0.3em !important;
-    padding-left: 0.5em !important;
-    padding-right: 0.5em !important;
-    cursor: pointer;
-    transition: 0.1s ease-out;
-}
-
-.edit-button:hover {
-    color: var(--text-off-black, #0f0f0f);
-    background-color: #f0f0f0;
-    transition-duration: 0.1s;
-    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
+    bottom: 1rem;
+    left: 0.5rem;
 }
 
 .createButton:hover {
@@ -1510,7 +1469,7 @@
     box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3)); 
 }
 
-
+.buttonForm
 
 #add-task-popup {
     padding: 18px;
@@ -1993,4 +1952,16 @@
     font-weight: 600;
     color: #0f0f0faa;
     line-height: 24px;
+}
+
+#more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.more-icon-taskList {
+    opacity: 0.5;
+    user-select: none;
+    aspect-ratio: auto;
 }

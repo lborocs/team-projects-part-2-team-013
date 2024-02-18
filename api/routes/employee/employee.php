@@ -301,6 +301,7 @@ function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) 
     $dueDate = $body["personalDueDate"] ?? null;
     $title = $body["personalTitle"];
     $content = $body["personalContent"] ?? null;
+    $createdAt = timestamp();
 
     if (db_generic_new(
         TABLE_PERSONALS ,
@@ -310,13 +311,15 @@ function _new_personal(RequestContext $ctx, array $body, array $url_specifiers) 
             $state,
             $dueDate,
             $title,
-            $content
+            $content,
+            $createdAt,
         ],
-        "ssiiss"
+        "ssiissi"
     )) {
 
         $body["itemID"] = $itemID;
         $body["personalAssignedTo"] = $assignedTo;
+        $body["personalCreatedAt"] = $createdAt;
 
         respond_ok(parse_database_row($body, TABLE_PERSONALS));
     } else {

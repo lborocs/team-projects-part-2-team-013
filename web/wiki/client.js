@@ -2,52 +2,67 @@ import { search } from "../global-topbar.js";
 import * as global from "../global-ui.js"
 import { animate } from "../global-ui.js"
 
-class Tag {
-    constructor(name, tagID) {
-        this.tagID = tagID;
-        this.name = name;
-        this.numPosts = 0;
-        this.content = null
-    }
-    renderTag() {
-        const tag = document.createElement('div');
-        tag.classList.add('tag');
-        tag.setAttribute('id', "delTag")
-        tag.setAttribute('tagID', this.tagID);
-        tag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}&nbsp;<span class="numPosts">${this.numPosts}</span>`;
-        document.querySelector('.tagsContainer').appendChild(tag);
-        this.content = tag;
-        this.addEventListeners();
-    }
-    addEventListeners() {
-        this.content.addEventListener('click', () => {
-            if (this.content.classList.contains('selectedDel')) {
-                this.content.classList.toggle('selectedDel');
-                tagsToDelete = tagsToDelete.filter((e) => e !== this.tagID);
-            } else {
-                this.content.classList.toggle('selectedDel');
-                tagsToDelete.push(this.tagID);
-            }
-            if (tagsToDelete.length > 0) {
-                document.getElementById("create-button").classList.remove("disabled");
-            }
-            else {
-                document.getElementById("create-button").classList.add("disabled");
-            }
-        });
-    }
-    addPostNum() {
-        this.numPosts++;
-        deleteTagsDisplay.sort((a, b) => b.numPosts - a.numPosts);
-    }
-}
-var deleteTagsDisplay = [];
-var tagsToDelete = [];
+
+var tagsToDelete = new Set();
 var postsContainer = document.querySelector('.posts');
 var posts = document.querySelectorAll('.post');
 const searchInput = document.getElementById("inputField")
+const deleteTagsPopup = document.getElementById("delete-tags-popup");
+const deleteTagsHasPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .hasPosts');
+const deleteTagsNoPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .noPosts');
+const deleteTagsConfirmButton = deleteTagsPopup.querySelector("#confirm-button");
+const tagSelection = document.querySelector('#tag-selection');
 
-var postsMap = new Map();
+
+
+class Tag {
+
+    element;
+    tag;
+    
+    constructor(inner) {
+        this.tag = inner;
+    }
+
+    renderTag() {
+        const elem = document.createElement('div');
+
+        const parent =  this.tag.hasPosts ? deleteTagsHasPostContainer : deleteTagsNoPostContainer;
+
+        elem.classList.add('tag');
+        elem.setAttribute('tagID', this.tag.tagID);
+        elem.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.tag.name}&nbsp;`;
+        parent.appendChild(elem);
+        this.element = elem;
+        this.addEventListeners();
+    }
+    addEventListeners() {
+        this.element.addEventListener('click', () => {
+            if (this.element.classList.contains('selectedDel')) {
+                this.element.classList.toggle('selectedDel');
+                tagsToDelete.delete(this.tag.tagID);
+            } else {
+                this.element.classList.toggle('selectedDel');
+                tagsToDelete.add(this.tag.tagID);
+            }
+            if (tagsToDelete.size > 0) {
+                document.getElementById("confirm-button").classList.remove("disabled");
+            }
+            else {
+                document.getElementById("confirm-button").classList.add("disabled");
+            }
+        });
+    }
+}
+
+
+function renderTagInDeleter(tag) {
+    (new Tag(tag)).renderTag();
+}
+
+
+const postMap = new Map();
+const tagMap = new Map();
 
 
 async function searchPosts() {
@@ -60,7 +75,7 @@ async function searchPosts() {
         tags.push(tag.getAttribute("tagID"));
     });
     var selectedCategory = document.querySelector('input[name="category"]:checked');
-    await fetchPosts(tagsList, selectedCategory.value, search, tags);
+    await fetchPosts(selectedCategory.value, search, tags);
 }
 
 
@@ -73,59 +88,43 @@ async function updatePosts() {
 }
 
 
-async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
-    global.setBreadcrumb(["Wiki"], ["./"]);
+async function fetchPosts(isTechnical = 1, searchQuery = "", selectedTags = []) {
 
-    const tagParam = tags.length ? `&tags=${tags.join(",")}` : "";
-    const data = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical}&q=${search}${tagParam}`);
-    const data2 = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ? 0 : 1}&q=${search}${tagParam}`);
-    console.log(data);
+    const tagParam = selectedTags.length ? `&tags=${selectedTags.join(",")}` : "";
+    const res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical}&q=${searchQuery}${tagParam}`);
 
-    if (data.success !== true) {
+    console.log(res);
+
+    if (res.success !== true) {
         console.log("Posts failed to be fetched");
         return;
     }
 
+
     document.querySelectorAll('.post').forEach((post) => { post.remove() });
 
     console.log("Posts have been fetched");
-    data.data.posts.forEach(post => {
+    res.data.posts.forEach(post => {
         console.log(post);
         console.log(post.tags);
-        if (post.tags != null) {
-            let newtags = [];
-            console.log(post.tags);
-            console.log("TAGS");
-            post.tags.forEach((tag) => {
-                deleteTagsDisplay.find(findTag(tag)).addPostNum();
-                newtags.push(tagsList.find(findTag(tag)).name);
-                console.log(tag);
-                console.log("REPLACING TAGS");
-            });
-            post.tagsNames = newtags;
+
+        if (post.tags !== null) {
+            // fill in rich post tags
+            post.tags = post.tags.map(tagID => tagMap.get(tagID));
+        } else {
+            post.tags = [];
         }
-        console.log(post.tags);
-        console.log(post.tagsNames);
+
         console.log("Rendering post");
-        renderPost(post.postID, post.title, post.author, post.isTechnical, post.tagsNames);
-        postsContainer = document.querySelector('.posts');
-        // Store the post in the Map using postID as the key
-        postsMap.set(post.postID, post);
+        renderPost(post.postID, post.title, post.author, post.isTechnical, post.tags.map(tag => tag.name));
+        
+        postMap.set(post.postID, post);
         console.log(post);
-    });
-    data2.data.posts.forEach(post => {
-        if (post.tags != null) {
-            post.tags.forEach((tag) => {
-                deleteTagsDisplay.find(findTag(tag)).addPostNum();
-            });
-        }
-    });
-    deleteTagsDisplay.forEach((tag) => {
-        tag.renderTag();
+
     });
     setUpPostsEventListeners();
     posts = document.querySelectorAll('.post');
-    console.log(postsMap);
+    console.log(postMap);
 }
 
 async function fetchTags() {
@@ -137,12 +136,27 @@ async function fetchTags() {
     }
 
     console.log("Tags have been fetched");
+    tagSelection.replaceChildren();
     data.data.tags.forEach(tag => {
-        document.querySelector('.tag-selection').innerHTML += `<div class="tag" tagID="${tag.tagID}" name="${tag.name}" id="normal"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
-        let tempTag = new Tag(tag.name, tag.tagID);
-        deleteTagsDisplay.push(tempTag);
+        tagMap.set(tag.tagID, tag);
+        renderTag(tag);
+        renderTagInDeleter(tag);
     });
     return data.data.tags;
+}
+
+function renderTag(tag) {
+    const elem = document.createElement('div');
+    elem.classList.add('tag');
+    elem.setAttribute('tagID', tag.tagID);
+    elem.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag.name}`;
+
+    elem.addEventListener('click', () => {
+        elem.classList.toggle('selected');
+        searchPosts();
+    });
+
+    tagSelection.appendChild(elem);
 }
 
 async function deleteTag(tagID) {
@@ -154,53 +168,27 @@ async function deleteTag(tagID) {
     }
 }
 
-document.querySelector('#create-button').addEventListener('click', () => {
-    if (tagsToDelete.length > 0) {
+deleteTagsConfirmButton.addEventListener('click', () => {
+    if (tagsToDelete.size > 0) {
         const deleteSelectedTags = tagsToDelete.map((tag) => deleteTag(tag));
         Promise.all(deleteSelectedTags).then(() => {
             console.log("Tags have been deleted");
-            tagsToDelete = [];
+            //location.reload();
+            tagsToDelete = new Set();
             document.querySelectorAll(".tag.selectedDel").forEach((tag) => {
-                tag.classList.remove("selectedDel");
                 tag.remove();
             });
-            document.getElementById("create-button").classList.add("disabled");
-            fetchTags().then((tags) => {
-                fetchPosts(tags);
+            deleteTagsConfirmButton.classList.add("disabled");
+            searchPosts();
+            fetchTags()
+            closePopup();
             });
-        });
+
     }
 });
 
-let tagsList;
 fetchTags().then((tags) => {
-    document.querySelectorAll('.tag').forEach((tag) => {
-        tag.addEventListener('click', () => {
-            if (tag.attributes.getNamedItem('id').value === "delTag") {
-                return;
-                if (tag.classList.contains('selectedDel')) {
-                    tag.classList.toggle('selectedDel');
-                    tagsToDelete = tagsToDelete.filter((e) => e !== tag.getAttribute("tagID"));
-                } else {
-                    tag.classList.toggle('selectedDel');
-                    tagsToDelete.push(tag.getAttribute("tagID"));
-                }
-                if (tagsToDelete.length > 0) {
-                    document.getElementById("create-button").classList.remove("disabled");
-                }
-                else {
-                    document.getElementById("create-button").classList.add("disabled");
-                }
-            } else {
-                tag.classList.toggle('selected');
-                updatePosts();
-            }
-            console.log(tagsToDelete);
-        })
-    });
-
-    fetchPosts(tags);
-    tagsList = tags;
+    searchPosts();
 });
 
 
@@ -208,7 +196,7 @@ let postList = document.querySelectorAll('.post');
 function setUpPostsEventListeners() {
     postList = document.querySelectorAll('.post');
     postList.forEach((post) => {
-        post.querySelector("#trash").addEventListener("click", (event) => {
+        post.querySelector(".delete-post").addEventListener("click", (event) => {
             event.stopPropagation();
             confirmDelete().then(() => {
                 post.remove();
@@ -222,7 +210,7 @@ function setUpPostsEventListeners() {
             });
         });
 
-        post.querySelector("#edit").addEventListener("click", (event) => {
+        post.querySelector(".edit-post").addEventListener("click", (event) => {
             event.stopPropagation();
             let postID = post.getAttribute("data-postID")
             window.location.href = `/wiki/create/#${postID}`;
@@ -235,69 +223,69 @@ function setUpPostsEventListeners() {
     })
 }
 
-function findTag(tagID) {
-    return function (tag) {
-        return tag.tagID === tagID;
-    }
-}
-
-function findTagName(tagName) {
-    return function (tag) {
-        return tag.name === tagName;
-    }
-}
 
 /**
- * @param {Array} tags 
+ * Constructs a post HTML element and appends it to the posts container.
+ *
+ * @param {string} postID 
+ * @param {string} title 
+ * @param {string} author
+ * @param {boolean} isTechnical - 1 if the post is technical, 0 if it is non-technical.
+ * @param {Array<string>} tags - array of tags associated with the post. Defaults to ["No Tags"] to avoid null checks.
  */
 function renderPost(postID, title, author, isTechnical, tags) {
-
-    let post = document.createElement("div")
-    post.classList.add("post")
-    let postHTML = `
-    <div class="post-info">
-        <div class="title">${title}</div>
-        <div class="tags">`;
-
-    if (tags != null) {
-        tags.forEach((tag) => {
-            postHTML += `<div class="tag" name="${tag}"><span class="material-symbols-rounded">sell</span>${tag}</div>`;
-        });
-    } else {
-        postHTML += `<div class="tag" name="NoTags">No Tags</div>`;
-    }
-
-    postHTML += `</div>
-        <div class="author">
-            <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
-            ${global.employeeToName(author)}
-            <div class="post-icons manager-only">
-            <div class="icon-button no-box" id="edit">
-                <div class="button-icon">
-                    <span class="material-symbols-rounded">
-                        edit_square
-                    </span>
-                </div>
-            </div>
-            <div class="icon-button no-box" id="trash">
-            <div class="button-icon">
-                    <span class="material-symbols-rounded">
-                        delete
-                    </span>
-                </div>
-            </div>
-        </div>
-    `
-
-
-    post.innerHTML = postHTML;
-
+    const post = document.createElement("div")
+    post.className = "post"
     post.setAttribute("data-postID", postID)
     post.setAttribute("data-isTechnical", isTechnical)
 
+    const postInfo = document.createElement("div")
+    postInfo.className = "post-info"
+
+    const postTitle = document.createElement("div")
+    postTitle.className = "title"
+    postTitle.textContent = title
+
+    const tagsContainer = document.createElement("div")
+    tagsContainer.className = "tags"
+    const tagsArray = tags.length ? tags : ["No Tags"]
+    tagsArray.forEach(tag => {
+        const tagDiv = document.createElement("div")
+        tagDiv.className = "tag"
+        tagDiv.setAttribute("name", tag)
+        tagDiv.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag}`;
+        tagsContainer.appendChild(tagDiv)
+    });
+
+    const authorDiv = document.createElement("div")
+    authorDiv.className = "author"
+    authorDiv.innerHTML = `
+        <div class="icon">
+            <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
+        </div>
+        <div class="name">
+            ${global.employeeToName(author)}
+        </div>
+    `;  
+
+    const postIcons = document.createElement("div")
+    postIcons.className = "post-icons manager-only"
+    postIcons.innerHTML = `
+        <div class="icon-button no-box edit-post"><span class="material-symbols-rounded">edit_square</span></div>
+        <div class="text-button red delete-post"><span class="material-symbols-rounded">delete</span></div>
+    `;
+
+    postInfo.appendChild(postTitle)
+    postInfo.appendChild(tagsContainer)
+
+    authorDiv.appendChild(postIcons)    
+    postInfo.appendChild(authorDiv)
+
+    post.appendChild(postInfo)
+   
+
     postsContainer.appendChild(post)
 }
-
 
 
 searchInput.addEventListener("input", updatePosts)
@@ -382,6 +370,16 @@ document.getElementById("manage-tags").addEventListener("click", () => {
     editTags();
 });
 
+function closePopup() {
+    let popupDiv = document.querySelector('.popup');
+    let fullscreenDiv = document.querySelector('.fullscreen');
+    let dialog = popupDiv.querySelector('.popup-dialog');
+    dialog.style.transform = 'translateY(-1%)'
+    dialog.style.opacity = '0';
+    dialog.style.display = 'none';
+    fullscreenDiv.style.filter = 'none';
+}
+
 function editTags() {
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
@@ -390,14 +388,15 @@ function editTags() {
     dialog.style.transform = 'translateY(0px)'
     dialog.style.opacity = '1';
     dialog.style.display = 'flex';
-    let createButton = dialog.querySelector('#create-button');
+
     let closeButton = dialog.querySelector('#close-button');
 
     closeButton.addEventListener('click', (event) => {
         event.preventDefault();
-        dialog.style.transform = 'translateY(-1%)'
-        dialog.style.opacity = '0';
-        dialog.style.display = 'none';
-        fullscreenDiv.style.filter = 'none';
+        closePopup();
     });
 }
+
+
+//initialise the page
+global.setBreadcrumb(["Wiki"], ["./"]);
