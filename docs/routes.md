@@ -12,7 +12,8 @@ Written/designed by aidan F223129
         "lastName": "new lname",
         "avatar":"base64 avatar bytes",
         "isManager":0, // manager only
-      }
+      }```
+  - [x] DELETE (delete employee)
 
 
 - [x] **/employee/employee.php/bulk?ids=id1,id2** (no query params defaults to the logged in user)
