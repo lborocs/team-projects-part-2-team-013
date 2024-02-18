@@ -181,8 +181,10 @@ tagsList.then((tagsList) => {
         document.querySelector("#title").innerHTML = "Edit Post";
         getPostData(postID).then((post) => {
             console.log(post);
+            const postContent = JSON.parse(post.content);
             document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value = post.title;
-            quill.root.innerHTML = post.content;
+            console.log("setting cotnent to", postContent);
+            quill.setContents(postContent);
             if (post.isTechnical == 1) {
                 document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked = true;
             }
@@ -234,6 +236,7 @@ var quill = new Quill('#editor', {
     },
     theme: 'snow'
 });
+
 
 
 input.addEventListener("keydown", function(event) {
