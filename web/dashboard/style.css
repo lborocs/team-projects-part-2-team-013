@@ -103,6 +103,15 @@
     
 }
 
+.metric-card.transparent {
+    background-color: transparent;
+    box-shadow: none;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, background-color 0.1s ease;
+
+}
+
 .metric-card.add-metric {
     background-color: transparent;
     box-shadow: none;
@@ -551,49 +560,6 @@ a {
 }
 
 
-
-.automatic, #view-scroll,
-.manual, #view-fit {
-    padding-right: 0;
-    padding-left: 5px;
-    justify-content: flex-end;
-    overflow-x: clip;
-    transition: width 0.1s ease-out;
-    width: 32px;
-
-    .button-text {
-        opacity: 0;
-        transition: opacity 0.1s ease-out;
-    }
-}
-.manual, #view-fit {
-    color: #ae5e30;
-    background-color:#ffddb0;
-    & span {
-        color: #ae5e30;
-    }
-}
-.automatic, #view-scroll {
-    color: #1a7431;
-    background-color: #b7efc5;
-    & span {
-        color: #1a7431;
-    }
-}
-.manual:hover, #view-fit:hover, 
-.automatic:hover, #view-scroll:hover {
-    transition: width 0.1s ease-out;
-    .button-text {
-        opacity: 1;
-        transition: opacity 0.1s ease-out;
-    }
-}
-.manual:hover, #view-fit:hover {
-    width: 102px;
-}
-.automatic:hover, #view-scroll:hover {
-    width: 80px;
-}
 
 
 
