@@ -271,16 +271,11 @@ function renderPost(postID, title, author, isTechnical, tags) {
         <div class="author">
             <img class="avatar" src="${global.employeeAvatarOrFallback(author)}" width="30" height="30">
             ${global.employeeToName(author)}
-        </div>
-    `
-
-    postHTML += `
-        </div>
-        <div class="post-icons manager-only">
+            <div class="post-icons manager-only">
             <div class="icon-button no-box" id="edit">
                 <div class="button-icon">
                     <span class="material-symbols-rounded">
-                        edit
+                        edit_square
                     </span>
                 </div>
             </div>
@@ -292,7 +287,8 @@ function renderPost(postID, title, author, isTechnical, tags) {
                 </div>
             </div>
         </div>
-    `;
+    `
+
 
     post.innerHTML = postHTML;
 
@@ -390,10 +386,10 @@ function editTags() {
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
     fullscreenDiv.style.filter = 'brightness(0.75)';
-    let dialog = popupDiv.querySelector('.popupDialog');
+    let dialog = popupDiv.querySelector('.popup-dialog');
     dialog.style.transform = 'translateY(0px)'
     dialog.style.opacity = '1';
-    dialog.style.display = 'block';
+    dialog.style.display = 'flex';
     let createButton = dialog.querySelector('#create-button');
     let closeButton = dialog.querySelector('#close-button');
 

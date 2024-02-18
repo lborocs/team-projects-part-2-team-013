@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/global-styles.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
+    <link rel="stylesheet" href="medium.css">
     <link rel="stylesheet" href="/ui-elements/search-bar.css">
     <link rel="stylesheet" href="/ui-elements/dropdown.css">
     <link rel="stylesheet" href="/ui-elements/text-button.css">
@@ -100,7 +101,7 @@
     </div>
 
     <div class="popup">
-        <dialog open class='popupDialog' id="add-task-popup">
+        <dialog open class='popup-dialog' id="add-task-popup">
             <div class="popup-title">
             <span>Manage Tags</span>
             <div class="small-icon" id="close-button">
@@ -111,7 +112,7 @@
             </div>
             <div class="tagsContainer">
             </div>
-            <div class="confirm-buttons-row">
+            <div class="confirm-buttons-row" id="manage-tags-confirm-row">
                 <div class="text-button red disabled" id="create-button">
                     <div class="button-text">
                         Remove

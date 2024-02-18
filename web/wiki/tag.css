@@ -10,6 +10,7 @@
     color: #2d2e30;
     font-size: 14px;
     font-weight: 600;
+    white-space: nowrap;
     gap: 0.4em;
 
     transition: background-color 0.05s ease-out;

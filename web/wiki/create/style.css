@@ -433,20 +433,6 @@ input[type="text"]:focus-within {
     outline: none;
 }
 
-#tagCloseButton {
-    background-color: transparent;
-    border: none;
-    color: #999;
-    cursor: pointer;
-    margin-left: 5px;
-}
-
-#tagCloseButton:hover {
-    color: #666;
-    background-color: rgb(230, 230, 230);
-    border-radius: 50%;
-}
-
 .avatar {
     width: 1.75em;
     height: 1.75em;
