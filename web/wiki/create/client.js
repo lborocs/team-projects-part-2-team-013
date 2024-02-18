@@ -292,7 +292,7 @@ async function updateTags(postID, data2) {
 
 function submitPost(){
     var title = document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value;
-    var body = quill.root.innerHTML;                       
+    var body = JSON.stringify(quill.getContents());                       
     var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
     const checkTempPromises = currentTags.map((tag) => tag.checkTemp());
     Promise.all(checkTempPromises)

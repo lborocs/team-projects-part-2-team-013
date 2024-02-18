@@ -24,18 +24,7 @@ function r_manager_employee_projects(RequestContext $ctx, string $args) {
 
     $search = SearchParams::from_query_params(TABLE_PROJECTS, additionalCols: ["lastAccessed"]);
 
-
-    if ($args == "@me") {
-        $emp_id = $ctx->session->hex_associated_user_id;
-    } else {
-        $emp_id = $args;
-        if (!@hex2bin($emp_id)) {
-            respond_bad_request(
-                "Url resource specifiers are expected to be valid hex",
-                ERROR_REQUEST_URL_PATH_PARAMS_INVALID,
-            );
-        }
-    }
+    $emp_id = employee_id_from_args($args, $ctx);
 
     object_check_employee_exists($ctx, [$emp_id]);
 
