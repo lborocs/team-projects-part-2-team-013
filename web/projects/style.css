@@ -1985,3 +1985,16 @@ td:has(#more) {
     width: 100%;
     outline: solid 1px transparent;
 }
+
+
+.explainer.popout {
+    position: absolute;
+    top: 0.5rem;
+    right: 0;
+    width: 330px;
+    height: calc(100% - 1rem);
+    z-index: 9999;
+    transition-duration: 0;
+    box-shadow: 0 4px 4px rgba(0,0,0,0.1), -2px -2px 20px rgba(0,0,0,0.15);
+    
+}

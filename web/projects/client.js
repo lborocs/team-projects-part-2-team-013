@@ -2107,8 +2107,8 @@ let mediaQueryDesktop = window.matchMedia("(min-width: 1521px)")
 //check for mobile on load
 if (mediaQueryMobile.matches) {
     console.log("[mediaQueryMobile] mobile")
-    explainer.classList.add("hidden")
-    overlay.classList.add("norender")
+    explainer.classList.remove("popout")
+    overlay.classList.add("hidden")
     explainerShowHide.classList.add("norender")
 } else {
     console.log("[mediaQuery] desktop")
@@ -2119,6 +2119,7 @@ mediaQueryMobile.addEventListener("change", (e) => {
     if (e.matches) {
         console.log("[mediaQuerymobileChange] mobile")
         explainer.classList.add("hidden")
+        explainer.classList.remove("popout")
         overlay.classList.add("norender")
         explainerShowHide.classList.add("norender")
     }
@@ -2127,7 +2128,7 @@ mediaQueryMobile.addEventListener("change", (e) => {
 //check for medium on load
 if (mediaQueryMedium.matches) {
     console.log("[mediaQueryMedium] medium")
-    explainer.classList.add("hidden")
+    explainer.classList.add("popout")
     explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_open</span>`
 
 }
@@ -2136,7 +2137,7 @@ if (mediaQueryMedium.matches) {
 mediaQueryMedium.addEventListener("change", (e) => {
     if (e.matches) {
         console.log("[mediaQueryMediumChange] medium")
-        explainer.classList.add("hidden")
+        explainer.classList.add("popout")
         explainerShowHide.classList.remove("norender")
         explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_open</span>`
 
@@ -2146,6 +2147,7 @@ mediaQueryMedium.addEventListener("change", (e) => {
 //check for desktop on load
 if (mediaQueryDesktop.matches) {
     console.log("[mediaQueryDesktop] desktop")
+    explainer.classList.remove("popout")
     explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_close</span>`
 }
 
@@ -2154,6 +2156,7 @@ mediaQueryDesktop.addEventListener("change", (e) => {
     if (e.matches) {
         console.log("[mediaQueryDesktopChange] desktop")
         explainer.classList.remove("hidden")
+        explainer.classList.remove("popout")
         explainerShowHide.classList.remove("norender")
         explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_close</span>`
     }
