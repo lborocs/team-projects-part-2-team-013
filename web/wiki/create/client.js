@@ -232,6 +232,7 @@ var quill = new Quill('#editor', {
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
             [{ 'header': '1' }, { 'header': '2' }, 'code-block'],
             ['link', 'image'],
+            ['clean'],
         ]
     },
     theme: 'snow'
