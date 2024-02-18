@@ -287,4 +287,26 @@ function ensure_html_is_clean(string $html) {
 
 }
 
+
+function employee_id_from_args(string $args, RequestContext $ctx, bool $allow_none=false) {
+
+    if ($args == "" && $allow_none) {
+        return null;
+
+    } elseif ($args == "@me") {
+
+        $emp_id = $ctx->session->hex_associated_user_id;
+
+    } else {
+        $emp_id = $args;
+        if (!@hex2bin($emp_id)) {
+            respond_bad_request(
+                "Url resource specifiers are expected to be valid hex",
+                ERROR_REQUEST_URL_PATH_PARAMS_INVALID,
+            );
+        }
+    }
+    return $emp_id;
+}
+
 ?>
