@@ -452,16 +452,6 @@
 
 }
 
-#delete-button {
-    background-color: #ff4b5c;
-    color: white;
-    transition: background-color 0.1s ease;
-}
-
-#delete-button:hover {
-    background-color: #cc3946;
-    color: white;
-}
 
 #mobile-search-icon {
     display: none;

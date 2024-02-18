@@ -788,14 +788,18 @@ function confirmDelete() {
         popupDiv.innerHTML = `
             <dialog open class='popup-dialog'>
                 <div class="popup-title">
-                    Delete Todo Item
+                    Delete To-Do Item
                     <div class="small-icon close-button">
                         <span class="material-symbols-rounded">
                             close
                         </span>
                     </div>
                 </div>
-                <div class="popup-text">Are you sure you want to delete this Todo item?<br>This action cannot be undone.</div>
+                <div class="popup-text">Are you sure you want to delete this To-Do item?</div>
+                <div class="popup-text">
+                <b>This action cannot be undone.</b> 
+                    <br></br>
+                </div>
                 <div class="modal-buttons-and-tip">
                     <div class="modal-tip">
                         <span class="modal-tip-title">TIP</span>
