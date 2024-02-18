@@ -444,7 +444,7 @@ input[type="text"]:focus-within {
 /* quill override */
 .ql-editor {
     font-family: 'Open Sans', sans-serif;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .ql-toolbar.ql-snow {
