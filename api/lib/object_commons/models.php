@@ -364,7 +364,7 @@ const TABLE_POSTS = new Table(
             constraints:[new ContentLengthConstraint(4, 128)]
         ),
         new Column(
-            "postContent", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
+            "postContent", is_primary_key:false, type:"json", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(4, 65535)]
         ),
         new Column(
