@@ -13,6 +13,8 @@ const preferencesOptions = document.querySelector('.preferences-options');
 const systemOptions = document.querySelector('.system-options');
 const manageUsersOptions = document.querySelector('.manage-users-options');
 
+const logoutButton = document.querySelector('.log-out');
+
 accountTab.addEventListener('click', () => {
     accountOptions.classList.remove('norender');
     preferencesOptions.classList.add('norender');
@@ -283,6 +285,14 @@ function employeeCardEventListeners(){
         });
     });
 }
+
+logoutButton.addEventListener('click', () => {
+    delete_api("/employee/session.php/session").then(async () => {
+        await clearStorages();
+        window.location.href = "/";
+    });
+});
+
 
 global.setBreadcrumb(["Settings", "Account"], ["./", '#' + "account"])
 
