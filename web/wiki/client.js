@@ -2,53 +2,67 @@ import { search } from "../global-topbar.js";
 import * as global from "../global-ui.js"
 import { animate } from "../global-ui.js"
 
-class Tag {
-    constructor(name, tagID) {
-        this.tagID = tagID;
-        this.name = name;
-        this.numPosts = 0;
-        this.content = null
-    }
-    renderTag() {
-        const tag = document.createElement('div');
-        tag.classList.add('tag');
-        tag.setAttribute('id', "delTag")
-        tag.setAttribute('tagID', this.tagID);
-        tag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}&nbsp;<span class="numPosts">${this.numPosts}</span>`;
-        document.querySelector('.tagsContainer').appendChild(tag);
-        this.content = tag;
-        this.addEventListeners();
-    }
-    addEventListeners() {
-        this.content.addEventListener('click', () => {
-            if (this.content.classList.contains('selectedDel')) {
-                this.content.classList.toggle('selectedDel');
-                tagsToDelete = tagsToDelete.filter((e) => e !== this.tagID);
-            } else {
-                this.content.classList.toggle('selectedDel');
-                tagsToDelete.push(this.tagID);
-            }
-            if (tagsToDelete.length > 0) {
-                document.getElementById("create-button").classList.remove("disabled");
-            }
-            else {
-                document.getElementById("create-button").classList.add("disabled");
-            }
-        });
-    }
-    addPostNum() {
-        this.numPosts++;
-        deleteTagsDisplay.sort((a, b) => b.numPosts - a.numPosts);
-    }
-}
 
-var deleteTagsDisplay = [];
-var tagsToDelete = [];
+var tagsToDelete = new Set();
 var postsContainer = document.querySelector('.posts');
 var posts = document.querySelectorAll('.post');
 const searchInput = document.getElementById("inputField")
+const deleteTagsPopup = document.getElementById("delete-tags-popup");
+const deleteTagsHasPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .hasPosts');
+const deleteTagsNoPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .noPosts');
+const deleteTagsConfirmButton = deleteTagsPopup.querySelector("#confirm-button");
+const tagSelection = document.querySelector('#tag-selection');
 
-var postsMap = new Map();
+
+
+class Tag {
+
+    element;
+    tag;
+    
+    constructor(inner) {
+        this.tag = inner;
+    }
+
+    renderTag() {
+        const elem = document.createElement('div');
+
+        const parent =  this.tag.hasPosts ? deleteTagsHasPostContainer : deleteTagsNoPostContainer;
+
+        elem.classList.add('tag');
+        elem.setAttribute('tagID', this.tag.tagID);
+        elem.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.tag.name}&nbsp;`;
+        parent.appendChild(elem);
+        this.element = elem;
+        this.addEventListeners();
+    }
+    addEventListeners() {
+        this.element.addEventListener('click', () => {
+            if (this.element.classList.contains('selectedDel')) {
+                this.element.classList.toggle('selectedDel');
+                tagsToDelete.delete(this.tag.tagID);
+            } else {
+                this.element.classList.toggle('selectedDel');
+                tagsToDelete.add(this.tag.tagID);
+            }
+            if (tagsToDelete.size > 0) {
+                document.getElementById("confirm-button").classList.remove("disabled");
+            }
+            else {
+                document.getElementById("confirm-button").classList.add("disabled");
+            }
+        });
+    }
+}
+
+
+function renderTagInDeleter(tag) {
+    (new Tag(tag)).renderTag();
+}
+
+
+const postMap = new Map();
+const tagMap = new Map();
 
 
 async function searchPosts() {
@@ -61,7 +75,7 @@ async function searchPosts() {
         tags.push(tag.getAttribute("tagID"));
     });
     var selectedCategory = document.querySelector('input[name="category"]:checked');
-    await fetchPosts(tagsList, selectedCategory.value, search, tags);
+    await fetchPosts(selectedCategory.value, search, tags);
 }
 
 
@@ -73,83 +87,44 @@ async function updatePosts() {
     roller.roll();
 }
 
-async function countPostTags() {
-    const nonTechnicalData = await get_api(`/wiki/post.php/posts?is_technical=0&q=`);
-    const technicalData = await get_api(`/wiki/post.php/posts?is_technical=1&q=`);
-    if (nonTechnicalData.success !== true) {
-        console.log("Posts failed to be fetched");
-        return;
-    }
-    nonTechnicalData.data.posts.forEach(post => {
-        if (post.tags != null) {
-            post.tags.forEach((tag) => {
-                deleteTagsDisplay.find(findTag(tag)).addPostNum();
-            });
-        }
-    });
-    technicalData.data.posts.forEach(post => {
-        if (post.tags != null) {
-            post.tags.forEach((tag) => {
-                deleteTagsDisplay.find(findTag(tag)).addPostNum();
-            });
-        }
-    });
-    deleteTagsDisplay.forEach((tag) => {
-        tag.renderTag();
-    });
-}
 
-async function fetchPosts(tagsList, isTechnical = 1, searchQuery = "", selectedTags = []) {
+async function fetchPosts(isTechnical = 1, searchQuery = "", selectedTags = []) {
 
     const tagParam = selectedTags.length ? `&tags=${selectedTags.join(",")}` : "";
-    const technicalPostsData = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical}&q=${searchQuery}${tagParam}`);
-    const nonTechnicalPostsData = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ? 0 : 1}&q=${searchQuery}${tagParam}`);
+    const res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical}&q=${searchQuery}${tagParam}`);
 
-    console.log(technicalPostsData);
-    console.log(nonTechnicalPostsData);
+    console.log(res);
 
-    if (technicalPostsData.success !== true) {
+    if (res.success !== true) {
         console.log("Posts failed to be fetched");
         return;
     }
 
-    if (nonTechnicalPostsData.success !== true) {
-        console.log("Posts failed to be fetched");
-        return;
-    }
 
     document.querySelectorAll('.post').forEach((post) => { post.remove() });
 
     console.log("Posts have been fetched");
-    technicalPostsData.data.posts.forEach(post => {
+    res.data.posts.forEach(post => {
         console.log(post);
         console.log(post.tags);
 
-        if (post.tags != null) {
-
-            let newtags = [];
-            console.log(post.tags);
-            console.log("TAGS");
-
-            post.tags.forEach((tag) => {
-                newtags.push(tagsList.find(findTag(tag)).name);
-                console.log(tag);
-                console.log("REPLACING TAGS");
-            });
-
-            post.tagsNames = newtags;
+        if (post.tags !== null) {
+            // fill in rich post tags
+            post.tags = post.tags.map(tagID => tagMap.get(tagID));
+        } else {
+            post.tags = [];
         }
 
         console.log("Rendering post");
-        renderPost(post.postID, post.title, post.author, post.isTechnical, post.tagsNames);
+        renderPost(post.postID, post.title, post.author, post.isTechnical, post.tags.map(tag => tag.name));
         
-        postsMap.set(post.postID, post);
+        postMap.set(post.postID, post);
         console.log(post);
 
     });
     setUpPostsEventListeners();
     posts = document.querySelectorAll('.post');
-    console.log(postsMap);
+    console.log(postMap);
 }
 
 async function fetchTags() {
@@ -161,13 +136,27 @@ async function fetchTags() {
     }
 
     console.log("Tags have been fetched");
-    document.querySelector('.tag-selection').innerHTML = '';
+    tagSelection.replaceChildren();
     data.data.tags.forEach(tag => {
-        document.querySelector('.tag-selection').innerHTML += `<div class="tag" tagID="${tag.tagID}" name="${tag.name}" id="normal"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
-        let tempTag = new Tag(tag.name, tag.tagID);
-        deleteTagsDisplay.push(tempTag);
+        tagMap.set(tag.tagID, tag);
+        renderTag(tag);
+        renderTagInDeleter(tag);
     });
     return data.data.tags;
+}
+
+function renderTag(tag) {
+    const elem = document.createElement('div');
+    elem.classList.add('tag');
+    elem.setAttribute('tagID', tag.tagID);
+    elem.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag.name}`;
+
+    elem.addEventListener('click', () => {
+        elem.classList.toggle('selected');
+        searchPosts();
+    });
+
+    tagSelection.appendChild(elem);
 }
 
 async function deleteTag(tagID) {
@@ -179,19 +168,18 @@ async function deleteTag(tagID) {
     }
 }
 
-document.querySelector('#create-button').addEventListener('click', () => {
-    if (tagsToDelete.length > 0) {
+deleteTagsConfirmButton.addEventListener('click', () => {
+    if (tagsToDelete.size > 0) {
         const deleteSelectedTags = tagsToDelete.map((tag) => deleteTag(tag));
         Promise.all(deleteSelectedTags).then(() => {
             console.log("Tags have been deleted");
             //location.reload();
-            tagsToDelete = [];
+            tagsToDelete = new Set();
             document.querySelectorAll(".tag.selectedDel").forEach((tag) => {
-                tag.classList.remove("selectedDel");
                 tag.remove();
             });
-            document.getElementById("create-button").classList.add("disabled");
-            fetchPosts(tagsList);
+            deleteTagsConfirmButton.classList.add("disabled");
+            searchPosts();
             fetchTags()
             closePopup();
             });
@@ -199,36 +187,8 @@ document.querySelector('#create-button').addEventListener('click', () => {
     }
 });
 
-let tagsList;
 fetchTags().then((tags) => {
-    document.querySelectorAll('.tag').forEach((tag) => {
-        tag.addEventListener('click', () => {
-            if (tag.attributes.getNamedItem('id').value === "delTag") {
-                return;
-                if (tag.classList.contains('selectedDel')) {
-                    tag.classList.toggle('selectedDel');
-                    tagsToDelete = tagsToDelete.filter((e) => e !== tag.getAttribute("tagID"));
-                } else {
-                    tag.classList.toggle('selectedDel');
-                    tagsToDelete.push(tag.getAttribute("tagID"));
-                }
-                if (tagsToDelete.length > 0) {
-                    document.getElementById("create-button").classList.remove("disabled");
-                }
-                else {
-                    document.getElementById("create-button").classList.add("disabled");
-                }
-            } else {
-                tag.classList.toggle('selected');
-                updatePosts();
-            }
-            console.log(tagsToDelete);
-        })
-    });
-
-    fetchPosts(tags);
-    tagsList = tags;
-    countPostTags();
+    searchPosts();
 });
 
 
@@ -263,17 +223,6 @@ function setUpPostsEventListeners() {
     })
 }
 
-function findTag(tagID) {
-    return function (tag) {
-        return tag.tagID === tagID;
-    }
-}
-
-function findTagName(tagName) {
-    return function (tag) {
-        return tag.name === tagName;
-    }
-}
 
 /**
  * Constructs a post HTML element and appends it to the posts container.
@@ -299,7 +248,7 @@ function renderPost(postID, title, author, isTechnical, tags) {
 
     const tagsContainer = document.createElement("div")
     tagsContainer.className = "tags"
-    const tagsArray = Array.isArray(tags) ? tags : ["No Tags"]
+    const tagsArray = tags.length ? tags : ["No Tags"]
     tagsArray.forEach(tag => {
         const tagDiv = document.createElement("div")
         tagDiv.className = "tag"
@@ -439,7 +388,7 @@ function editTags() {
     dialog.style.transform = 'translateY(0px)'
     dialog.style.opacity = '1';
     dialog.style.display = 'flex';
-    let createButton = dialog.querySelector('#create-button');
+
     let closeButton = dialog.querySelector('#close-button');
 
     closeButton.addEventListener('click', (event) => {
