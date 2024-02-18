@@ -30,7 +30,6 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    justify-content: space-between;
     padding: 1rem 0.5rem;
     gap: 0.5rem;
 
@@ -48,8 +47,9 @@
         user-select: none;
         gap: 0.5rem;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         height: 100%;
+        width: 100%;
     }
 }
 
@@ -160,6 +160,7 @@
     display: flex;
     flex-direction: row;
     gap: 1em;
+    justify-content: flex-end;
 
 }
 
@@ -209,4 +210,10 @@
         gap: 0.5em;
     }
 
+}
+
+.editable{
+    border: black 1px solid;
+    width: 80%;
+    border-radius: 0.3em;
 }
