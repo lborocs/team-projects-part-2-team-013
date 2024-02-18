@@ -548,6 +548,9 @@ function db_post_set_tags(string $post_id, Array $tags) {
     );
     $delete_query->execute([$bin_p_id]);
 
+    if (count($tags) == 0) {
+        return true;
+    }
 
     $query = $db->prepare(
         "INSERT INTO `POST_TAGS` VALUES " . create_chunked_array_binding(count($tags), 2)
