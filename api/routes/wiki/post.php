@@ -241,22 +241,23 @@ register_route(new Route(
 // common obj functions
 
 function post_body_get_image_indexes(string $content) {
-    $out = [];
 
-    $num_matches = preg_match_all(
-        '/{{img(\d+)}}/i',
-        $content,
-        $out
-    );
-
+    $json = json_decode($content, true);
 
     $indexes = [];
 
-    foreach ($out[1] as $index) {
-        $indexes[] = intval($index);
+    foreach ($json["ops"] as $op) {
+        if (
+            is_array($op) &&
+            array_key_exists("insert", $op) &&
+            is_array($op["insert"]) &&
+            array_key_exists("image", $op["insert"])
+        ) {
+            $indexes[] = $op["insert"]["image"];
+        }
     }
 
-    return array_unique($indexes);
+    return $indexes;
 }
 
 
@@ -279,16 +280,6 @@ function create_post_assets(array $body, $bucket_id) {
             respond_bad_request(
                 "Expected a key for image '$index' in the images map",
                 ERROR_BODY_MISSING_REQUIRED_FIELD
-            );
-        }
-
-        // dont allow indexes over 11
-        // this also adds a limit to the number of images
-        // that can be uploaded per post (12 cause 0 is a valid index)
-        if ($index >= 11) {
-            respond_bad_request(
-                "Expected image index to be 11 at most",
-                ERROR_BODY_FIELD_INVALID_DATA
             );
         }
     }
