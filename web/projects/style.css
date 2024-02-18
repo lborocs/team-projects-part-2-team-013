@@ -1962,4 +1962,6 @@
 
 .more-icon-taskList {
     opacity: 0.5;
+    user-select: none;
+    aspect-ratio: auto;
 }

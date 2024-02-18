@@ -1068,8 +1068,8 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 
     taskRow.innerHTML += `
     <td>
-        <div id="more">
-            <span class="material-symbols-rounded more-icon-taskList">more_horiz</span>
+        <div id="more" class="small-icon more-icon-taskList">
+            <span class="material-symbols-rounded">more_horiz</span>
         </div>
     </td>
     `;
