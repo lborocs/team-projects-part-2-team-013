@@ -1600,7 +1600,7 @@ async function renderProject(project) {
     let isTeamLeader = (project.teamLeader.empID === session.employee.empID);
     let emps = await global.getEmployeesById([project.teamLeader.empID, project.createdBy.empID]);
     let teamLeader = emps.get(project.teamLeader.empID);
-    let icon = isTeamLeader ? `bookmark_manager` : `folder`;
+    let icon = isTeamLeader ? `admin_panel_settings` : `folder`;
     let teamLeaderName = global.employeeToName(teamLeader);
 
     //null checks and friendly formatting
