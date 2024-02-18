@@ -87,21 +87,6 @@ var taskDragLastDrawnColumn = 0;
 console.log("[import] loaded client.js")
 
 
-async function projectSwitchToOnClick(projectRow, setBreadcrumb = true) {
-    projectRows = document.querySelectorAll(".project-row")
-    projectRows.forEach((row) => {
-        row.classList.remove("selected")
-    })
-    projectRow.classList.add("selected")
-    explainerTaskSetToDefault();
-
-    let id = projectRow.getAttribute("data-ID");
-
-
-    await renderIndividualProject(id, setBreadcrumb);
-
-}
-
 async function renderIndividualProject(id, setBreadcrumb = true) {
     let project = await getProjectById(id);
     if (!project) {
@@ -3213,7 +3198,6 @@ async function searchAndRenderProjects() {
     console.log(`[searchAndRenderProjects(${currentPage})] page`);
     console.log(`[searchAndRenderProjects(${pageLimit})] limit`);
     console.log(data);
-    console.log('.project-row.selected');
 
     if (data.success !== true) {
         return;
