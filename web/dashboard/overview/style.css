@@ -1,0 +1,38 @@
+#overview-dashboard-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto;
+    gap: 20px;
+    grid-template-areas:
+        "overall-progress overall-progress task-count man-hours"
+        "overdue-tasks overdue-tasks most-viewed most-viewed"
+        "training-needs training-needs helpful-rate helpful-rate";
+}
+
+.overall-progress { 
+    grid-area: overall-progress; 
+}
+
+.task-count { 
+    grid-area: task-count; 
+}
+
+.man-hours { 
+    grid-area: man-hours; 
+}
+
+.overdue-tasks { 
+    grid-area: overdue-tasks; 
+}
+
+.most-viewed { 
+    grid-area: most-viewed; 
+}
+
+.helpful-rate { 
+    grid-area: helpful-rate; 
+}
+
+.training-needs { 
+    grid-area: training-needs; 
+}

@@ -45,15 +45,15 @@
     padding-right: 0.4em;
 }
 
-.tagsContainer{
+.tagsContainer {
     max-height: 44vh;
+    width: 100%;
     margin-top: 0.5em;
     position: relative;
     align-self: flex-start;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
+    display: grid;
+    grid-auto-columns: 1fr;
+    align-items: stretch;
     gap: 0.5rem;
     font-size: 0.85em;
     font-weight: 500;
@@ -68,6 +68,44 @@
         transition: background-color 0.05s ease-out;
         background-color: #fcefb4;
     } 
+
+    .hasPosts, .noPosts {
+        border-radius: 6px;
+        padding: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        min-height: 12rem;
+        flex-grow: 1;
+
+        .title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .tags {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+    }
+
+    .hasPosts {
+        background-color: rgba(255,0,0,0.1);
+    }
+
+    .noPosts {
+        background-color: rgba(0,255,0,0.1);
+    }
+
+    
 }
 
 body {
@@ -212,7 +250,7 @@ body {
     width: 100%;
 }
 
-.tag-selection{
+#tag-selection{
     height: 100%;
     position: relative;
     display: flex;

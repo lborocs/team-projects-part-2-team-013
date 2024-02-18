@@ -6,8 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="/global-styles.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="mobile.css">
+    <link rel="stylesheet" href="/dashboard/style.css">
+    <link rel="stylesheet" href="/dashboard/mobile.css">
     <link rel="stylesheet" href="/ui-elements/search-bar.css">
     <link rel="stylesheet" href="/ui-elements/dropdown.css">
     <link rel="stylesheet" href="/ui-elements/text-button.css">
@@ -19,9 +19,8 @@
     <link rel="stylesheet" href="/ui-elements/number-picker.css">
     <link rel="stylesheet" href="/ui-elements/date-picker.css">
     <link rel="stylesheet" href="/ui-elements/context-menu.css">
+    <link rel="stylesheet" href="style.css">
 
-
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
@@ -40,107 +39,8 @@
             <div class="sidebar"></div>
             
             <div class="main">
-                <div class="dashboard-options">
-                    <div class="title">
-                        <a class="icon-button" href="/projects/">
-                            <div class="button-icon">
-                                <span class="material-symbols-rounded">
-                                    arrow_back_ios_new
-                                </span>
-                            </div>
-                        </a>
-                        
-                        <span id="project-name"></span>
-
-
-                        <div class="dropdown" id="dashboard-time-period" tabindex="0">
-                            <div class="dropdown-text">
-                                All time
-                            </div>
-
-                            <div class="dropdown-chevron">
-                                <span class="material-symbols-rounded">
-                                    expand_more
-                                </span>
-                            </div>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-option" id="view-week">Last 7 days</div>
-                                <div class="dropdown-option" id="view-month">Last 30 days</div>
-                                <div class="dropdown-option" id="view-all">All Time</div>
-                            </div>
-                        </div>
-                    </div>
-     
-                    <div class="text-button option automatic" id="view-scroll" tabindex="0">
-                        <div class="button-text">
-                            AUTO
-                        </div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                flex_direction
-                            </span>
-                        </div> 
-                    </div>
-                    <div class="text-button option manual norender" id="view-fit" tabindex="0">
-                        <div class="button-text">
-                            MANUAL
-                        </div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                fit_screen
-                            </span>
-                        </div> 
-                    </div>
-                    
-                    <div class="icon-button no-box option tooltip tooltip-under" id="grid-shrink" tabindex="0">
-                        <div class="tooltiptext">Zoom out</div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                zoom_out
-                            </span>
-                        </div> 
-                    </div>
-                    <div class="icon-button no-box option tooltip tooltip-under" id="grid-expand" tabindex="0">
-                        <div class="tooltiptext">Zoom in</div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                zoom_in
-                            </span>
-                        </div>
-                    </div>
-                    <div class="icon-button no-box option disabled tooltip tooltip-under" id="grid-undo" tabindex="0">
-                        <div class="tooltiptext">Undo</div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                restart_alt
-                            </span>
-                        </div> 
-                    </div>
-
-                    <div class="text-button option" id="add-metric-small" tabindex="0">
-                        <div class="button-text">
-                            Add Metric
-                        </div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                dashboard_customize
-                            </span>
-                        </div> 
-                    </div>
-
-                    <div class="text-button option" id="edit-metric-order" tabindex="0">
-                        <div class="button-text">
-                            Edit Order
-                        </div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                low_priority
-                            </span>
-                        </div> 
-                    </div>
-                </div>
-                <div class="dashboard-container">
-                    <div class="metric-card">
+                <div id="overview-dashboard-container">
+                    <div class="metric-card overall-progress">
                         <div class="metric-title">
                             <div class="title-text">
                                 Project Completion
@@ -154,13 +54,14 @@
                             </div> 
                         </div>
                         <div class="chart-box">
-                            <canvas id="completionChart"></canvas>
+                            <canvas id="overallProgressChart"></canvas>
                         </div>    
                     </div>
-                    <div class="metric-card">
+
+                    <div class="metric-card task-count">
                         <div class="metric-title">
                             <div class="title-text">
-                                Tasks per Employee
+                                Task Count
                             </div>
                             <div class="icon-button no-box context-menu">
                                 <div class="button-icon">
@@ -171,13 +72,14 @@
                             </div> 
                         </div>
                         <div class="chart-box">
-                            <canvas id="tasksPerEmployeeChart"></canvas>
+                            <canvas id="taskCountChart"></canvas>
                         </div>
                     </div>
-                    <div class="metric-card">
+
+                    <div class="metric-card man-hours">
                         <div class="metric-title">
                             <div class="title-text">
-                                Man Hours: Expected vs Actual
+                                Man Hours
                             </div>
                             <div class="icon-button no-box context-menu">
                                 <div class="button-icon">
@@ -191,10 +93,11 @@
                             <canvas id="manHoursChart"></canvas>
                         </div>
                     </div>
-                    <div class="metric-card">
+
+                    <div class="metric-card overdue-tasks">
                         <div class="metric-title">
                             <div class="title-text">
-                                Man Hours per Employee
+                                Overdue Tasks
                             </div>
                             <div class="icon-button no-box context-menu">
                                 <div class="button-icon">
@@ -205,13 +108,14 @@
                             </div> 
                         </div>
                         <div class="chart-box">
-                            <canvas id="workloadChart"></canvas>
+                            <canvas id="overdueTasksChart"></canvas>
                         </div>
                     </div>
-                    <div class="metric-card">
+
+                    <div class="metric-card most-viewed">
                         <div class="metric-title">
                             <div class="title-text">
-                                Task Progress
+                                Most Viewed Posts
                             </div>
                             <div class="icon-button no-box context-menu">
                                 <div class="button-icon">
@@ -222,13 +126,14 @@
                             </div> 
                         </div>
                         <div class="chart-box">
-                            <canvas id="taskProgressChart"></canvas>
+                            <canvas id="mostViewedChart"></canvas>
                         </div>
                     </div>
-                    <div class="metric-card">
+
+                    <div class="metric-card helpful-rate">
                         <div class="metric-title">
                             <div class="title-text">
-                                Project is due in 40 days
+                                Found This Helpful Rate
                             </div>
                             <div class="icon-button no-box context-menu">
                                 <div class="button-icon">
@@ -239,15 +144,28 @@
                             </div> 
                         </div>
                         <div class="chart-box">
-                            <canvas id="timeBudgetChart"></canvas>
+                            <canvas id="helpfulRateChart"></canvas>
                         </div>
                     </div>
-                    
-                    <div class="metric-card add-metric">
-                        <span class="material-symbols-rounded">
-                            add_chart
-                        </span>
-                    </div> 
+
+                    <div class="metric-card training-needs">
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Training Needs
+                            </div>
+                            <div class="icon-button no-box context-menu">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        more_horiz
+                                    </span>
+                                </div>
+                            </div> 
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="trainingNeedsChart"></canvas>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

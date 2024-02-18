@@ -5,6 +5,7 @@ const accountCard = document.querySelector('.account-card');
 const changeButton = document.getElementById('change-button');
 const cancelButton = document.getElementById('cancel-button');
 const confirmButton = document.getElementById('confirm-button');
+const nameInput = document.querySelector('.name-display-input');
 
 
 function getQueryParam() {
@@ -52,18 +53,25 @@ changeButton.addEventListener('click', () => {
     changeButton.classList.add('norender');
     cancelButton.classList.remove('norender');
     confirmButton.classList.remove('norender');
+    nameInput.setAttribute('contenteditable', 'true');
+    nameInput.classList.add('editable');
+
 });
 
 cancelButton.addEventListener('click', () => {
     changeButton.classList.remove('norender');
     cancelButton.classList.add('norender');
     confirmButton.classList.add('norender');
+    nameInput.setAttribute('contenteditable', 'false');
+    nameInput.classList.remove('editable');
 });
 
 confirmButton.addEventListener('click', async () => {
     changeButton.classList.remove('norender');
     cancelButton.classList.add('norender');
     confirmButton.classList.add('norender');
+    nameInput.setAttribute('contenteditable', 'false');
+    nameInput.classList.remove('editable');
 });
     
 

@@ -308,12 +308,20 @@
     border-bottom: 1px solid var(--border-clr);
     margin-top: 5px;
     margin-bottom: 5px;
+    padding: 0.5em;
+}
+
+.employee-card:hover {
+    background-color: #cacaca;
+    cursor: pointer;
+    border-radius: 0.3em;
 }
 
 .table-headers{
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
+    padding: 1em;
     border-bottom: 3px solid black;
     font-weight: 600;
 }
