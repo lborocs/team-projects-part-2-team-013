@@ -12,8 +12,8 @@ var globalAssignments = [];
 var globalCurrentProject;
 var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
-const sortAttribute = 'lastAccessed'
-const sortDirection = 'desc';
+var sortAttribute = 'lastAccessed'
+var sortDirection = 'desc';
 var currentPage = 1;
 var pageLimit = 25;
 var onlyMyProjects = false;
@@ -86,21 +86,6 @@ var taskDragLastDrawnColumn = 0;
 
 console.log("[import] loaded client.js")
 
-
-async function projectSwitchToOnClick(projectRow, setBreadcrumb = true) {
-    projectRows = document.querySelectorAll(".project-row")
-    projectRows.forEach((row) => {
-        row.classList.remove("selected")
-    })
-    projectRow.classList.add("selected")
-    explainerTaskSetToDefault();
-
-    let id = projectRow.getAttribute("data-ID");
-
-
-    await renderIndividualProject(id, setBreadcrumb);
-
-}
 
 async function renderIndividualProject(id, setBreadcrumb = true) {
     let project = await getProjectById(id);
@@ -180,7 +165,12 @@ function setActivePane(newPane) {
         pane.classList.add("norender")
     })
 
-    document.getElementById(newPane).classList.remove("norender")
+    const elem = document.getElementById(newPane)
+    if (!elem) {
+        throw new Error(`[setActivePane] no element with id ${newPane}`);
+    }
+    elem.classList.remove("norender")
+    
 }
 
 
@@ -953,8 +943,10 @@ async function renderFromBreadcrumb(locations) {
     }
 
     try {
+        setActivePane("individual-project-pane");
         await renderIndividualProject(projID, true);
     } catch (e) {
+        setActivePane("select-projects-pane");
         await fetchAndRenderAllProjects();
     }
 
@@ -3199,22 +3191,20 @@ async function searchAndRenderProjects() {
     }
 
 
-    const data = await get_api(`${route}?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
+    const res = await get_api(`${route}?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
     console.log(`[searchAndRenderProjects(${currentPage})] page`);
     console.log(`[searchAndRenderProjects(${pageLimit})] limit`);
-    console.log(data);
-    console.log('.project-row.selected');
-
-    if (data.success !== true) {
+    console.log(res);
+    if (res.success !== true) {
         return;
     }
     
     clearProjectList();
 
-    if (data.data.projects.length < pageLimit) {
+    if (res.data.projects.length < pageLimit) {
         pageForwardButton.classList.add('disabled');
     } else {
         pageForwardButton.classList.remove('disabled');
@@ -3227,17 +3217,17 @@ async function searchAndRenderProjects() {
     }
 
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
-    await Promise.all(data.data.projects.map(async (project) => {
+    await Promise.all(res.data.projects.map(async (project) => {
         await renderProject(project);
     }));
 
-    if (data.data.projects.length === 0) {
+    if (res.data.projects.length === 0) {
         projectsTableEmptyState.classList.remove('norender');
     } else {
         projectsTableEmptyState.classList.add('norender');
     }
     
-    return data.data.projects;
+    return res.data.projects;
 }
 
 
