@@ -200,7 +200,14 @@ function _ensure_body_validity(Table $model, RequestContext $ctx, array $allowed
         $user_type = gettype($user_value);
         $column_type = $column->type;
 
-        if ($column_type == "binary") {
+        if ($user_type == "string" && $column_type == "json") {
+            if (!is_array(json_decode($user_value, true))) {
+                respond_bad_request(
+                    "Field $user_field is not a valid json string",
+                    ERROR_BODY_FIELD_INVALID_TYPE
+                );
+            }
+        } elseif ($column_type == "binary") {
             if ($user_type != "string") {
                 respond_bad_request(
                     "Field $user_field is not a string, binary fields should be a hex string",
