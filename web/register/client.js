@@ -9,7 +9,8 @@ const EMPTY_ICON = 'radio_button_unchecked';
 
 const passwordInput = document.getElementById('password');
 const emailInput = document.getElementById('email');
-const nameInput = document.getElementById('name');
+const firstNameInput = document.getElementById('first-name');
+const lastNameInput = document.getElementById('last-name');
 const registerButton = document.getElementById('register');
 const statusElement = document.getElementById('status');
 const passwordCriteria = document.querySelector('div.password-criteria');
@@ -86,34 +87,21 @@ function showCriteriaResult(condition, element) {
 async function register() {
     const email = emailInput.value;
     const password = passwordInput.value;
-    const name = nameInput.value;
+    const firstName = firstNameInput.value;
+    const lastName = lastNameInput.value;
 
-    if (email == "" || password == "" || name == "") {
+    if (email == "" || password == "" || lastName == "") {
         statusElement.classList.add("status-incorrect");
         statusElement.classList.remove("hidden");
         setStatus("All fields are required");
         return false;
     }
 
-    var names = name.split(" ");
-    var fullname = {};
-    if (names.length >= 2) {
-        fullname = {
-            first: names[0],
-            last: names.slice(1).join(" ")
-        }
-    } else {
-        fullname = {
-            first: null,
-            last: name
-        }
-    }
-
     const body = {
         email: email,
         password: password,
-        firstName: fullname.first,
-        lastName: fullname.last,
+        firstName: firstName,
+        lastName: lastName,
         token: "gonnagetabigtastyfrommcdonalds"
     }
 
@@ -132,9 +120,7 @@ async function register() {
         statusElement.classList.add("status-incorrect");
         statusElement.classList.remove("hidden");
         setStatus(`${res.error.message} (${res.error.code})`);
-
     }
-
 }
 
 passwordInput.addEventListener("input", updateCriteriaHints)
