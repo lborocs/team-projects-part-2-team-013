@@ -12,14 +12,15 @@ var globalAssignments = [];
 var globalCurrentProject;
 var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
-let sortAttribute = 'lastAccessed'
-let sortDirection = 'desc';
-let currentPage = 1;
-let pageLimit = 25;
-let titleButton = document.getElementById("title-column");
-let dateButton = document.getElementById("date-column");
-let statusButton = document.getElementById("status-column");
-let assigneesButton = document.getElementById("assignees-column")
+const sortAttribute = 'lastAccessed'
+const sortDirection = 'desc';
+var currentPage = 1;
+var pageLimit = 25;
+var onlyMyProjects = false;
+const titleButton = document.getElementById("title-column");
+const dateButton = document.getElementById("date-column");
+const statusButton = document.getElementById("status-column");
+const assigneesButton = document.getElementById("assignees-column")
 
 
 let sortArray = [titleButton, dateButton, statusButton, assigneesButton];
@@ -55,6 +56,7 @@ const view10 = document.querySelector("#view-10");
 const view25 = document.querySelector("#view-25");
 const view50 = document.querySelector("#view-50");
 const view100 = document.querySelector("#view-100");
+const projectFilterButton = document.querySelector("#project-filter");
 
 const projectBackButton = document.querySelector("#project-back")
 const projectSearchInput = document.querySelector("#project-search")
@@ -63,7 +65,6 @@ const explainerTaskManhours = document.querySelector(".manhours-container")
 const dashboardRedirect = document.getElementById('dashboard-redirect');
 const listViewButton = document.getElementById('list-view-button');
 const boardViewButton = document.getElementById('board-view-button');
-const lastAccessedButton = document.getElementById('project-last-accessed');
 const pageBackButton = document.getElementById('page-back-button');
 const pageForwardButton = document.getElementById('page-forward-button');
 const pageNumberElement = document.querySelector('.page-number');
@@ -925,11 +926,11 @@ async function fetchAndRenderAllProjects() {
             currentPage = 1;
             pageBackButton.classList.add("disabled");
             pageNumberElement.textContent = currentPage;
-            searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+            searchAndRenderProjects();
         });
     });
 
-    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+    await searchAndRenderProjects();
 
 }
 
@@ -3066,7 +3067,7 @@ async function projectPopup(id){
         }
 
         //refreshes the site with the changes
-        await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+        await searchAndRenderProjects();
         await projectPopup(project.projID);
 
 
@@ -3119,7 +3120,7 @@ const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
     () => {
         let search = projectSearchInput.value;
         console.log("[RollingProjectSearch] starting search for", search);
-        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+        searchAndRenderProjects();
     },
     150
 );
@@ -3135,7 +3136,7 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 
 
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
-    searchAndRenderProjects(projectSearchInput, sortAttribute, sortDirection, pageLimit, currentPage);
+    searchAndRenderProjects();
     startOrRollProjectSearchTimeout();
 
 })
@@ -3151,23 +3152,12 @@ const sleep = (ms) => {
     });
 };
 
-lastAccessedButton.addEventListener('click', function(event) {
-    if (event.button === 0) {
-        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
-    }
-    let projectTableHeaders = document.querySelectorAll("#projects-table > thead > tr > th");
-    projectTableHeaders.forEach((header) => {
-        header.classList.remove("sorting-by", "reverse");
-    });
-});
-
-
 pageBackButton.addEventListener('click', function() {
     if (currentPage > 1) {
         currentPage--;
         pageForwardButton.classList.remove('disabled');
         pageNumberElement.textContent = currentPage;
-        searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+        searchAndRenderProjects();
         console.log(`[pageBackButton] currentPage: ${currentPage}`);
     }
 });
@@ -3177,7 +3167,7 @@ pageForwardButton.addEventListener('click', async function() {
     pageBackButton.classList.remove('disabled');
     currentPage++;
     pageNumberElement.textContent = currentPage;
-    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+    await searchAndRenderProjects();
     console.log(`[pageForwardButton] currentPage: ${currentPage}`);
     await checkNextPage();
 });
@@ -3196,9 +3186,20 @@ async function checkNextPage() {
     }
 }
 
-async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', sortDirection = 'asc',pageLimit = 25, currentPage = 1) {
+async function searchAndRenderProjects() {
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
-    const data = await get_api(`/project/project.php/projects?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
+
+    const search = projectSearchInput.value;
+
+    var route;
+    if (!onlyMyProjects) {
+        route = "/project/project.php/projects"
+    } else {
+        route = "/employee/manager.php/employeeprojects/@me"
+    }
+
+
+    const data = await get_api(`${route}?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
@@ -3264,45 +3265,11 @@ async function searchAndRenderTasks() {
     renderTasks(tasks);
 }
 
-async function applySortingPreferences() {
-    const sortTasksType = await global.preferences.get('sortTasksType');
-    const sortTasksDirection = await global.preferences.get('sortTasksDirection');
-
-    return { sortTasksType, sortTasksDirection };
-}
-
-// const projectRows = document.querySelectorAll('.project-row');
-
-// projectRows.forEach(row => {
-//     row.addEventListener('click', async () => {
-//         const { sortTasksType, sortTasksDirection } = await applySortingPreferences();
-
-//         const typeToIdMap = {
-//             'By Name': 'name-column',
-//             'By Title': 'title-column',
-//             'By Date': 'date-column'
-//         };
-
-//         const elementId = typeToIdMap[sortTasksType];
-//         const element = document.getElementById(elementId);
-
-//         if (element) {
-//             element.classList.add('sorting-by');
-
-//             if (sortTasksDirection === 'Ascending') {
-//                 element.classList.add('asc');
-//             } else if (sortTasksDirection === 'Descending') {
-//                 element.classList.add('desc');
-//             }
-//         }
-//     });
-// });
-
 async function handleViewClick(limit) {
     projectsPerPageDropdown.querySelector(".dropdown-text").innerText = limit.toString();
     pageLimit = limit;
     currentPage = 1;
-    await searchAndRenderProjects(projectSearchInput.value, sortAttribute, sortDirection, pageLimit, currentPage);
+    await searchAndRenderProjects();
     console.log(`[view${limit}] limit: ${pageLimit}`);
     await checkNextPage();
 }
@@ -3311,6 +3278,20 @@ view10.addEventListener("click", () => handleViewClick(10));
 view25.addEventListener("click", () => handleViewClick(25));
 view50.addEventListener("click", () => handleViewClick(50));
 view100.addEventListener("click", () => handleViewClick(100));
+
+projectFilterButton.addEventListener("click", () => {
+    onlyMyProjects = !onlyMyProjects;
+
+    const label = projectFilterButton.querySelector(".button-text");
+    if (onlyMyProjects) {
+        label.innerText = "Only my Projects";
+    } else {
+        label.innerText = "All Projects";
+    }
+    currentPage = 1;
+    searchAndRenderProjects();
+});
+
 
 projectsPerPageDropdown.addEventListener("click", () => {
     projectsPerPageDropdown.classList.toggle("open")
