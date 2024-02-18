@@ -74,20 +74,20 @@ async function updatePosts() {
 }
 
 async function countPostTags() {
-    const data = await get_api(`/wiki/post.php/posts?is_technical=0&q=`);
-    const data2 = await get_api(`/wiki/post.php/posts?is_technical=1&q=`);
-    if (data.success !== true) {
+    const nonTechnicalData = await get_api(`/wiki/post.php/posts?is_technical=0&q=`);
+    const technicalData = await get_api(`/wiki/post.php/posts?is_technical=1&q=`);
+    if (nonTechnicalData.success !== true) {
         console.log("Posts failed to be fetched");
         return;
     }
-    data.data.posts.forEach(post => {
+    nonTechnicalData.data.posts.forEach(post => {
         if (post.tags != null) {
             post.tags.forEach((tag) => {
                 deleteTagsDisplay.find(findTag(tag)).addPostNum();
             });
         }
     });
-    data2.data.posts.forEach(post => {
+    technicalData.data.posts.forEach(post => {
         if (post.tags != null) {
             post.tags.forEach((tag) => {
                 deleteTagsDisplay.find(findTag(tag)).addPostNum();
@@ -276,7 +276,13 @@ function findTagName(tagName) {
 }
 
 /**
- * @param {Array} tags 
+ * Constructs a post HTML element and appends it to the posts container.
+ *
+ * @param {string} postID 
+ * @param {string} title 
+ * @param {string} author
+ * @param {boolean} isTechnical - 1 if the post is technical, 0 if it is non-technical.
+ * @param {Array<string>} tags - array of tags associated with the post. Defaults to ["No Tags"] to avoid null checks.
  */
 function renderPost(postID, title, author, isTechnical, tags) {
     const post = document.createElement("div")
