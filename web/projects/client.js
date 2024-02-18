@@ -12,8 +12,8 @@ var globalAssignments = [];
 var globalCurrentProject;
 var globalCurrentTask;
 var explainerTask = null // the currently selected task in the explaner, NOT AN ELEMENT
-const sortAttribute = 'lastAccessed'
-const sortDirection = 'desc';
+var sortAttribute = 'lastAccessed'
+var sortDirection = 'desc';
 var currentPage = 1;
 var pageLimit = 25;
 var onlyMyProjects = false;
