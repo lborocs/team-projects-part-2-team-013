@@ -177,7 +177,7 @@ tagsList.then((tagsList) => {
     let postID = getQueryParam();
     if (postID != "") {
         editing = true;
-        document.querySelector("#submitButton").innerHTML = 'Update post &nbsp <span class="material-symbols-rounded">done</span>';
+        document.querySelector("#submitButton").innerHTML = '<div class="button-text">Update post </div> <div class="button-icon"> <span class="material-symbols-rounded">done</span> </div>';
         document.querySelector("#title").innerHTML = "Edit Post";
         getPostData(postID).then((post) => {
             console.log(post);

@@ -855,19 +855,8 @@
 
 .delete-button {
     position: absolute;
-    bottom: 0.5em;
+    bottom: 0.5rem;
     right: 0.5em;
-    padding: 0.3em;
-    cursor: pointer;
-    transition: 0.2s ease-out;
-}
-
-.delete-button:hover {
-    color: var(--overdue-red, #c04646);
-    transition-duration: 0.1s;
-    background-color: #f0f0f0;
-    transition-duration: 0.1s;
-    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
 }
 
 .tasklist {
@@ -1480,20 +1469,8 @@
 
 .edit-button {
     position: absolute;
-    bottom: 0.5em;
-    border-radius: 4px;
-    padding: 0.3em !important;
-    padding-left: 0.5em !important;
-    padding-right: 0.5em !important;
-    cursor: pointer;
-    transition: 0.1s ease-out;
-}
-
-.edit-button:hover {
-    color: var(--text-off-black, #0f0f0f);
-    background-color: #f0f0f0;
-    transition-duration: 0.1s;
-    box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
+    bottom: 1rem;
+    left: 0.5rem;
 }
 
 .createButton:hover {

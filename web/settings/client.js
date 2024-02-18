@@ -180,86 +180,6 @@ window.addEventListener('load', async () => {
     });
 });
 
-let deleteAccountButton = document.querySelector('.delete-account');
-deleteAccountButton.addEventListener('click', () => {
-    confirmDelete()
-        .then(() => {
-        })
-        .catch((error) => {
-            console.log('Delete account cancelled');
-        })
-});
-
-
-
-
-
-
-
-function confirmDelete() {
-    return new Promise((resolve, reject) => {
-
-        if (global.queryModalSkip()) {
-            resolve();
-            return;
-        }
-
-        let popupDiv = document.querySelector('.popup');
-        let fullscreenDiv = document.querySelector('.fullscreen');
-
-        popupDiv.innerHTML = `
-            <dialog open class='popup-dialog'>
-                <div class="popup-title">
-                    Delete Todo Item
-                    <div class="small-icon close-button">
-                        <span class="material-symbols-rounded">
-                            close
-                        </span>
-                    </div>
-                </div>
-                <div class="popup-text">Are you sure you want to delete this Todo item?</div>
-                <div class="popup-text">This action cannot be undone.</div>
-
-                <div class="popup-buttons">
-                    <div class="text-button" id="cancel-button">
-                        <div class="button-text">Cancel</div>
-                    </div>
-                    <div class="text-button red" id="delete-button">
-                        <div class="button-text">Delete</div>
-                    </div>
-                </div>
-                <span>Tip: you can hold SHIFT to skip this modal</span>
-            </dialog>
-        `;
-        fullscreenDiv.style.filter = 'brightness(0.75)';
-
-        let dialog = popupDiv.querySelector('.popup-dialog');
-        let closeButton = dialog.querySelector('.close-button');
-        let cancelButton = dialog.querySelector('#cancel-button');
-        let deleteButton = dialog.querySelector('#delete-button');
-
-        closeButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
-        });
-
-        cancelButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
-        });
-
-        deleteButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            resolve();
-        });
-    });
-}
 
 async function getEmployee() {
     const res = await get_api(`/employee/employee.php/employee/@me`);
@@ -308,25 +228,24 @@ function preferenceAlert() {
     }, 200);
 }
 
-async function fetchEmployees(query) {
+async function searchEmployees(query) {
     console.log('fetching employees');
     const res = await get_api(`/employee/employee.php/all?q=${query}`);
     if (res.success) {
         const employees = res.data.employees;
-        console.log("EMPLOYEES");
-        console.log(employees);
         return employees;
 
     } else {
         console.error('Request failed');
     }
 }
+
 const inputField = document.querySelector('#inputField');
 const inputValue = inputField.value;
 
 inputField.addEventListener('input', async (event) => {
     const query = event.target.value;
-    const employees = await fetchEmployees(query);
+    const employees = await searchEmployees(query);
     console.log(employees);
     renderEmployees(employees);
 });
