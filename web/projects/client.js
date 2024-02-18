@@ -1066,6 +1066,14 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         `;
     }
 
+    taskRow.innerHTML += `
+    <td>
+        <div id="more">
+            <span class="material-symbols-rounded more-icon-taskList">more_horiz</span>
+        </div>
+    </td>
+    `;
+
     taskTableBody.appendChild(taskRow);
     taskTableBody.appendChild(listAddRow);
     calculateTaskCount();
