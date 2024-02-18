@@ -905,7 +905,10 @@ async function fetchAndRenderAllProjects() {
             if (header.classList.contains("sorting-by")) {
                 header.classList.toggle("reverse");
                 sortDirection = header.classList.contains("reverse") ? 'desc' : 'asc';
-                if (symbol) symbol.textContent = sortDirection === 'asc' ? 'arrow_downward' : 'arrow_upward';
+                if (sortAttribute === 'lastAccessed') {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                }
+                if (symbol) symbol.textContent = (sortDirection === 'asc' ^ sortAttribute === 'lastAccessed') ? 'arrow_downward' : 'arrow_upward';
             } else {
                 projectTableHeaders.forEach((header) => {
                     header.classList.remove("sorting-by", "reverse");
@@ -914,7 +917,10 @@ async function fetchAndRenderAllProjects() {
                 });
                 header.classList.add("sorting-by");
                 sortDirection = 'asc';
-                if (symbol) symbol.textContent = 'arrow_downward';
+                if (sortAttribute === 'lastAccessed') {
+                    sortDirection = 'desc'; 
+                }
+                if (symbol) symbol.textContent = (sortDirection === 'asc' ^ sortAttribute === 'lastAccessed') ? 'arrow_downward' : 'arrow_upward';
             }
             currentPage = 1;
             pageBackButton.classList.add("disabled");
