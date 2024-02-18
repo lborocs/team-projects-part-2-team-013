@@ -779,7 +779,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         return
     }
 
-    console.error('[renderAssignments] rendering assignments:')
+    console.log('[renderAssignments] rendering assignments:')
     console.log(assignments)
 
     let unique_users = new Set();
