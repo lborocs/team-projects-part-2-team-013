@@ -135,35 +135,10 @@
     justify-content: flex-start;
     padding: 0.2em;
     padding-left: 0;
-
-}
-
-
-.tags {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
     gap: 0.5em;
-    margin-top: 0.25em;
-    .tag {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        padding: 0.25em;
-        padding-left: 0.5em;
-        padding-right: 0.5em;
-        border-radius: 1rem;
-        background-color: #ebedef;
-        color: #2d2e30;
-        font-size: 13px;
-        font-weight: 600;
-        gap: 0.5em;
-    };
-    .tag i {
-        color: #4e5057;
-        font-size: 14px;
-    }
 }
+
+
 
 
 .divider {

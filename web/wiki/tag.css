@@ -1,0 +1,43 @@
+.tag {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.25em;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    border-radius: 1em;
+    background-color: #ebedef;
+    color: #2d2e30;
+    font-size: 14px;
+    font-weight: 600;
+    gap: 0.4em;
+
+    transition: background-color 0.05s ease-out;
+
+    user-select: none;
+
+    & span {
+        color: #4e5057;
+        font-size: 16px;
+
+    }
+}
+
+#tagCloseButton {
+    background-color: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    margin-left: 5px;
+}
+.tag:has(#tagCloseButton):hover {
+
+    cursor: pointer;
+
+    #tagCloseButton {
+        color: #666;
+        background-color: rgb(230, 230, 230);
+        border-radius: 50%;
+        cursor: pointer;
+    }
+}

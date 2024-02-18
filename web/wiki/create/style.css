@@ -220,6 +220,10 @@ input[type="text"] {
 
 #listOfTags{
     margin-top: 0em;
+    padding-left: 1em;
+    gap: 0.5em;
+    overflow-x: auto;
+
 }
 
 .options {
@@ -321,7 +325,6 @@ input[type="radio"] + label {
     align-items: center;
     width: 100%;
     height: 4em;
-    padding: 0.5em;
     margin-top: 1em;
     margin-bottom: 0;
     border-radius: 10px;
@@ -352,14 +355,20 @@ input[type="radio"] + label {
 input[type="text"] {
     display: block;
     width: 100%;
-    height: 2.5em;
+    height: 100%;
     padding: 0.5em;
+    padding-left: 1em;
     border: none;
     border-radius: 10px;
     font-size: 1em;
     font-weight: 600;
     font-family: 'Open Sans', sans-serif;
     color: #2d2e30;
+}
+
+input[type="text"]:focus-within {
+    outline: solid 2px #388bffaa;
+    outline-offset: -1px;
 }
 
 
@@ -375,36 +384,28 @@ input[type="text"] {
     margin-top: 5px;
 }
 
-.tag {
-    display: flex;
-    align-items: center;
-    background-color: #f2f2f2;
-    color: #333;
-    border-radius: 20px;
-    padding: 5px 10px;
-    margin-right: 5px;
-    margin-top : 5px;
-    margin-bottom: 5px;
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
-}
-
 .tag i {
     margin-left: 5px;
     cursor: pointer;
 }
+
 #input-tag{
     width: 25.1em;
 }
 
 .tag-input {
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
     position: relative;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 5px;
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     width: 25.1em;
     height: 4em;
+    padding: 5px;
+
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     background-color: #fff;
 }
 
@@ -418,8 +419,7 @@ input[type="text"] {
     display: inline-block;
     color: #333;
     padding: 5px 10px;
-    margin-right: 5px;
-    margin-bottom: 5px;
+
 }
 
 .tag-input input[type="text"] {
@@ -452,4 +452,15 @@ input[type="text"] {
     height: 1.75em;
     border-radius: 50%;
     aspect-ratio: 1;
+}
+
+
+/* quill override */
+.ql-editor {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+}
+
+.ql-toolbar.ql-snow {
+    font-family: 'Open Sans', system-ui;
 }

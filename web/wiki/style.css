@@ -291,6 +291,9 @@ body {
     border-radius: 8px;
     border: 1px solid #e0e0e0;
     box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.1);
+
+    transition: 0.05s ease-out;
+
     .post-info {
         .title {
             font-size: 1.25em;
@@ -331,6 +334,13 @@ body {
         flex-direction: column;
         justify-content: space-between;
         color: #494b4e;
+
+
+        .icon-button {
+            opacity: 0;
+            transition: 0.1s ease-out;
+        }
+
     }
 }
 
@@ -360,11 +370,16 @@ body {
 }
 
 .post:hover {
-    box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.15);
+    box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.1);
     cursor: pointer;
-    border: solid 1px #bbbbbb;
+    border: solid 1px #ffffffea;
     background-color: rgba(255,255,255,0.7);
     transition: 0.1s ease-out;
+
+    .icon-button {
+        opacity: 1;
+        transition: 0.05s ease-out;
+    }
 }
 
 
