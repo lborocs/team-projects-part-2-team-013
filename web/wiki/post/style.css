@@ -28,7 +28,7 @@
         color: #1a1a1b;
     }
     .content{
-        font-size: 0.9em;
+        font-size: 15px;
         margin-top: 0.5em;
         margin-bottom: 0.5em;
 
@@ -117,13 +117,13 @@
     
     .author {
         line-height: 2.4rem;
-        font-size: 0.9em;
+        font-size: 15px;
         color: #2d2e30;
     }
 
     .date {
         line-height: 2.4rem;
-        font-size: 0.9em;
+        font-size: 15px;
         color: #2d2e30;
         margin-left: auto;
     }
