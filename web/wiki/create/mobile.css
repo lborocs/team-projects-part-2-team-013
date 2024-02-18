@@ -99,12 +99,23 @@
     }
 
     #editor {
-        max-height: calc(100vh - 26rem);
+        max-height: calc(100dvh - 26rem);
     }
 
     .ql-toolbar.ql-snow {
         padding-left: 0;
         padding-right: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: clip;
+    }
+
+    .ql-toolbar.ql-snow .ql-formats {
+        margin-right: 0;
+        white-space: nowrap;
+        display: flex;
+        flex-wrap: nowrap;
     }
 
 
