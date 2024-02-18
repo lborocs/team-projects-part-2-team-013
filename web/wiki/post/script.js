@@ -1,5 +1,16 @@
 import * as global from "../../global-ui.js";
 
+
+const renderer = new Quill("#renderer-content", {
+    readOnly: true,
+    theme: "snow",
+    modules: {
+        toolbar: false
+    }
+});
+
+document.renderer = renderer;
+
 window.postMeta = [0, 0]; // Subscribed, Liked
 
 function getQueryParam() {
@@ -79,9 +90,11 @@ async function getPostData(postID, tagsList){
 
     let postElement = document.querySelector(".post")
 
+    const postContent = JSON.parse(post.content);
     document.querySelector(".title").innerText = post.title
     postElement.querySelector("#postTitle").innerHTML = post.title
-    postElement.querySelector(".content").innerHTML = post.content
+    console.log("setting cotnent to", postContent);
+    renderer.setContents(postContent);
     postElement.querySelector(".author").innerText = global.employeeToName(post.author)
     postElement.querySelector(".date").innerHTML = global.formatDateFull(new Date(post.createdAt * 1000))
     console.log(post)
