@@ -1595,36 +1595,42 @@ function correctContextMenus() {
 //     return project
 // }
  
-function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, lastAccessed, dueDate) {
+async function renderProject(project) {
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
-    let project = document.createElement("tr");
-    project.setAttribute("tabindex", "0");
-    project.classList.add("project-row");
+    let projectRow = document.createElement("tr");
+    projectRow.setAttribute("tabindex", "0");
+    projectRow.classList.add("project-row");
+
+    let session = await global.getCurrentSession();
+    let isTeamLeader = (project.teamLeader.empID === session.employee.empID);
+    let emps = await global.getEmployeesById([project.teamLeader.empID, project.createdBy.empID]);
+    let teamLeader = emps.get(project.teamLeader.empID);
+
     let icon = isTeamLeader ? `bookmark_manager` : `folder`;
 
     let teamLeaderName = global.employeeToName(teamLeader);
 
-    let date = createdAt ? global.formatDateFull(new Date(createdAt)) : "No creation date found";
-    let lastAccessedFormatted = lastAccessed ? formatLastAccessed(new Date(lastAccessed)) : `<span class="disabled">Never</span>`;
-    let lastAccessedTooltip = lastAccessedFormatted.includes("Never") ? "Never accessed" : new Date(lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'});
-    let dueDateFormatted = dueDate ? global.formatDateFull(new Date(dueDate)) : `<span class="disabled">Not set</span>`;
+    let date = project.createdAt ? global.formatDateFull(new Date(project.createdAt)) : "No creation date found";
+    let lastAccessedFormatted = project.lastAccessed ? formatLastAccessed(new Date(project.lastAccessed)) : `<span class="disabled">Never</span>`;
+    let lastAccessedTooltip = lastAccessedFormatted.includes("Never") ? "Never accessed" : new Date(project.lastAccessed).toLocaleString('en-GB', { timeZone: 'GMT', dateStyle: 'long', timeStyle: 'short'});
+    let dueDateFormatted = project.dueDate ? global.formatDateFull(new Date(project.dueDate)) : `<span class="disabled">Not set</span>`;
 
-    project.innerHTML = `
+    projectRow.innerHTML = `
         <td>
-            <a href="/projects/#${ID}">
+            <a href="/projects/#${project.projID}">
                 <div class="project-card">
                     <div class="icon">
                         <span class="material-symbols-rounded">${icon}</span>
                     </div>
                     <div class="name">
-                        ${title}
+                        ${project.name}
                     </div>
                 </div>
             </a>
         </td>
         <td>
-            <a href="/projects/#${ID}">
+            <a href="/projects/#${project.projID}">
                 <div class="name-card">
                     <div class="icon">
                         <img src="${global.employeeAvatarOrFallback(teamLeader)}" class="avatar">
@@ -1638,7 +1644,7 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         <td>${date}</td>
         <td>${dueDateFormatted}</td>
         <td>
-            <a href="/projects/#${ID}">
+            <a href="/projects/#${project.projID}">
                 <div class="tooltip tooltip-above name-card">
                     <p class="tooltiptext">${lastAccessedTooltip}</p>
                     <div class="name">
@@ -1656,26 +1662,27 @@ function renderProject(ID, title, desc, teamLeader, isTeamLeader, createdAt, las
         </td>
     `;
 
-    projectTitle.innerHTML = title;
+    projectTitle.innerHTML = project.name;
 
-    //sets id to the project id
-    project.setAttribute("data-ID", ID);
-    project.setAttribute("data-title", title);
-    project.setAttribute("data-description", desc);
-    project.setAttribute("data-team-leader", JSON.stringify(teamLeader));
-    projectsTable.querySelector("tbody").appendChild(project);
+    //sets the data-attributes on the projectRow
+    projectRow.setAttribute("data-ID", project.projID);
+    projectRow.setAttribute("data-title", project.name);
+    projectRow.setAttribute("data-description", project.description !== null ? project.description : "Not set");
+    projectRow.setAttribute("data-due-date", project.dueDate !== null ? project.dueDate : "Not set");
+    projectRow.setAttribute("data-team-leader", JSON.stringify(teamLeader));
+    projectsTable.querySelector("tbody").appendChild(projectRow);
 
 
-    const projectActions = project.querySelector(".project-actions");
+    const projectActions = projectRow.querySelector(".project-actions");
     projectActions.addEventListener("click", (e) => {
         e.stopPropagation()
-        projectPopup(ID)
+        projectPopup(project.projID)
 
     });
 
     teamLeaderEnableElementsIfTeamLeader();
 
-    return project;
+    return projectRow;
 }
 
 function formatLastAccessed(date) {
@@ -2476,7 +2483,7 @@ async function projectObjectRenderAndListeners(project) {
 
 
     let teamLeaderName = global.employeeToName(teamLeader);
-    let element = renderProject(project.projID, project.name, project.description, teamLeader, isTeamLeader, project.createdAt, project.lastAccessed);
+    let element = renderProject(project);
 
     calculateTaskCount();
     element.data = project;
@@ -3222,6 +3229,7 @@ async function searchAndRenderProjects(search, sortAttribute = 'lastAccessed', s
 
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
     await Promise.all(data.data.projects.map(async (project) => {
+        console.error(project)
         await projectObjectRenderAndListeners(project);
     }));
 

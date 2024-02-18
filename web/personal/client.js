@@ -15,7 +15,7 @@ import * as global from "../global-ui.js";
 
 var globalPersonalsList = []
 var globalPersonalsSort = {
-    alphabetic: false,
+    alphabetical: false,
     timeCreated: false,
     dueDate: false,
     descending: true
@@ -31,9 +31,9 @@ const mobilePersonalsSearch = document.getElementById('mobile-search-icon')
 const mobilePersonalsSearchInput = document.getElementById('mobile-search-input')
 const personalsSortDropdown = document.getElementById('personals-sort')
 const dropdownMenus = document.querySelectorAll('.dropdown-menu')
-const sortAlphabetic = document.getElementById('sort-alphabetic')
-const sortTimeCreated = document.getElementById('sort-time-created')
-const sortDueDate = document.getElementById('sort-due-date')
+const sortAlphabetical = document.getElementById('sort-alphabetical')
+const sortTimeCreated = document.getElementById('sort-timeCreated')
+const sortDueDate = document.getElementById('sort-dueDate')
 const personalsSortDirection = document.getElementById('personals-sort-direction')
 
 
@@ -99,7 +99,7 @@ async function createPersonal(title) {
 
     globalPersonalsList.push(res.data)
 
-    return true 
+    return true
 }
 
 function selectPersonal(id) {
@@ -125,8 +125,8 @@ function renderPersonal(id) {
 
     const hasDescription = personal.content !== null
     const chevronOrAddDescription = hasDescription ? `
-        <div class="personal-chevron"><span class="material-symbols-rounded">expand_more</span></div>` 
-        : 
+        <div class="personal-chevron"><span class="material-symbols-rounded">expand_more</span></div>`
+        :
         '<div class="small-icon add-description"><span class="material-symbols-rounded">docs_add_on</span></div>'
 
     personalCard.innerHTML = `
@@ -199,6 +199,19 @@ function renderPersonal(id) {
 
 }
 
+
+/**
+ * Clears the list of personals then re-renders in the order of globalPersonalsList
+ */
+function renderAllPersonals() {
+    global.animate(document.querySelector(".list-container"), "flash")
+    unrenderAllPersonals()
+    globalPersonalsList.forEach(personal => {
+        renderPersonal(personal.itemID)
+    })
+}
+
+
 function renderDummyPersonal() {
 
     return new Promise((resolve, reject) => {
@@ -208,7 +221,7 @@ function renderDummyPersonal() {
             reject();
             return;
         }
-        
+
         const handle = global.takeMutex("renderDummyPersonal");
         newPersonalButton.classList.add('disabled');
         mobileNewPersonalButton.classList.add('disabled');
@@ -258,7 +271,7 @@ function renderDummyPersonal() {
                 personalCard.querySelector('.save').classList.remove('disabled')
             }
         })
-        
+
         titleInput.addEventListener('keydown', (e) => {
 
             if (e.key === 'Enter') {
@@ -413,7 +426,7 @@ function searchPersonals(query) {
 }
 
 function sortPersonals() {
-    if (globalPersonalsSort.alphabetic) {
+    if (globalPersonalsSort.alphabetical) {
         globalPersonalsList.sort((a, b) => {
             if (globalPersonalsSort.descending) {
                 return a.title.localeCompare(b.title)
@@ -456,10 +469,10 @@ function personalCardEditMode(id) {
         var newTitle = title.innerHTML
         const description = personalCard.querySelector('.personal-description')
         var newDescription = description.innerHTML
-        
+
         title.setAttribute('contenteditable', 'true')
         title.focus()
-        
+
         const range = document.createRange()
         const sel = window.getSelection()
         range.setStart(title.childNodes[0], title.innerHTML.length)
@@ -506,9 +519,7 @@ function personalCardEditMode(id) {
             resolve()
         })
 
-        
-
-    });
+    })
 }
 
 
@@ -582,105 +593,96 @@ mobilePersonalsSearchInput.addEventListener('input', (e) => {
 
 
 
+/**
+ * updates personal todo sorting and rerenders the list
+ * 
+ * @param {string} sortOption a valid sort option: 'Alphabetical', 'Time created', 'Due date'
+ * @returns {boolean} true / false if a valid sort option was passed in
+ */
+function updateSortOption(sortOption) {
+    const options = {
+        'Alphabetical': {
+            selected: 'alphabetical',
+            unselected: ['timeCreated', 'dueDate']
+        },
+        'Time created': {
+            selected: 'timeCreated',
+            unselected: ['alphabetical', 'dueDate']
+        },
+        'Due date': {
+            selected: 'dueDate',
+            unselected: ['alphabetical', 'timeCreated']                   
+        }
+    }
+
+    const { selected, unselected } = options[sortOption]
+
+    //makes it obvious if a nonexistent option is selected
+    if (!selected || !unselected) {
+        console.error(`[updateSortOption] Invalid sort option se;ected"`)
+        return false
+    }
+
+    //selects option in dropdown preview
+    personalsSortDropdown.querySelector('.dropdown-text').textContent = sortOption
+    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = "arrow_downward"
+
+    //selects same option in global sort
+    globalPersonalsSort[selected] = true
+    unselected.forEach(option => globalPersonalsSort[option] = false)
+
+    //marks selected option as selected in dropdown menu
+    personalsSortDropdown.querySelectorAll('.dropdown-option').forEach(option => {
+        if (option.id.includes(selected)) {
+            option.classList.add('selected')
+        } else {
+            option.classList.remove('selected')
+        }
+    })
+    
+    console.log(globalPersonalsSort)
+    console.log(globalPersonalsList)
+    //sorts and renders based on this new list order
+    sortPersonals()
+    renderAllPersonals()
+    return true
+}
+
+/**
+ * reverses the sort direction, updates the arrow in the dropdown and rerenders the list
+ */
+function reverseSortDirection() {
+    globalPersonalsSort.descending = !globalPersonalsSort.descending
+    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = (globalPersonalsSort.descending) ? "arrow_downward" : "arrow_upward"
+    sortPersonals()
+    renderAllPersonals()
+}
 
 
+
+sortAlphabetical.addEventListener('click', () => {
+    updateSortOption('Alphabetical')
+})
+
+sortTimeCreated.addEventListener('click', () => {
+    updateSortOption('Time created')
+})
+
+sortDueDate.addEventListener('click', () => {
+    updateSortOption('Due date')
+})
+
+//dropdown open/close logic
 personalsSortDropdown.addEventListener("click", () => {
     personalsSortDropdown.classList.toggle("open")
 })
-
 document.addEventListener("click", (e) => {
     if (!personalsSortDropdown.contains(e.target)) {
         personalsSortDropdown.classList.remove("open")
     }
-});
-
-
-//below is a very long and terrible way of handling dropdowns, it will be refactored.
-
-sortAlphabetic.addEventListener("click", () => {
-
-    personalsSortDropdown.querySelector('.dropdown-text').textContent = "Alphabetical"
-    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = "arrow_downward"
-
-    if(globalPersonalsSort.alphabetic === true) {
-        console.log(globalPersonalsSort)
-        globalPersonalsSort.descending = !globalPersonalsSort.descending
-        console.log(globalPersonalsSort)
-        sortPersonals()
-        return
-    }
-
-    globalPersonalsSort.descending = true
-
-    sortAlphabetic.classList.add("selected")
-    sortTimeCreated.classList.remove("selected")
-    sortDueDate.classList.remove("selected")
-
-    globalPersonalsSort.alphabetic = true
-    globalPersonalsSort.timeCreated = false
-    globalPersonalsSort.dueDate = false
-
-    console.log(globalPersonalsSort)
-    sortPersonals()
-})
-sortTimeCreated.addEventListener("click", () => {
-
-    personalsSortDropdown.querySelector('.dropdown-text').textContent = "Time created"
-    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = "arrow_downward"
-
-    if(globalPersonalsSort.timeCreated === true) {
-        globalPersonalsSort.descending = !globalPersonalsSort.descending
-        console.log(globalPersonalsSort)
-        sortPersonals()
-        return
-    }
-
-    globalPersonalsSort.descending = true
-
-    sortTimeCreated.classList.add("selected")
-    sortAlphabetic.classList.remove("selected")
-    sortDueDate.classList.remove("selected")
-
-    globalPersonalsSort.alphabetic = false
-    globalPersonalsSort.timeCreated = true
-    globalPersonalsSort.dueDate = false
-    
-    console.log(globalPersonalsSort)
-    sortPersonals()
-})
-sortDueDate.addEventListener("click", () => {
-    
-    personalsSortDropdown.querySelector('.dropdown-text').textContent = "Due date"
-    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = "arrow_downward"
-
-    if(globalPersonalsSort.dueDate === true) {
-        globalPersonalsSort.descending = !globalPersonalsSort.descending
-        console.log(globalPersonalsSort)
-        sortPersonals()
-        return
-    }
-
-    globalPersonalsSort.descending = true
-
-    sortDueDate.classList.add("selected")
-    sortAlphabetic.classList.remove("selected")
-    sortTimeCreated.classList.remove("selected")
-
-
-    globalPersonalsSort.alphabetic = false
-    globalPersonalsSort.timeCreated = false
-    globalPersonalsSort.dueDate = true
-    
-    console.log(globalPersonalsSort)
-    sortPersonals()
 })
 
-personalsSortDirection.addEventListener("click", () => {
-    globalPersonalsSort.descending = !globalPersonalsSort.descending
-    personalsSortDropdown.querySelector('.material-symbols-rounded').textContent = (globalPersonalsSort.descending) ? "arrow_downward" : "arrow_upward"
-    console.log(globalPersonalsSort)
-    sortPersonals()
-})
+personalsSortDirection.addEventListener("click", reverseSortDirection);
 
 
 
@@ -702,56 +704,6 @@ getAllPersonals().then(() => {
         renderPersonal(personal.itemID)
     })
 })
-
-
-
-
-
-
-
-
-function displayPersonalModal(id) {
-    const personal = globalPersonalsList.find(personal => personal.itemID === id)
-    console.log(personal)
-
-    let popupContainer = document.querySelector('.popup');
-    let fullscreen = document.querySelector('.fullscreen');
-
-    popupContainer.innerHTML = `
-        <dialog open class='popup-dialog'>
-            <div class="popup-title">
-                ${personal.title}
-                <div class="small-icon close-button">
-                    <span class="material-symbols-rounded">
-                        close
-                    </span>
-                </div>
-            </div>
-            <div class="popup-text">${personal.content}</div>
-            <div class="popup-text">State ${personal.state}</div>
-
-            <div class="popup-buttons">
-                <div class="text-button blue edit-button">
-                    <div class="button-text">Edit</div>
-                </div>
-            </div>
-        </dialog>
-    `;
-    fullscreen.style.filter = 'brightness(0.75)';
-
-    let dialog = popupContainer.querySelector('.popup-dialog');
-    let closeButton = dialog.querySelector('.close-button');
-    let deleteButton = dialog.querySelector('.edit-button');
-
-    closeButton.addEventListener('click', (event) => {
-        event.preventDefault(); 
-        dialog.style.display = 'none';
-        fullscreen.style.filter = 'none';
-        reject();
-    });
-
-}
-
 
 //modified confirmDelete from wiki.
 function confirmDelete() {
@@ -825,7 +777,7 @@ function confirmDelete() {
         let deleteButton = dialog.querySelector('#delete-button');
 
         closeButton.addEventListener('click', (event) => {
-            event.preventDefault(); 
+            event.preventDefault();
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
             rejectAndUnlock();
