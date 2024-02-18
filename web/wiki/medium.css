@@ -1,0 +1,15 @@
+@media (max-width: 830px) {
+    #new-post {
+        aspect-ratio: 1;
+        padding: 0;
+        
+        .button-text {
+            display: none;
+        }
+
+
+    }
+}
+
+
+
