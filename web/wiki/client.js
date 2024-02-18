@@ -72,6 +72,31 @@ async function updatePosts() {
     roller.roll();
 }
 
+async function countPostTags() {
+    const data = await get_api(`/wiki/post.php/posts?is_technical=0&q=`);
+    const data2 = await get_api(`/wiki/post.php/posts?is_technical=1&q=`);
+    if (data.success !== true) {
+        console.log("Posts failed to be fetched");
+        return;
+    }
+    data.data.posts.forEach(post => {
+        if (post.tags != null) {
+            post.tags.forEach((tag) => {
+                deleteTagsDisplay.find(findTag(tag)).addPostNum();
+            });
+        }
+    });
+    data2.data.posts.forEach(post => {
+        if (post.tags != null) {
+            post.tags.forEach((tag) => {
+                deleteTagsDisplay.find(findTag(tag)).addPostNum();
+            });
+        }
+    });
+    deleteTagsDisplay.forEach((tag) => {
+        tag.renderTag();
+    });
+}
 
 async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
     global.setBreadcrumb(["Wiki"], ["./"]);
@@ -97,7 +122,6 @@ async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
             console.log(post.tags);
             console.log("TAGS");
             post.tags.forEach((tag) => {
-                deleteTagsDisplay.find(findTag(tag)).addPostNum();
                 newtags.push(tagsList.find(findTag(tag)).name);
                 console.log(tag);
                 console.log("REPLACING TAGS");
@@ -113,16 +137,6 @@ async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
         postsMap.set(post.postID, post);
         console.log(post);
     });
-    data2.data.posts.forEach(post => {
-        if (post.tags != null) {
-            post.tags.forEach((tag) => {
-                deleteTagsDisplay.find(findTag(tag)).addPostNum();
-            });
-        }
-    });
-    deleteTagsDisplay.forEach((tag) => {
-        tag.renderTag();
-    });
     setUpPostsEventListeners();
     posts = document.querySelectorAll('.post');
     console.log(postsMap);
@@ -137,6 +151,7 @@ async function fetchTags() {
     }
 
     console.log("Tags have been fetched");
+    document.querySelector('.tag-selection').innerHTML = '';
     data.data.tags.forEach(tag => {
         document.querySelector('.tag-selection').innerHTML += `<div class="tag" tagID="${tag.tagID}" name="${tag.name}" id="normal"><span class="material-symbols-rounded">sell</span>${tag.name}</div>`;
         let tempTag = new Tag(tag.name, tag.tagID);
@@ -159,16 +174,18 @@ document.querySelector('#create-button').addEventListener('click', () => {
         const deleteSelectedTags = tagsToDelete.map((tag) => deleteTag(tag));
         Promise.all(deleteSelectedTags).then(() => {
             console.log("Tags have been deleted");
+            //location.reload();
             tagsToDelete = [];
             document.querySelectorAll(".tag.selectedDel").forEach((tag) => {
                 tag.classList.remove("selectedDel");
                 tag.remove();
             });
             document.getElementById("create-button").classList.add("disabled");
-            fetchTags().then((tags) => {
-                fetchPosts(tags);
+            fetchPosts(tagsList);
+            fetchTags()
+            closePopup();
             });
-        });
+
     }
 });
 
@@ -201,6 +218,7 @@ fetchTags().then((tags) => {
 
     fetchPosts(tags);
     tagsList = tags;
+    countPostTags();
 });
 
 
@@ -382,6 +400,16 @@ document.getElementById("manage-tags").addEventListener("click", () => {
     editTags();
 });
 
+function closePopup() {
+    let popupDiv = document.querySelector('.popup');
+    let fullscreenDiv = document.querySelector('.fullscreen');
+    let dialog = popupDiv.querySelector('.popup-dialog');
+    dialog.style.transform = 'translateY(-1%)'
+    dialog.style.opacity = '0';
+    dialog.style.display = 'none';
+    fullscreenDiv.style.filter = 'none';
+}
+
 function editTags() {
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
@@ -395,9 +423,6 @@ function editTags() {
 
     closeButton.addEventListener('click', (event) => {
         event.preventDefault();
-        dialog.style.transform = 'translateY(-1%)'
-        dialog.style.opacity = '0';
-        dialog.style.display = 'none';
-        fullscreenDiv.style.filter = 'none';
+        closePopup();
     });
 }
