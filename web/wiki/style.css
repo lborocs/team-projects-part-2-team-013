@@ -256,19 +256,15 @@ body {
 }
 
 .tag-selection{
-    height: 88%;
+    height: 100%;
     position: relative;
-    align-self: flex-start;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.9em;
-    font-size: 0.85em;
-    font-weight: 500;
-    color: #2d2e30;
-    margin-bottom: 0.5em;
-    overflow-y: scroll;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    overflow-y: auto;
+    overflow-x: clip;
     
     .tag:hover {
         cursor: pointer;
