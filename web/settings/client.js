@@ -250,13 +250,23 @@ inputField.addEventListener('input', async (event) => {
     renderEmployees(employees);
 });
 
+window.onload = async function() {
+    const employees = await searchEmployees('');
+    renderEmployees(employees);
+};
+
 async function renderEmployees(employees) {
     var employeeList = document.querySelector('.employee-list');
     employeeList.innerHTML = '';
     employees.forEach((employee) => {
+        if (employee.firstName == null){
+            var firstName = "N/A";
+        } else{
+            var firstName = employee.firstName;
+        }
         employeeList.innerHTML += `
             <div class="employee-card" data-empID="${employee.empID}">
-                <div class="first-name">${employee.firstName}</div>
+                <div class="first-name">${firstName}</div>
                 <div class="last-name">${employee.lastName}</div>
                 <div class="email">${employee.email}</div>
             </div>
