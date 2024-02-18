@@ -212,7 +212,7 @@ body {
     width: 100%;
 }
 
-.tag-selection{
+#tag-selection{
     height: 100%;
     position: relative;
     display: flex;
