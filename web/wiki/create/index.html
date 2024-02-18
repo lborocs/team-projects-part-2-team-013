@@ -45,45 +45,47 @@
             <div class="sidebar"></div>
 
             <div class="main">
-                <div class="post-title">
-                    <input type="text" placeholder="Post title ...">
-                </div>
-
-                <div id="editor">
-
-                </div>
-                <div class="post-title" id="listOfTags">
-                    <span class="material-symbols-rounded" id="placeholderTag">sell</span>
-                </div>
-                <div class="options"><!--used to be called search-dropdown-->
-                    <div class="search-dropdown">
-                    <div class="tag-input"><!--used to have class search-->
-                        <!--<input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
-                        </input>-->
-                        <ul>
-                            <li>
-                                <input class="search-input" type="text" id="input-tag" placeholder="Tags ..." />
-                            </li>
-                        </ul>
-                        <div class="search-icon" id="glass">
-                            <span class="material-symbols-rounded">search</span>
-                        </div>                    
-                    <div class="popover">
-                        <div class="employee-list">
+                <div class="post-container">
+                    <div class="post-title">
+                        <input type="text" placeholder="Post title ...">
+                    </div>
+                    <div class="editor-container">
+                        <div id="editor">
+                            <!-- quill.js goes here -->
                         </div>
                     </div>
+                    <div class="post-title" id="listOfTags">
+                        <span class="material-symbols-rounded" id="placeholderTag">sell</span>
                     </div>
-                </div>
-                <!--
-                <div class="options">
-                    <div class="tag-input">
-                        <ul>
-                            <li>
-                                <input type="text" id="input-tag" placeholder="Tags ..." />
-                            </li>
-                        </ul>
+                    <div class="options"><!--used to be called search-dropdown-->
+                        <div class="search-dropdown">
+                        <div class="tag-input"><!--used to have class search-->
+                            <!--<input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+                            </input>-->
+                            <ul>
+                                <li>
+                                    <input class="search-input" type="text" id="input-tag" placeholder="Tags ..." />
+                                </li>
+                            </ul>
+                            <div class="search-icon" id="glass">
+                                <span class="material-symbols-rounded">search</span>
+                            </div>                    
+                        <div class="popover">
+                            <div class="employee-list">
+                            </div>
+                        </div>
+                        </div>
                     </div>
-                -->
+                    <!--
+                    <div class="options">
+                        <div class="tag-input">
+                            <ul>
+                                <li>
+                                    <input type="text" id="input-tag" placeholder="Tags ..." />
+                                </li>
+                            </ul>
+                        </div>
+                    -->
                     <div class="items">
                         <div class="type-of-post">
                             <div class="category">
@@ -106,7 +108,8 @@
                             </div>
                         </div>
                     </div>
-                </div>   
+                </div>
+            </div>
         </div>
     </div>
     </div>

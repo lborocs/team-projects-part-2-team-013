@@ -224,6 +224,14 @@ async function getPostData(postID){
 }
 
 var quill = new Quill('#editor', {
+    modules: {
+        'toolbar': [
+            [ 'bold', 'italic', 'underline'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet'}],
+            [{ 'header': '1' }, { 'header': '2' }, 'code-block' ],
+            [ 'link', 'image'],
+        ]
+    },
     theme: 'snow'
 });
 
