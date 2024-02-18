@@ -709,16 +709,16 @@ button:hover {
 }
 
 ::-webkit-scrollbar {
-    width: 0.5em;
-    height: 0.5em;
+    width: 0.5rem;
+    height: 0.5rem;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f4f4f4
+    background: var(--light-grey-bg);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #ddd;
+    background: #cecece;
     border-radius: 8px;
 }
 
