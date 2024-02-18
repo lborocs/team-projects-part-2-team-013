@@ -300,7 +300,7 @@ body {
         flex-wrap: wrap;
         gap: 0.5rem;
 
-        .icon-button {
+        .icon-button, .text-button {
             opacity: 0;
             transition: 0.1s ease-out;
         }
@@ -317,9 +317,13 @@ body {
     background-color: rgba(255,255,255,0.7);
     transition: 0.1s ease-out;
 
-    .icon-button {
-        opacity: 1;
-        transition: 0.05s ease-out;
+    .post-icons {
+
+        .icon-button, .text-button {
+            opacity: 1;
+            transition: 0.05s ease-out;
+        }
+        
     }
 }
 
@@ -481,7 +485,7 @@ input[type="radio"]:not(:checked) + label:hover {
     border-right: 2px solid rgba(0,0,0,0.1);
 }
 
-#trash:hover{
+.delete-post:hover{
     color: #f44336;
     background-color: rgba(255, 0, 0, 0.096)
 }
