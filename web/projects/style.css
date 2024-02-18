@@ -196,6 +196,12 @@
         outline-offset: -1px;
     }
 
+    .project-actions:active {
+        background-color: #f0efef !important;
+        outline: solid 1px var(--border-clr, #e0e0e0);
+        outline-offset: -1px;
+    }
+
     .projects-table-empty-state {
         display: flex;
         flex-direction: row;

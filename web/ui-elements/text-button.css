@@ -62,9 +62,11 @@
 }   
 
 .text-button.red {
-    background-color: #ff5c5c;
-    color: white;
+    background-color: #ffddd3;
+    color: #421212;
 }
+
+
 
 .text-button.red.text-button.disabled {
     background-color: #c4c9d2;
@@ -91,6 +93,16 @@
     
     .text-button.no-box:hover {
         background-color: #f1f2f4;
+    }
+
+    .text-button.red:hover {
+        background-color: #d51e00;
+        color: white;
+    }
+
+    .text-button.red:active {
+        background-color: #ffbbb0;
+        color: white;
     }
     
     .text-button.no-box:active {
