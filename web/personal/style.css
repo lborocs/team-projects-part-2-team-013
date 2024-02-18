@@ -59,6 +59,15 @@
         color: #172d5b;
         opacity: 0.5;
         pointer-events: none;
+
+        .dropdown-icon {
+            pointer-events: none;
+        }
+
+        .dropdown-text {
+            pointer-events: none;
+        }
+        
     }
 
     .dropdown-chevron {
@@ -396,6 +405,7 @@
 
 .no-results {
     margin-right: auto;
+    opacity: 0.8;
 }
 
 .mobile-search-icon {
