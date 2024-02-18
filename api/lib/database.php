@@ -369,11 +369,11 @@ function db_post_fetchall(string $search_term, ?Array $tags, $is_technical) {
     }
     
 
-    $query = $db->prepare("
-        SELECT 
-            POSTS.postID, POSTS.postTitle, POSTS.postAuthor, POSTS.postCreatedAt, POSTS.postIsTechnical,
+    $query = $db->prepare(
+        "SELECT 
+            `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
             `EMPLOYEES`.*, `ASSETS`.contentType,
-            GROUP_CONCAT(DISTINCT `TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+            GROUP_CONCAT(DISTINCT tagList.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
 	        COUNT(`POST_VIEWS`.empID) as views
         FROM `POSTS`
         JOIN `EMPLOYEES`
@@ -382,10 +382,10 @@ function db_post_fetchall(string $search_term, ?Array $tags, $is_technical) {
             ON `EMPLOYEES`.avatar = `ASSETS`.assetID
         LEFT JOIN `POST_TAGS`
             ON `POSTS`.postID = `POST_TAGS`.postID
-        LEFT JOIN `TAGS` 
-            ON `POST_TAGS`.tagID = `TAGS`.tagID
         LEFT JOIN `POST_VIEWS` 
             ON `POST_VIEWS`.postID = `POSTS`.postID
+        LEFT JOIN (SELECT * FROM `POST_TAGS`) as tagList
+            ON tagList.postID = `POSTS`.postID
         WHERE LOWER(`POSTS`.postTitle) LIKE ? 
         AND `POSTS`.postIsTechnical = ?
         " . $tag_term . "
