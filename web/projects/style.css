@@ -1971,3 +1971,13 @@
     color: #0f0f0faa;
     line-height: 24px;
 }
+
+#more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.more-icon-taskList {
+    opacity: 0.5;
+}
