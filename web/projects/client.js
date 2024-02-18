@@ -2178,8 +2178,12 @@ function confirmDelete() {
                 <div>Are you sure you want to delete this task?</div>
                 <div><strong>This change cannot be undone.</strong></div>
                 <form method="dialog" class = "buttonForm">
-                    <button class="closeButton">Cancel</button>
-                    <button class="deleteButton">Delete</button> 
+                    <div class="text-button" id="closeButton">
+                    <div class="button-text">Cancel</div>
+                    </div>
+                    <div class="text-button red" id="deleteButton">
+                    <div class="button-text">Delete</div> 
+                    </div>
                 </form>
             </dialog>
         `;
@@ -2188,8 +2192,8 @@ function confirmDelete() {
         fullscreenDiv.style.filter = 'brightness(0.6)';
 
         let dialog = popupDiv.querySelector('.popupDialog');
-        let closeButton = dialog.querySelector('.closeButton');
-        let deleteButton = dialog.querySelector('.deleteButton');
+        let closeButton = dialog.querySelector('#closeButton');
+        let deleteButton = dialog.querySelector('#deleteButton');
 
         closeButton.addEventListener('click', (event) => {
             event.preventDefault(); 

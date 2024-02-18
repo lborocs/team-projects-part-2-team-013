@@ -1422,16 +1422,9 @@
     display: flex;
     align-self: center;
     justify-content: center;
-}
-
-.editButton {
-    background-color: var(--confirm-button-colour, rgb(66, 116, 255));
-    color: var(--white, white);
-    border: none;
-}
-
-.editButton:hover {
-    border: none !important;
+    align-items: center;
+    width:  100%;
+    gap: 1em;
 }
 
 .addButton, .setButton {
@@ -1450,17 +1443,6 @@
     box-sizing: border-box;
 }
 
-.deleteButton {
-    background-color: rgb(218,55, 60);
-    color: var(--white, white);
-}
-
-.deleteButton:hover {
-    background-color: rgb(161, 40, 40);
-    color: var(--white, white);
-    box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3));
-        border: none;
-}
 
 .createButton {
     background-color: var(--confirm-button-colour, rgb(66, 116, 255));
@@ -1487,7 +1469,7 @@
     box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3)); 
 }
 
-
+.buttonForm
 
 #add-task-popup {
     padding: 18px;
