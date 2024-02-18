@@ -441,9 +441,9 @@ function sortPersonals() {
         console.log("sorting by createdAt")
         globalPersonalsList.sort((a, b) => {
             if (globalPersonalsSort.descending) {
-                return a.created - b.created
+                return a.createdAt - b.createdAt
             } else {
-                return b.created - a.created
+                return b.createdAt - a.createdAt
             }
         })
     } else if (globalPersonalsSort.dueDate) {
