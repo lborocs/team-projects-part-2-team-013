@@ -3191,21 +3191,20 @@ async function searchAndRenderProjects() {
     }
 
 
-    const data = await get_api(`${route}?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
+    const res = await get_api(`${route}?q=${search}&sort_by=${sortAttribute}&sort_direction=${sortDirection}&limit=${pageLimit}&page=${currentPage}`);
     console.log(`[searchAndRenderProjects(${sortDirection})] sort Direction`);
     console.log(`[searchAndRenderProjects(${search})] fetched projects`);
     console.log(`[searchAndRenderProjects(${sortAttribute})] sortattribute`);
     console.log(`[searchAndRenderProjects(${currentPage})] page`);
     console.log(`[searchAndRenderProjects(${pageLimit})] limit`);
-    console.log(data);
-
-    if (data.success !== true) {
+    console.log(res);
+    if (res.success !== true) {
         return;
     }
     
     clearProjectList();
 
-    if (data.data.projects.length < pageLimit) {
+    if (res.data.projects.length < pageLimit) {
         pageForwardButton.classList.add('disabled');
     } else {
         pageForwardButton.classList.remove('disabled');
@@ -3218,17 +3217,17 @@ async function searchAndRenderProjects() {
     }
 
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
-    await Promise.all(data.data.projects.map(async (project) => {
+    await Promise.all(res.data.projects.map(async (project) => {
         await renderProject(project);
     }));
 
-    if (data.data.projects.length === 0) {
+    if (res.data.projects.length === 0) {
         projectsTableEmptyState.classList.remove('norender');
     } else {
         projectsTableEmptyState.classList.add('norender');
     }
     
-    return data.data.projects;
+    return res.data.projects;
 }
 
 
