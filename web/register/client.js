@@ -105,8 +105,6 @@ async function register() {
         token: "gonnagetabigtastyfrommcdonalds"
     }
 
-    console.log("[register] registering", body)
-
     const res = await post_api("/employee/session.php/register", body, {use_auth: false, redirect_on_error: false})
 
     if (res.success) {
