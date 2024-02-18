@@ -79,22 +79,19 @@ async function getPostData(postID, tagsList){
 
     const post = response.data;
 
-    post.images.forEach((image) => {
+    const content = JSON.parse(post.content);
 
-        post.content = post.content.replaceAll(
-            `\{\{img${image.index}\}\}`,
-            `<img src="${global.assetToUrl(global.ASSET_TYPE_POST, post.postID, image.asset.assetID, image.asset.contentType)}" class="post-image">`
-            );
+    post.images.forEach((image) => {
+        const asset = image.asset;
+        content.ops[image.index].insert.image = global.assetToUrl(global.ASSET_TYPE_POST, post.postID, asset.assetID, asset.contentType)
     });
 
 
     let postElement = document.querySelector(".post")
-
-    const postContent = JSON.parse(post.content);
     document.querySelector(".title").innerText = post.title
     postElement.querySelector("#postTitle").innerHTML = post.title
-    console.log("setting cotnent to", postContent);
-    renderer.setContents(postContent);
+    console.log("setting cotnent to", content);
+    renderer.setContents(content);
     postElement.querySelector(".author").innerText = global.employeeToName(post.author)
     postElement.querySelector(".date").innerHTML = global.formatDateFull(new Date(post.createdAt * 1000))
     console.log(post)

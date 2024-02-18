@@ -234,6 +234,7 @@ var quill = new Quill('#editor', {
     },
     theme: 'snow'
 });
+document.editor = quill;
 
 
 input.addEventListener("keydown", function(event) {
@@ -292,7 +293,19 @@ async function updateTags(postID, data2) {
 
 function submitPost(){
     var title = document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value;
-    var body = JSON.stringify(quill.getContents());                       
+
+    const content = quill.getContents();
+    const images = {};
+
+    Object.entries(content.ops).forEach(([key, value]) => {
+        if (value.insert.image) {
+            images[key] = value.insert.image.substr(22);
+            content.ops[key].insert.image = `${key}`;
+        }
+    });
+
+
+    var body = JSON.stringify(content);                       
     var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
     const checkTempPromises = currentTags.map((tag) => tag.checkTemp());
     Promise.all(checkTempPromises)
@@ -306,7 +319,9 @@ function submitPost(){
                 "isTechnical": isTechnical + 0,
                 "title": title,
                 "content": body,
+                "images": images,
             };
+            console.log(data);
             var data2 = {
                 "tags": tagsToSubmit,
             }; 
