@@ -21,7 +21,7 @@ let postID = getQueryParam();
 console.log("query param : " + postID);
 
 function findTag(tagID) {
-    return function(tag) {
+    return function (tag) {
         return tag.tagID === tagID;
     }
 }
@@ -70,7 +70,7 @@ async function getPostMeta(postID) {
     return response.data.meta;
 }
 
-async function getPostData(postID, tagsList){
+async function getPostData(postID, tagsList) {
     const response = await get_api(`/wiki/post.php/post/${postID}`);
     if (!response.success) {
         console.error("[getPostData] error fetching post: ", response.data);
@@ -102,7 +102,7 @@ async function getPostData(postID, tagsList){
         return post;
     }
     let newtags = [];
-    
+
     post.tags.forEach((tag) => {
         newtags.push(tagsList.find(findTag(tag)).name)
     });
@@ -115,7 +115,7 @@ async function updateMeta(postID, subscribed, feedback) {
     subscribed = subscribed || 0;
     feedback = feedback || 0;
     console.log("[updateMeta] updating post meta: ", postID, subscribed, feedback);
-    const response = await put_api(`/wiki/post.php/meta/${postID}`, {subscribed, feedback});
+    const response = await put_api(`/wiki/post.php/meta/${postID}`, { subscribed, feedback });
     if (!response.success) {
         console.error("[updateMeta] error updating post meta: ", response.data);
         return;
@@ -135,13 +135,13 @@ getPostMeta(postID).then((meta) => {
     if (meta.feedback) {
         document.querySelector("#useful").classList.add("active");
     }
-        console.log("Is the user subscribed: " + meta.subscribed);
-        console.log("Has the user liked: " + meta.feedback);
-    
+    console.log("Is the user subscribed: " + meta.subscribed);
+    console.log("Has the user liked: " + meta.feedback);
+
 });
 
 let watchingButton = document.querySelector("#watching");
-watchingButton.addEventListener("click", function() {
+watchingButton.addEventListener("click", function () {
     if (watchingButton.classList.contains("active")) {
         watchingButton.classList.remove("active");
         postMeta[0] = 0;
@@ -154,7 +154,7 @@ watchingButton.addEventListener("click", function() {
 });
 
 let usefulButton = document.querySelector("#useful");
-usefulButton.addEventListener("click", function() {
+usefulButton.addEventListener("click", function () {
     if (usefulButton.classList.contains("active")) {
         usefulButton.classList.remove("active");
         postMeta[1] = 0;

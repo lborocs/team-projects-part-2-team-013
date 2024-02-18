@@ -14,7 +14,7 @@ class Tag {
         tag.classList.add('tag');
         tag.setAttribute('id', "delTag")
         tag.setAttribute('tagID', this.tagID);
-        tag.innerHTML =`<span class="material-symbols-rounded">sell</span>${this.name}&nbsp;<span class="numPosts">${this.numPosts}</span>`;
+        tag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}&nbsp;<span class="numPosts">${this.numPosts}</span>`;
         document.querySelector('.tagsContainer').appendChild(tag);
         this.content = tag;
         this.addEventListeners();
@@ -31,7 +31,7 @@ class Tag {
             if (tagsToDelete.length > 0) {
                 document.getElementById("create-button").classList.remove("disabled");
             }
-            else{
+            else {
                 document.getElementById("create-button").classList.add("disabled");
             }
         });
@@ -86,7 +86,7 @@ async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
         return;
     }
 
-    document.querySelectorAll('.post').forEach((post) => { post.remove() });    
+    document.querySelectorAll('.post').forEach((post) => { post.remove() });
 
     console.log("Posts have been fetched");
     data.data.posts.forEach(post => {
@@ -97,7 +97,7 @@ async function fetchPosts(tagsList, isTechnical = 1, search = "", tags = []) {
             console.log(post.tags);
             console.log("TAGS");
             post.tags.forEach((tag) => {
-                deleteTagsDisplay.find(findTag(tag)).addPostNum();  
+                deleteTagsDisplay.find(findTag(tag)).addPostNum();
                 newtags.push(tagsList.find(findTag(tag)).name);
                 console.log(tag);
                 console.log("REPLACING TAGS");
@@ -182,18 +182,18 @@ fetchTags().then((tags) => {
                     tag.classList.toggle('selectedDel');
                     tagsToDelete = tagsToDelete.filter((e) => e !== tag.getAttribute("tagID"));
                 } else {
-                tag.classList.toggle('selectedDel');
-                tagsToDelete.push(tag.getAttribute("tagID"));
+                    tag.classList.toggle('selectedDel');
+                    tagsToDelete.push(tag.getAttribute("tagID"));
                 }
                 if (tagsToDelete.length > 0) {
                     document.getElementById("create-button").classList.remove("disabled");
                 }
-                else{
+                else {
                     document.getElementById("create-button").classList.add("disabled");
                 }
             } else {
-            tag.classList.toggle('selected');
-            updatePosts();
+                tag.classList.toggle('selected');
+                updatePosts();
             }
             console.log(tagsToDelete);
         })
@@ -236,13 +236,13 @@ function setUpPostsEventListeners() {
 }
 
 function findTag(tagID) {
-    return function(tag) {
+    return function (tag) {
         return tag.tagID === tagID;
     }
 }
 
 function findTagName(tagName) {
-    return function(tag) {
+    return function (tag) {
         return tag.name === tagName;
     }
 }
@@ -251,7 +251,7 @@ function findTagName(tagName) {
  * @param {Array} tags 
  */
 function renderPost(postID, title, author, isTechnical, tags) {
-    
+
     let post = document.createElement("div")
     post.classList.add("post")
     let postHTML = `
@@ -292,11 +292,11 @@ function renderPost(postID, title, author, isTechnical, tags) {
 
     post.innerHTML = postHTML;
 
-        post.setAttribute("data-postID", postID)
-        post.setAttribute("data-isTechnical", isTechnical)
+    post.setAttribute("data-postID", postID)
+    post.setAttribute("data-isTechnical", isTechnical)
 
-        postsContainer.appendChild(post)
-    }
+    postsContainer.appendChild(post)
+}
 
 
 
@@ -352,7 +352,7 @@ function confirmDelete() {
         let deleteButton = dialog.querySelector('#delete-button');
 
         closeButton.addEventListener('click', (event) => {
-            event.preventDefault(); 
+            event.preventDefault();
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
             reject();
@@ -394,7 +394,7 @@ function editTags() {
     let closeButton = dialog.querySelector('#close-button');
 
     closeButton.addEventListener('click', (event) => {
-        event.preventDefault(); 
+        event.preventDefault();
         dialog.style.transform = 'translateY(-1%)'
         dialog.style.opacity = '0';
         dialog.style.display = 'none';

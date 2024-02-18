@@ -22,7 +22,7 @@ class Tag {
         document.querySelector("#listOfTags").appendChild(newElement);
         this.newTag = newElement;
         this.addDeleteListener();
-        
+
     }
 
     addDeleteListener() {
@@ -35,28 +35,28 @@ class Tag {
             selectTags.push(this);
             this.addToSelect();
             organiseSelect();
-        }       
+        }
         const index = currentTags.indexOf(this);
         if (index !== -1) {
             currentTags.splice(index, 1);
         }
         console.log(currentTags);
         console.log("This is currentTags")
-        if (currentTags.length == 0){
+        if (currentTags.length == 0) {
             document.querySelector("#placeholderTag").classList.remove("norender")
         }
     }
 
-    async checkTemp(){
+    async checkTemp() {
         console.log("Checking tag: ", this.name);
         console.log("Tag ID: ", this.tagID);
-        if (this.tagID != 0){
+        if (this.tagID != 0) {
             return
         }
         this.tagID = await this.createTag(this.name);
     }
 
-    async createTag(tag){
+    async createTag(tag) {
         console.log("Creating tag: ", tag);
         var data = {
             "name": tag,
@@ -70,7 +70,7 @@ class Tag {
         return result.data.tagID;
     }
 
-    addToSelect(){
+    addToSelect() {
         const newSelectTag = document.createElement("div");
         newSelectTag.className = "name-card";
         newSelectTag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}`;
@@ -117,7 +117,7 @@ function getQueryParam() {
 }
 
 function findTag(tagID) {
-    return function(tag) {
+    return function (tag) {
         return tag.tagID === tagID;
     }
 }
@@ -139,31 +139,31 @@ function organiseSelect() {
     console.log(currentTags);
     selectTags.sort((a, b) => a.name.localeCompare(b.name));
     sleep(10).then(() => {
-    var input = document.querySelector("#input-tag").value.trim();
-    if (input === "") {
-        var index = 0;
-        selectTags.forEach((tag) => {
-            if (index < 5) {
-                tag.render();
-                index++;
-            } else {
-                tag.deRender();
-            }
-        });
-    } else {
-        var count = 0;
-        selectTags.forEach((tag) => {
-            if (count < 5 && tag.name.includes(input)) {
-                tag.render();
-                count++;
-            } else {
-                tag.deRender();
-            }
-        });
-    }
-});
+        var input = document.querySelector("#input-tag").value.trim();
+        if (input === "") {
+            var index = 0;
+            selectTags.forEach((tag) => {
+                if (index < 5) {
+                    tag.render();
+                    index++;
+                } else {
+                    tag.deRender();
+                }
+            });
+        } else {
+            var count = 0;
+            selectTags.forEach((tag) => {
+                if (count < 5 && tag.name.includes(input)) {
+                    tag.render();
+                    count++;
+                } else {
+                    tag.deRender();
+                }
+            });
+        }
+    });
 }
-    
+
 
 let tagsList = fetchTags();
 tagsList.then((tagsList) => {
@@ -208,7 +208,7 @@ tagsList.then((tagsList) => {
 
 
 
-async function getPostData(postID){
+async function getPostData(postID) {
     const data = await get_api(`/wiki/post.php/post/${postID}`);
     if (!data.success) {
         console.error("[getPostData] error fetching post: ", data.data);
@@ -228,10 +228,10 @@ async function getPostData(postID){
 var quill = new Quill('#editor', {
     modules: {
         'toolbar': [
-            [ 'bold', 'italic', 'underline'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet'}],
-            [{ 'header': '1' }, { 'header': '2' }, 'code-block' ],
-            [ 'link', 'image'],
+            ['bold', 'italic', 'underline'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'header': '1' }, { 'header': '2' }, 'code-block'],
+            ['link', 'image'],
         ]
     },
     theme: 'snow'
@@ -240,29 +240,29 @@ document.editor = quill;
 
 
 
-input.addEventListener("keydown", function(event) {
-if (event.key === "Enter") {
-    event.preventDefault();
-    tagContent = input.value.trim();
-    if (tagContent === "") {
-        return;
-    }
-    const tagExists = selectTags.find(tag => tag.name === tagContent);
-    console.log(tagExists);
-    console.log("This is tagExists")
-    if (tagExists) {
-        currentTags.push(tagExists);
-        tagExists.addTag();
-        selectTags = selectTags.filter(tag => tag.tagID !== tagExists.tagID);
-        tagExists.removeFromSelect();
-    }
-    else{
-        tempTag = new Tag(tagContent, 0);
-        currentTags.push(tempTag);
-        tempTag.addTag();
-    }
-    input.value = "";
-    organiseSelect();
+input.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        tagContent = input.value.trim();
+        if (tagContent === "") {
+            return;
+        }
+        const tagExists = selectTags.find(tag => tag.name === tagContent);
+        console.log(tagExists);
+        console.log("This is tagExists")
+        if (tagExists) {
+            currentTags.push(tagExists);
+            tagExists.addTag();
+            selectTags = selectTags.filter(tag => tag.tagID !== tagExists.tagID);
+            tagExists.removeFromSelect();
+        }
+        else {
+            tempTag = new Tag(tagContent, 0);
+            currentTags.push(tempTag);
+            tempTag.addTag();
+        }
+        input.value = "";
+        organiseSelect();
     }
     else if (event.key === "Backspace" && input.value === "") {
         currentTags.pop().removeTag();
@@ -294,7 +294,7 @@ async function updateTags(postID, data2) {
     console.log(response);
 }
 
-function submitPost(){
+function submitPost() {
     var title = document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value;
 
     const content = quill.getContents();
@@ -308,7 +308,7 @@ function submitPost(){
     });
 
 
-    var body = JSON.stringify(content);                       
+    var body = JSON.stringify(content);
     var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
     const checkTempPromises = currentTags.map((tag) => tag.checkTemp());
     Promise.all(checkTempPromises)
@@ -327,16 +327,16 @@ function submitPost(){
             console.log(data);
             var data2 = {
                 "tags": tagsToSubmit,
-            }; 
+            };
             console.log("Next bit is data2")
             console.log(data2);
             if (editing) {
                 let postID = getQueryParam();
                 updatePost(postID, data).then(() => {
-                updateTags(postID, data2).then(() => {
-                    window.location.href = "../";
+                    updateTags(postID, data2).then(() => {
+                        window.location.href = "../";
+                    });
                 });
-            });
             } else {
                 let postID = createPost(data);
                 postID.then((postID) => {
@@ -358,11 +358,11 @@ const sleep = (ms) => {
     });
 };
 
-document.querySelector(".search-input").addEventListener("focus", function() {
-   document.querySelector("#glass").classList.add("norender");
+document.querySelector(".search-input").addEventListener("focus", function () {
+    document.querySelector("#glass").classList.add("norender");
 });
 
-document.querySelector(".search-input").addEventListener("blur", function() {
+document.querySelector(".search-input").addEventListener("blur", function () {
     document.querySelector("#glass").classList.remove("norender");
 });
 
