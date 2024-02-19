@@ -335,6 +335,12 @@ firstNameChange.addEventListener('click', () => {
     firstNameConfirm.classList.remove('norender');
     firstNameInput.setAttribute('contenteditable', 'true');
     firstNameInput.classList.add('editable');
+    resetName(2);
+    secondNameChange.classList.remove('norender');
+    secondNameCancel.classList.add('norender');
+    secondNameConfirm.classList.add('norender');
+    secondNameInput.setAttribute('contenteditable', 'false');
+    secondNameInput.classList.remove('editable');
     firstNameInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -369,6 +375,12 @@ secondNameChange.addEventListener('click', () => {
     secondNameConfirm.classList.remove('norender');
     secondNameInput.setAttribute('contenteditable', 'true');
     secondNameInput.classList.add('editable');
+    resetName(1);
+    firstNameChange.classList.remove('norender');
+    firstNameCancel.classList.add('norender');
+    firstNameConfirm.classList.add('norender');
+    firstNameInput.setAttribute('contenteditable', 'false');
+    firstNameInput.classList.remove('editable');
     secondNameInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
