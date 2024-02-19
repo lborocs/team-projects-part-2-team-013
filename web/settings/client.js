@@ -213,7 +213,7 @@ async function getEmployee() {
         return res.data;
     } else {
     console.error("[getEmployee] failed to get employee", empID)
-}
+    }
 }
 
 
@@ -613,8 +613,8 @@ function avatarPopup() {
                     </form>
                 </div>
                 <div class="popup-buttons">
-                    <div class="text-button" id="popup-cancel">
-                        <div class="button-text">Cancel</div>
+                    <div class="text-button" id="popup-reset">
+                        <div class="button-text">Reset</div>
                     </div>
                     <div class="text-button blue" id="popup-confirm">
                         <div class="button-text">Confirm</div>
@@ -626,7 +626,7 @@ function avatarPopup() {
 
         let dialog = popupDiv.querySelector('.popup-dialog');
         let popupClose = dialog.querySelector('.close-button');
-        let popupCancel = dialog.querySelector('#popup-cancel');
+        let popupReset = dialog.querySelector('#popup-reset');
         let popupConfirm = dialog.querySelector('#popup-confirm');
         async function loadCurrentAvatar() {
             let avatar = dialog.querySelector('.avatar');
@@ -652,11 +652,22 @@ function avatarPopup() {
             reject();
         });
 
-        popupCancel.addEventListener('click', (event) => {
+        popupReset.addEventListener('click', async (event) => {
             event.preventDefault();
+            let avatar = document.querySelector('#user-icon-current');
+            console.log('reset button clicked');
+            resetAvatar();
+            setUserData();
+            let defaultAvatar = await setAvatar();
+            console.log('default avatar');
+            console.log(defaultAvatar);
+            avatar.src = defaultAvatar;
+            var userIcon = document.querySelector('#user-icon');
+            userIcon.src = defaultAvatar;
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
-            reject();
+            resolve();
+            
         });
 
         popupConfirm.addEventListener('click', (event) => {
@@ -687,6 +698,15 @@ async function updateAvatar(avatar) {
     let newAvatar = avatar.split(',')[1];
     const body = {
         avatar: newAvatar,
+    };
+    const data = await patch_api(`/employee/employee.php/employee/@me`, body);
+    console.log(data);
+    return data;
+}
+
+async function resetAvatar() {
+    const body = {
+        avatar: null,
     };
     const data = await patch_api(`/employee/employee.php/employee/@me`, body);
     console.log(data);

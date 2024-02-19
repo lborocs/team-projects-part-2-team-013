@@ -568,7 +568,11 @@ function showTaskInExplainer(taskCard) {
     let hours = Math.floor(manHours / 3600);
     let minutes = Math.round((manHours / 3600 - hours) * 60);
 
-    if (minutes > 0) {
+    if (manHours === 0 || manHours === null) {
+        timeDisplay = "Not set";
+    } else if (hours < 1) {
+        timeDisplay = `${minutes} Minute${minutes !== 1 ? 's' : ''}`;
+    } else if (minutes > 0) {
         timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`;
     } else {
         timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''}`;
@@ -1076,11 +1080,11 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
-        assignmentElem.classList.add("tooltip", "tooltip-under");
 
         if (usersAssigned) {
             let count = taskUserCount.get(assignment.task.taskID) || 0;
             if (count < 3) {
+                assignmentElem.classList.add("tooltip", "tooltip-under");
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
 
@@ -1092,6 +1096,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
                 }
 
             } else if (count === 3) {
+                assignmentElem.classList.add("tooltip", "tooltip-left");
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
 
                 const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");

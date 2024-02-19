@@ -172,31 +172,31 @@ input {
 }
 
 .tooltip.tooltip-right .tooltiptext {
-    top: 50%;
-    left: 100%;
-    transform: translate(0, -50%);
+    top: 100%;
+    right: -400%;
+    transform: translate(0, 0);
 }
 
-.tooltip.tooltip-right .tooltiptext::after{
-    top: 50%;
-    right: 100%;
+.tooltip.tooltip-right .tooltiptext::after {
+    bottom: 100%;
+    right: 75%;
     margin-top: -5px;
     border-style: solid;
-    border-color: transparent #2f2f2fcc transparent transparent;
+    border-color: transparent transparent #2f2f2fcc transparent;
 }
 
 .tooltip.tooltip-left .tooltiptext {
-    top: 50%;
-    right: 125%;
-    transform: translate(0, -50%);
+    top: 100%;
+    right: -5.75em;
+    transform: translate(0, 0);
 }
 
-.tooltip.tooltip-left .tooltiptext::after{
-    top: 50%;
-    left: 100%;
+.tooltip.tooltip-left .tooltiptext::after {
+    bottom: 100%;
+    left: 92%;
     margin-top: -5px;
     border-style: solid;
-    border-color: transparent transparent transparent #2f2f2fcc;
+    border-color: transparent transparent #2f2f2fcc transparent;
 }
 
 .tooltip.tooltip-above .tooltiptext {
