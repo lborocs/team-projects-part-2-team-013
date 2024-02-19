@@ -1,4 +1,3 @@
-import { search } from "../global-topbar.js";
 import * as global from "../global-ui.js";
 import { animate, getEmployeesById } from "../global-ui.js";
 
@@ -2562,8 +2561,7 @@ function deleteTaskFromExplainer() {
 
 function deleteTask(taskID) {
     console.log("[deleteTask] deleting task " + taskID);
-    let selectedProject = document.querySelector(".project-row.selected");
-    let projID = selectedProject.getAttribute("data-ID");
+    let projID = globalCurrentProject.projID;
 
 
     delete_api(`/project/task.php/task/${projID}/${taskID}`);
@@ -3679,5 +3677,27 @@ async function getProjectPreferences() {
     console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${sortAttribute}`);
     console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
 }
+
+async function getArchived(projID){
+    let res = await get_api(`/project/task.php/tasks/${projID}?archived=1`);
+    return res.data.tasks;
+}
+
+let archiveButton = document.getElementById("view-archived-button");
+archiveButton.addEventListener("click", async () => {
+    if(archiveButton.classList.contains("active")){
+        console.log("[archiveButton] clicked");
+        archiveButton.classList.remove("active");
+        let projID = globalCurrentProject.projID;
+        let tasks = fetchTasks(projID)
+        renderTasks(globalTasksList);
+    } else {
+        console.log("[archiveButton] clicked");
+        archiveButton.classList.add("active");
+        let projID = globalCurrentProject.projID;
+        let tasks = await getArchived(projID);
+        renderTasks(tasks);
+    }
+});
 
 getProjectPreferences();
