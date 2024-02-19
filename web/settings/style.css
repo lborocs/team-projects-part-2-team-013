@@ -389,7 +389,7 @@
 }
 
 .editable{
-    border: black 1px solid;
+    border: rgb(124, 124, 124) 1px solid;
     width: 80%;
     border-radius: 0.2em;
     cursor: text;
