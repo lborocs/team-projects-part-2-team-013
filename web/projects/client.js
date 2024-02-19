@@ -3315,14 +3315,14 @@ async function getProjectPreferences() {
     const prefDirection = await global.preferences.get('projectOrder');
     sortAttribute = prefSort.or_default();
     sortDirection = prefDirection.or_default();
-    let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
+    let sortColumn = document.querySelector(`[data-attribute="${sortAttribute}"]`);
     sortColumn.classList.add('sorting-by');
     if (sortDirection === 'asc') {
         sortColumn.classList.add('asc');
     } else {
         sortColumn.classList.add('desc');
     }
-    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${attributeSearch}`);
+    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${sortAttribute}`);
     console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
 }
 
