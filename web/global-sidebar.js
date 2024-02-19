@@ -39,7 +39,7 @@ wiki.setAttribute('href', '/wiki/');
 export const dashboard = document.createElement('a')
 dashboard.classList.add('sidebar-item', 'manager-only', 'norender')
 dashboard.id = 'workload';
-dashboard.setAttribute('href', '/dashboard/overview/');
+dashboard.setAttribute('href', '/dashboard/');
 
 export const training = document.createElement('a')
 training.classList.add('sidebar-item', 'manager-only', 'norender')

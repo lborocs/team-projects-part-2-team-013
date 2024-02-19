@@ -450,7 +450,7 @@ async function renderAssignmentsInExplainer(taskID) {
 
 function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
-    console.error("[setUpTaskEventListeners] setting up event listeners")
+    console.log("[setUpTaskEventListeners] setting up event listeners")
 
     // card view
     if (listeners & RENDER_COLUMN) {
@@ -769,7 +769,7 @@ async function renderTasks(tasks, update = RENDER_BOTH) {
     await Promise.all(tasks.map((task) => {
         taskObjectRenderAll(task, update)
     }));
-    setUpTaskEventListeners();
+    setUpTaskEventListeners(update);
     await renderAssignments(globalAssignments, update);
 }
 
@@ -1233,7 +1233,6 @@ function taskListSortBy(sortObject) {
     }
     
     let sortDirection = !(cl.contains("asc"));
-    console.error(sortDirection)
     
     let sortBy = sortObject.id;
     let tasks = globalTasksList;
@@ -1255,7 +1254,7 @@ function taskListSortBy(sortObject) {
     tasks.forEach(async (task) => {
         taskObjectRenderAll(task, RENDER_LIST);
     });
-    setUpTaskEventListeners();
+    setUpTaskEventListeners(RENDER_LIST);
     renderAssignments(globalAssignments, RENDER_LIST);
     animate(document.querySelector(".tasktable-body"), "flash");
 }
@@ -1410,11 +1409,11 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     <div class="item action-delete">
                         <div class="icon">
                             <span class="material-symbols-rounded">
-                                delete
+                                inventory_2
                             </span>
                         </div>
                         <div class="text">
-                            Delete
+                            Archive
                         </div>
                     </div>
                     <div class="divider"></div>
@@ -1688,8 +1687,24 @@ async function renderProject(project) {
                 </div>
             </a>
         </td>
-        <td>${date}</td>
-        <td>${dueDateFormatted}</td>
+        <td>
+            <a href="/projects/#${project.projID}">
+                <div class="name-card">
+                    <div class="name">
+                        ${date}
+                    </div>
+                </div>
+            </a>
+        </td>
+        <td>
+            <a href="/projects/#${project.projID}">
+                <div class="name-card">
+                    <div class="name">
+                        ${dueDateFormatted}
+                    </div>
+                </div>
+            </a>
+        </td>
         <td>
             <a href="/projects/#${project.projID}">
                 <div class="tooltip tooltip-above name-card">
@@ -1940,7 +1955,11 @@ async function addTask() {
 
     //flatpickr for date picker
     let datePickerInput = popupDiv.querySelector('.date-picker-input')
+
+    let projectDueDate = globalCurrentProject.dueDate ? new Date(globalCurrentProject.dueDate) : new Date();
+
     let fp = flatpickr(datePickerInput, {
+        defaultDate: projectDueDate,
         dateFormat: 'd/m/Y',
         altInput: true,
         altFormat: 'F j, Y',
@@ -2223,14 +2242,14 @@ function confirmDelete() {
         console.log("[confirmDelete] before popup")
         popupDiv.innerHTML = `
             <dialog open class='popupDialog' id="delete-popup">
-                <div>Are you sure you want to delete this task?</div>
+                <div>Are you sure you want to archive this task?</div>
                 <div><strong>This change cannot be undone.</strong></div>
                 <form method="dialog" class = "buttonForm">
                     <div class="text-button" id="closeButton">
                     <div class="button-text">Cancel</div>
                     </div>
                     <div class="text-button red" id="deleteButton">
-                    <div class="button-text">Delete</div> 
+                    <div class="button-text">Archive</div> 
                     </div>
                 </form>
             </dialog>
@@ -2881,10 +2900,10 @@ async function projectPopup(id){
                 <div class="created-at view-only">
                     Project created ${new Date(project.createdAt).toLocaleDateString()}
                 </div>
-                <div class="text-button edit-only red" id="delete-button">
+                <div class="text-button edit-only" id="delete-button">
                     <div class="button-icon">
                         <span class="material-symbols-rounded">
-                            delete
+                            inventory_2
                         </span>
                     </div>
                     <div class="button-text">

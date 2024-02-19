@@ -12,6 +12,12 @@
     width: 100%;
 }
 
+.tab {
+    text-decoration: none;
+    color: inherit;
+}
+
+
 .tab-selector {
     gap: 0.5em;
     padding: 0.5rem;

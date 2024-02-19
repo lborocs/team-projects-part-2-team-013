@@ -191,6 +191,10 @@
         }
     }
 
+    .title.training-only {
+        margin-left: 1rem;
+    }
+
     .time-selection {
         display: flex;
         flex-direction: row;
@@ -558,6 +562,32 @@ a {
 
 
 }
+
+
+.tabs {
+    margin-right: auto;
+    margin-left: 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    .tab {
+        border-radius: 5px;
+        padding: 0.5rem;
+        transition: background-color 0.1s ease-out;
+
+    }
+
+    .tab.selected {
+        background-color: var(--light-gray-bg, #f1f1f1);
+
+    }
+}
+
+
+
 
 
 
