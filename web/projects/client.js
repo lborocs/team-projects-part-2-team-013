@@ -27,7 +27,6 @@ let sortArray = [titleButton, dateButton, statusButton, assigneesButton];
 
 //single things
 const taskGrid = document.querySelector(".taskgrid")
-const taskGridWrapper = document.querySelector(".taskgrid-wrapper")
 const taskList = document.querySelector(".tasklist")
 const taskTable = document.querySelector(".tasktable")
 const taskTableBody = document.querySelector(".tasktable-body")
@@ -199,10 +198,10 @@ views.forEach((view, i) => {
         })
         console.log("[viewOnClick] selected")
 
-        taskGridWrapper.classList.toggle("fade")
+        taskGrid.classList.toggle("fade")
         taskList.classList.toggle("fade")
         setTimeout(() => {
-            taskGridWrapper.classList.toggle("norender")
+            taskGrid.classList.toggle("norender")
             taskList.classList.toggle("norender")
         }, 50)
     })
@@ -220,8 +219,8 @@ views.forEach((view, i) => {
 
             boardViewButton.classList.remove("selected");
             listViewButton.classList.add("selected");
-            taskGridWrapper.classList.add("fade");
-            taskGridWrapper.classList.add("norender");
+            taskGrid.classList.add("fade");
+            taskGrid.classList.add("norender");
             taskList.classList.remove("fade");
             taskList.classList.remove("norender");
             
@@ -455,14 +454,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
     // card view
     if (listeners & RENDER_COLUMN) {
         //enable horizontal scrolling on the task card
-        if(taskGridWrapper.scrollHeight <= taskGridWrapper.clientHeight) {
-            taskGridWrapper.addEventListener("wheel", (event) => {
-                event.preventDefault();
-                taskGridWrapper.scrollBy({
-                    left: event.deltaY < 0 ? -30 : 30,
-                })
-            });
-        }
+        
         taskCards = document.querySelectorAll(".task");
         taskCards.forEach((taskCard) => {
 
@@ -2189,7 +2181,6 @@ if (mediaQueryMobile.matches) {
     boardViewButton.classList.remove("selected");
     boardViewButton.classList.add("norender");
     listViewButton.classList.add("selected");
-    taskGridWrapper.classList.add("norender");
     taskList.classList.remove("norender");
     taskList.classList.remove("fade");
     boardViewButton.classList.add("norender")
