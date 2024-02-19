@@ -115,6 +115,8 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         console.error(`[renderIndividualProject] Error fetching tasks`);
         return false;
     }
+    globalTasksList = tasks;
+
     
     const attributeSearch = await global.preferences.get_or_default('tasksort');
     const sortDirection = await global.preferences.get_or_default('taskdirection');
@@ -128,9 +130,8 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         sortColumn.classList.add("asc")
     }
 
-    await renderTasks(tasks);
+    taskListSortBy(sortColumn);
     console.log("[renderIndividualProject] fetched & rendered tasks for " + project.name)
-    globalTasksList = tasks;
     console.log("global tasks list:")
     console.log(globalTasksList)
 
@@ -262,7 +263,6 @@ function explainerTaskSetToDefault() {
 }
 
 function getTaskState(task) {
-
     let taskState = task.getAttribute("data-state");
     if (taskState == null) {
         console.error("[getTaskState] task has no state");
@@ -1171,60 +1171,60 @@ function setupDropdownEventListeners(taskRow) {
 
 sortArray.forEach((sortObject) => {
     sortObject.addEventListener("click", () => {
-        const cl = sortObject.classList;
-        const symbol = sortObject.querySelector('.material-symbols-rounded');
-        if (cl.contains("sorting-by")) {
-            if(cl.contains("desc")) {
-                cl.remove("desc");
-                cl.add("asc");
-                if (symbol) symbol.innerHTML = "arrow_upward";
-            } else {
-                cl.remove("asc");
-                cl.add("desc");
-                if (symbol) symbol.innerHTML = "arrow_downward";
-            }
-        } else  {
-            sortArray.forEach((sortObject) => {
-                sortObject.classList.remove("sorting-by", "asc", "desc");
-                const otherSymbol = sortObject.querySelector('.material-symbols-rounded');
-                if (otherSymbol) otherSymbol.innerHTML = "swap_vert";
-            });
-            cl.add("sorting-by", "desc");
-            if (symbol) symbol.innerHTML = "arrow_downward";
-        }
-        
-        let sortDirection = !(cl.contains("asc"));
-        console.error(sortDirection)
-        
-        let sortBy = sortObject.id;
-        let tasks = globalTasksList;
-        if (sortBy == "title-column") {
-            sortByTitle(tasks, sortDirection);
-        } else if (sortBy == "date-column") {
-            sortByDueDate(tasks, sortDirection);
-        } else if (sortBy == "status-column") {
-            sortByState(tasks, sortDirection);
-        } else if (sortBy == "assignees-column") {
-            sortByAssignees(tasks, sortDirection);
-        } else {
-            console.error("invalid sort criteria");
-        }
-        taskRows = document.querySelectorAll(".taskRow");
-        taskRows.forEach((task) => {
-            task.remove();
-        });
-        tasks.forEach(async (task) => {
-            await new Promise((resolve) => {
-                taskObjectRenderAll(task, RENDER_LIST);
-                resolve();
-            })
-            
-        });
-        setUpTaskEventListeners();
-        renderAssignments(globalAssignments, RENDER_LIST);
-        animate(document.querySelector(".tasktable-body"), "flash");
+        taskListSortBy(sortObject)
     })
 })
+
+function taskListSortBy(sortObject) {
+    const cl = sortObject.classList;
+    const symbol = sortObject.querySelector('.material-symbols-rounded');
+    if (cl.contains("sorting-by")) {
+        if(cl.contains("desc")) {
+            cl.remove("desc");
+            cl.add("asc");
+            if (symbol) symbol.innerHTML = "arrow_upward";
+        } else {
+            cl.remove("asc");
+            cl.add("desc");
+            if (symbol) symbol.innerHTML = "arrow_downward";
+        }
+    } else  {
+        sortArray.forEach((sortObject) => {
+            sortObject.classList.remove("sorting-by", "asc", "desc");
+            const otherSymbol = sortObject.querySelector('.material-symbols-rounded');
+            if (otherSymbol) otherSymbol.innerHTML = "swap_vert";
+        });
+        cl.add("sorting-by", "desc");
+        if (symbol) symbol.innerHTML = "arrow_downward";
+    }
+    
+    let sortDirection = !(cl.contains("asc"));
+    console.error(sortDirection)
+    
+    let sortBy = sortObject.id;
+    let tasks = globalTasksList;
+    if (sortBy == "title-column") {
+        sortByTitle(tasks, sortDirection);
+    } else if (sortBy == "date-column") {
+        sortByDueDate(tasks, sortDirection);
+    } else if (sortBy == "status-column") {
+        sortByState(tasks, sortDirection);
+    } else if (sortBy == "assignees-column") {
+        sortByAssignees(tasks, sortDirection);
+    } else {
+        console.error("invalid sort criteria");
+    }
+    taskRows = document.querySelectorAll(".taskRow");
+    taskRows.forEach((task) => {
+        task.remove();
+    });
+    tasks.forEach(async (task) => {
+        taskObjectRenderAll(task, RENDER_LIST);
+    });
+    setUpTaskEventListeners();
+    renderAssignments(globalAssignments, RENDER_LIST);
+    animate(document.querySelector(".tasktable-body"), "flash");
+}
 
 
 function sortByCreatedAt(tasks, descending) {
@@ -1418,7 +1418,9 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
             </div>
         </div>
     `
-    
+    if(state == 2) {
+        task.querySelector(".submenu").classList.add("menu-left");
+    }
 
     let statusIcon;
     let overdueContainerClass = "";
