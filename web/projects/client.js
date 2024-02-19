@@ -444,222 +444,227 @@ async function renderAssignmentsInExplainer(taskID) {
     });
 }
 
-function setUpTaskEventListeners() {
+function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
-    console.log("[setUpTaskEventListeners] setting up event listeners")
+    console.error("[setUpTaskEventListeners] setting up event listeners")
 
-    taskCards = document.querySelectorAll(".task");
-    taskCards.forEach((taskCard) => {
+    // card view
+    if (listeners & RENDER_COLUMN) {
+        taskCards = document.querySelectorAll(".task");
+        taskCards.forEach((taskCard) => {
 
-        let contextMenuButton = taskCard.querySelector(".context-menu");
-        let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
+            let contextMenuButton = taskCard.querySelector(".context-menu");
+            let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
 
-        contextMenuButton.addEventListener("click", (e) => {
-            e.stopPropagation();
-            //closes the rest of them first
-            let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
-            contextMenus.forEach(menu => {
-                if (menu !== contextMenuPopover) {
-                    menu.classList.remove("visible");
-                    menu.parentElement.classList.remove("active");
-                }
-            });
-            contextMenuPopover.classList.toggle("visible");
-            contextMenuButton.classList.toggle("active");
-        });
-
-        //stops the context menu from closing when you click on the options
-        let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
-        contextMenuItems.forEach(item => {
-            let timeoutId;
-            item.addEventListener("pointerup", (e) => {
+            contextMenuButton.addEventListener("click", (e) => {
                 e.stopPropagation();
-                console.log("[contextMenuItemOnClick] clicked")
-
-                if (item.classList.contains("action-edit")) {
-                    console.log("[contextMenuItemOnClick] edit clicked")
-                    showTaskInExplainer(taskCard);
-                    editTaskPopup(globalCurrentTask);
-                    
-
-                } else if (item.classList.contains("action-delete")) {
-                    console.log("[contextMenuItemOnClick] delete clicked")
-
-                    let taskID = taskCard.getAttribute("id");
-                    confirmDelete().then(() => {
-                        deleteTask(taskID)
-                        taskCard.remove()
-                        calculateTaskCount()
-                    }).catch((e) => {
-                        console.log('[DeleteTaskButtonsClick] Deletion cancelled');
-                        console.log(e)
-                    });
-
-
-                } else if (item.classList.contains("action-copy")) {
-                    console.log("[contextMenuItemOnClick] copy clicked")
-
-                    if(timeoutId) {
-                        clearTimeout(timeoutId);
+                //closes the rest of them first
+                let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+                contextMenus.forEach(menu => {
+                    if (menu !== contextMenuPopover) {
+                        menu.classList.remove("visible");
+                        menu.parentElement.classList.remove("active");
                     }
+                });
+                contextMenuPopover.classList.toggle("visible");
+                contextMenuButton.classList.toggle("active");
+            });
 
-                    let taskID = taskCard.getAttribute("id");
-                    let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
-                    navigator.clipboard.writeText(link)
+            //stops the context menu from closing when you click on the options
+            let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
+            contextMenuItems.forEach(item => {
+                let timeoutId;
+                item.addEventListener("pointerup", (e) => {
+                    e.stopPropagation();
+                    console.log("[contextMenuItemOnClick] clicked")
 
-                    item.querySelector(".text").innerHTML = "Copied!"
-                    timeoutId = setTimeout(() => {
-                        item.querySelector(".text").innerHTML = "Copy Link"
-                    }, 1000)
+                    if (item.classList.contains("action-edit")) {
+                        console.log("[contextMenuItemOnClick] edit clicked")
+                        showTaskInExplainer(taskCard);
+                        editTaskPopup(globalCurrentTask);
+                        
+
+                    } else if (item.classList.contains("action-delete")) {
+                        console.log("[contextMenuItemOnClick] delete clicked")
+
+                        let taskID = taskCard.getAttribute("id");
+                        confirmDelete().then(() => {
+                            deleteTask(taskID)
+                            taskCard.remove()
+                            calculateTaskCount()
+                        }).catch((e) => {
+                            console.log('[DeleteTaskButtonsClick] Deletion cancelled');
+                            console.log(e)
+                        });
 
 
-                } else if (item.classList.contains("action-open")) {
-                    console.log("[contextMenuItemOnClick] open clicked")
+                    } else if (item.classList.contains("action-copy")) {
+                        console.log("[contextMenuItemOnClick] copy clicked")
 
-                    let taskID = taskCard.getAttribute("id");
-                    let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
-                    window.open(link, "_blank")
+                        if(timeoutId) {
+                            clearTimeout(timeoutId);
+                        }
 
-                } else if (!item.classList.contains("disabled")) {
-                    if (item.classList.contains("not-started-state")) {
-                        console.log("[contextMenuItemOnClick] not started clicked")
-                    } else if (item.classList.contains("in-progress-state")) {
-                        console.log("[contextMenuItemOnClick] in progress clicked")
-                    } else if (item.classList.contains("finished-state")) {
-                        console.log("[contextMenuItemOnClick] finished clicked")
+                        let taskID = taskCard.getAttribute("id");
+                        let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
+                        navigator.clipboard.writeText(link)
+
+                        item.querySelector(".text").innerHTML = "Copied!"
+                        timeoutId = setTimeout(() => {
+                            item.querySelector(".text").innerHTML = "Copy Link"
+                        }, 1000)
+
+
+                    } else if (item.classList.contains("action-open")) {
+                        console.log("[contextMenuItemOnClick] open clicked")
+
+                        let taskID = taskCard.getAttribute("id");
+                        let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
+                        window.open(link, "_blank")
+
+                    } else if (!item.classList.contains("disabled")) {
+                        if (item.classList.contains("not-started-state")) {
+                            console.log("[contextMenuItemOnClick] not started clicked")
+                        } else if (item.classList.contains("in-progress-state")) {
+                            console.log("[contextMenuItemOnClick] in progress clicked")
+                        } else if (item.classList.contains("finished-state")) {
+                            console.log("[contextMenuItemOnClick] finished clicked")
+                        }
+                    } else {
+                        console.log("[contextMenuItemOnClick] no known action")
                     }
-                } else {
-                    console.log("[contextMenuItemOnClick] no known action")
-                }
+                });
             });
-        });
 
-        //have to include mouse up and down this is crazy event propagation
-        contextMenuButton.addEventListener("pointerup", (e) => {
-            e.stopPropagation();
-        });
-
-        contextMenuButton.addEventListener("pointerdown", (e) => {
-            e.stopPropagation();
-        });
-
-        let taskStatusContainers = taskCard.querySelectorAll(".status-container");
-        taskStatusContainers.forEach((icon) => {
-
-            icon.addEventListener("pointerdown", (e) => {
+            //have to include mouse up and down this is crazy event propagation
+            contextMenuButton.addEventListener("pointerup", (e) => {
                 e.stopPropagation();
             });
 
-            icon.addEventListener("pointerup", (e) => {
+            contextMenuButton.addEventListener("pointerdown", (e) => {
                 e.stopPropagation();
             });
-        
-        })
 
-        //closes the context menu if they click outside
-        document.addEventListener("pointerup", (e) => {
-            if (!contextMenuButton.contains(e.target)) {
-                contextMenuPopover.classList.remove("visible");
-                contextMenuButton.classList.remove("active");
-            }
-        });
+            let taskStatusContainers = taskCard.querySelectorAll(".status-container");
+            taskStatusContainers.forEach((icon) => {
 
-        taskCard.addEventListener("contextmenu", (e) => {
-            e.preventDefault(); //stop the browser putting its own right click menu over the top
-            e.stopPropagation();
-        
-            //closes the rest of them first
-            let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
-            contextMenus.forEach(menu => {
-                if (menu !== contextMenuPopover) {
-                    menu.classList.remove("visible");
-                    menu.parentElement.classList.remove("active");
+                icon.addEventListener("pointerdown", (e) => {
+                    e.stopPropagation();
+                });
+
+                icon.addEventListener("pointerup", (e) => {
+                    e.stopPropagation();
+                });
+            
+            })
+
+            //closes the context menu if they click outside
+            document.addEventListener("pointerup", (e) => {
+                if (!contextMenuButton.contains(e.target)) {
+                    contextMenuPopover.classList.remove("visible");
+                    contextMenuButton.classList.remove("active");
                 }
             });
-        
-            contextMenuPopover.classList.toggle("visible");
-            contextMenuButton.classList.toggle("active");
-        });
 
-
-        taskCard.addEventListener("pointerdown", (e) => {
-            //if the target is the context menu button, dont show the explainer
-            if (e.target.classList.contains("context-menu")) {
-                return
-            }
-
-            taskCards.forEach((card) => {
-                card.classList.remove("clicked")
-                card.classList.remove("task-focussed")
-            })
-            taskCard.classList.add("clicked")
-            taskCard.classList.add("task-focussed")
-        });
-        taskCard.addEventListener("click", (e) => {
-
-            if (e.target.classList.contains("context-menu")) {
-                return
-            }
-
-            if (taskCard.classList.contains("beingdragged")) {
-                return
-            }
-
-            //right click
-            if (e.button == 2) {
-                return
-            }
-
-            // console.log(explainer)
-            explainer.classList.remove("hidden")
-            overlay.classList.remove("norender")
+            taskCard.addEventListener("contextmenu", (e) => {
+                e.preventDefault(); //stop the browser putting its own right click menu over the top
+                e.stopPropagation();
             
-            taskCards.forEach((card) => {
-                card.classList.remove("clicked")
-            })
-
-            showTaskInExplainer(taskCard);
+                //closes the rest of them first
+                let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+                contextMenus.forEach(menu => {
+                    if (menu !== contextMenuPopover) {
+                        menu.classList.remove("visible");
+                        menu.parentElement.classList.remove("active");
+                    }
+                });
             
+                contextMenuPopover.classList.toggle("visible");
+                contextMenuButton.classList.toggle("active");
+            });
+
+
+            taskCard.addEventListener("pointerdown", (e) => {
+                //if the target is the context menu button, dont show the explainer
+                if (e.target.classList.contains("context-menu")) {
+                    return
+                }
+
+                taskCards.forEach((card) => {
+                    card.classList.remove("clicked")
+                    card.classList.remove("task-focussed")
+                })
+                taskCard.classList.add("clicked")
+                taskCard.classList.add("task-focussed")
+            });
+            taskCard.addEventListener("click", (e) => {
+
+                if (e.target.classList.contains("context-menu")) {
+                    return
+                }
+
+                if (taskCard.classList.contains("beingdragged")) {
+                    return
+                }
+
+                //right click
+                if (e.button == 2) {
+                    return
+                }
+
+                // console.log(explainer)
+                explainer.classList.remove("hidden")
+                overlay.classList.remove("norender")
+                
+                taskCards.forEach((card) => {
+                    card.classList.remove("clicked")
+                })
+
+                showTaskInExplainer(taskCard);
+                
+            });
+
+            taskCard.addEventListener("dragstart", () => {
+                taskCard.classList.add("beingdragged");
+            });
+
+            taskCard.addEventListener("dragend", () => {
+                taskCard.classList.remove("beingdragged");
+                taskCard.classList.remove("clicked");
+
+                taskColumns.forEach((column) => {
+                    column.classList.remove("highlight")
+                })
+
+                if (taskCard.getAttribute("id") !== explainerTaskContainer.getAttribute("task-id")) {
+                    taskCard.classList.remove("task-focussed");
+                }
+
+                updateTaskState(taskCard);
+                calculateTaskCount()
+            });
         });
-
-        taskCard.addEventListener("dragstart", () => {
-            taskCard.classList.add("beingdragged");
-        });
-
-        taskCard.addEventListener("dragend", () => {
-            taskCard.classList.remove("beingdragged");
-            taskCard.classList.remove("clicked");
-
-            taskColumns.forEach((column) => {
-                column.classList.remove("highlight")
-            })
-
-            if (taskCard.getAttribute("id") !== explainerTaskContainer.getAttribute("task-id")) {
-                taskCard.classList.remove("task-focussed");
-            }
-
-            updateTaskState(taskCard);
-            calculateTaskCount()
-        });
-    });
+    }
 
     //list view
-    taskRows = document.querySelectorAll(".taskRow");
-    taskRows.forEach((taskRow) => {
-        taskRow.addEventListener("pointerdown", () => {
-            console.log("[taskRowOnMouseDown] clicked")
-            //taskRow.classList.add("clicked")
-        });
+    if (listeners & RENDER_LIST) {
+        taskRows = document.querySelectorAll(".taskRow");
+        taskRows.forEach((taskRow) => {
+            taskRow.addEventListener("pointerdown", () => {
+                console.log("[taskRowOnMouseDown] clicked")
+                //taskRow.classList.add("clicked")
+            });
 
-        taskRow.addEventListener("pointerup", () => {
-            //show explainer
-            console.log("[taskRowOnTouchStart] clicked")
-            // taskRows.forEach((row) => {
-            //     row.classList.remove("clicked")
-            // })
-            showTaskInExplainer(taskRow);
+            taskRow.addEventListener("pointerup", () => {
+                //show explainer
+                console.log("[taskRowOnTouchStart] clicked")
+                // taskRows.forEach((row) => {
+                //     row.classList.remove("clicked")
+                // })
+                showTaskInExplainer(taskRow);
+            });
         });
-    });
+    }
 }
 
 
@@ -736,10 +741,10 @@ async function fetchTasks(projID) {
         console.log(`[fetchTasks] tasks have been fetched for ${projID}`)
         if (data.data.contains_assignments) {
             globalAssignments = data.data.assignments;
-
+            
             data.data.tasks.forEach((task) => {
                 task.assignments = [];
-                data.data.assignments.forEach((assignment) => {
+                globalAssignments.forEach((assignment) => {
                     if (assignment.task.taskID === task.taskID) {
                         task.assignments.push(assignment.employee.empID);
                     }
