@@ -113,7 +113,7 @@ if (items !== null) {
             return
         }
 
-        if (item.getAttribute('href') === window.location.pathname) {
+        if (window.location.pathname.startsWith(item.getAttribute('href'))) {
             item.classList.add("selected")
         }
     })
