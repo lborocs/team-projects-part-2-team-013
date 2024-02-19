@@ -22,9 +22,6 @@ right.classList.add('right');
 export const hamburger = document.createElement('div')
 hamburger.id = 'hamburger';
 
-export const mobileBack = document.createElement('div')
-mobileBack.id = 'mobile-back';
-
 export const breadcrumb = document.createElement('div')
 breadcrumb.classList.add('breadcrumb');
 
@@ -43,9 +40,6 @@ notificationPopover.tabIndex = -1;
 export const userAvatar = document.createElement('div')
 userAvatar.classList.add('item');
 userAvatar.id = 'user-icon-container';
-
-mobileBack.innerHTML = `<span class="material-symbols-rounded">arrow_back</span>`;
-
 
 hamburger.innerHTML = `<span class="material-symbols-rounded">menu</span>`
 
@@ -85,7 +79,6 @@ notificationPopover.innerHTML = `
 
 left.appendChild(hamburger);
 left.appendChild(logo);
-left.appendChild(mobileBack);
 left.appendChild(breadcrumb);
 
 right.appendChild(search);
