@@ -264,7 +264,12 @@ function r_session_register_otp(RequestContext $ctx, string $args) {
 
     $token = auth_signup_create_token($email, SIGNUP_MODE::SIGNUP_SELF);
 
-    $message = "Please click the following link to complete your registration process, this link will expire in 30 minutes: https://013.team/register/#". $token;
+    if (db_account_fetch($email)) {
+        $message = "Someone tried to register with your email, if this was you please reset your password, if this was not you can safely ignore this email.";
+    } else {
+        $message = "Please click the following link to complete your registration process, this link will expire in 30 minutes: https://013.team/register/#". $token;
+    }
+
 
     send_email($email, $email, "Your registration verification", $message);
 
@@ -387,6 +392,36 @@ function r_session_reset_password(RequestContext $ctx, string $args) {
     }
 }
 
+function r_employee_invite(RequestContext $ctx, string $args) {
+    $ctx->body_require_fields_as_types([
+        "email"=>"string",
+    ]);
+
+    $email = $ctx->request_body["email"];
+
+    validate_email($email);
+
+    if (db_account_fetch($email)) {
+        respond_bad_request(
+            "An account with that email already exists",
+            ERROR_ACCOUNT_ALREADY_EXISTS
+        );
+    }
+
+    $token = auth_signup_create_token($email, SIGNUP_MODE::SIGNUP_INVITED);
+
+    $inviter = db_employee_fetch($ctx->session->hex_associated_user_id);
+
+    $name = $inviter["firstName"] ?? "" . " " . $inviter["lastName"];
+
+    $message = "$name has invited to register for Make-It-All, click here to complete your registration, this link will expire in 5 days: https://013.team/register/#". $token;
+
+    send_email($email, $email, "Your invitation to 013.team", $message);
+
+    respond_no_content();
+
+}
+
 function r_session_204(RequestContext $ctx, string $args) {
     respond_no_content();
 }
@@ -395,11 +430,12 @@ register_route(new Route(["POST"], "/login", "r_session_login", 0, ["REQUIRES_BO
 register_route(new Route(["DELETE", "GET", "PUT"], "/session", "r_session_session", 1));
 register_route(new Route(["POST"], "/otp", "r_session_otp", 1, ["REQUIRES_BODY"]));
 register_route(new Route(["PATCH", "GET"], "/account", "r_session_account", 1, ["REQUIRES_BODY"]));
-register_route(new Route(["GET"], "/generate_204", "r_session_204", 0));
 register_route(new Route(["GET", "POST"], "/register", "r_session_register", 0, ["REQUIRES_BODY"]));
 register_route(new Route(["POST", "PATCH", "PUT"], "/resetpassword", "r_session_reset_password", 0, ["REQUIRES_BODY"]));
 register_route(new Route(["POST"], "/logoutall", "r_session_logout_all", 1));
 register_route(new Route(["POST"], "/verifyemail", "r_session_register_otp", 0, ["REQUIRES_BODY"]));
+register_route(new Route(["POST"], "/invite", "r_employee_invite", 1, ["REQUIRES_BODY"]));
+register_route(new Route(["GET"], "/generate_204", "r_session_204", 0));
 
 
 contextual_run();
