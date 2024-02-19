@@ -125,9 +125,7 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     sortColumn.classList.add("sorting-by");
     if (sortDirection === 'desc') {
         sortColumn.classList.add("desc");
-        console.error("CUMMM")
     } else {
-        console.error("NOOOOOO")
         sortColumn.classList.add("asc")
     }
 
@@ -265,7 +263,6 @@ function explainerTaskSetToDefault() {
 }
 
 function getTaskState(task) {
-
     let taskState = task.getAttribute("data-state");
     if (taskState == null) {
         console.error("[getTaskState] task has no state");
@@ -1421,7 +1418,9 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
             </div>
         </div>
     `
-    
+    if(state == 2) {
+        task.querySelector(".submenu").classList.add("menu-left");
+    }
 
     let statusIcon;
     let overdueContainerClass = "";

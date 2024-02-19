@@ -146,6 +146,9 @@
             transform: translateY(-2%);
             transition: opacity 0.1s ease-out, transform 0.1s ease-out;
         }
+        .menu-left {
+            left: -85%;
+        }
 
         .left{
             left: -87%;
