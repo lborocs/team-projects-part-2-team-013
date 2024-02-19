@@ -449,10 +449,12 @@ async function renderAssignmentsInExplainer(taskID) {
 //enable horizontal scrolling on the task card
 let isEventAdded = false;
 async function addHorizontalScrolling() {
-    if (!isEventAdded && taskGridWrapper.scrollHeight <= taskGridWrapper.clientHeight) {
+    console.log("[addHorizontalScrolling] checking if horizontal scrolling is needed")
+    console.log(taskGrid.scrollHeight, taskGrid.clientHeight)
+    if (!isEventAdded && taskGrid.scrollHeight <= taskGrid.clientHeight) {
         console.log("[addHorizontalScrolling] adding event listener")
-        taskGridWrapper.addEventListener("wheel", (event) => {
-            taskGridWrapper.scrollBy({
+        taskGrid.addEventListener("wheel", (event) => {
+            taskGrid.scrollBy({
                 left: event.deltaY < 0 ? -30 : 30,
             })
         });
