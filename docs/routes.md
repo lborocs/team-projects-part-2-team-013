@@ -192,6 +192,9 @@ Written/designed by aidan F223129
 - [x] **/employee/session.php/verifyemail**
   - POST (request for a verification email to be sent to continue signup) {email:string}
 
+- [x] **/employee/session.php/invite**
+  - POST (invite an email to become an employee of 013.team) {email:string}
+
 ## meta.php
 
 - [x] **/employee/meta.php/notifications**
