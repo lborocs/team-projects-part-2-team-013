@@ -204,7 +204,7 @@ function confirmDelete() {
         popupDiv.innerHTML = `
             <dialog open class='popup-dialog'>
                 <div class="popup-title">
-                    Delete Todo Item
+                    Delete Account
                     <div class="small-icon close-button">
                         <span class="material-symbols-rounded">
                             close
@@ -212,6 +212,7 @@ function confirmDelete() {
                     </div>
                 </div>
                 <div class="popup-text">Are you sure you want to delete this user's account?</div>
+                <div class="popup-text">Any employee specific data will be deleted</div>
                 <div class="popup-text">This action cannot be undone.</div>
 
                 <div class="popup-buttons">
@@ -222,7 +223,6 @@ function confirmDelete() {
                         <div class="button-text">Delete</div>
                     </div>
                 </div>
-                <span>Tip: you can hold SHIFT to skip this modal</span>
             </dialog>
         `;
         fullscreenDiv.style.filter = 'brightness(0.75)';
