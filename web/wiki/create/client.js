@@ -304,7 +304,8 @@ function submitPost() {
 
     Object.entries(content.ops).forEach(([key, value]) => {
         if (value.insert.image) {
-            images[key] = value.insert.image.substr(22);
+            // remove the data:image tag
+            images[key] = value.insert.image.split(",")[1];
             content.ops[key].insert.image = `${key}`;
         }
     });

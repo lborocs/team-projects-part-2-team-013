@@ -68,6 +68,11 @@
         transition: background-color 0.05s ease-out;
         background-color: #fcefb4;
     } 
+    
+    .title {
+        font-size: 14px;
+        font-weight: 600;
+    }
 
     .hasPosts, .noPosts {
         border-radius: 6px;
@@ -81,10 +86,7 @@
         min-height: 12rem;
         flex-grow: 1;
 
-        .title {
-            font-size: 14px;
-            font-weight: 600;
-        }
+        
 
         .tags {
             display: flex;
@@ -98,11 +100,13 @@
     }
 
     .hasPosts {
-        background-color: rgba(255,0,0,0.1);
+        background-color: rgba(0,0,0,0.025);
+        border: solid 2px rgba(255,0,0,0.1);
     }
 
     .noPosts {
-        background-color: rgba(0,255,0,0.1);
+        background-color: rgba(0,0,0,0.025);
+        border: solid 2px rgba(50, 209, 1, 0.1);
     }
 
     
@@ -137,6 +141,8 @@ body {
     align-items: center;
     color: #555555;
     padding: 6px;
+    padding-left: 0;
+    padding-right: 0;
     background-color: #eeeeee;
 }
 
