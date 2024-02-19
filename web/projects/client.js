@@ -2859,22 +2859,45 @@ async function editTaskPopup(task){
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Expected Manhours:
+                    Add man hours
                 </div>
-
-                <div class="number-picker" id="expected-man-hours">
-                    <div class = "stepper decrement" tabindex="0">
-                        <span class="material-symbols-rounded">
-                            remove
-                        </span>
+                <div id="man-hours-and-minutes">
+                    <div class="number-picker" id="add-man-hours-button2">
+                        <div class = "stepper decrement" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                remove
+                            </span>
+                        </div>
+                        <input type="number" class="number-input" value="1" min="0" tabindex="0">
+                        <div class="stepper increment" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                add
+                            </span>
+                        </div>
+                        <div class="manhours-label">Hours</div>
                     </div>
-
-                    <input type="number" class="number-input" value="1" min="0" tabindex="0">
-
-                    <div class="stepper increment" tabindex="0">
-                        <span class="material-symbols-rounded">
-                            add
-                        </span>
+                    <div class="number-picker" id="expected-man-minutes">
+                        <div class="number-picker" id="expected-man-minutes">
+                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                                <div class="dropdown-text">
+                                    0
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option" id="manhours-minutes0">0</div>
+                                    <div class="dropdown-option" id="manhours-minutes15">15</div>
+                                    <div class="dropdown-option" id="manhours-minutes30">30</div>
+                                    <div class="dropdown-option" id="manhours-minutes45">45</div>
+                                </div>
+                            </div>
+                            <div class="manhours-label">
+                                Minutes
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2915,8 +2938,8 @@ async function editTaskPopup(task){
     });
 
     //event listeners for the number picker
-    let numberPicker = document.querySelector("#expected-man-hours");
-    let numberPickerInput = numberPicker.querySelector('input[type="number"]')
+    let numberPicker = document.querySelector("#add-man-hours-button2");
+let numberPickerInput = numberPicker.querySelector('input[type="number"]');
     let numberPickerPlus = numberPicker.querySelector('.stepper.increment')
     let numberPickerMinus = numberPicker.querySelector('.stepper.decrement')
     numberPickerPlus.addEventListener('click', e => {
@@ -2973,8 +2996,17 @@ async function editTaskPopup(task){
         { insert: description }
     ]);
 
-    let expectedManHoursInput = numberPicker.querySelector('input[type="number"]');
-    expectedManHoursInput.value = task.expectedManHours / 3600;
+    // Calculate the hours and minutes from task.expectedManHours
+    let hours = Math.floor(task.expectedManHours / 3600);
+    let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
+
+    // Set the value of the man hours input
+    let manHoursInput = document.querySelector('#add-man-hours-button2 .number-input');
+    manHoursInput.value = hours;
+
+    // Set the selected value of the minutes dropdown
+    let minutesDropdownText = document.querySelector('#manhours-minutes-dropdown .dropdown-text');
+    minutesDropdownText.innerText = minutes;
 
     let dueDateInput = popupDiv.querySelector('.date-picker-input');
     fp.setDate(task.dueDate, true);
