@@ -452,10 +452,12 @@ async function renderAssignmentsInExplainer(taskID) {
 //enable horizontal scrolling on the task card
 let isEventAdded = false;
 async function addHorizontalScrolling() {
-    if (!isEventAdded && taskGridWrapper.scrollHeight <= taskGridWrapper.clientHeight) {
+    console.log("[addHorizontalScrolling] checking if horizontal scrolling is needed")
+    console.log(taskGrid.scrollHeight, taskGrid.clientHeight)
+    if (!isEventAdded && taskGrid.scrollHeight <= taskGrid.clientHeight) {
         console.log("[addHorizontalScrolling] adding event listener")
-        taskGridWrapper.addEventListener("wheel", (event) => {
-            taskGridWrapper.scrollBy({
+        taskGrid.addEventListener("wheel", (event) => {
+            taskGrid.scrollBy({
                 left: event.deltaY < 0 ? -30 : 30,
             })
         });
@@ -493,6 +495,19 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 contextMenuPopover.classList.toggle("visible");
                 contextMenuButton.classList.toggle("active");
             });
+
+            function handleTaskStateChange(item, state) {
+                console.log(`[contextMenuItemOnClick] ${item.classList[1]} clicked`);
+                let taskID = taskCard.getAttribute("id");
+                let projID = globalCurrentProject.projID;
+                patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: state}).then((res) => {
+                    if (res.success) {
+                        console.log(`[setUpTaskEventListeners] updated task ${taskID} to state ${state}`);
+                    } else {
+                        console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state ${state}`);
+                    }
+                });
+            }
 
             //stops the context menu from closing when you click on the options
             let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
@@ -547,12 +562,22 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                         window.open(link, "_blank")
 
                     } else if (!item.classList.contains("disabled")) {
+                        let taskID = taskCard.getAttribute("id");
                         if (item.classList.contains("not-started-state")) {
                             console.log("[contextMenuItemOnClick] not started clicked")
+                            handleTaskStateChange(item, 0);
+                            globalTasksList.find(task => task.taskID === taskID).state = 0;
+                            renderTasks(globalTasksList);
                         } else if (item.classList.contains("in-progress-state")) {
                             console.log("[contextMenuItemOnClick] in progress clicked")
+                            handleTaskStateChange(item, 1);
+                            globalTasksList.find(task => task.taskID === taskID).state = 1;
+                            renderTasks(globalTasksList);
                         } else if (item.classList.contains("finished-state")) {
                             console.log("[contextMenuItemOnClick] finished clicked")
+                            handleTaskStateChange(item, 2);
+                            globalTasksList.find(task => task.taskID === taskID).state = 2;
+                            renderTasks(globalTasksList);
                         }
                     } else {
                         console.log("[contextMenuItemOnClick] no known action")
