@@ -394,3 +394,6 @@
     border-radius: 0.2em;
     cursor: text;
 }
+.error-message{
+    color: red;
+}

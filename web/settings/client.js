@@ -23,15 +23,15 @@ const cancelButtons = document.querySelectorAll('#cancel-button');
 const confirmButtons = document.querySelectorAll('#confirm-button');
 const nameInputs = document.querySelectorAll('.name-display-input');
 
-const changeButton1 = changeButtons[0];
-const cancelButton1 = cancelButtons[0];
-const confirmButton1 = confirmButtons[0];
-const nameInput1 = nameInputs[0];
+const firstNameChange = changeButtons[0];
+const firstNameCancel = cancelButtons[0];
+const firstNameConfirm = confirmButtons[0];
+const firstNameInput = nameInputs[0];
 
-const changeButton2 = changeButtons[1];
-const cancelButton2 = cancelButtons[1];
-const confirmButton2 = confirmButtons[1];
-const nameInput2 = nameInputs[1];
+const secondNameChange = changeButtons[1];
+const secondNameCancel = cancelButtons[1];
+const secondNameConfirm = confirmButtons[1];
+const secondNameInput = nameInputs[1];
 
 
 function switchToTab(tab) {
@@ -240,8 +240,8 @@ async function setUserData() {
         var firstName = emp.firstName;
     }
     var lastName = emp.lastName;
-    nameInput1.innerHTML = firstName;
-    nameInput2.innerHTML = lastName;
+    firstNameInput.innerHTML = firstName;
+    secondNameInput.innerHTML = lastName;
 };
 
 setUserData();
@@ -328,71 +328,83 @@ logoutButton.addEventListener('click', () => {
     });
 });
 
-changeButton1.addEventListener('click', () => {
+firstNameChange.addEventListener('click', () => {
     console.log('change button clicked');
-    changeButton1.classList.add('norender');
-    cancelButton1.classList.remove('norender');
-    confirmButton1.classList.remove('norender');
-    nameInput1.setAttribute('contenteditable', 'true');
-    nameInput1.classList.add('editable');
-    nameInput1.addEventListener('keydown', function(event) {
+    firstNameChange.classList.add('norender');
+    firstNameCancel.classList.remove('norender');
+    firstNameConfirm.classList.remove('norender');
+    firstNameInput.setAttribute('contenteditable', 'true');
+    firstNameInput.classList.add('editable');
+    resetName(2);
+    secondNameChange.classList.remove('norender');
+    secondNameCancel.classList.add('norender');
+    secondNameConfirm.classList.add('norender');
+    secondNameInput.setAttribute('contenteditable', 'false');
+    secondNameInput.classList.remove('editable');
+    firstNameInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            confirmButton1.click();
+            firstNameConfirm.click();
         }
     });
 });
 
-cancelButton1.addEventListener('click', () => {
+firstNameCancel.addEventListener('click', () => {
     resetName(1);
-    changeButton1.classList.remove('norender');
-    cancelButton1.classList.add('norender');
-    confirmButton1.classList.add('norender');
-    nameInput1.setAttribute('contenteditable', 'false');
-    nameInput1.classList.remove('editable');
+    firstNameChange.classList.remove('norender');
+    firstNameCancel.classList.add('norender');
+    firstNameConfirm.classList.add('norender');
+    firstNameInput.setAttribute('contenteditable', 'false');
+    firstNameInput.classList.remove('editable');
 });
 
-confirmButton1.addEventListener('click', async () => {
-    changeButton1.classList.remove('norender');
-    cancelButton1.classList.add('norender');
-    confirmButton1.classList.add('norender');
-    nameInput1.setAttribute('contenteditable', 'false');
-    nameInput1.classList.remove('editable');
-    let nameValue = nameInput1.innerHTML;
+firstNameConfirm.addEventListener('click', async () => {
+    firstNameChange.classList.remove('norender');
+    firstNameCancel.classList.add('norender');
+    firstNameConfirm.classList.add('norender');
+    firstNameInput.setAttribute('contenteditable', 'false');
+    firstNameInput.classList.remove('editable');
+    let nameValue = firstNameInput.innerHTML;
     changeFirstName(nameValue);
 });
 
-changeButton2.addEventListener('click', () => {
+secondNameChange.addEventListener('click', () => {
     console.log('change button clicked');
-    changeButton2.classList.add('norender');
-    cancelButton2.classList.remove('norender');
-    confirmButton2.classList.remove('norender');
-    nameInput2.setAttribute('contenteditable', 'true');
-    nameInput2.classList.add('editable');
-    nameInput2.addEventListener('keydown', function(event) {
+    secondNameChange.classList.add('norender');
+    secondNameCancel.classList.remove('norender');
+    secondNameConfirm.classList.remove('norender');
+    secondNameInput.setAttribute('contenteditable', 'true');
+    secondNameInput.classList.add('editable');
+    resetName(1);
+    firstNameChange.classList.remove('norender');
+    firstNameCancel.classList.add('norender');
+    firstNameConfirm.classList.add('norender');
+    firstNameInput.setAttribute('contenteditable', 'false');
+    firstNameInput.classList.remove('editable');
+    secondNameInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            confirmButton2.click();
+            secondNameConfirm.click();
         }
     });
 });
 
-cancelButton2.addEventListener('click', () => {
+secondNameCancel.addEventListener('click', () => {
     resetName(2);
-    changeButton2.classList.remove('norender');
-    cancelButton2.classList.add('norender');
-    confirmButton2.classList.add('norender');
-    nameInput2.setAttribute('contenteditable', 'false');
-    nameInput2.classList.remove('editable');
+    secondNameChange.classList.remove('norender');
+    secondNameCancel.classList.add('norender');
+    secondNameConfirm.classList.add('norender');
+    secondNameInput.setAttribute('contenteditable', 'false');
+    secondNameInput.classList.remove('editable');
 });
 
-confirmButton2.addEventListener('click', async () => {
-    changeButton2.classList.remove('norender');
-    cancelButton2.classList.add('norender');
-    confirmButton2.classList.add('norender');
-    nameInput2.setAttribute('contenteditable', 'false');
-    nameInput2.classList.remove('editable');
-    let nameValue = nameInput2.innerHTML;
+secondNameConfirm.addEventListener('click', async () => {
+    secondNameChange.classList.remove('norender');
+    secondNameCancel.classList.add('norender');
+    secondNameConfirm.classList.add('norender');
+    secondNameInput.setAttribute('contenteditable', 'false');
+    secondNameInput.classList.remove('editable');
+    let nameValue = secondNameInput.innerHTML;
     changeLastName(nameValue);
 });
 
@@ -407,15 +419,15 @@ async function resetName(n){
     }
     var lastName = emp.lastName;
     if (n == 1){
-        nameInput1.innerHTML = firstName;
+        firstNameInput.innerHTML = firstName;
     } else if (n == 2){
-        nameInput2.innerHTML = lastName;
+        secondNameInput.innerHTML = lastName;
     }
 }
 async function changeFirstName(newName) {
     if (newName == "N/A" || newName.trim() == ""){
         newName = null;
-        nameInput1.innerHTML = "N/A";
+        firstNameInput.innerHTML = "N/A";
     }
     const body = {
         firstName: newName,
@@ -443,7 +455,6 @@ logoutButton.addEventListener('click', () => {
 
 changePasswordButton.addEventListener('click', () => {
     passwordPopup().then(() => {
-        console.log('password changed');
     }
     ).catch(() => {
         console.log('password change cancelled');
@@ -452,12 +463,10 @@ changePasswordButton.addEventListener('click', () => {
 
 
 function passwordPopup() {
-    console.error('password popup');
     return new Promise((resolve, reject) => {
 
         let popupDiv = document.querySelector('.popup');
         let fullscreenDiv = document.querySelector('.fullscreen');
-        console.error("we got further")
         popupDiv.innerHTML = `
             <dialog open class='popup-dialog'>
                 <div class="popup-title">
@@ -481,6 +490,7 @@ function passwordPopup() {
                     <div class="input-wrapper">
                         <input class="password textfield" type="password" id="new-password" placeholder="New Password">
                         <input class="password textfield" type="password" id="confirm-new-password" placeholder="Confirm New Password">
+                        <div class="error-message " id="password-error"></div>
                     </div>
                 </div>
 
@@ -494,16 +504,22 @@ function passwordPopup() {
                 </div>
             </dialog>
         `;
-        console.error("after html")
         fullscreenDiv.style.filter = 'brightness(0.75)';
 
         let dialog = popupDiv.querySelector('.popup-dialog');
+        let popupClose = dialog.querySelector('.close-button');
         let popupCancel = dialog.querySelector('#popup-cancel');
         let popupConfirm = dialog.querySelector('#popup-confirm');
-        console.error(popupConfirm);
         let currentPassword = dialog.querySelector('#current-password');
-        let newPassword = dialog.querySelector('#new-password');
+        let changedPassword = dialog.querySelector('#new-password');
         let confirmNewPassword = dialog.querySelector('#confirm-new-password');
+
+        popupClose.addEventListener('click', (event) => {
+            event.preventDefault();
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            reject();
+        });
 
         popupCancel.addEventListener('click', (event) => {
             event.preventDefault();
@@ -515,31 +531,46 @@ function passwordPopup() {
         popupConfirm.addEventListener('click', (event) => {
             console.log('confirm button clicked');
             event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            if (!newPassword.value == confirmNewPassword.value) {
-                console.error('passwords do not match');
-            }
-            const oldPassword = currentPassword.value;
-            const newPassword = newPassword.value;
-            changePassword(oldPassword, newPassword);
-            resolve();
+            let oldPassword = currentPassword.value;
+            let newPassword = changedPassword.value;
+            let confirmPassword = confirmNewPassword.value;
+            changePassword(oldPassword, newPassword, confirmPassword).then((res) => {
+                if (res) {
+                    dialog.style.display = 'none';
+                    fullscreenDiv.style.filter = 'none';
+                    resolve();
+                }
+            });
         });
     });
 }
 
-async function changePassword(currentPassword, newPassword) {
+async function changePassword(currentPassword, newPassword, confirmPassword) {
     const body = {
         password: currentPassword,
         newPassword: newPassword,
     };
-
-    const response = await patch_api('/employee/session.php/account', body);
-    if (response.success) {
-        console.log('password changed');
-    } else {
-        console.log('password change failed');
+    if (newPassword !== confirmPassword) {
+        console.error('passwords do not match');
+        let errorMessage = document.querySelector('.error-message');
+        errorMessage.innerHTML = "Passwords do not match";
+        return false;
     }
+
+        const res = await patch_api('/employee/session.php/account', body);
+        console.log("Password reset response:")
+        console.log(res);
+        console.error(res.error.message);
+        console.error(res.error.code);
+        let errorMessage = document.querySelector('.error-message');
+        errorMessage.innerHTML = res.error.message;
+        if (res.success) {
+            console.log('password changed');
+            return true;
+        } else {
+            console.log('password change failed');
+            return false;
+        }
     setUserData();
 }
 
