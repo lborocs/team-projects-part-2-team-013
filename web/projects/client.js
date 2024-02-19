@@ -185,6 +185,15 @@ async function addManHoursPopup(task) {
     console.log("[addManHoursPopup] Running addManHoursPopup")
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
+
+    let hours = Math.floor(task.expectedManHours / 3600);
+    let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
+    let timeDisplay = "";
+    if (minutes > 0) {
+        timeDisplay = `${hours} hours ${minutes} minutes`;
+    } else {
+        timeDisplay = `${hours} hours`;
+    }
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-man-hours-popup">
             <div class="popup-title">
@@ -199,13 +208,13 @@ async function addManHoursPopup(task) {
             <div class="task-title">
                 ${task.title}
             </div>
-            <div class="popup-subtitle">Description</div>
-            <div class="task-description">
-                ${task.description}
+            <div class="popup-subtitle">Expected man hours</div>
+            <div class="task-title">
+                ${timeDisplay}
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Add man hours:
+                    Add man hours
                 </div>
                 <div id="man-hours-and-minutes">
                     <div class="number-picker" id="add-man-hours-button2">
@@ -375,7 +384,7 @@ async function addManHoursPopup(task) {
 
 views.forEach((view, i) => {
     
-    view.addEventListener("pointerup", () => {
+    view.addEventListener("click", () => {
 
         if (view.classList.contains("selected")) {
             return
@@ -556,14 +565,13 @@ function showTaskInExplainer(taskCard) {
     let manHours = globalCurrentTask.expectedManHours;
     let timeDisplay = "";
 
-    if (manHours < 3600) {
-        // Convert to minutes and display
-        let minutes = manHours / 60;
-        timeDisplay = `${minutes.toFixed(0)} Minute${minutes !== 1 ? 's' : ''}`;
+    let hours = Math.floor(manHours / 3600);
+    let minutes = Math.round((manHours / 3600 - hours) * 60);
+
+    if (minutes > 0) {
+        timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`;
     } else {
-        // Convert to hours and display
-        let hours = manHours / 3600;
-        timeDisplay = `${hours.toFixed(0)} Hour${hours !== 1 ? 's' : ''}`;
+        timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''}`;
     }
 
     explainerTaskManhours.innerHTML = `
@@ -694,7 +702,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
             contextMenuItems.forEach(item => {
                 let timeoutId;
-                item.addEventListener("pointerup", (e) => {
+                item.addEventListener("click", (e) => {
                     e.stopPropagation();
                     console.log("[contextMenuItemOnClick] clicked")
 
@@ -767,29 +775,29 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             });
 
             //have to include mouse up and down this is crazy event propagation
-            contextMenuButton.addEventListener("pointerup", (e) => {
+            contextMenuButton.addEventListener("click", (e) => {
                 e.stopPropagation();
             });
 
-            contextMenuButton.addEventListener("pointerdown", (e) => {
+            contextMenuButton.addEventListener("click", (e) => {
                 e.stopPropagation();
             });
 
             let taskStatusContainers = taskCard.querySelectorAll(".status-container");
             taskStatusContainers.forEach((icon) => {
 
-                icon.addEventListener("pointerdown", (e) => {
+                icon.addEventListener("click", (e) => {
                     e.stopPropagation();
                 });
 
-                icon.addEventListener("pointerup", (e) => {
+                icon.addEventListener("click", (e) => {
                     e.stopPropagation();
                 });
             
             })
 
             //closes the context menu if they click outside
-            document.addEventListener("pointerup", (e) => {
+            document.addEventListener("click", (e) => {
                 if (!contextMenuButton.contains(e.target)) {
                     contextMenuPopover.classList.remove("visible");
                     contextMenuButton.classList.remove("active");
@@ -814,9 +822,13 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             });
 
 
-            taskCard.addEventListener("pointerdown", (e) => {
+            taskCard.addEventListener("click", (e) => {
                 //if the target is the context menu button, dont show the explainer
                 if (e.target.classList.contains("context-menu")) {
+                    return
+                }
+                //right click doesnt show the card as clicked
+                if (e.button == 2) {
                     return
                 }
 
@@ -1378,7 +1390,7 @@ function setupDropdownEventListeners(taskRow) {
         let taskID = taskRow.getAttribute("id");
         let projID = globalCurrentProject.projID;
         patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 0}).then((res) => {
-            if (res.status == 204) {
+            if (res.success) {
                 console.log(`[setupDropdownEventListeners] updated task ${taskID} to state 0`);
             } else {
                 console.error(`[setupDropdownEventListeners] failed to update task ${taskID} to state 0`);
@@ -1398,8 +1410,8 @@ function setupDropdownEventListeners(taskRow) {
 
         let taskID = taskRow.getAttribute("id");
         let projID = globalCurrentProject.projID;
-        ppatch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 1}).then((res) => {
-            if (res.status == 204) {
+        patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 1}).then((res) => {
+            if (res.success) {
                 console.log(`[setupDropdownEventListeners] Successfully updated task ${taskID} to state 1`);
             } else {
                 console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 1`);
@@ -1420,7 +1432,7 @@ function setupDropdownEventListeners(taskRow) {
         let taskID = taskRow.getAttribute("id");
         let projID = globalCurrentProject.projID;
         patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 2}).then((res) => {
-            if (res.status == 204) {
+            if (res.success) {
                 console.log(`[setupDropdownEventListeners] Successfully updated task ${taskID} to state 2`);
             } else {
                 console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 2`);
@@ -1528,7 +1540,7 @@ function sortByAssignees(tasks, descending) {
     tasks.sort((a, b) => {
         let aAssignees = a.assignments.length;
         let bAssignees = b.assignments.length;
-        return descending ? aAssignees - bAssignees : bAssignees - aAssignees;
+        return descending ? bAssignees - aAssignees : aAssignees - bAssignees;
     });
     return tasks;
 }
@@ -2305,7 +2317,10 @@ async function addTask() {
         event.stopPropagation();
         let title = dialog.querySelector('.add-task-title-input').value;
         let description = quill.root.innerHTML;
-        let expectedManHours = parseInt(numberPickerInput.value, 10) * 3600;
+        let hoursInput = parseInt(numberPickerInput.value, 10) * 3600;
+        let minutesDropdown = document.querySelector("#manhours-minutes-dropdown .dropdown-text");
+        let minutesInput = parseInt(minutesDropdown.innerText, 10) * 60;
+        let expectedManHours = hoursInput + minutesInput;
         let dueDate = fp.selectedDates[0];
         let dueDateTimestamp = dueDate ? dueDate.getTime() : null;
         let state = 0;
@@ -2368,7 +2383,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
 const addButtonArray = [notStartedAddButton];
 
 addButtonArray.forEach((button) => {
-    button.addEventListener("pointerup", async () => {
+    button.addEventListener("click", async () => {
         if (button.id == "notstarted-add") {
             await addTask();
         } else {
@@ -2844,22 +2859,45 @@ async function editTaskPopup(task){
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Expected Manhours:
+                    Add man hours
                 </div>
-
-                <div class="number-picker" id="expected-man-hours">
-                    <div class = "stepper decrement" tabindex="0">
-                        <span class="material-symbols-rounded">
-                            remove
-                        </span>
+                <div id="man-hours-and-minutes">
+                    <div class="number-picker" id="add-man-hours-button2">
+                        <div class = "stepper decrement" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                remove
+                            </span>
+                        </div>
+                        <input type="number" class="number-input" value="1" min="0" tabindex="0">
+                        <div class="stepper increment" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                add
+                            </span>
+                        </div>
+                        <div class="manhours-label">Hours</div>
                     </div>
-
-                    <input type="number" class="number-input" value="1" min="0" tabindex="0">
-
-                    <div class="stepper increment" tabindex="0">
-                        <span class="material-symbols-rounded">
-                            add
-                        </span>
+                    <div class="number-picker" id="expected-man-minutes">
+                        <div class="number-picker" id="expected-man-minutes">
+                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                                <div class="dropdown-text">
+                                    0
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option" id="manhours-minutes0">0</div>
+                                    <div class="dropdown-option" id="manhours-minutes15">15</div>
+                                    <div class="dropdown-option" id="manhours-minutes30">30</div>
+                                    <div class="dropdown-option" id="manhours-minutes45">45</div>
+                                </div>
+                            </div>
+                            <div class="manhours-label">
+                                Minutes
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2885,6 +2923,8 @@ async function editTaskPopup(task){
         </dialog>
     `;
 
+    
+
     //quill for description
     var quill = new Quill('#description-editor', {
         modules: {
@@ -2898,8 +2938,8 @@ async function editTaskPopup(task){
     });
 
     //event listeners for the number picker
-    let numberPicker = document.querySelector("#expected-man-hours");
-    let numberPickerInput = numberPicker.querySelector('input[type="number"]')
+    let numberPicker = document.querySelector("#add-man-hours-button2");
+let numberPickerInput = numberPicker.querySelector('input[type="number"]');
     let numberPickerPlus = numberPicker.querySelector('.stepper.increment')
     let numberPickerMinus = numberPicker.querySelector('.stepper.decrement')
     numberPickerPlus.addEventListener('click', e => {
@@ -2947,6 +2987,29 @@ async function editTaskPopup(task){
         option.setAttribute("data-id", emp.empID);
         empList.appendChild(option);
     });
+
+    let taskTitleInput = popupDiv.querySelector('.add-task-title-input');
+    taskTitleInput.value = task.title;
+
+    let description = task.description.replace(/<p>|<\/p>|<br>/g, '');
+    quill.setContents([
+        { insert: description }
+    ]);
+
+    // Calculate the hours and minutes from task.expectedManHours
+    let hours = Math.floor(task.expectedManHours / 3600);
+    let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
+
+    // Set the value of the man hours input
+    let manHoursInput = document.querySelector('#add-man-hours-button2 .number-input');
+    manHoursInput.value = hours;
+
+    // Set the selected value of the minutes dropdown
+    let minutesDropdownText = document.querySelector('#manhours-minutes-dropdown .dropdown-text');
+    minutesDropdownText.innerText = minutes;
+
+    let dueDateInput = popupDiv.querySelector('.date-picker-input');
+    fp.setDate(task.dueDate, true);
 
     // turn employeelist into a map of id to employee
     let employeeMap = new Map();

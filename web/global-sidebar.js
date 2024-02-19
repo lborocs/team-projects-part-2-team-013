@@ -36,15 +36,10 @@ wiki.classList.add('sidebar-item')
 wiki.id = 'wiki';
 wiki.setAttribute('href', '/wiki/');
 
-export const dashboard = document.createElement('a')
-dashboard.classList.add('sidebar-item', 'manager-only', 'norender')
-dashboard.id = 'workload';
-dashboard.setAttribute('href', '/dashboard/');
-
 export const training = document.createElement('a')
 training.classList.add('sidebar-item', 'manager-only', 'norender')
 training.id = 'training';
-training.setAttribute('href', '/workload/');
+training.setAttribute('href', '/dashboard/');
 
 export const settings = document.createElement('a')
 settings.classList.add('sidebar-item')
@@ -66,7 +61,6 @@ mobileSidebarHeader.appendChild(closeSidebar);
 home.innerHTML = `<span class="material-symbols-rounded">home</span> <p class="">Projects</p>`;
 personal.innerHTML = `<span class="material-symbols-rounded">checklist</span> <p class="">My List</p>`;
 wiki.innerHTML = `<span class="material-symbols-rounded">menu_book</span> <p class="">Wiki</p>`;
-dashboard.innerHTML = `<span class="material-symbols-rounded">speed</span> <p class="">Dashboards</p>`;
 training.innerHTML = `<span class="material-symbols-rounded">school</span> <p class="">Training</p>`;
 settings.innerHTML = `<span class="material-symbols-rounded">settings</span> <p class="">Settings</p>`;
 logout.innerHTML = `<span class="material-symbols-rounded">logout</span> <p class="">Logout</p>`;
@@ -77,7 +71,6 @@ if (sidebar !== null) {
     sidebar.appendChild(home);
     sidebar.appendChild(personal);
     sidebar.appendChild(wiki);
-    sidebar.appendChild(dashboard);
     sidebar.appendChild(training);
     sidebar.appendChild(settings);
     sidebar.appendChild(logout);
@@ -89,7 +82,7 @@ if (sidebar !== null) {
 let selectedItem = null;
 if (items !== null) {
     items.forEach((item) => {
-        item.addEventListener("pointerup", (e) => {
+        item.addEventListener("click", (e) => {
 
             if (e.button !== 0) {
                 return
