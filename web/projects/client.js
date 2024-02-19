@@ -3118,6 +3118,8 @@ async function editTaskPopup(task){
         let minutes = minutesDropdownText.innerText;
         let expectedManHours = parseInt(manHours * 3600 + minutes * 60);
         let dueDate = fp.selectedDates[0];
+        dueDate = dueDate ? dueDate.getTime() : null;
+        
 
 
         let data = {
