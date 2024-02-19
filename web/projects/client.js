@@ -130,7 +130,11 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         sortColumn.classList.add("asc")
     }
 
+    // tasks sort by for default sorting
     taskListSortBy(sortColumn);
+
+    // render in board only
+    renderTasks(tasks, RENDER_COLUMN);
     console.log("[renderIndividualProject] fetched & rendered tasks for " + project.name)
     console.log("global tasks list:")
     console.log(globalTasksList)
@@ -746,12 +750,12 @@ async function fetchTasks(projID) {
  * @param {Array} tasks 
  */
 async function renderTasks(tasks, update = RENDER_BOTH) {
-    clearRenderedTasks();
+    clearRenderedTasks(update);
     await Promise.all(tasks.map((task) => {
         taskObjectRenderAll(task, update)
     }));
     setUpTaskEventListeners();
-    await renderAssignments(globalAssignments);
+    await renderAssignments(globalAssignments, update);
 }
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
@@ -851,13 +855,18 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
     });
 }
 
-function clearRenderedTasks() {
-    taskCards.forEach((task) => {
-        task.remove()
-    })
-    taskRows.forEach((task) => {
-        task.remove()
-    }) 
+// clear is the tasks that will be cleared, RENDER_BOTH will clear both
+function clearRenderedTasks(clear = RENDER_BOTH) {
+    if (clear & RENDER_COLUMN) {
+        taskCards.forEach((task) => {
+            task.remove()
+        })
+    }
+    if (clear & RENDER_LIST) {
+        taskRows.forEach((task) => {
+            task.remove()
+        }) 
+    }
 }
 
 async function teamLeaderEnableElementsIfTeamLeader() {
