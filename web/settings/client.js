@@ -1,17 +1,18 @@
 import * as global from "../global-ui.js";
 
-const accountTab = document.querySelector('.account');
-const preferencesTab = document.querySelector('.preferences');
-const systemTab = document.querySelector('.system');
-const manageUsersTab = document.querySelector('.manage-users');
+const accountTab = document.querySelector('#account');
+const preferencesTab = document.querySelector('#preferences');
+const systemTab = document.querySelector('#system');
+const manageUsersTab = document.querySelector('#manageusers');
 
 const tabs = document.querySelectorAll('.tab');
+const options = document.querySelectorAll('.options');
 
 const accountCard = document.querySelector('.account-card');
-const accountOptions = document.querySelector('.account-options');
-const preferencesOptions = document.querySelector('.preferences-options');
-const systemOptions = document.querySelector('.system-options');
-const manageUsersOptions = document.querySelector('.manage-users-options');
+const accountOptions = document.querySelector('#account-options');
+const preferencesOptions = document.querySelector('#preferences-options');
+const systemOptions = document.querySelector('#system-options');
+const manageUsersOptions = document.querySelector('#manageusers-options');
 const sidebarCheckbox = document.getElementById('sidebar-checkbox');
 const changePasswordButton = document.querySelector('.change-password');
 
@@ -32,65 +33,53 @@ const cancelButton2 = cancelButtons[1];
 const confirmButton2 = confirmButtons[1];
 const nameInput2 = nameInputs[1];
 
-accountTab.addEventListener('click', () => {
-    accountOptions.classList.remove('norender');
-    preferencesOptions.classList.add('norender');
-    systemOptions.classList.add('norender');
-    manageUsersOptions.classList.add('norender');
+
+function switchToTab(tab) {
+    console.log(`[switchToTab] switching to tab ${tab.id}`);
+
+    options.forEach(option => {
+        option.classList.add('norender');
+    });
 
     tabs.forEach(tab => {
         tab.classList.remove('active-tab');
-    })
+    });
 
-    accountTab.classList.add('active-tab');
+    tab.classList.add('active-tab');
+    document.querySelector(`#${tab.id}-options`).classList.remove('norender');
 
-    global.setBreadcrumb(["Settings", "Account"], ["../", '#' + "account"])
-})
+    var name;
+    if (tab.id == "manageusers") {
+        name = "Manage Users";
+    } else {
+        name = tab.id.charAt(0).toUpperCase() + tab.id.slice(1);
+    }
 
-preferencesTab.addEventListener('click', () => {
-    accountOptions.classList.add('norender');
-    preferencesOptions.classList.remove('norender');
-    systemOptions.classList.add('norender');
-    manageUsersOptions.classList.add('norender');
+    global.setBreadcrumb(["Settings", name], ["/settings/", "#" + tab.id]);
 
-    tabs.forEach(tab => {
-        tab.classList.remove('active-tab');
-    })
+}
 
-    preferencesTab.classList.add('active-tab');
+window.addEventListener("breadcrumbnavigate", (event) => {
+    console.log("[settings] received breadcrumb navigate");
+    renderFromBreadcrumb(event.locations);
+});
 
-    global.setBreadcrumb(["Settings", "Preferences"], ["../", '#' + "preferences"])
-})
 
-systemTab.addEventListener('click', () => {
-    accountOptions.classList.add('norender');
-    preferencesOptions.classList.add('norender');
-    systemOptions.classList.remove('norender');
-    manageUsersOptions.classList.add('norender');
+function renderFromBreadcrumb(locations) {
 
-    tabs.forEach(tab => {
-        tab.classList.remove('active-tab');
-    })
+    const page = locations.length ? locations[0] : "account"
+    // strip the hash
 
-    systemTab.classList.add('active-tab');
+    const elem = document.getElementById(page);
 
-    global.setBreadcrumb(["Settings", "System"], ["../", '#' + "system"])
-})
+    if (!elem) {
+        console.error("[renderFromBreadcrumb] no element found for:", page);
+        return;
+    }
 
-manageUsersTab.addEventListener('click', () => {
-    accountOptions.classList.add('norender');
-    preferencesOptions.classList.add('norender');
-    systemOptions.classList.add('norender');
-    manageUsersOptions.classList.remove('norender');
+    switchToTab(elem);
+}
 
-    tabs.forEach(tab => {
-        tab.classList.remove('active-tab');
-    })
-
-    manageUsersTab.classList.add('active-tab');
-
-    global.setBreadcrumb(["Settings", "Manage Users"], ["../", '#' + "manage-users"])
-})
 
 //dropdown menu event listeners
 
@@ -298,6 +287,7 @@ inputField.addEventListener('input', async (event) => {
 });
 
 window.onload = async function() {
+    renderFromBreadcrumb(global.getLocationHashArray());
     const employees = await searchEmployees('');
     renderEmployees(employees);
 };
@@ -553,5 +543,5 @@ async function changePassword(currentPassword, newPassword) {
     setUserData();
 }
 
-global.setBreadcrumb(["Settings", "Account"], ["./", '#' + "account"])
+global.setBreadcrumb(["Settings", "Account"], ["./", "#account"])
 
