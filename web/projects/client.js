@@ -2896,6 +2896,8 @@ async function editTaskPopup(task){
         </dialog>
     `;
 
+    
+
     //quill for description
     var quill = new Quill('#description-editor', {
         modules: {
@@ -2958,6 +2960,20 @@ async function editTaskPopup(task){
         option.setAttribute("data-id", emp.empID);
         empList.appendChild(option);
     });
+
+    let taskTitleInput = popupDiv.querySelector('.add-task-title-input');
+    taskTitleInput.value = task.title;
+
+    let description = task.description.replace(/<p>|<\/p>|<br>/g, '');
+    quill.setContents([
+        { insert: description }
+    ]);
+
+    let expectedManHoursInput = numberPicker.querySelector('input[type="number"]');
+    expectedManHoursInput.value = task.expectedManHours / 3600;
+
+    let dueDateInput = popupDiv.querySelector('.date-picker-input');
+    fp.setDate(task.dueDate, true);
 
     // turn employeelist into a map of id to employee
     let employeeMap = new Map();
