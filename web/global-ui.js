@@ -1080,6 +1080,7 @@ function fillCurrentUserInfo() {
         console.log("[fillCurrentUserInfo] user icon added")
     });
 }
+export { fillCurrentUserInfo };
 
 function userIconContextMenu() {
     if (topbar.userAvatar === null) {
