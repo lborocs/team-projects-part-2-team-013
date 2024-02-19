@@ -34,9 +34,6 @@ logo.src = 'https://cdn.013.team/assets/logo-large.png';
 logo.alt = 'logo';
 
 export const search = document.createElement('form')
-search.classList.add('search', 'white');
-search.id = 'global-search';
-search.autocomplete = "off"
 
 export const notificationPopover = document.createElement('div')
 notificationPopover.classList.add('notification-popover', 'item');
@@ -51,27 +48,6 @@ mobileBack.innerHTML = `<span class="material-symbols-rounded">arrow_back</span>
 
 
 hamburger.innerHTML = `<span class="material-symbols-rounded">menu</span>`
-
-search.innerHTML = `
-    <input id="search" class="search-input" type="text" autocomplete="false" placeholder="Search"></input>
-    <div class="search-icon">
-        <span class="material-symbols-rounded">search</span>
-    </div>
-    <div class="search-icon clear-icon">
-        <span class="material-symbols-rounded" id="delete-search">close</span>
-    </div>
-`;
-
-search.querySelector('#delete-search').addEventListener('click', () => {
-    search.querySelector('#search').value = '';
-});
-
-search.querySelector('#search').addEventListener('keypress', (function(event) {
-    if ((search.querySelector('#search').value === '') || (event.key != 'Enter')) {
-        return
-    }
-    window.location.href = `/search/?${search.querySelector('#search').value}`;
-}));
 
 notificationPopover.innerHTML = `
     <div class="icon-button no-box">

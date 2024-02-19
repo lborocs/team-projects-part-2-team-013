@@ -185,6 +185,15 @@ async function addManHoursPopup(task) {
     console.log("[addManHoursPopup] Running addManHoursPopup")
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
+
+    let hours = Math.floor(task.expectedManHours / 3600);
+    let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
+    let timeDisplay = "";
+    if (minutes > 0) {
+        timeDisplay = `${hours} hours ${minutes} minutes`;
+    } else {
+        timeDisplay = `${hours} hours`;
+    }
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-man-hours-popup">
             <div class="popup-title">
@@ -199,13 +208,13 @@ async function addManHoursPopup(task) {
             <div class="task-title">
                 ${task.title}
             </div>
-            <div class="popup-subtitle">Description</div>
-            <div class="task-description">
-                ${task.description}
+            <div class="popup-subtitle">Expected man hours</div>
+            <div class="task-title">
+                ${timeDisplay}
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Add man hours:
+                    Add man hours
                 </div>
                 <div id="man-hours-and-minutes">
                     <div class="number-picker" id="add-man-hours-button2">
@@ -556,14 +565,13 @@ function showTaskInExplainer(taskCard) {
     let manHours = globalCurrentTask.expectedManHours;
     let timeDisplay = "";
 
-    if (manHours < 3600) {
-        // Convert to minutes and display
-        let minutes = manHours / 60;
-        timeDisplay = `${minutes.toFixed(0)} Minute${minutes !== 1 ? 's' : ''}`;
+    let hours = Math.floor(manHours / 3600);
+    let minutes = Math.round((manHours / 3600 - hours) * 60);
+
+    if (minutes > 0) {
+        timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`;
     } else {
-        // Convert to hours and display
-        let hours = manHours / 3600;
-        timeDisplay = `${hours.toFixed(0)} Hour${hours !== 1 ? 's' : ''}`;
+        timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''}`;
     }
 
     explainerTaskManhours.innerHTML = `
@@ -1382,7 +1390,7 @@ function setupDropdownEventListeners(taskRow) {
         let taskID = taskRow.getAttribute("id");
         let projID = globalCurrentProject.projID;
         patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 0}).then((res) => {
-            if (res.status == 204) {
+            if (res.success) {
                 console.log(`[setupDropdownEventListeners] updated task ${taskID} to state 0`);
             } else {
                 console.error(`[setupDropdownEventListeners] failed to update task ${taskID} to state 0`);
@@ -1402,8 +1410,8 @@ function setupDropdownEventListeners(taskRow) {
 
         let taskID = taskRow.getAttribute("id");
         let projID = globalCurrentProject.projID;
-        ppatch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 1}).then((res) => {
-            if (res.status == 204) {
+        patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 1}).then((res) => {
+            if (res.success) {
                 console.log(`[setupDropdownEventListeners] Successfully updated task ${taskID} to state 1`);
             } else {
                 console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 1`);
@@ -1424,7 +1432,7 @@ function setupDropdownEventListeners(taskRow) {
         let taskID = taskRow.getAttribute("id");
         let projID = globalCurrentProject.projID;
         patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 2}).then((res) => {
-            if (res.status == 204) {
+            if (res.success) {
                 console.log(`[setupDropdownEventListeners] Successfully updated task ${taskID} to state 2`);
             } else {
                 console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 2`);
@@ -2309,7 +2317,10 @@ async function addTask() {
         event.stopPropagation();
         let title = dialog.querySelector('.add-task-title-input').value;
         let description = quill.root.innerHTML;
-        let expectedManHours = parseInt(numberPickerInput.value, 10) * 3600;
+        let hoursInput = parseInt(numberPickerInput.value, 10) * 3600;
+        let minutesDropdown = document.querySelector("#manhours-minutes-dropdown .dropdown-text");
+        let minutesInput = parseInt(minutesDropdown.innerText, 10) * 60;
+        let expectedManHours = hoursInput + minutesInput;
         let dueDate = fp.selectedDates[0];
         let dueDateTimestamp = dueDate ? dueDate.getTime() : null;
         let state = 0;
@@ -2889,6 +2900,8 @@ async function editTaskPopup(task){
         </dialog>
     `;
 
+    
+
     //quill for description
     var quill = new Quill('#description-editor', {
         modules: {
@@ -2951,6 +2964,20 @@ async function editTaskPopup(task){
         option.setAttribute("data-id", emp.empID);
         empList.appendChild(option);
     });
+
+    let taskTitleInput = popupDiv.querySelector('.add-task-title-input');
+    taskTitleInput.value = task.title;
+
+    let description = task.description.replace(/<p>|<\/p>|<br>/g, '');
+    quill.setContents([
+        { insert: description }
+    ]);
+
+    let expectedManHoursInput = numberPicker.querySelector('input[type="number"]');
+    expectedManHoursInput.value = task.expectedManHours / 3600;
+
+    let dueDateInput = popupDiv.querySelector('.date-picker-input');
+    fp.setDate(task.dueDate, true);
 
     // turn employeelist into a map of id to employee
     let employeeMap = new Map();
