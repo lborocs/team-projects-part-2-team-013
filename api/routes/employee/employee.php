@@ -144,7 +144,7 @@ function r_employee_manage(RequestContext $ctx, string $args) {
             }
 
             // delete old avatar
-            if ($employee["avatar"]["assetID"]) {
+            if ($employee["avatar"]) {
                 $old_av = db_asset_fetch($employee["avatar"]["assetID"]);
                 if ($old_av) {
                     Asset::from_db($old_av)->delete();
