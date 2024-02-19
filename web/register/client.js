@@ -89,6 +89,8 @@ async function register() {
     const password = passwordInput.value;
     const firstName = firstNameInput.value;
     const lastName = lastNameInput.value;
+    const token = document.location.hash.substring(1);
+    console.log(token)
 
     if (email == "" || password == "" || lastName == "") {
         statusElement.classList.add("status-incorrect");
@@ -102,7 +104,7 @@ async function register() {
         password: password,
         firstName: firstName ? firstName : null,
         lastName: lastName,
-        token: "gonnagetabigtastyfrommcdonalds"
+        token: token
     }
 
     const res = await post_api("/employee/session.php/register", body, {use_auth: false, redirect_on_error: false})

@@ -3,11 +3,6 @@
         height: max(auto, (100% - 3em));
     }
 
-    #view-archived-button{
-        position: absolute;
-        right: 6em;
-    }
-
     .sidebar{
         margin-left: -100%;
         position: fixed;
@@ -21,6 +16,10 @@
         .mobile-sidebar-header {
             display: flex;
         }
+    }
+
+    #list-view-button {
+        display: none;
     }
 
     .sidebar-item {
@@ -76,8 +75,8 @@
         z-index: 0;
         justify-content: flex-start;
         align-content: space-between;
-        margin: 1em;
-        gap: 0;
+        margin: 0.5em;
+        gap: 0.5rem;
 
         .search {
             width: 100%;
@@ -88,13 +87,14 @@
         }
     }
 
-    .view {
-        font-size: 1.1em;
-        margin-left: 0;
-        margin-right: 0.5em;
-        margin-bottom: 0.5em;
+
+    #dashboard-redirect {
+        background-color: rgba(255,255,255,0.1);
     }
 
+    .views {
+        border-bottom: none;
+    }
     
 
     .container {
@@ -289,6 +289,10 @@
 
     .button-text.mobile {
         display: block;
+    }
+
+    .taskgrid {
+        display: none !important;
     }
 
 

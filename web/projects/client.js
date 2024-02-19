@@ -3332,6 +3332,38 @@ async function editTaskPopup(task){
         }
     });
 
+    createButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let projID = globalCurrentProject.projID;
+        let taskID = task.taskID
+        let description = quill.root.innerHTML;
+        let manHours = manHoursInput.value;
+        let minutes = minutesDropdownText.innerText;
+        let expectedManHours = parseInt(manHours * 3600 + minutes * 60);
+        let dueDate = fp.selectedDates[0];
+        dueDate = dueDate ? dueDate.getTime() : null;
+        
+
+
+        let data = {
+            title: taskTitleInput.value,
+            description: description,
+            expectedManHours: expectedManHours,
+            dueDate: dueDate,
+        };
+
+        let res = await patch_api(`/project/task.php/task/${projID}/${taskID}`, data);
+        console.log(res);
+
+        let assignedEmployeesArray = [...assignedEmployees];
+        let assignmentRes = await put_api(`/project/task.php/assignments/${projID}/${taskID}`, {
+            assignments: assignedEmployeesArray
+        });
+        console.log(assignmentRes);
+    });
+
 }
 
 async function projectPopup(id){
