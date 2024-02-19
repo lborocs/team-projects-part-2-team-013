@@ -454,6 +454,15 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
     // card view
     if (listeners & RENDER_COLUMN) {
+        //enable horizontal scrolling on the task card
+        if(taskGridWrapper.scrollHeight <= taskGridWrapper.clientHeight) {
+            taskGridWrapper.addEventListener("wheel", (event) => {
+                event.preventDefault();
+                taskGridWrapper.scrollBy({
+                    left: event.deltaY < 0 ? -30 : 30,
+                })
+            });
+        }
         taskCards = document.querySelectorAll(".task");
         taskCards.forEach((taskCard) => {
 
