@@ -428,6 +428,10 @@ async function renderAssignmentsInExplainer(taskID) {
     
     let employees = await getEmployeesById([...unique_users]);
 
+    assignments = assignments.sort((a, b) => {
+        return employees.get(a).deleted - employees.get(b).deleted;
+    });
+
     assignments.forEach((empID) => {
         let emp = employees.get(empID); // Get employee from employees map
         let emp_name = global.employeeToName(emp);
@@ -811,6 +815,10 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
     });
 
     let employees = await getEmployeesById([...unique_users]);
+
+    assignments = assignments.sort((a, b) => {
+        return employees.get(a.employee.empID).deleted - employees.get(b.employee.empID).deleted;
+    });
 
     assignments.forEach((assignment) => {
         let emp = employees.get(assignment.employee.empID);
