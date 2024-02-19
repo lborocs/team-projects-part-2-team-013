@@ -589,9 +589,9 @@ function db_post_accesses_fetchall() {
     global $db;
     $epoch = timestamp() - POST_ACCESS_DELTA;
     $query = $db->prepare(
-        "SELECT empID, postID, COUNT(postViewAccessedAt) as views 
+        "SELECT postID, COUNT(postViewAccessedAt) as views 
         FROM POST_VIEWS WHERE postViewAccessedAt > ?
-        GROUP BY empID, postID
+        GROUP BY postID
         ORDER BY views DESC
         LIMIT " . DATA_FETCH_LIMIT
     );
