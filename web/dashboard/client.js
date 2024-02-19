@@ -34,6 +34,7 @@ var projectData;
 var trainingData;
 if (projectID !== "") {
     console.log("[client.js] projectID: ", projectID);
+    projectData = await project.init(projectID);
     global.setBreadcrumb(["Manager's Dashboard", projectData.project.name], ["/dashboard/", "/dashboard/#" + projectData.project.projID]);
     project.init(projectID);
 } else {

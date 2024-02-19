@@ -1,3 +1,5 @@
+import * as global from '../global-ui.js';
+
 export var charts = [];
 
 export var projectData = null;
@@ -6,7 +8,7 @@ export var tasksPerEmployeeData = null;
 export var workloadData = null;
 
 
-
+const dashboardContainer = document.querySelector(".dashboard-container");
 
 
 export async function init(id) {
