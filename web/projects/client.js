@@ -769,7 +769,7 @@ async function renderTasks(tasks, update = RENDER_BOTH) {
     await Promise.all(tasks.map((task) => {
         taskObjectRenderAll(task, update)
     }));
-    setUpTaskEventListeners();
+    setUpTaskEventListeners(update);
     await renderAssignments(globalAssignments, update);
 }
 
@@ -1233,7 +1233,6 @@ function taskListSortBy(sortObject) {
     }
     
     let sortDirection = !(cl.contains("asc"));
-    console.error(sortDirection)
     
     let sortBy = sortObject.id;
     let tasks = globalTasksList;
@@ -1255,7 +1254,7 @@ function taskListSortBy(sortObject) {
     tasks.forEach(async (task) => {
         taskObjectRenderAll(task, RENDER_LIST);
     });
-    setUpTaskEventListeners();
+    setUpTaskEventListeners(RENDER_LIST);
     renderAssignments(globalAssignments, RENDER_LIST);
     animate(document.querySelector(".tasktable-body"), "flash");
 }
