@@ -447,6 +447,22 @@ async function renderAssignmentsInExplainer(taskID) {
         usersAssignedExplainer.appendChild(assignmentElem);
     });
 }
+//enable horizontal scrolling on the task card
+let isEventAdded = false;
+async function addHorizontalScrolling() {
+    if (!isEventAdded && taskGridWrapper.scrollHeight <= taskGridWrapper.clientHeight) {
+        console.log("[addHorizontalScrolling] adding event listener")
+        taskGridWrapper.addEventListener("wheel", (event) => {
+            taskGridWrapper.scrollBy({
+                left: event.deltaY < 0 ? -30 : 30,
+            })
+        });
+        isEventAdded = true;
+    }
+}
+window.addEventListener('resize', () => {
+    addHorizontalScrolling();
+});
 
 function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
@@ -455,14 +471,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
     // card view
     if (listeners & RENDER_COLUMN) {
         //enable horizontal scrolling on the task card
-        if(taskGridWrapper.scrollHeight <= taskGridWrapper.clientHeight) {
-            taskGridWrapper.addEventListener("wheel", (event) => {
-                event.preventDefault();
-                taskGridWrapper.scrollBy({
-                    left: event.deltaY < 0 ? -30 : 30,
-                })
-            });
-        }
+        addHorizontalScrolling();
         taskCards = document.querySelectorAll(".task");
         taskCards.forEach((taskCard) => {
 
