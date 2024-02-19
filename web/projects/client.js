@@ -449,24 +449,6 @@ async function renderAssignmentsInExplainer(taskID) {
         usersAssignedExplainer.appendChild(assignmentElem);
     });
 }
-//enable horizontal scrolling on the task card
-let isEventAdded = false;
-async function addHorizontalScrolling() {
-    console.log("[addHorizontalScrolling] checking if horizontal scrolling is needed")
-    console.log(taskGrid.scrollHeight, taskGrid.clientHeight)
-    if (!isEventAdded && taskGrid.scrollHeight <= taskGrid.clientHeight) {
-        console.log("[addHorizontalScrolling] adding event listener")
-        taskGrid.addEventListener("wheel", (event) => {
-            taskGrid.scrollBy({
-                left: event.deltaY < 0 ? -30 : 30,
-            })
-        });
-        isEventAdded = true;
-    }
-}
-window.addEventListener('resize', () => {
-    addHorizontalScrolling();
-});
 
 function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
@@ -474,8 +456,6 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
     // card view
     if (listeners & RENDER_COLUMN) {
-        //enable horizontal scrolling on the task card
-        addHorizontalScrolling();
         taskCards = document.querySelectorAll(".task");
         taskCards.forEach((taskCard) => {
 
