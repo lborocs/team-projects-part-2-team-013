@@ -1475,15 +1475,6 @@
 
 .buttonForm
 
-#add-task-popup {
-    padding: 18px;
-    padding-top: 14px;
-    max-width: 840px;
-    width: calc(100% - 2.5em);
-    gap: 0.75em;
-
-}
-
 
 .add-task-title-input{
     color: var(--text-off-black, #0f0f0f);
@@ -1602,14 +1593,6 @@
 }
 
 
-#add-project-popup {
-    padding: 18px;
-    padding-top: 14px;
-    max-width: 840px;
-    width: calc(100% - 2.5em);
-    gap: 0.75em;
-}
-
 .add-project-title-input{
     color: var(--text-off-black, #0f0f0f);
     display: flex;
@@ -1712,10 +1695,6 @@
     box-shadow: 0 0 4px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
 }
 
-#edit-task-popup {
-    padding-top: 1em;
-    padding-bottom: 1em;
-}
 
 .edit-task-title{
     font-weight: bold;
