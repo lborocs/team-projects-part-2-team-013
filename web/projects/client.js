@@ -3119,6 +3119,7 @@ async function editTaskPopup(task){
         let expectedManHours = parseInt(manHours * 3600 + minutes * 60);
         let dueDate = fp.selectedDates[0];
 
+
         let data = {
             title: taskTitleInput.value,
             description: description,
@@ -3128,6 +3129,12 @@ async function editTaskPopup(task){
 
         let res = await patch_api(`/project/task.php/task/${projID}/${taskID}`, data);
         console.log(res);
+
+        let assignedEmployeesArray = [...assignedEmployees];
+        let assignmentRes = await put_api(`/project/task.php/assignments/${projID}/${taskID}`, {
+            assignments: assignedEmployeesArray
+        });
+        console.log(assignmentRes);
     });
 
 }
