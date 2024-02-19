@@ -280,7 +280,7 @@ class GlobalEmployeeRequest {
 
 const DEFAULT_PREFERENCES = {
     "sidebarisopen": true,
-    "taskview": 1,
+    "taskview": 1, // managers default to 2 (all projects) and employees default to 1 (lead projects)
     "tasksort": "name",
     "taskorder": "desc",
     "taskfilters.managermine": false,
@@ -299,6 +299,13 @@ const DEFAULT_PREFERENCES = {
     "projectfilters.notoverdue": false,
     "notificationslastreadat": 0,
 }
+
+// we need to set dynamically
+getCurrentSession(true).then((session) => {
+    isManager = (session.auth_level ?? 0) >= 2;
+    DEFAULT_PREFERENCES.taskview = isManager ? 2 : 1;
+});
+
 
 class PreferenceValue {
     
