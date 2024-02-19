@@ -591,7 +591,7 @@ function db_post_accesses_fetchall(int $delta) {
     $query = $db->prepare(
         "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
             COUNT(postViewAccessedAt) as views,
-            GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
+            GROUP_CONCAT(DISTINCT `POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
         FROM POST_VIEWS
         LEFT JOIN POSTS
             ON `POSTS`.postID = `POST_VIEWS`.postID
@@ -633,7 +633,7 @@ function db_post_fetch_most_subscribed() {
 
     $query = $db->prepare(
         "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
-        GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+        GROUP_CONCAT(DISTINCT `POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
         COUNT(`EMPLOYEE_POST_META`.empID) as subscriptions
         FROM `POSTS`
         LEFT JOIN `POST_TAGS`
@@ -669,7 +669,7 @@ function db_post_fetch_most_helpful() {
 
     $query = $db->prepare(
         "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
-        GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+        GROUP_CONCAT(DISTINCT `POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
         COUNT(`EMPLOYEE_POST_META`.empID) as helpful
         FROM `POSTS`
         LEFT JOIN `POST_TAGS`
@@ -709,7 +709,7 @@ function db_post_fetch(string $hex_post_id, string $fetcher_id) {
 
     $query = $db->prepare(
         "SELECT `POSTS`.*, `EMPLOYEES`.*, `ASSETS`.contentType,
-            GROUP_CONCAT(`TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+            GROUP_CONCAT(DISTINCT `TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
             `EMPLOYEE_POST_META`.postMetaFeedback as feedback,
             `EMPLOYEE_POST_META`.postMetaSubscribed as subscribed
         FROM `POSTS`
