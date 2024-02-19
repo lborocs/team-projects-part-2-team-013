@@ -1955,7 +1955,11 @@ async function addTask() {
 
     //flatpickr for date picker
     let datePickerInput = popupDiv.querySelector('.date-picker-input')
+
+    let projectDueDate = globalCurrentProject.dueDate ? new Date(globalCurrentProject.dueDate) : new Date();
+
     let fp = flatpickr(datePickerInput, {
+        defaultDate: projectDueDate,
         dateFormat: 'd/m/Y',
         altInput: true,
         altFormat: 'F j, Y',
