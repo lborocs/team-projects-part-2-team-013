@@ -45,7 +45,6 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    justify-content: space-between;
     padding: 1rem 0.5rem;
     gap: 0.5rem;
 
@@ -56,16 +55,21 @@
         color: var(--text-off-black, #0f0f0f);
         font-weight: 600;
         flex-wrap: nowrap;
-        cursor: pointer;
     }
 
     .name {
         user-select: none;
         gap: 0.5rem;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         height: 100%;
+        width: 100%;
+        white-space: nowrap;
     }
+}
+
+.change-password, .log-out{
+    cursor: pointer;
 }
 
 .option-title {
@@ -324,4 +328,19 @@
     padding: 1em;
     border-bottom: 3px solid black;
     font-weight: 600;
+}
+
+.buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+    justify-content: flex-end;
+
+}
+
+.editable{
+    border: black 1px solid;
+    width: 80%;
+    border-radius: 0.2em;
+    cursor: text;
 }
