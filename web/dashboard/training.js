@@ -161,13 +161,6 @@ function renderEmptyMetric(id, title) {
         <div class="title-text">
             ${title}
         </div>
-        <div class="icon-button no-box context-menu">
-            <div class="button-icon">
-                <span class="material-symbols-rounded">
-                    more_horiz
-                </span>
-            </div>
-        </div> 
     `;
 
     metricCard.appendChild(metricTitle);
