@@ -1669,8 +1669,15 @@ async function renderProject(project) {
                 </div>
             </a>
         </td>
-        <td>${date}</td>
-        <td>${dueDateFormatted}</td>
+        <td>
+            <a href="/projects/#${project.projID}">
+                ${date}
+            </a>
+        </td>
+        <td>
+            <a href="/projects/#${project.projID}">
+                ${dueDateFormatted}
+            </a>
         <td>
             <a href="/projects/#${project.projID}">
                 <div class="tooltip tooltip-above name-card">
