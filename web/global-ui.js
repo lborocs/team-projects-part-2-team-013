@@ -25,21 +25,6 @@ export const ASSET_TYPE_EMPLOYEE = "employees";
 export const ASSET_TYPE_POST = "posts";
 export const ASSET_TYPE_PROJECT = "projects";
 
-export var settings;
-// this uses the settings object to reduce the amount of localstorage calls
-export function getSetting(key) {
-    console.log(`[getSetting] ${key} is ${settings[key]}`)
-    return settings[key];
-}
-
-// settings object and localstorage entry are kept in sync
-export function setSetting(key, value) {
-    ensureSettings();
-    settings[key] = value;
-    localStorage.setItem('settings', JSON.stringify(settings));
-    console.log(`[setSetting] ${key} set to ${value}`);
-    console.log(settings);
-}
 
 caches.open("employees");
 
@@ -294,8 +279,8 @@ class GlobalEmployeeRequest {
 
 
 const DEFAULT_PREFERENCES = {
-    "sidebarisopen": false,
-    "taskview": 0,
+    "sidebarisopen": true,
+    "taskview": 1,
     "tasksort": "name",
     "taskorder": "desc",
     "taskfilters.managermine": false,
@@ -1010,10 +995,6 @@ if (topbar.hamburger !== null) {
         document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
             paragraph.classList.toggle("norender")
         })
-
-        // update settings
-        setSetting("sidebarIsOpen", sidebarContainer.classList.contains("sidebar-open"));
-        console.log("[hamburger] sidebarIsOpen set to " + sidebarContainer.classList.contains("sidebar-open"));
     })
 }
 
@@ -1057,40 +1038,6 @@ export function managerElementsEnableIfManager() {
             
         })
     });
-}
-
-function ensureSettings() {
-    settings = JSON.parse(localStorage.getItem('settings'));
-    if (!settings) { // if initial settings aren't in local storage, set them
-        settings = {
-            sidebarIsOpen: false, // true, false
-            taskView: "board", // board, list
-            taskSort: "none", // none, name, due, created, hours
-            taskOrder: "desc", // asc, desc
-            taskFilters: { // union of filters is applied
-                managerMine: false, // (manager) only tasks assigned to me
-                group: false, // only tasks assigned to more than one person
-                single: false, // only tasks assigned to one person
-                finished: false, // only finished tasks
-                inProgress: false, // only in progress tasks
-                notStarted: false, // only not started tasks
-                overdue: false, // only overdue task, if tasks have no due date they are not included
-                notOverdue: false, // only not overdue tasks or tasks with no due date
-            },
-            projectSort: "none", // none, name, due, created, accessed
-            projectOrder: "desc", // asc, desc
-            projectFilters: {
-                managerMine: false, // (manager) only projects I am in, or team leader of
-                teamLeader: false, // only projects I am team leader of
-                overdue: false, // only overdue projects, if projects have no due date they are not included
-                notOverdue: false, // only not overdue projects or projects with no due date
-            },
-        };
-        localStorage.setItem('settings', JSON.stringify(settings));
-    }
-    console.log("[ensureSettings] settings loaded, settings is now:");
-    console.log(settings);
-
 }
 
 
@@ -1336,24 +1283,27 @@ if (window.location.pathname !== '/' || window.location.pathname !== '/register/
         }
     }, 200);
 
-    ensureSettings();
-
     if (sidebarContainer !== null) {
-        if(window.innerWidth > 600 && getSetting("sidebarIsOpen") === true) {
-            console.log("[init] setting sidebar to open")
-            sidebar.sidebar.classList.add("visible")
-            sidebarContainer.classList.add("sidebar-open")
-            document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-                paragraph.classList.remove("norender")
-            })
-        } else {
-            console.log("[init] setting sidebar to closed")
-            sidebar.sidebar.classList.remove("visible")
-            sidebarContainer.classList.remove("sidebar-open")
-            document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
-                paragraph.classList.add("norender")
-            })
-        }
+
+        preferences.get_or_default("sidebarIsOpen").then((sidebarIsOpen) => {
+
+            if(window.innerWidth > 600 && sidebarIsOpen === true) {
+                console.log("[init] setting sidebar to open")
+                sidebar.sidebar.classList.add("visible")
+                sidebarContainer.classList.add("sidebar-open")
+                document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+                    paragraph.classList.remove("norender")
+                })
+            } else {
+                console.log("[init] setting sidebar to closed")
+                sidebar.sidebar.classList.remove("visible")
+                sidebarContainer.classList.remove("sidebar-open")
+                document.querySelectorAll(".sidebar-item p").forEach((paragraph) => {
+                    paragraph.classList.add("norender")
+                })
+            }
+        });
+
     }
 
     fillCurrentUserInfo();
