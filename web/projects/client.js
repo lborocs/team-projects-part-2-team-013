@@ -1035,13 +1035,14 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     let state = task.state
     let taskID = task.taskID || "Unknown";
     let expectedManHours = task.expectedManHours; //no safety here because not null i think
-    let assignments = task.assignments || [];    
+    let assignments = task.assignments || [];
+    let archived = task.archived || 0;
 
     if (update & RENDER_COLUMN) {
         renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours, assignments);
     }
     if (update & RENDER_LIST) {
-        renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours, assignments);
+        renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours, assignments, archived);
     }
     
     calculateTaskCount()
@@ -1272,8 +1273,8 @@ function calculateTaskCount() {
     console.table(notStartedCount, inProgressCount, finishedCount)
 }
 
-function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours, assignments = []) {
-    console.log("[renderTaskInList] rendering task in list")
+function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours, assignments = [], archived = 0) {
+    console.log("[renderTaskInList] rendering task in list", globalCurrentTask)
 
     let taskRow = document.createElement("tr");
     taskRow.classList.add("taskRow");
@@ -1292,7 +1293,11 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     var icon;
     var statusText;
     var stateClass;
-    if (state == 0) {
+    if (archived == 1) {
+        stateClass = "archived";
+        icon = "archive";
+        statusText = "Archived";
+    } else if (state == 0) {
         stateClass = "not-started";
         icon = "push_pin";
         statusText = "Not Started";
@@ -1304,6 +1309,10 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         stateClass = "finished";
         icon = "check_circle";
         statusText = "Finished";
+    } else if (archived == 1){
+        stateClass = "archived";
+        icon = "archive";
+        statusText = "Archived";
     } else {
         console.error(`[renderTaskInList] invalid state (${state}) for task ${title}`);
     }
