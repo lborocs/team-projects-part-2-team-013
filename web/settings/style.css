@@ -60,7 +60,7 @@
         user-select: none;
         gap: 0.5rem;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         height: 100%;
         width: 100%;
         white-space: nowrap;
