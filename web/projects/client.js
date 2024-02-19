@@ -181,6 +181,197 @@ function setActivePane(newPane) {
     
 }
 
+async function addManHoursPopup(task) {
+    console.log("[addManHoursPopup] Running addManHoursPopup")
+    let popupDiv = document.querySelector('.popup');
+    let fullscreenDiv = document.querySelector('.fullscreen');
+    popupDiv.innerHTML = `
+        <dialog open class='popupDialog' id="add-man-hours-popup">
+            <div class="popup-title">
+                <span>Add Man Hours</span>
+                <div class="small-icon" id="close-button">
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+                </div>
+            </div>
+            <div class="popup-subtitle">Title</div>
+            <div class="task-title">
+                ${task.title}
+            </div>
+            <div class="popup-subtitle">Description</div>
+            <div class="task-description">
+                ${task.description}
+            </div>
+            <div class="manhours-row">
+                <div class="manhours-label">
+                    Add man hours:
+                </div>
+                <div id="man-hours-and-minutes">
+                    <div class="number-picker" id="add-man-hours-button2">
+                        <div class = "stepper decrement" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                remove
+                            </span>
+                        </div>
+                        <input type="number" class="number-input" value="1" min="0" tabindex="0">
+                        <div class="stepper increment" tabindex="0">
+                            <span class="material-symbols-rounded">
+                                add
+                            </span>
+                        </div>
+                        <div class="manhours-label">Hours</div>
+                    </div>
+                    <div class="number-picker" id="expected-man-minutes">
+                        <div class="number-picker" id="expected-man-minutes">
+                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                                <div class="dropdown-text">
+                                    0
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option" id="manhours-minutes0">0</div>
+                                    <div class="dropdown-option" id="manhours-minutes15">15</div>
+                                    <div class="dropdown-option" id="manhours-minutes30">30</div>
+                                    <div class="dropdown-option" id="manhours-minutes45">45</div>
+                                </div>
+                            </div>
+                            <div class="manhours-label">
+                                Minutes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="confirm-buttons-row">
+                <div class="text-button" id="discard-button">
+                    <div class="button-text">
+                        Discard
+                    </div>
+                </div>
+                <div class="text-button blue" id="add-button">
+                    <div class="button-text">
+                        Add
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    `;
+
+    let manhoursMinutesDropdown = document.querySelector("#manhours-minutes-dropdown")
+    let manhoursMinutes0 = document.querySelector("#manhours-minutes0")
+    let manhoursMinutes15 = document.querySelector("#manhours-minutes15")
+    let manhoursMinutes30 = document.querySelector("#manhours-minutes30")
+    let manhoursMinutes45 = document.querySelector("#manhours-minutes45")
+
+    manhoursMinutesDropdown.addEventListener("click", function() {
+        this.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!manhoursMinutesDropdown.contains(e.target)) {
+            manhoursMinutesDropdown.classList.remove("open")
+        }
+    });
+    
+    manhoursMinutes0.addEventListener("click", () => {
+        manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "0";
+    })
+    manhoursMinutes15.addEventListener("click", () => {
+        manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "15";
+    })
+    manhoursMinutes30.addEventListener("click", () => {
+        manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "30";
+    })
+    manhoursMinutes45.addEventListener("click", () => {
+        manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "45";
+    })
+
+    // Event listeners for the number picker
+    let numberPicker = document.querySelector("#add-man-hours-button2");
+    if (numberPicker) {
+        let numberPickerInput = numberPicker.querySelector('input[type="number"]');
+        let numberPickerPlus = numberPicker.querySelector('.stepper.increment');
+        let numberPickerMinus = numberPicker.querySelector('.stepper.decrement');
+        if (numberPickerPlus) {
+            numberPickerPlus.addEventListener('click', e => {
+                e.preventDefault();
+                numberPickerInput.stepUp();
+            });
+        }
+        if (numberPickerMinus) {
+            numberPickerMinus.addEventListener('click', e => {
+                e.preventDefault();
+                numberPickerInput.stepDown();
+            });
+        }
+        if (numberPickerInput) {
+            numberPickerInput.addEventListener('focus', e => {
+                numberPickerInput.select();
+            });
+        }
+    }
+
+    fullscreenDiv.style.filter = 'brightness(0.75)';
+    let dialog = popupDiv.querySelector('.popupDialog');
+    dialog.style.transform = 'translateY(0px)'
+    dialog.style.opacity = '1';
+    
+    let addButton = dialog.querySelector('#add-button');
+    let closeButton = dialog.querySelector('#close-button');
+    let discardButton = dialog.querySelector('#discard-button');
+
+    if (closeButton) {
+        closeButton.addEventListener('click', (event) => {
+            event.preventDefault(); 
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addManHoursCloseButton] rejecting")
+        });
+    }
+
+    if (discardButton) {
+        discardButton.addEventListener('click', (event) => {
+            event.preventDefault(); 
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addManHoursDiscardButton] rejecting")
+        });
+    }
+
+    if (addButton) {
+        addButton.addEventListener('click', (event) => {
+            event.preventDefault(); 
+            // Add the man hours to the task
+            task.manHours += parseInt(numberPickerInput.value);
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addManHoursAddButton] adding man hours")
+        });
+    }
+
+    dialog.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addManHoursEscape] rejecting")
+        }
+    });
+}
+
+
 
 views.forEach((view, i) => {
     
@@ -376,13 +567,23 @@ function showTaskInExplainer(taskCard) {
     }
 
     explainerTaskManhours.innerHTML = `
-        <div class="description-header">Man hours</div>
+        <div class="description-header">Estimated Man hours</div>
         <div class="man-hours">
             <div class="manhours">
                 ${timeDisplay}
             </div>
+            <div class="text-button" id="add-man-hours">
+                <div class="button-text">+</div>
+            </div> 
         </div>
     `;
+
+    let addManHoursButton = explainerTaskManhours.querySelector('#add-man-hours');
+    if (addManHoursButton) {
+        addManHoursButton.addEventListener('click', function() {
+            addManHoursPopup(globalCurrentTask);
+        });
+    }
 
     //Task status
     let statusElement = document.querySelector(".status");
