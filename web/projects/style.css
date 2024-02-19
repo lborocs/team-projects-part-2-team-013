@@ -772,6 +772,8 @@
     width: clamp(22em, 32%, 34em);
     min-width: 330px;
     transition: 0.08s ease-out;
+    min-height: calc(100% - 7em);
+    height: fit-content;
 }
 
 .taskcolumn.highlight {
