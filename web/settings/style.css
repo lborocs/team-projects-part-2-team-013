@@ -99,7 +99,7 @@
     background-color: rgb(244,244,244);
     border-radius: 3px;
     border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
+    border-bottom-right-radius: 0;
     color: #000000;
     font-weight: 600;
     transition-duration: 0s;

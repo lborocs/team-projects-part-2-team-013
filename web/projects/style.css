@@ -1,6 +1,5 @@
 #view-archived-button{
-    position: absolute;
-    right: 9.5em;
+    margin-left: auto;
 }
 
 .selection-screen {
@@ -422,10 +421,6 @@
     }
 }
 
-.views > :last-child {
-    margin-left: auto;
-}
-
 .view {
     box-sizing: border-box;
     display: flex;
@@ -708,6 +703,7 @@
     margin-left: 1em;
     margin-right: 1em;
     justify-content: center;
+    overflow-y: auto;
 }
 
 .taskgrid-wrapper {
@@ -1996,4 +1992,8 @@ td:has(#more) {
 .explainer.popout.hidden {
     width: 0;
     transition: width 0.1s ease-out;
+}
+
+#add-man-hours {
+    height: 20px;
 }
