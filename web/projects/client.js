@@ -1502,7 +1502,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
                             arrow_forward_ios
                         </span>
                     </div>
-                    <div class="submen" id="leftsubmenu">
+                    <div class="submenu">
                         <div class="item not-started-state ${selectedState[0]}">
                             <div class="icon">
                                 <span class="material-symbols-rounded">
