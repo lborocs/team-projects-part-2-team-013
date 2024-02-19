@@ -331,6 +331,9 @@ function updateTaskState(task) {
 //takes a task card HTML ELEMENT
 function showTaskInExplainer(taskCard) {
 
+
+    explainer.querySelector('.edit-button').classList.remove('disabled');
+    explainer.querySelector('.delete-button').classList.remove('disabled');
     let taskID = taskCard.getAttribute("id");
     let assignees = taskCard.getAttribute("data-assignments");
     explainerTaskContainer.setAttribute("task-id", taskID);
@@ -3191,7 +3194,7 @@ async function projectPopup(id){
 }
 
 
-document.querySelector(".edit-button").addEventListener("pointerup", async () => {
+document.querySelector(".edit-button").addEventListener("click", async () => {
     let taskID = explainerTaskContainer.getAttribute("task-id");
     //get task from globalTasksList
     console.log(globalTasksList)
