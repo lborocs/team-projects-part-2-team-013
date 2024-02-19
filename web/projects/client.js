@@ -291,6 +291,12 @@ function updateTaskState(task) {
         //update the disabled option in the context menu
         let contextMenu = task.querySelector(".context-menu-popover");
         let stateSelector = contextMenu.querySelector(".state-selector .submenu");
+        if (newState == 2) {
+            stateSelector.classList.add("menu-left");
+        }
+        else {
+            stateSelector.classList.remove("menu-left");
+        }
         let stateItems = stateSelector.querySelectorAll(".item");
         stateItems.forEach((item) => {
             item.classList.remove("disabled");
