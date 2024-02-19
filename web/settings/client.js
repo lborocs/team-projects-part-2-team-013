@@ -508,12 +508,12 @@ function passwordPopup() {
         fullscreenDiv.style.filter = 'brightness(0.75)';
 
         let dialog = popupDiv.querySelector('.popup-dialog');
-        let popupCancel = dialog.getElementById('popup-cancel');
-        let popupConfirm = dialog.getElementById('popup-confirm');
-        console.error(confirmButton);
-        let currentPassword = dialog.getElementById('current-password');
-        let newPassword = dialog.getElementById('new-password');
-        let confirmNewPassword = dialog.getElementById('confirm-new-password');
+        let popupCancel = dialog.querySelector('#popup-cancel');
+        let popupConfirm = dialog.querySelector('#popup-confirm');
+        console.error(popupConfirm);
+        let currentPassword = dialog.querySelector('#current-password');
+        let newPassword = dialog.querySelector('#new-password');
+        let confirmNewPassword = dialog.querySelector('#confirm-new-password');
 
         popupCancel.addEventListener('click', (event) => {
             event.preventDefault();
@@ -522,7 +522,7 @@ function passwordPopup() {
             reject();
         });
 
-        popupConfirm.addEventListener('mousedown', (event) => {
+        popupConfirm.addEventListener('click', (event) => {
             console.log('confirm button clicked');
             event.preventDefault();
             dialog.style.display = 'none';
