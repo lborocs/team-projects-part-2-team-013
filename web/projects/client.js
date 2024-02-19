@@ -185,6 +185,15 @@ async function addManHoursPopup(task) {
     console.log("[addManHoursPopup] Running addManHoursPopup")
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
+
+    let hours = Math.floor(task.expectedManHours / 3600);
+    let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
+    let timeDisplay = "";
+    if (minutes > 0) {
+        timeDisplay = `${hours} hours ${minutes} minutes`;
+    } else {
+        timeDisplay = `${hours} hours`;
+    }
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-man-hours-popup">
             <div class="popup-title">
@@ -199,13 +208,13 @@ async function addManHoursPopup(task) {
             <div class="task-title">
                 ${task.title}
             </div>
-            <div class="popup-subtitle">Description</div>
-            <div class="task-description">
-                ${task.description}
+            <div class="popup-subtitle">Expected man hours</div>
+            <div class="task-title">
+                ${timeDisplay}
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Add man hours:
+                    Add man hours
                 </div>
                 <div id="man-hours-and-minutes">
                     <div class="number-picker" id="add-man-hours-button2">
@@ -556,14 +565,13 @@ function showTaskInExplainer(taskCard) {
     let manHours = globalCurrentTask.expectedManHours;
     let timeDisplay = "";
 
-    if (manHours < 3600) {
-        // Convert to minutes and display
-        let minutes = manHours / 60;
-        timeDisplay = `${minutes.toFixed(0)} Minute${minutes !== 1 ? 's' : ''}`;
+    let hours = Math.floor(manHours / 3600);
+    let minutes = Math.round((manHours / 3600 - hours) * 60);
+
+    if (minutes > 0) {
+        timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`;
     } else {
-        // Convert to hours and display
-        let hours = manHours / 3600;
-        timeDisplay = `${hours.toFixed(0)} Hour${hours !== 1 ? 's' : ''}`;
+        timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''}`;
     }
 
     explainerTaskManhours.innerHTML = `
@@ -2305,7 +2313,10 @@ async function addTask() {
         event.stopPropagation();
         let title = dialog.querySelector('.add-task-title-input').value;
         let description = quill.root.innerHTML;
-        let expectedManHours = parseInt(numberPickerInput.value, 10) * 3600;
+        let hoursInput = parseInt(numberPickerInput.value, 10) * 3600;
+        let minutesDropdown = document.querySelector("#manhours-minutes-dropdown .dropdown-text");
+        let minutesInput = parseInt(minutesDropdown.innerText, 10) * 60;
+        let expectedManHours = hoursInput + minutesInput;
         let dueDate = fp.selectedDates[0];
         let dueDateTimestamp = dueDate ? dueDate.getTime() : null;
         let state = 0;
