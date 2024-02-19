@@ -585,13 +585,20 @@ function db_post_accesses_add(string $emp_id, string $post_id) {
     }
 }
 
-function db_post_accesses_fetchall() {
+function db_post_accesses_fetchall(int $delta) {
     global $db;
-    $epoch = timestamp() - POST_ACCESS_DELTA;
+    $epoch = timestamp() - $delta;
     $query = $db->prepare(
-        "SELECT postID, COUNT(postViewAccessedAt) as views 
-        FROM POST_VIEWS WHERE postViewAccessedAt > ?
-        GROUP BY postID
+        "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
+            COUNT(postViewAccessedAt) as views,
+            GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
+        FROM POST_VIEWS
+        LEFT JOIN POSTS
+            ON `POSTS`.postID = `POST_VIEWS`.postID
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        WHERE postViewAccessedAt > ?
+        GROUP BY `POSTS`.postID
         ORDER BY views DESC
         LIMIT " . DATA_FETCH_LIMIT
     );
@@ -611,11 +618,86 @@ function db_post_accesses_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_POST_VIEWS, ["views"=>"integer"]);
+        $encoded = parse_database_row($row, TABLE_POSTS, [
+            "views"=>"integer",
+            "tags"=>"a-binary",
+        ]);
         array_push($data, $encoded);
     }
     return $data;
 
+}
+
+function db_post_fetch_most_subscribed() {
+    global $db;
+
+    $query = $db->prepare(
+        "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
+        GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+        COUNT(`EMPLOYEE_POST_META`.empID) as subscriptions
+        FROM `POSTS`
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        LEFT JOIN `EMPLOYEE_POST_META`
+            ON `EMPLOYEE_POST_META`.postID = `POSTS`.postID AND `EMPLOYEE_POST_META`.postMetaSubscribed = 1
+        GROUP BY `POSTS`.postID
+        ORDER BY subscriptions DESC
+        LIMIT " . DATA_FETCH_LIMIT
+    );
+
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    $res = $query->get_result();
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_POSTS, [
+            "subscriptions"=>"integer",
+            "tags"=>"a-binary",
+        ]);
+        array_push($data, $encoded);
+    }
+    return $data;
+}
+
+function db_post_fetch_most_helpful() {
+    global $db;
+
+    $query = $db->prepare(
+        "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
+        GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+        COUNT(`EMPLOYEE_POST_META`.empID) as helpful
+        FROM `POSTS`
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        LEFT JOIN `EMPLOYEE_POST_META`
+            ON `EMPLOYEE_POST_META`.postID = `POSTS`.postID AND `EMPLOYEE_POST_META`.postMetaFeedback = 1
+        GROUP BY `POSTS`.postID
+        ORDER BY helpful DESC
+        LIMIT " . DATA_FETCH_LIMIT
+    );
+
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    $res = $query->get_result();
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_POSTS, [
+            "helpful"=>"integer",
+            "tags"=>"a-binary",
+        ]);
+        array_push($data, $encoded);
+    }
+    return $data;
 }
 
 
@@ -1585,10 +1667,10 @@ function db_tag_fetchall() {
     return $data;
 }
 
-function db_tag_fetch_popular() {
+function db_tag_fetch_popular(int $delta) {
     global $db;
 
-    $epoch = timestamp() - POST_ACCESS_DELTA;
+    $epoch = timestamp() - $delta;
 
     $query = $db->prepare(
         "SELECT `TAGS`.*, `POPULAR_TAGS`.views FROM `TAGS`
