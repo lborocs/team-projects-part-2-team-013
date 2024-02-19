@@ -21,6 +21,8 @@ const secondNameInput = nameInputs[1];
 const accountDropdown = document.getElementById('account-dropdown');
 const accountOptions = document.querySelectorAll('.account-option');
 
+
+
 function getQueryParam() {
     return window.location.hash.substring(1);
 }
@@ -93,6 +95,7 @@ async function setUserData() {
     accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
 
     document.querySelector('.current-name').innerHTML = employeeName;
+    global.setBreadcrumb(["Settings", "Manage User", employeeName], ["./", "#account", "#manageusers"])
     accountCard.querySelector('.email').innerHTML = employeeEmail;
     accountCard.querySelector('.avatar').src = employeeAvatar;
     accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
@@ -331,3 +334,4 @@ async function handleClick() {
 }
 
 sendButton.addEventListener("click", handleClick);
+
