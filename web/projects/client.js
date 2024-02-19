@@ -115,25 +115,27 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         console.error(`[renderIndividualProject] Error fetching tasks`);
         return false;
     }
+    globalTasksList = tasks;
+
     
-    const prefSort = await global.preferences.get('tasksort');
-    const prefDirection = await global.preferences.get('taskdirection');
-    const attributeSearch = prefSort.or_default();
-    const sortDirection = prefDirection.or_default();
+    const attributeSearch = await global.preferences.get_or_default('tasksort');
+    const sortDirection = await global.preferences.get_or_default('taskdirection');
+
 
     let sortColumn = taskList.querySelector(`[data-value=${attributeSearch}]`);
     sortColumn.classList.add("sorting-by");
     if (sortDirection === 'desc') {
         sortColumn.classList.add("desc");
-        console.error("CUMMM")
     } else {
-        console.error("NOOOOOO")
         sortColumn.classList.add("asc")
     }
 
-    await renderTasks(tasks);
+    // tasks sort by for default sorting
+    taskListSortBy(sortColumn);
+
+    // render in board only
+    renderTasks(tasks, RENDER_COLUMN);
     console.log("[renderIndividualProject] fetched & rendered tasks for " + project.name)
-    globalTasksList = tasks;
     console.log("global tasks list:")
     console.log(globalTasksList)
 
@@ -265,7 +267,6 @@ function explainerTaskSetToDefault() {
 }
 
 function getTaskState(task) {
-
     let taskState = task.getAttribute("data-state");
     if (taskState == null) {
         console.error("[getTaskState] task has no state");
@@ -295,6 +296,12 @@ function updateTaskState(task) {
         //update the disabled option in the context menu
         let contextMenu = task.querySelector(".context-menu-popover");
         let stateSelector = contextMenu.querySelector(".state-selector .submenu");
+        if (newState == 2) {
+            stateSelector.classList.add("menu-left");
+        }
+        else {
+            stateSelector.classList.remove("menu-left");
+        }
         let stateItems = stateSelector.querySelectorAll(".item");
         stateItems.forEach((item) => {
             item.classList.remove("disabled");
@@ -780,12 +787,12 @@ async function fetchTasks(projID) {
  * @param {Array} tasks 
  */
 async function renderTasks(tasks, update = RENDER_BOTH) {
-    clearRenderedTasks();
+    clearRenderedTasks(update);
     await Promise.all(tasks.map((task) => {
         taskObjectRenderAll(task, update)
     }));
     setUpTaskEventListeners();
-    await renderAssignments(globalAssignments);
+    await renderAssignments(globalAssignments, update);
 }
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
@@ -885,13 +892,18 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
     });
 }
 
-function clearRenderedTasks() {
-    taskCards.forEach((task) => {
-        task.remove()
-    })
-    taskRows.forEach((task) => {
-        task.remove()
-    }) 
+// clear is the tasks that will be cleared, RENDER_BOTH will clear both
+function clearRenderedTasks(clear = RENDER_BOTH) {
+    if (clear & RENDER_COLUMN) {
+        taskCards.forEach((task) => {
+            task.remove()
+        })
+    }
+    if (clear & RENDER_LIST) {
+        taskRows.forEach((task) => {
+            task.remove()
+        }) 
+    }
 }
 
 async function teamLeaderEnableElementsIfTeamLeader() {
@@ -1314,60 +1326,60 @@ function setupDropdownEventListeners(taskRow) {
 
 sortArray.forEach((sortObject) => {
     sortObject.addEventListener("click", () => {
-        const cl = sortObject.classList;
-        const symbol = sortObject.querySelector('.material-symbols-rounded');
-        if (cl.contains("sorting-by")) {
-            if(cl.contains("desc")) {
-                cl.remove("desc");
-                cl.add("asc");
-                if (symbol) symbol.innerHTML = "arrow_upward";
-            } else {
-                cl.remove("asc");
-                cl.add("desc");
-                if (symbol) symbol.innerHTML = "arrow_downward";
-            }
-        } else  {
-            sortArray.forEach((sortObject) => {
-                sortObject.classList.remove("sorting-by", "asc", "desc");
-                const otherSymbol = sortObject.querySelector('.material-symbols-rounded');
-                if (otherSymbol) otherSymbol.innerHTML = "swap_vert";
-            });
-            cl.add("sorting-by", "desc");
-            if (symbol) symbol.innerHTML = "arrow_downward";
-        }
-        
-        let sortDirection = !(cl.contains("asc"));
-        console.error(sortDirection)
-        
-        let sortBy = sortObject.id;
-        let tasks = globalTasksList;
-        if (sortBy == "title-column") {
-            sortByTitle(tasks, sortDirection);
-        } else if (sortBy == "date-column") {
-            sortByDueDate(tasks, sortDirection);
-        } else if (sortBy == "status-column") {
-            sortByState(tasks, sortDirection);
-        } else if (sortBy == "assignees-column") {
-            sortByAssignees(tasks, sortDirection);
-        } else {
-            console.error("invalid sort criteria");
-        }
-        taskRows = document.querySelectorAll(".taskRow");
-        taskRows.forEach((task) => {
-            task.remove();
-        });
-        tasks.forEach(async (task) => {
-            await new Promise((resolve) => {
-                taskObjectRenderAll(task, RENDER_LIST);
-                resolve();
-            })
-            
-        });
-        setUpTaskEventListeners();
-        renderAssignments(globalAssignments, RENDER_LIST);
-        animate(document.querySelector(".tasktable-body"), "flash");
+        taskListSortBy(sortObject)
     })
 })
+
+function taskListSortBy(sortObject) {
+    const cl = sortObject.classList;
+    const symbol = sortObject.querySelector('.material-symbols-rounded');
+    if (cl.contains("sorting-by")) {
+        if(cl.contains("desc")) {
+            cl.remove("desc");
+            cl.add("asc");
+            if (symbol) symbol.innerHTML = "arrow_upward";
+        } else {
+            cl.remove("asc");
+            cl.add("desc");
+            if (symbol) symbol.innerHTML = "arrow_downward";
+        }
+    } else  {
+        sortArray.forEach((sortObject) => {
+            sortObject.classList.remove("sorting-by", "asc", "desc");
+            const otherSymbol = sortObject.querySelector('.material-symbols-rounded');
+            if (otherSymbol) otherSymbol.innerHTML = "swap_vert";
+        });
+        cl.add("sorting-by", "desc");
+        if (symbol) symbol.innerHTML = "arrow_downward";
+    }
+    
+    let sortDirection = !(cl.contains("asc"));
+    console.error(sortDirection)
+    
+    let sortBy = sortObject.id;
+    let tasks = globalTasksList;
+    if (sortBy == "title-column") {
+        sortByTitle(tasks, sortDirection);
+    } else if (sortBy == "date-column") {
+        sortByDueDate(tasks, sortDirection);
+    } else if (sortBy == "status-column") {
+        sortByState(tasks, sortDirection);
+    } else if (sortBy == "assignees-column") {
+        sortByAssignees(tasks, sortDirection);
+    } else {
+        console.error("invalid sort criteria");
+    }
+    taskRows = document.querySelectorAll(".taskRow");
+    taskRows.forEach((task) => {
+        task.remove();
+    });
+    tasks.forEach(async (task) => {
+        taskObjectRenderAll(task, RENDER_LIST);
+    });
+    setUpTaskEventListeners();
+    renderAssignments(globalAssignments, RENDER_LIST);
+    animate(document.querySelector(".tasktable-body"), "flash");
+}
 
 
 function sortByCreatedAt(tasks, descending) {
@@ -1561,7 +1573,9 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
             </div>
         </div>
     `
-    
+    if(state == 2) {
+        task.querySelector(".submenu").classList.add("menu-left");
+    }
 
     let statusIcon;
     let overdueContainerClass = "";
@@ -3455,14 +3469,14 @@ async function getProjectPreferences() {
     const prefDirection = await global.preferences.get('projectOrder');
     sortAttribute = prefSort.or_default();
     sortDirection = prefDirection.or_default();
-    let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
+    let sortColumn = document.querySelector(`[data-attribute="${sortAttribute}"]`);
     sortColumn.classList.add('sorting-by');
     if (sortDirection === 'asc') {
         sortColumn.classList.add('asc');
     } else {
         sortColumn.classList.add('desc');
     }
-    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${attributeSearch}`);
+    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${sortAttribute}`);
     console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
 }
 
