@@ -12,6 +12,7 @@ const accountOptions = document.querySelector('.account-options');
 const preferencesOptions = document.querySelector('.preferences-options');
 const systemOptions = document.querySelector('.system-options');
 const manageUsersOptions = document.querySelector('.manage-users-options');
+const sidebarCheckbox = document.getElementById('sidebar-checkbox');
 
 const logoutButton = document.querySelector('.log-out');
 
@@ -91,6 +92,14 @@ manageUsersTab.addEventListener('click', () => {
 })
 
 //dropdown menu event listeners
+
+sidebarCheckbox.addEventListener('change', async function() {
+    if (this.checked) {
+        await global.preferences.set('sidebarisopen', true);
+    } else {
+        await global.preferences.set('sidebarisopen', false);
+    }
+});
 
 document.addEventListener('click', function(event) {
     [...preferencesMenus, ...globalSettingsMenus].forEach(({ optionsId }) => {
@@ -188,6 +197,14 @@ window.addEventListener('load', async () => {
         document.querySelector(textId).innerHTML = defaultElement;
     });
 
+    const sidebarValue = await global.preferences.get('sidebarisopen');
+    const sidebar = sidebarValue.or_default();
+    if (sidebar == true) {
+        sidebarCheckbox.checked = true;
+    } else {
+        sidebarCheckbox.checked = false;
+    }
+
     globalSettingsMenus.forEach(async ({ textId, settingKey }) => {
         const setting = await global.siteSettings.get(settingKey);
         console.log('setting:', setting);
@@ -195,6 +212,8 @@ window.addEventListener('load', async () => {
         console.log('settingValue:', settingValue);
         document.querySelector(textId).innerHTML = settingValue;
     });
+
+    
 });
 
 
