@@ -702,6 +702,7 @@
     margin-top: 0.75em;
     margin-left: 1em;
     margin-right: 1em;
+    padding-bottom: 8em;
     justify-content: center;
     overflow-y: auto;
 }
