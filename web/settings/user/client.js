@@ -2,23 +2,24 @@ import * as global from "../../global-ui.js";
 
 const nameValues = document.querySelectorAll('.current-name');
 const accountCard = document.querySelector('.account-card');
-const accountOptions = document.querySelector('.account-options');
 
 const changeButtons = document.querySelectorAll('#change-button');
 const cancelButtons = document.querySelectorAll('#cancel-button');
 const confirmButtons = document.querySelectorAll('#confirm-button');
 const nameInputs = document.querySelectorAll('.name-display-input');
 
-const changeButton1 = changeButtons[0];
-const cancelButton1 = cancelButtons[0];
-const confirmButton1 = confirmButtons[0];
-const nameInput1 = nameInputs[0];
+const firstNameChange = changeButtons[0];
+const firstNameCancel = cancelButtons[0];
+const firstNameConfirm = confirmButtons[0];
+const firstNameInput = nameInputs[0];
 
-const changeButton2 = changeButtons[1];
-const cancelButton2 = cancelButtons[1];
-const confirmButton2 = confirmButtons[1];
-const nameInput2 = nameInputs[1];
+const secondNameChange = changeButtons[1];
+const secondNameCancel = cancelButtons[1];
+const secondNameConfirm = confirmButtons[1];
+const secondNameInput = nameInputs[1];
 
+const accountDropdown = document.getElementById('account-dropdown');
+const accountOptions = document.querySelectorAll('.account-option');
 
 function getQueryParam() {
     return window.location.hash.substring(1);
@@ -27,6 +28,39 @@ let empID = getQueryParam();
 console.log("THE ID");
 console.log(empID);
 
+async function updateAccountType(type) {
+    const body = {
+        isManager: type,
+    };
+
+    const response = await patch_api(`/employee/employee.php/employee/${empID}`, body);
+    setUserData();
+}
+
+accountDropdown.addEventListener('click', (event) => {
+    event.stopPropagation();
+    accountDropdown.classList.toggle('open');
+});
+
+accountOptions.forEach((option) => {
+    let accountType = document.querySelector('#account-type');
+    option.addEventListener('click', (event) => {
+        event.stopPropagation();
+        let selectedOption = option.innerText;
+        accountType.innerHTML = selectedOption;
+        accountDropdown.classList.remove('open');
+        if (selectedOption == "Manager") {
+            updateAccountType(1);
+        } else {
+            updateAccountType(0);
+        }
+    });
+});
+
+document.addEventListener('click', (event) => {
+    event.stopPropagation();
+    accountDropdown.classList.remove('open');
+});
 
 async function getEmployee(empID) {
     console.log('fetching employee');
@@ -40,6 +74,8 @@ async function getEmployee(empID) {
 }
 getEmployee(empID);
 
+
+
 async function setUserData() {
     let empData = await getEmployee(empID);
     let emp = empData.employee;
@@ -52,6 +88,10 @@ async function setUserData() {
 
     const isManager = emp.isManager != 0;
 
+    let accountType = document.querySelector('#account-type');
+    accountType.innerHTML = isManager ? "Manager" : "Employee";
+    accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
+
     document.querySelector('.current-name').innerHTML = employeeName;
     accountCard.querySelector('.email').innerHTML = employeeEmail;
     accountCard.querySelector('.avatar').src = employeeAvatar;
@@ -63,78 +103,78 @@ async function setUserData() {
         var firstName = emp.firstName;
     }
     var lastName = emp.lastName;
-    nameInput1.innerHTML = firstName;
-    nameInput2.innerHTML = lastName;
+    firstNameInput.innerHTML = firstName;
+    secondNameInput.innerHTML = lastName;
 };
 
 setUserData();
 
-changeButton1.addEventListener('click', () => {
+firstNameChange.addEventListener('click', () => {
     console.log('change button clicked');
-    changeButton1.classList.add('norender');
-    cancelButton1.classList.remove('norender');
-    confirmButton1.classList.remove('norender');
-    nameInput1.setAttribute('contenteditable', 'true');
-    nameInput1.classList.add('editable');
-    nameInput1.addEventListener('keydown', function(event) {
+    firstNameChange.classList.add('norender');
+    firstNameCancel.classList.remove('norender');
+    firstNameConfirm.classList.remove('norender');
+    firstNameInput.setAttribute('contenteditable', 'true');
+    firstNameInput.classList.add('editable');
+    firstNameInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            confirmButton1.click();
+            firstNameConfirm.click();
         }
     });
 
 });
 
-cancelButton1.addEventListener('click', () => {
+firstNameCancel.addEventListener('click', () => {
     resetName(1);
-    changeButton1.classList.remove('norender');
-    cancelButton1.classList.add('norender');
-    confirmButton1.classList.add('norender');
-    nameInput1.setAttribute('contenteditable', 'false');
-    nameInput1.classList.remove('editable');
+    firstNameChange.classList.remove('norender');
+    firstNameCancel.classList.add('norender');
+    firstNameConfirm.classList.add('norender');
+    firstNameInput.setAttribute('contenteditable', 'false');
+    firstNameInput.classList.remove('editable');
 });
 
-confirmButton1.addEventListener('click', async () => {
-    changeButton1.classList.remove('norender');
-    cancelButton1.classList.add('norender');
-    confirmButton1.classList.add('norender');
-    nameInput1.setAttribute('contenteditable', 'false');
-    nameInput1.classList.remove('editable');
-    let nameValue = nameInput1.innerHTML;
+firstNameConfirm.addEventListener('click', async () => {
+    firstNameChange.classList.remove('norender');
+    firstNameCancel.classList.add('norender');
+    firstNameConfirm.classList.add('norender');
+    firstNameInput.setAttribute('contenteditable', 'false');
+    firstNameInput.classList.remove('editable');
+    let nameValue = firstNameInput.innerHTML;
     changeFirstName(nameValue);
 });
 
-changeButton2.addEventListener('click', () => {
+secondNameChange.addEventListener('click', () => {
     console.log('change button clicked');
-    changeButton2.classList.add('norender');
-    cancelButton2.classList.remove('norender');
-    confirmButton2.classList.remove('norender');
-    nameInput2.setAttribute('contenteditable', 'true');
-    nameInput2.classList.add('editable');
-    nameInput2.addEventListener('keydown', function(event) {
+    secondNameChange.classList.add('norender');
+    secondNameCancel.classList.remove('norender');
+    secondNameConfirm.classList.remove('norender');
+    secondNameInput.setAttribute('contenteditable', 'true');
+    secondNameInput.classList.add('editable');
+    secondNameInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            confirmButton2.click();
+            secondNameConfirm.click();
         }
     });
 });
 
-cancelButton2.addEventListener('click', () => {
+secondNameCancel.addEventListener('click', () => {
     resetName(2);
-    changeButton2.classList.remove('norender');
-    cancelButton2.classList.add('norender');
-    confirmButton2.classList.add('norender');
-    nameInput2.setAttribute('contenteditable', 'false');
-    nameInput2.classList.remove('editable');
+    secondNameChange.classList.remove('norender');
+    secondNameCancel.classList.add('norender');
+    secondNameConfirm.classList.add('norender');
+    secondNameInput.setAttribute('contenteditable', 'false');
+    secondNameInput.classList.remove('editable');
 });
 
-confirmButton2.addEventListener('click', async () => {
-    changeButton2.classList.remove('norender');
-    cancelButton2.classList.add('norender');
-    confirmButton2.classList.add('norender');
-    nameInput2.setAttribute('contenteditable', 'false');
-    nameInput2.classList.remove('editable');
-    let nameValue = nameInput2.innerHTML;
+secondNameConfirm.addEventListener('click', async () => {
+    secondNameChange.classList.remove('norender');
+    secondNameCancel.classList.add('norender');
+    secondNameConfirm.classList.add('norender');
+    secondNameInput.setAttribute('contenteditable', 'false');
+    secondNameInput.classList.remove('editable');
+    let nameValue = secondNameInput.innerHTML;
     changeLastName(nameValue);
 });
 
@@ -148,16 +188,16 @@ async function resetName(n){
     }
     var lastName = emp.lastName;
     if (n == 1){
-        nameInput1.innerHTML = firstName;
+        firstNameInput.innerHTML = firstName;
     } else if (n == 2){
-        nameInput2.innerHTML = lastName;
+        secondNameInput.innerHTML = lastName;
     }
 }
 
 async function changeFirstName(newName) {
     if (newName == "N/A" || newName.trim() == ""){
         newName = null;
-        nameInput1.innerHTML = "N/A";
+        firstNameInput.innerHTML = "N/A";
     }
     const body = {
         firstName: newName,

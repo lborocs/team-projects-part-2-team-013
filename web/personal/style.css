@@ -395,7 +395,7 @@
 
 
 .personal-task:active {
-    background-color: var(--make-it-all-tint);
+    background-color: #1673f511;
     transition: background-color 0.1s ease-out;
 }
 

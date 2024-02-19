@@ -5,7 +5,6 @@ import * as global from "../global-ui.js";
         empID: '32c2b4e29490c2a226c2b4e29490c2a2'
     }
     itemID: "530cc2b4e29490c2a2244bc2b4e29490"
-    dueDate: timestamp
     state: 0
     title: "Meet Linda for coffee"
     createdAt: timestamp
@@ -17,7 +16,6 @@ var globalPersonalsList = []
 var globalPersonalsSort = {
     alphabetical: false,
     createdAt: false,
-    dueDate: false,
     descending: true
 }
 
@@ -33,7 +31,6 @@ const personalsSortDropdown = document.getElementById('personals-sort')
 const dropdownMenus = document.querySelectorAll('.dropdown-menu')
 const sortAlphabetical = document.getElementById('sort-alphabetical')
 const sortCreatedAt = document.getElementById('sort-createdAt')
-const sortDueDate = document.getElementById('sort-dueDate')
 const personalsSortDirection = document.getElementById('personals-sort-direction')
 
 
@@ -123,10 +120,6 @@ function renderPersonal(id) {
 
     const checkedState = (personal.state === 1) ? 'checked' : ''
 
-    const hasDueDate = (personal.dueDate) ? '' : 'norender'
-
-    const date = personal.dueDate ? new Date(personal.dueDate).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) : "Add due date";
-
     personalCard.innerHTML = `
         <div class="personal-checkbox">
             <input type="checkbox" id="${id}" ${checkedState}>
@@ -140,12 +133,7 @@ function renderPersonal(id) {
                     </div>
                 </div>
             </div>
-            <div class="date-picker ${hasDueDate}">
-                <div class="date-picker-icon">
-                    <span class="material-symbols-rounded">event_upcoming</span>
-                </div>
-                <input disabled class="date-picker-input" type="text" placeholder="${date}" tabindex="0"></input>
-            </div>
+            
             <div class="personal-icons">
                 <div class="icon-button no-box edit">
                     <div class="button-icon">
@@ -166,24 +154,6 @@ function renderPersonal(id) {
             </div>
         </div>
     `
-
-
-    //flatpickr datepicker
-    let datePickerInput = personalCard.querySelector('.date-picker-input')
-    const today  = new Date()
-
-    let fp = flatpickr(datePickerInput, {
-        dateFormat: 'd/m/Y',
-        altInput: true,
-        altFormat: 'F j, Y',
-        disableMobile: false,
-        onChange: (selectedDates, dateStr, instance) => {
-            datePickerInput.dispatchEvent(new Event('change'))
-        }
-    })
-
-    fp.allowInput = false
-
     
 
     if (personal.state === 1) {
@@ -386,7 +356,7 @@ async function togglePersonalState(id) {
     renderPersonal(id)
 }
 
-async function editPersonal(id, title, dueDate = null) {
+async function editPersonal(id, title) {
 
     if (!title) {
         console.error(`[editPersonal] No title provided`)
@@ -395,9 +365,6 @@ async function editPersonal(id, title, dueDate = null) {
 
     const body = {}
 
-    if (dueDate) {
-        body.dueDate = dueDate
-    }
 
     if (title) {
         body.title = title
@@ -416,9 +383,6 @@ async function editPersonal(id, title, dueDate = null) {
     const personal = globalPersonalsList.find(personal => personal.itemID === id);
     if (title) {
         personal.title = title
-    }
-    if (dueDate) {
-        personal.dueDate = dueDate
     }
 
     unrenderPersonal(id)
@@ -473,15 +437,6 @@ function sortPersonals() {
                 return b.createdAt - a.createdAt
             }
         })
-    } else if (globalPersonalsSort.dueDate) {
-        console.log("sorting by dueDate")
-        globalPersonalsList.sort((a, b) => {
-            if (globalPersonalsSort.descending) {
-                return a.due - b.due
-            } else {
-                return b.due - a.due
-            }
-        })
     }
 }
 
@@ -491,14 +446,11 @@ function personalCardEditMode(id) {
         const personalCard = getPersonalCardById(id)
         const saveButton = personalCard.querySelector('.save')
         const personalIcons = personalCard.querySelector('.personal-icons')
-        const datePicker = personalCard.querySelector('.date-picker')
-        const datePickerInput = personalCard.querySelector('.date-picker-input')
-
-        datePickerInput.disabled = false
+        
+      
         personalCard.classList.add('edit-mode')
         saveButton.classList.remove('norender')
         personalIcons.classList.add('norender')
-        datePicker.classList.remove('norender')
 
         const title = personalCard.querySelector('.title-text')
         var newTitle = title.innerHTML
@@ -521,7 +473,6 @@ function personalCardEditMode(id) {
                 personalCard.classList.remove('edit-mode')
                 saveButton.classList.add('norender')
                 personalIcons.classList.remove('norender')
-                datePickerInput.disabled = true
                 resolve()
             }
         })
@@ -530,31 +481,12 @@ function personalCardEditMode(id) {
             newTitle = title.innerHTML
         })
 
-        
-        //if personal has a due date, set it in the datepicker
-        if (globalPersonalsList.find(personal => personal.itemID === id).dueDate) {
-            const dueDate = new Date(globalPersonalsList.find(personal => personal.itemID === id).dueDate)
-            fp.setDate(dueDate)
-        }
-        let newDueDate = null
-        datePickerInput.addEventListener('change', () => {
-            const dueDate = fp.selectedDates[0]
-            console.log(dueDate)
-            //convert to ms for api
-            let time = dueDate.getTime()
-
-            if (dueDate) {
-                newDueDate = time
-            }
-        })
-
         saveButton.addEventListener('click', () => {
             //TODO: change to be a single server request
-            editPersonal(id, newTitle, newDueDate)
+            editPersonal(id, newTitle)
             personalCard.classList.remove('edit-mode')
             saveButton.classList.add('norender')
             personalIcons.classList.remove('norender')
-            datePickerInput.disabled = true
             resolve()
         })
 
@@ -635,22 +567,18 @@ mobilePersonalsSearchInput.addEventListener('input', (e) => {
 /**
  * updates personal todo sorting and rerenders the list
  * 
- * @param {string} sortOption a valid sort option: 'Alphabetical', 'Time created', 'Due date'
+ * @param {string} sortOption a valid sort option: 'Alphabetical', 'Time created'
  * @returns {boolean} true / false if a valid sort option was passed in
  */
 function updateSortOption(sortOption) {
     const options = {
         'Alphabetical': {
             selected: 'alphabetical',
-            unselected: ['createdAt', 'dueDate']
+            unselected: ['createdAt']
         },
         'Time created': {
             selected: 'createdAt',
-            unselected: ['alphabetical', 'dueDate']
-        },
-        'Due date': {
-            selected: 'dueDate',
-            unselected: ['alphabetical', 'createdAt']                   
+            unselected: ['alphabetical']
         }
     }
 
@@ -706,10 +634,6 @@ sortAlphabetical.addEventListener('click', () => {
 
 sortCreatedAt.addEventListener('click', () => {
     updateSortOption('Time created')
-})
-
-sortDueDate.addEventListener('click', () => {
-    updateSortOption('Due date')
 })
 
 //dropdown open/close logic

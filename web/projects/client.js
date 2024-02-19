@@ -1035,13 +1035,14 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     let state = task.state
     let taskID = task.taskID || "Unknown";
     let expectedManHours = task.expectedManHours; //no safety here because not null i think
-    let assignments = task.assignments || [];    
+    let assignments = task.assignments || [];
+    let archived = task.archived || 0;
 
     if (update & RENDER_COLUMN) {
         renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours, assignments);
     }
     if (update & RENDER_LIST) {
-        renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours, assignments);
+        renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours, assignments, archived);
     }
     
     calculateTaskCount()
@@ -1272,8 +1273,8 @@ function calculateTaskCount() {
     console.table(notStartedCount, inProgressCount, finishedCount)
 }
 
-function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours, assignments = []) {
-    console.log("[renderTaskInList] rendering task in list")
+function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", dueDate = "", expectedManHours, assignments = [], archived = 0) {
+    console.log("[renderTaskInList] rendering task in list", globalCurrentTask)
 
     let taskRow = document.createElement("tr");
     taskRow.classList.add("taskRow");
@@ -1292,7 +1293,11 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
     var icon;
     var statusText;
     var stateClass;
-    if (state == 0) {
+    if (archived == 1) {
+        stateClass = "archived";
+        icon = "archive";
+        statusText = "Archived";
+    } else if (state == 0) {
         stateClass = "not-started";
         icon = "push_pin";
         statusText = "Not Started";
@@ -1304,6 +1309,10 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         stateClass = "finished";
         icon = "check_circle";
         statusText = "Finished";
+    } else if (archived == 1){
+        stateClass = "archived";
+        icon = "archive";
+        statusText = "Archived";
     } else {
         console.error(`[renderTaskInList] invalid state (${state}) for task ${title}`);
     }
@@ -1689,16 +1698,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                         </div>
                         <div class="text">
                             Open in new tab
-                        </div>
-                    </div>
-                    <div class="item disabled">
-                        <div class="icon">
-                            <span class="material-symbols-rounded">
-                                export_notes
-                            </span>
-                        </div>
-                        <div class="text">
-                            Export
                         </div>
                     </div>
                 </div>
@@ -3108,6 +3107,38 @@ async function editTaskPopup(task){
         }
     });
 
+    createButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let projID = globalCurrentProject.projID;
+        let taskID = task.taskID
+        let description = quill.root.innerHTML;
+        let manHours = manHoursInput.value;
+        let minutes = minutesDropdownText.innerText;
+        let expectedManHours = parseInt(manHours * 3600 + minutes * 60);
+        let dueDate = fp.selectedDates[0];
+        dueDate = dueDate ? dueDate.getTime() : null;
+        
+
+
+        let data = {
+            title: taskTitleInput.value,
+            description: description,
+            expectedManHours: expectedManHours,
+            dueDate: dueDate,
+        };
+
+        let res = await patch_api(`/project/task.php/task/${projID}/${taskID}`, data);
+        console.log(res);
+
+        let assignedEmployeesArray = [...assignedEmployees];
+        let assignmentRes = await put_api(`/project/task.php/assignments/${projID}/${taskID}`, {
+            assignments: assignedEmployeesArray
+        });
+        console.log(assignmentRes);
+    });
+
 }
 
 async function projectPopup(id){
@@ -3706,13 +3737,28 @@ archiveButton.addEventListener("click", async () => {
         console.log("[archiveButton] clicked");
         archiveButton.classList.remove("active");
         let projID = globalCurrentProject.projID;
-        let tasks = fetchTasks(projID)
         renderTasks(globalTasksList);
+        archiveButton.innerHTML = `
+        <div class="button-text desktop">
+            View Archived Tasks
+        </div>
+        <div class="button-text mobile">
+            View Archived Tasks
+        </div>
+        `;
     } else {
         console.log("[archiveButton] clicked");
         archiveButton.classList.add("active");
         let projID = globalCurrentProject.projID;
         let tasks = await getArchived(projID);
+        archiveButton.innerHTML = `
+        <div class="button-text desktop">
+            View Active Tasks
+        </div>
+        <div class="button-text mobile">
+            View Active Tasks
+        </div>
+        `;
         renderTasks(tasks);
     }
 });
