@@ -384,7 +384,7 @@ async function addManHoursPopup(task) {
 
 views.forEach((view, i) => {
     
-    view.addEventListener("pointerup", () => {
+    view.addEventListener("click", () => {
 
         if (view.classList.contains("selected")) {
             return
@@ -704,7 +704,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
             contextMenuItems.forEach(item => {
                 let timeoutId;
-                item.addEventListener("pointerup", (e) => {
+                item.addEventListener("click", (e) => {
                     e.stopPropagation();
                     console.log("[contextMenuItemOnClick] clicked")
 
@@ -777,29 +777,29 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             });
 
             //have to include mouse up and down this is crazy event propagation
-            contextMenuButton.addEventListener("pointerup", (e) => {
+            contextMenuButton.addEventListener("click", (e) => {
                 e.stopPropagation();
             });
 
-            contextMenuButton.addEventListener("pointerdown", (e) => {
+            contextMenuButton.addEventListener("click", (e) => {
                 e.stopPropagation();
             });
 
             let taskStatusContainers = taskCard.querySelectorAll(".status-container");
             taskStatusContainers.forEach((icon) => {
 
-                icon.addEventListener("pointerdown", (e) => {
+                icon.addEventListener("click", (e) => {
                     e.stopPropagation();
                 });
 
-                icon.addEventListener("pointerup", (e) => {
+                icon.addEventListener("click", (e) => {
                     e.stopPropagation();
                 });
             
             })
 
             //closes the context menu if they click outside
-            document.addEventListener("pointerup", (e) => {
+            document.addEventListener("click", (e) => {
                 if (!contextMenuButton.contains(e.target)) {
                     contextMenuPopover.classList.remove("visible");
                     contextMenuButton.classList.remove("active");
@@ -824,9 +824,13 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             });
 
 
-            taskCard.addEventListener("pointerdown", (e) => {
+            taskCard.addEventListener("click", (e) => {
                 //if the target is the context menu button, dont show the explainer
                 if (e.target.classList.contains("context-menu")) {
+                    return
+                }
+                //right click doesnt show the card as clicked
+                if (e.button == 2) {
                     return
                 }
 
@@ -2381,7 +2385,7 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
 const addButtonArray = [notStartedAddButton];
 
 addButtonArray.forEach((button) => {
-    button.addEventListener("pointerup", async () => {
+    button.addEventListener("click", async () => {
         if (button.id == "notstarted-add") {
             await addTask();
         } else {
