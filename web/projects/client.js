@@ -630,21 +630,58 @@ function setUpTaskEventListeners() {
         });
     });
 
-    //list view
+    // list view
     taskRows = document.querySelectorAll(".taskRow");
     taskRows.forEach((taskRow) => {
-        taskRow.addEventListener("pointerdown", () => {
-            console.log("[taskRowOnMouseDown] clicked")
-            //taskRow.classList.add("clicked")
+        let contextMenuButton = taskRow.querySelector(".context-menu");
+        let contextMenuPopover = taskRow.querySelector(".context-menu-popover");
+
+        contextMenuButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            //closes the rest of them first
+            let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+            contextMenus.forEach(menu => {
+                if (menu !== contextMenuPopover) {
+                    menu.classList.remove("visible");
+                    menu.parentElement.classList.remove("active");
+                }
+            });
+            contextMenuPopover.classList.toggle("visible");
+            contextMenuButton.classList.toggle("active");
         });
 
-        taskRow.addEventListener("pointerup", () => {
-            //show explainer
-            console.log("[taskRowOnTouchStart] clicked")
-            // taskRows.forEach((row) => {
-            //     row.classList.remove("clicked")
-            // })
-            showTaskInExplainer(taskRow);
+        //stops the context menu from closing when you click on the options
+        let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
+        contextMenuItems.forEach(item => {
+            item.addEventListener("pointerup", (e) => {
+                e.stopPropagation();
+                console.log("[contextMenuItemOnClick] clicked")
+            });
+        });
+
+        //closes the context menu if they click outside
+        document.addEventListener("pointerup", (e) => {
+            if (!contextMenuButton.contains(e.target)) {
+                contextMenuPopover.classList.remove("visible");
+                contextMenuButton.classList.remove("active");
+            }
+        });
+
+        taskRow.addEventListener("contextmenu", (e) => {
+            e.preventDefault(); //stops the browser putting its own right click menu over the top
+            e.stopPropagation();
+        
+            //closes the rest of them first
+            let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+            contextMenus.forEach(menu => {
+                if (menu !== contextMenuPopover) {
+                    menu.classList.remove("visible");
+                    menu.parentElement.classList.remove("active");
+                }
+            });
+        
+            contextMenuPopover.classList.toggle("visible");
+            contextMenuButton.classList.toggle("active");
         });
     });
 }
@@ -1078,10 +1115,113 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         `;
     }
 
+    let selectedState = ["", "", ""];
+    selectedState[state] = "disabled";
+
     taskRow.innerHTML += `
     <td>
-        <div id="more" class="small-icon more-icon-taskList">
+        <div id="more" class="small-icon more-icon-taskList context-menu">
             <span class="material-symbols-rounded">more_horiz</span>
+            <div class="context-menu-popover">
+                <div class="item action-edit">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            edit
+                        </span>
+                    </div>
+                    <div class="text">
+                        Edit
+                    </div>
+                </div>
+                <div class="item state-selector">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            move_group
+                        </span>
+                    </div>
+                    <div class="text">
+                        Move to
+                    </div>
+                    <div class="arrow">
+                        <span class="material-symbols-rounded">
+                            arrow_forward_ios
+                        </span>
+                    </div>
+                    <div class="submenu">
+                        <div class="item not-started-state ${selectedState[0]}">
+                            <div class="icon">
+                                <span class="material-symbols-rounded">
+                                    push_pin
+                                </span>
+                            </div>
+                            <div class="text">
+                                Not Started
+                            </div>
+                        </div>
+                        <div class="item in-progress-state ${selectedState[1]}">
+                            <div class="icon">
+                                <span class="material-symbols-rounded">
+                                    timeline
+                                </span>
+                            </div>
+                            <div class="text">
+                                In Progress
+                            </div>
+                        </div>
+                        <div class="item finished-state ${selectedState[2]}">
+                            <div class="icon">
+                                <span class="material-symbols-rounded">
+                                    check_circle
+                                </span>
+                            </div>
+                            <div class="text">
+                                Finished
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item action-delete">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            delete
+                        </span>
+                    </div>
+                    <div class="text">
+                        Delete
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="item action-copy">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            link
+                        </span>
+                    </div>
+                    <div class="text">
+                        Copy link
+                    </div>
+                </div>
+                <div class="item action-open">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            open_in_new
+                        </span>
+                    </div>
+                    <div class="text">
+                        Open in new tab
+                    </div>
+                </div>
+                <div class="item disabled">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            export_notes
+                        </span>
+                    </div>
+                    <div class="text">
+                        Export
+                    </div>
+                </div>
+            </div>
         </div>
     </td>
     `;
