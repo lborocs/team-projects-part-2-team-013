@@ -55,7 +55,7 @@ function switchToTab(tab) {
         name = tab.id.charAt(0).toUpperCase() + tab.id.slice(1);
     }
 
-    global.setBreadcrumb(["Settings", name], ["../", "#" + tab.id]);
+    global.setBreadcrumb(["Settings", name], ["/settings/", "#" + tab.id]);
 
 }
 
