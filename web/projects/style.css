@@ -1939,6 +1939,9 @@
     font-weight: 600;
     color: #0f0f0faa;
     line-height: 24px;
+    width: 20em;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 td:has(#more) {
