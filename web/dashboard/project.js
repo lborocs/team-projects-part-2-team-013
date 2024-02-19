@@ -423,9 +423,9 @@ async function getTaskProgress(projectData) {
             duration = now - task.createdAt;
         }
 
-        start = start / (60 * 60 * 24);
-        duration = duration / (60 * 60 * 24);
-        overdue = overdue / (60 * 60 * 24);
+        start = start / (1000 * 60 * 60 * 24);
+        duration = duration / (1000 * 60 * 60 * 24);
+        overdue = overdue / (1000 * 60 * 60 * 24);
 
         startData.push(start);
         durationData.push(duration);
