@@ -1147,7 +1147,6 @@ function userIconContextMenu() {
                 window.location.href = "/settings";
             } else if (item.classList.contains("action-invite")) {
                 console.log("[User Icon Redirect] Redirecting to invite page")
-                window.location.href = "/invite";
             } else if (item.classList.contains("action-logout")) {
                 console.log("[User Icon Redirect] Logging out")
                 delete_api("/employee/session.php/session").then(async () => {
@@ -1429,12 +1428,16 @@ document.addEventListener("keyup", (e) => {
     });
 });
 
+document.querySelector(".action-invite").addEventListener("pointerup", () => {
+    invitePopup();
+});
+
 function invitePopup() {
     return new Promise((resolve) => {
         let popupDiv = document.querySelector('.popup');
         let fullscreenDiv = document.querySelector('.fullscreen');
         popupDiv.innerHTML = `
-            <dialog open class='popup-dialog'>
+            <dialog open class='invite-popup-dialog'>
                 <div class="popup-title">
                     Enter email address of employee to invite:
                 </div>
@@ -1450,8 +1453,16 @@ function invitePopup() {
         document.querySelector('.popup-button');
         let emailInput = document.querySelector('.popup-input');
         let inviteButton = document.querySelector('.popup-button');
-        inviteButton.addEventListener('click', () => {
-        
+        inviteButton.addEventListener('click', async () => {
+            let email = emailInput.value;
+            const res = await post_api("/employee/session.php/invite", {email: email});
+            if (res.success) {
+                fullscreenDiv.style.filter = 'brightness(1)';
+                popupDiv.innerHTML = '';
+                alert("Invite sent");
+            } else {
+                alert(`Failed to send invite : ${res.error.message}`);
+            }
         });
         resolve();
     });
