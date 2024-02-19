@@ -2900,10 +2900,10 @@ async function projectPopup(id){
                 <div class="created-at view-only">
                     Project created ${new Date(project.createdAt).toLocaleDateString()}
                 </div>
-                <div class="text-button edit-only red" id="delete-button">
+                <div class="text-button edit-only" id="delete-button">
                     <div class="button-icon">
                         <span class="material-symbols-rounded">
-                            delete
+                            inventory_2
                         </span>
                     </div>
                     <div class="button-text">
