@@ -554,7 +554,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                             let taskID = taskCard.getAttribute("id");
                             let projID = globalCurrentProject.projID;
                             patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 0}).then((res) => {
-                                if (res.status == 204) {
+                                if (res.success) {
                                     console.log(`[setUpTaskEventListeners] updated task ${taskID} to state 0`);
                                 } else {
                                     console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state 0`);
@@ -566,7 +566,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                             let taskID = taskCard.getAttribute("id");
                             let projID = globalCurrentProject.projID;
                             patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 1}).then((res) => {
-                                if (res.status == 204) {
+                                if (res.success) {
                                     console.log(`[setUpTaskEventListeners] updated task ${taskID} to state 1`);
                                 } else {
                                     console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state 1`);
@@ -577,7 +577,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                             let taskID = taskCard.getAttribute("id");
                             let projID = globalCurrentProject.projID;
                             patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 2}).then((res) => {
-                                if (res.status == 204) {
+                                if (res.success) {
                                     console.log(`[setUpTaskEventListeners] updated task ${taskID} to state 2`);
                                 } else {
                                     console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state 2`);
