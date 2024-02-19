@@ -41,6 +41,7 @@
         font-weight: 600;
         flex-wrap: nowrap;
         cursor: pointer;
+        white-space: nowrap;
     }
 
     .name {
@@ -215,5 +216,6 @@
 .editable{
     border: black 1px solid;
     width: 80%;
-    border-radius: 0.3em;
+    border-radius: 0.2em;
+    cursor: text;
 }

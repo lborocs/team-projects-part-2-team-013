@@ -98,7 +98,8 @@ async function getPostData(postID, tagsList) {
     console.log("Post Technical Status: ", post.isTechnical);
     console.log(post)
 
-    global.setBreadcrumb(["Wiki", post.title], ["../", '#' + post.postID])
+    let postType = post.isTechnical ? "Technical" : "Non-Technical";
+    global.setBreadcrumb(["Wiki", postType, post.title], ["../", "../", '#' + post.postID]);
 
     if (!post.tags) {
         return post;
