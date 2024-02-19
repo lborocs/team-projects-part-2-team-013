@@ -562,16 +562,22 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                         window.open(link, "_blank")
 
                     } else if (!item.classList.contains("disabled")) {
+                        let taskID = taskCard.getAttribute("id");
                         if (item.classList.contains("not-started-state")) {
                             console.log("[contextMenuItemOnClick] not started clicked")
                             handleTaskStateChange(item, 0);
-                            console.lo
+                            globalTasksList.find(task => task.taskID === taskID).state = 0;
+                            renderTasks(globalTasksList);
                         } else if (item.classList.contains("in-progress-state")) {
                             console.log("[contextMenuItemOnClick] in progress clicked")
                             handleTaskStateChange(item, 1);
+                            globalTasksList.find(task => task.taskID === taskID).state = 1;
+                            renderTasks(globalTasksList);
                         } else if (item.classList.contains("finished-state")) {
                             console.log("[contextMenuItemOnClick] finished clicked")
                             handleTaskStateChange(item, 2);
+                            globalTasksList.find(task => task.taskID === taskID).state = 2;
+                            renderTasks(globalTasksList);
                         }
                     } else {
                         console.log("[contextMenuItemOnClick] no known action")
