@@ -111,7 +111,7 @@
 
 }
 
-#project-popup, #add-task-popup, #add-project-popup {
+#project-popup, #add-task-popup, #add-project-popup, #add-man-hours-popup {
     padding: 18px;
     padding-top: 14px;
     max-width: 840px;

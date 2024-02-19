@@ -1992,3 +1992,7 @@ td:has(#more) {
     width: 0;
     transition: width 0.1s ease-out;
 }
+
+#add-man-hours {
+    height: 20px;
+}
