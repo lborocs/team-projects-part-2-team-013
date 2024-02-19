@@ -219,7 +219,7 @@ class GlobalEmployeeRequest {
             // if the employee is in the cache
             if (cache_emp) {
                 // if we are older than 1h
-                if (cache_emp.headers.get("date") < Date.now() - 60 * 60 * 60) {
+                if (cache_emp.headers.get("date") < Date.now() - 5 * 60 * 60) {
                     console.log(`[getEmployeesById] Purging ${employee} from cache`);
                     to_req.add(employee)
                     cache.delete("/employees/" + employee);
