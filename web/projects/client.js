@@ -568,7 +568,9 @@ function showTaskInExplainer(taskCard) {
     let hours = Math.floor(manHours / 3600);
     let minutes = Math.round((manHours / 3600 - hours) * 60);
 
-    if (minutes > 0) {
+    if (hours < 1) {
+        timeDisplay = `${minutes} Minute${minutes !== 1 ? 's' : ''}`;
+    } else if (minutes > 0) {
         timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`;
     } else {
         timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''}`;
