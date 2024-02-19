@@ -276,11 +276,13 @@ class GlobalEmployeeRequest {
 
 }
 
-
+export const PREFERENCE_NEVER = 2;
+export const PREFERENCE_I_LEAD = 1;
+export const PREFERENCE_ALWAYS = 0;
 
 const DEFAULT_PREFERENCES = {
     "sidebarisopen": true,
-    "taskview": 1,
+    "taskview": PREFERENCE_I_LEAD,
     "tasksort": "name",
     "taskorder": "desc",
     "taskfilters.managermine": false,
