@@ -496,6 +496,19 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 contextMenuButton.classList.toggle("active");
             });
 
+            function handleTaskStateChange(item, state) {
+                console.log(`[contextMenuItemOnClick] ${item.classList[1]} clicked`);
+                let taskID = taskCard.getAttribute("id");
+                let projID = globalCurrentProject.projID;
+                patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: state}).then((res) => {
+                    if (res.success) {
+                        console.log(`[setUpTaskEventListeners] updated task ${taskID} to state ${state}`);
+                    } else {
+                        console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state ${state}`);
+                    }
+                });
+            }
+
             //stops the context menu from closing when you click on the options
             let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
             contextMenuItems.forEach(item => {
@@ -551,38 +564,14 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                     } else if (!item.classList.contains("disabled")) {
                         if (item.classList.contains("not-started-state")) {
                             console.log("[contextMenuItemOnClick] not started clicked")
-                            let taskID = taskCard.getAttribute("id");
-                            let projID = globalCurrentProject.projID;
-                            patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 0}).then((res) => {
-                                if (res.success) {
-                                    console.log(`[setUpTaskEventListeners] updated task ${taskID} to state 0`);
-                                } else {
-                                    console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state 0`);
-                                }
-                            });
+                            handleTaskStateChange(item, 0);
                             console.lo
                         } else if (item.classList.contains("in-progress-state")) {
                             console.log("[contextMenuItemOnClick] in progress clicked")
-                            let taskID = taskCard.getAttribute("id");
-                            let projID = globalCurrentProject.projID;
-                            patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 1}).then((res) => {
-                                if (res.success) {
-                                    console.log(`[setUpTaskEventListeners] updated task ${taskID} to state 1`);
-                                } else {
-                                    console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state 1`);
-                                }
-                            });
+                            handleTaskStateChange(item, 1);
                         } else if (item.classList.contains("finished-state")) {
                             console.log("[contextMenuItemOnClick] finished clicked")
-                            let taskID = taskCard.getAttribute("id");
-                            let projID = globalCurrentProject.projID;
-                            patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: 2}).then((res) => {
-                                if (res.success) {
-                                    console.log(`[setUpTaskEventListeners] updated task ${taskID} to state 2`);
-                                } else {
-                                    console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state 2`);
-                                }
-                            });
+                            handleTaskStateChange(item, 2);
                         }
                     } else {
                         console.log("[contextMenuItemOnClick] no known action")
