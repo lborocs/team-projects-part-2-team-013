@@ -453,7 +453,6 @@ logoutButton.addEventListener('click', () => {
 
 changePasswordButton.addEventListener('click', () => {
     passwordPopup().then(() => {
-        console.log('password changed');
     }
     ).catch(() => {
         console.log('password change cancelled');
@@ -462,12 +461,10 @@ changePasswordButton.addEventListener('click', () => {
 
 
 function passwordPopup() {
-    console.error('password popup');
     return new Promise((resolve, reject) => {
 
         let popupDiv = document.querySelector('.popup');
         let fullscreenDiv = document.querySelector('.fullscreen');
-        console.error("we got further")
         popupDiv.innerHTML = `
             <dialog open class='popup-dialog'>
                 <div class="popup-title">
@@ -491,6 +488,7 @@ function passwordPopup() {
                     <div class="input-wrapper">
                         <input class="password textfield" type="password" id="new-password" placeholder="New Password">
                         <input class="password textfield" type="password" id="confirm-new-password" placeholder="Confirm New Password">
+                        <div class="error-message " id="password-error"></div>
                     </div>
                 </div>
 
@@ -504,15 +502,13 @@ function passwordPopup() {
                 </div>
             </dialog>
         `;
-        console.error("after html")
         fullscreenDiv.style.filter = 'brightness(0.75)';
 
         let dialog = popupDiv.querySelector('.popup-dialog');
         let popupCancel = dialog.querySelector('#popup-cancel');
         let popupConfirm = dialog.querySelector('#popup-confirm');
-        console.error(popupConfirm);
         let currentPassword = dialog.querySelector('#current-password');
-        let newPassword = dialog.querySelector('#new-password');
+        let changedPassword = dialog.querySelector('#new-password');
         let confirmNewPassword = dialog.querySelector('#confirm-new-password');
 
         popupCancel.addEventListener('click', (event) => {
@@ -525,31 +521,46 @@ function passwordPopup() {
         popupConfirm.addEventListener('click', (event) => {
             console.log('confirm button clicked');
             event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            if (!newPassword.value == confirmNewPassword.value) {
-                console.error('passwords do not match');
-            }
-            const oldPassword = currentPassword.value;
-            const newPassword = newPassword.value;
-            changePassword(oldPassword, newPassword);
-            resolve();
+            let oldPassword = currentPassword.value;
+            let newPassword = changedPassword.value;
+            let confirmPassword = confirmNewPassword.value;
+            changePassword(oldPassword, newPassword, confirmPassword).then((res) => {
+                if (res) {
+                    dialog.style.display = 'none';
+                    fullscreenDiv.style.filter = 'none';
+                    resolve();
+                }
+            });
         });
     });
 }
 
-async function changePassword(currentPassword, newPassword) {
+async function changePassword(currentPassword, newPassword, confirmPassword) {
     const body = {
         password: currentPassword,
         newPassword: newPassword,
     };
-
-    const response = await patch_api('/employee/session.php/account', body);
-    if (response.success) {
-        console.log('password changed');
-    } else {
-        console.log('password change failed');
+    if (newPassword !== confirmPassword) {
+        console.error('passwords do not match');
+        let errorMessage = document.querySelector('.error-message');
+        errorMessage.innerHTML = "Passwords do not match";
+        return false;
     }
+
+        const res = await patch_api('/employee/session.php/account', body);
+        console.log("Password reset response:")
+        console.log(res);
+        console.error(res.error.message);
+        console.error(res.error.code);
+        let errorMessage = document.querySelector('.error-message');
+        errorMessage.innerHTML = res.error.message;
+        if (res.success) {
+            console.log('password changed');
+            return true;
+        } else {
+            console.log('password change failed');
+            return false;
+        }
     setUserData();
 }
 
