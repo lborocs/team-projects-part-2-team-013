@@ -1536,7 +1536,7 @@ function sortByAssignees(tasks, descending) {
     tasks.sort((a, b) => {
         let aAssignees = a.assignments.length;
         let bAssignees = b.assignments.length;
-        return descending ? aAssignees - bAssignees : bAssignees - aAssignees;
+        return descending ? bAssignees - aAssignees : aAssignees - bAssignees;
     });
     return tasks;
 }
