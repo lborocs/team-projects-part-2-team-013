@@ -4,7 +4,6 @@ import * as global from "../global-ui.js";
     assignedTo: {
         empID: '32c2b4e29490c2a226c2b4e29490c2a2'
     }
-    content: null
     itemID: "530cc2b4e29490c2a2244bc2b4e29490"
     dueDate: timestamp
     state: 0
@@ -124,12 +123,6 @@ function renderPersonal(id) {
 
     const checkedState = (personal.state === 1) ? 'checked' : ''
 
-    const hasDescription = personal.content !== null
-    const chevronOrAddDescription = hasDescription ? `
-        <div class="personal-chevron"><span class="material-symbols-rounded">expand_more</span></div>`
-        :
-        '<div class="small-icon add-description"><span class="material-symbols-rounded">docs_add_on</span></div>'
-
     personalCard.innerHTML = `
         <div class="personal-checkbox">
             <input type="checkbox" id="${id}" ${checkedState}>
@@ -142,9 +135,7 @@ function renderPersonal(id) {
                         ${personal.title}
                     </div>
                 </div>
-                <div class="personal-description">${personal.content ? personal.content : ''}</div>
             </div>
-            ${chevronOrAddDescription}
             <div class="personal-icons">
                 <div class="icon-button no-box edit">
                     <div class="button-icon">
@@ -367,19 +358,22 @@ async function togglePersonalState(id) {
     renderPersonal(id)
 }
 
-async function editPersonal(id, title, description) {
+async function editPersonal(id, title) {
+
+    if (!title) {
+        console.error(`[editPersonal] No title provided`)
+        return false
+    }
+
     const session = await global.getCurrentSession()
     const employeeID = session.employee.empID
 
     const body = {}
 
-    if (title) {
-        body.title = title
+    body = {
+        title: title
     }
-    if (description) {
-        body.content = description
-    }
-
+    
     const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
 
     if (!res.success) {
@@ -389,9 +383,6 @@ async function editPersonal(id, title, description) {
     const personal = globalPersonalsList.find(personal => personal.itemID === id);
     if (title) {
         personal.title = title
-    }
-    if (description) {
-        personal.content = description
     }
 
     unrenderPersonal(id)
@@ -472,8 +463,6 @@ function personalCardEditMode(id) {
 
         const title = personalCard.querySelector('.title-text')
         var newTitle = title.innerHTML
-        const description = personalCard.querySelector('.personal-description')
-        var newDescription = description.innerHTML
 
         title.setAttribute('contenteditable', 'true')
         title.focus()
@@ -489,8 +478,7 @@ function personalCardEditMode(id) {
             if (e.key === 'Enter') {
                 e.preventDefault()
                 newTitle = title.innerHTML
-                newDescription = description.innerHTML
-                editPersonal(id, newTitle, newDescription)
+                editPersonal(id, newTitle)
                 personalCard.classList.remove('edit-mode')
                 saveButton.classList.add('norender')
                 personalIcons.classList.remove('norender')
@@ -498,26 +486,13 @@ function personalCardEditMode(id) {
             }
         })
 
-        description.setAttribute('contenteditable', 'true')
-        description.focus()
-        description.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault()
-                description.blur()
-            }
-        })
-
         title.addEventListener('blur', () => {
             newTitle = title.innerHTML
         })
 
-        description.addEventListener('blur', () => {
-            newDescription = description.innerHTML
-        })
-
         saveButton.addEventListener('click', () => {
             //TODO: change to be a single server request
-            editPersonal(id, newTitle, newDescription)
+            editPersonal(id, newTitle)
             personalCard.classList.remove('edit-mode')
             saveButton.classList.add('norender')
             personalIcons.classList.remove('norender')
