@@ -51,7 +51,6 @@ async function verify() {
     const res = await post_api("/employee/session.php/verifyemail", data)
 
     if (res.success) {
-        statusElement.classList.remove("status-incorrect");
         statusElement.classList.remove("hidden");
         setStatus("Email sent, please check your email.");
     }

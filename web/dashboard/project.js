@@ -85,6 +85,69 @@ export async function init(id) {
             }
         }
     }));
+    //still example data at this point
+
+    const taskProgressData = await getTaskProgress(projectData);
+    console.error(taskProgressData);
+    
+    charts.push(new Chart(document.getElementById("taskProgressChart"), {
+        type: 'bar',
+        data: {
+            labels: taskProgressData.labels,
+            datasets: [
+                {
+                    label: 'Start',
+                    data: taskProgressData.startData,
+                    backgroundColor: 'transparent'
+                },
+                {
+                    label: 'Duration',
+                    data: taskProgressData.durationData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)'
+                },
+                {
+                    label: 'Overdue',
+                    data: taskProgressData.overdueData,
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)'
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            scales: {
+                x: {
+                    stacked: true,
+                    startData: taskProgressData.minStartDay,
+                },
+                y: {
+                    stacked: true,
+                    ticks: {
+                        display: false
+                    }
+                }   
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            if (context.dataset.label === 'Duration') {
+                                return `Duration: ${context.raw} days`;
+                            } else if (context.dataset.label === 'Overdue') {
+                                return `Overdue: ${context.raw} days`;
+                            } else {
+                                return `Start: Day ${context.raw}`;
+                            }
+                        }
+                    },
+                    position: 'average',
+                },
+                title: {
+                    display: false,
+                }
+            }
+        }
+    }));
+    
     
     
     charts.push(new Chart(document.getElementById("workloadChart"), {
@@ -223,7 +286,7 @@ async function getManHoursPerEmployee(projectData) {
         }
 
         employees.add(assignment.employee.empID);
-        taskEmpSpent.get(assignment.task.taskID).set(assignment.employee.empID, Math.floor(Math.random() * 3));
+        taskEmpSpent.get(assignment.task.taskID).set(assignment.employee.empID, assignment.manHours);
     });
 
     var labels = Array.from(employees);
@@ -256,6 +319,61 @@ async function getManHoursPerEmployee(projectData) {
         data: data
     };
 
+
+}
+
+async function getTaskProgress(projectData) {
+    let tasks = projectData.tasks.tasks.sort((a, b) => a.createdAt - b.createdAt);
+    // get last 12 tasks
+    tasks = tasks.slice(-12);
+
+    const labels = tasks.map(task => task.title);
+    const startData = [];
+    const durationData = [];
+    const overdueData = [];
+    
+    const now = new Date().getTime();
+
+
+    tasks.forEach(task => {
+        let start = task.createdAt;
+        let duration;
+        let overdue;
+        // task completed
+        start = now - task.createdAt;
+        if (task.completedAt) {
+            duration = task.completedAt - task.dueDate
+            // completed late
+            if (task.completedAt > task.dueDate) {
+                overdue = task.completedAt - task.dueDate;
+            }
+        } 
+        // not completed and overdue
+        else if (now > task.dueDate) {
+            overdue = now - task.dueDate;
+            duration = task.createdAt - task.createdAt
+        }
+        // not completed and not overdue
+        else {
+            duration = now - task.createdAt;
+        }
+
+        start = start / (60 * 60 * 24);
+        duration = duration / (60 * 60 * 24);
+        overdue = overdue / (60 * 60 * 24);
+
+        startData.push(start);
+        durationData.push(duration);
+        overdueData.push(overdue);
+    });
+
+    return {
+        labels: labels,
+        startData: startData,
+        durationData: durationData,
+        overdueData: overdueData,
+        minStartDay: 0
+    }
 
 }
 
