@@ -450,7 +450,7 @@ async function renderAssignmentsInExplainer(taskID) {
 
 function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
-    console.error("[setUpTaskEventListeners] setting up event listeners")
+    console.log("[setUpTaskEventListeners] setting up event listeners")
 
     // card view
     if (listeners & RENDER_COLUMN) {
