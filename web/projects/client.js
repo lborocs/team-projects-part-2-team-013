@@ -1080,11 +1080,11 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
-        assignmentElem.classList.add("tooltip", "tooltip-under");
 
         if (usersAssigned) {
             let count = taskUserCount.get(assignment.task.taskID) || 0;
             if (count < 3) {
+                assignmentElem.classList.add("tooltip", "tooltip-under");
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
 
@@ -1096,6 +1096,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
                 }
 
             } else if (count === 3) {
+                assignmentElem.classList.add("tooltip", "tooltip-left");
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
 
                 const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");

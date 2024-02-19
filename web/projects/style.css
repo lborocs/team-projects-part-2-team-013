@@ -1477,8 +1477,17 @@
     box-shadow: 2px 2px 5px var(--box-shadow-heavier-clr, rgba(0, 0, 0, 0.3)); 
 }
 
-
-
+.task-title {
+    font-size: 0.86em;
+    font-weight: 600;
+    line-height: 24px;
+    color: #0f0f0faa;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
 
 .add-task-title-input{
     color: var(--text-off-black, #0f0f0f);
