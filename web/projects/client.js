@@ -3112,17 +3112,31 @@ async function editTaskPopup(task){
         event.stopPropagation();
 
         let projID = globalCurrentProject.projID;
-        let taskID = explainerTaskContainer.getAttribute("task-id");
-        console.log('UniqueIdentifier: Global Current Task', globalcurrentTask);
+        let taskID = task.taskID
+        let description = quill.root.innerHTML;
+        let manHours = manHoursInput.value;
+        let minutes = minutesDropdownText.innerText;
+        let expectedManHours = parseInt(manHours * 3600 + minutes * 60);
+        let dueDate = fp.selectedDates[0];
+        dueDate = dueDate ? dueDate.getTime() : null;
+        
+
 
         let data = {
-            taskID: taskID,
             title: taskTitleInput.value,
             description: description,
-            
+            expectedManHours: expectedManHours,
+            dueDate: dueDate,
         };
 
-        patch_api(`/project/task.php/task/${projID}/${taskID}`, data);
+        let res = await patch_api(`/project/task.php/task/${projID}/${taskID}`, data);
+        console.log(res);
+
+        let assignedEmployeesArray = [...assignedEmployees];
+        let assignmentRes = await put_api(`/project/task.php/assignments/${projID}/${taskID}`, {
+            assignments: assignedEmployeesArray
+        });
+        console.log(assignmentRes);
     });
 
 }

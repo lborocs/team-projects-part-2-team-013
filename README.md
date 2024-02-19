@@ -74,25 +74,3 @@ The site should now function like normal on your local machine.
 10. instead of running the web server like above select `RUN DEVELOPMENT API`
 11. the api will need a copy of the invalidation service running so make sure you can run (and possibly build) it
 12. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
-
-
-# Plan
-## Individual Tasks
-![Todo list for christmas](https://cdn.013.team/development/todolist.jpg)
-
-## Good practicies
-![Good practices](https://cdn.013.team/development/rules.jpg)
-
-
-
-### jamie
-![30th feb moment](https://cdn.013.team/Screenshot2023-11-28-024447.png)
-
-### compiling jumpscare
-![lets use a compiled language guys](https://cdn.013.team/development/jumpscare.png)
-
-### octavian
-![pj party](https://cdn.013.team/development/Screenshot%202024-01-08%20082014.png)
-
-### userbenchmark fire gif
-![crazy fire gif](https://www.userbenchmark.com/resources/img/wri/creatives/assets/flame.gif)
