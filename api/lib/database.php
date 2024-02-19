@@ -1036,7 +1036,7 @@ function db_employee_assigned_to_task(string $task_id, string $employee_id) {
     return $query->get_result()->num_rows > 0;
 }
 
-function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id) {
+function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id, int $archived_only) {
     $bin_p_id = hex2bin($project_id);
     $bin_u_id = hex2bin($user_id);
 
@@ -1045,12 +1045,17 @@ function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id
     $query = $db->prepare(
         "SELECT TASKS.* FROM TASKS, EMPLOYEE_TASKS
         WHERE `TASKS`.projID = ? AND `EMPLOYEE_TASKS`.empID = ?
-        AND `TASKS`.taskArchived = 0
+        AND `TASKS`.taskArchived = ?
         AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID 
         "
     );
 
-    $query->bind_param("ss", $bin_p_id, $bin_u_id);
+    $query->bind_param(
+        "ssi",
+        $bin_p_id,
+        $bin_u_id,
+        $archived_only
+    );
     $result = $query->execute();
     
     // select  error)
@@ -1412,7 +1417,7 @@ function db_task_fetch(string $task_id) {
     return parse_database_row($res->fetch_assoc(), TABLE_TASKS);
 }
 
-function db_task_fetchall(string $project_id) {
+function db_task_fetchall(string $project_id, $archived_only) {
     $bin_p_id = hex2bin($project_id);
 
     global $db;
@@ -1420,11 +1425,15 @@ function db_task_fetchall(string $project_id) {
     $query = $db->prepare(
         "SELECT TASKS.* FROM TASKS
         WHERE `TASKS`.projID = ?
-        AND `TASKS`.taskArchived = 0
+        AND `TASKS`.taskArchived = ?
         "
     );
 
-    $query->bind_param("s", $bin_p_id);
+    $query->bind_param(
+        "si",
+        $bin_p_id,
+        $archived_only
+    );
     $result = $query->execute();
     
     // select  error)
@@ -1525,12 +1534,14 @@ function db_task_fetch_assignments(string $task_id) {
         "SELECT `EMPLOYEE_TASKS`.* FROM `TASKS`, `EMPLOYEE_TASKS`
         WHERE
         `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID
-        AND `TASKS`.taskArchived = 0
         AND `TASKS`.taskID = ?
         "
     );
 
-    $query->bind_param("s", $bin_t_id);
+    $query->bind_param(
+        "s",
+        $bin_t_id
+    );
     $result = $query->execute();
 
     // select  error
@@ -1551,7 +1562,7 @@ function db_task_fetch_assignments(string $task_id) {
 
 
 
-function db_project_fetch_assignments(string $project_id) {
+function db_project_fetch_assignments(string $project_id, int $archived_only) {
     $bin_p_id = hex2bin($project_id);
 
     global $db;
@@ -1559,12 +1570,16 @@ function db_project_fetch_assignments(string $project_id) {
     $query = $db->prepare(
         "SELECT `EMPLOYEE_TASKS`.* FROM `TASKS`, `EMPLOYEE_TASKS`
         WHERE `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND
-        `TASKS`.taskArchived = 0 AND
+        `TASKS`.taskArchived = ? AND
         `TASKS`.projID = ?
         "
     );
 
-    $query->bind_param("s", $bin_p_id);
+    $query->bind_param(
+        "is",
+        $archived_only,
+        $bin_p_id
+    );
     $result = $query->execute();
     
     // select  error)

@@ -217,7 +217,7 @@ Written/designed by aidan F223129
 # project
 
 ## task.php
-- [x] **/project/task.php/tasks/:PROJECT_ID**
+- [x] **/project/task.php/tasks/:PROJECT_ID?archived=0/1**
     - [x] GET (get all tasks)
       
       will return a body containing an array of tasks, and if the user is a manager, an array of assignments. otherwise it will just return the users tasks.
