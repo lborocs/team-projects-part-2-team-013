@@ -108,7 +108,7 @@ function r_employee_manage(RequestContext $ctx, string $args) {
 
             $global_settings = db_global_settings_get();
 
-            $av_enabled = $global_settings["avatarEnabled"];
+            $av_enabled = $global_settings["avatarsEnabled"];
 
             // 0 = enabled
             // 1 = mgr only
@@ -144,7 +144,7 @@ function r_employee_manage(RequestContext $ctx, string $args) {
             }
 
             // delete old avatar
-            if ($employee["avatar"]["assetID"]) {
+            if ($employee["avatar"]) {
                 $old_av = db_asset_fetch($employee["avatar"]["assetID"]);
                 if ($old_av) {
                     Asset::from_db($old_av)->delete();

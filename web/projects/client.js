@@ -101,7 +101,6 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         return false;
     }
     teamLeader = teamLeader.get(project.teamLeader.empID);
-    //remove tasks currently on the screen
     taskCards.forEach((task) => {
         task.remove()
     })
@@ -140,7 +139,6 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     
     // unselect not this project
     console.log("[renderIndividualProject] selected " + project.name)
-    //update the breadcrumb with the project name
     if (setBreadcrumb) {
         global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
         dashboardRedirect.href = `/dashboard/#${id}`
@@ -358,7 +356,6 @@ async function addManHoursPopup(task) {
     if (addButton) {
         addButton.addEventListener('click', (event) => {
             event.preventDefault(); 
-            // Add the man hours to the task
             task.manHours += parseInt(numberPickerInput.value);
             dialog.style.transform = 'translateY(-1%)'
             dialog.style.opacity = '0';
@@ -459,7 +456,6 @@ function explainerTaskSetToDefault() {
     let statusElement = document.querySelector(".status");
     statusElement.innerHTML = "";
 
-    //using globalCurrentProject
     if (globalCurrentProject) {
         let projName = globalCurrentProject.name
         let projID = globalCurrentProject.projID
@@ -497,7 +493,6 @@ function updateTaskState(task) {
     if (newState != state) {
         task.setAttribute("data-state", newState);
 
-        //update the disabled option in the context menu
         let contextMenu = task.querySelector(".context-menu-popover");
         let stateSelector = contextMenu.querySelector(".state-selector .submenu");
         if (newState == 2) {
@@ -527,7 +522,6 @@ function updateTaskState(task) {
     }
 }
 
-//takes a task card HTML ELEMENT
 function showTaskInExplainer(taskCard) {
 
 
@@ -536,7 +530,6 @@ function showTaskInExplainer(taskCard) {
     let taskID = taskCard.getAttribute("id");
     let assignees = taskCard.getAttribute("data-assignments");
     explainerTaskContainer.setAttribute("task-id", taskID);
-    //get the task from globalTasksList
     globalCurrentTask = globalTasksList.find((task) => {
         return task.taskID == taskID;
     });
@@ -546,7 +539,6 @@ function showTaskInExplainer(taskCard) {
     explainerTaskTitle.classList.remove("norender");
 
 
-    //Task description
     let description = globalCurrentTask.description;
     if (!description || description === "<p><br></p>") {
         description = "None set";
@@ -556,11 +548,9 @@ function showTaskInExplainer(taskCard) {
     }
     explainerTaskDescription.innerHTML = description;
 
-    //Task date
     let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
     explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "None set";
 
-    //Task manhours
     let manHours = globalCurrentTask.expectedManHours;
     let timeDisplay = "";
 
@@ -596,7 +586,6 @@ function showTaskInExplainer(taskCard) {
         });
     }
 
-    //Task status
     let statusElement = document.querySelector(".status");
     let explainerTaskStatusElement = document.querySelector(".explainer-task-status");
     statusElement.innerHTML = globalCurrentTask.state == 0 ? "Not Started" : globalCurrentTask.state == 1 ? "In Progress" : "Finished";
@@ -611,7 +600,6 @@ function showTaskInExplainer(taskCard) {
     
     animate(document.querySelector(".task-overview"), "flash");
 
-    //Task assignments
     renderAssignmentsInExplainer(taskID);
 
     global.setBreadcrumb(["Projects", globalCurrentProject.name, globalCurrentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + globalCurrentTask.taskID])
@@ -647,7 +635,7 @@ async function renderAssignmentsInExplainer(taskID) {
     });
 
     assignments.forEach((empID) => {
-        let emp = employees.get(empID); // Get employee from employees map
+        let emp = employees.get(empID);
         let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
 
@@ -826,11 +814,9 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
 
             taskCard.addEventListener("click", (e) => {
-                //if the target is the context menu button, dont show the explainer
                 if (e.target.classList.contains("context-menu")) {
                     return
                 }
-                //right click doesnt show the card as clicked
                 if (e.button == 2) {
                     return
                 }
@@ -852,12 +838,10 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                     return
                 }
 
-                //right click
                 if (e.button == 2) {
                     return
                 }
 
-                // console.log(explainer)
                 explainer.classList.remove("hidden")
                 overlay.classList.remove("norender")
                 
@@ -897,15 +881,10 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
         taskRows.forEach((taskRow) => {
             taskRow.addEventListener("pointerdown", () => {
                 console.log("[taskRowOnMouseDown] clicked")
-                //taskRow.classList.add("clicked")
             });
 
             taskRow.addEventListener("pointerup", () => {
-                //show explainer
                 console.log("[taskRowOnTouchStart] clicked")
-                // taskRows.forEach((row) => {
-                //     row.classList.remove("clicked")
-                // })
                 showTaskInExplainer(taskRow);
             });
         });
@@ -1079,11 +1058,11 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
-        assignmentElem.classList.add("tooltip", "tooltip-under");
 
         if (usersAssigned) {
             let count = taskUserCount.get(assignment.task.taskID) || 0;
             if (count < 3) {
+                assignmentElem.classList.add("tooltip", "tooltip-under");
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
 
@@ -1095,6 +1074,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
                 }
 
             } else if (count === 3) {
+                assignmentElem.classList.add("tooltip", "tooltip-left");
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
 
                 const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
@@ -2941,7 +2921,7 @@ async function editTaskPopup(task){
 
     //event listeners for the number picker
     let numberPicker = document.querySelector("#add-man-hours-button2");
-let numberPickerInput = numberPicker.querySelector('input[type="number"]');
+    let numberPickerInput = numberPicker.querySelector('input[type="number"]');
     let numberPickerPlus = numberPicker.querySelector('.stepper.increment')
     let numberPickerMinus = numberPicker.querySelector('.stepper.decrement')
     numberPickerPlus.addEventListener('click', e => {
@@ -2998,30 +2978,40 @@ let numberPickerInput = numberPicker.querySelector('input[type="number"]');
         { insert: description }
     ]);
 
-    // Calculate the hours and minutes from task.expectedManHours
     let hours = Math.floor(task.expectedManHours / 3600);
     let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
 
-    // Set the value of the man hours input
     let manHoursInput = document.querySelector('#add-man-hours-button2 .number-input');
     manHoursInput.value = hours;
 
-    // Set the selected value of the minutes dropdown
     let minutesDropdownText = document.querySelector('#manhours-minutes-dropdown .dropdown-text');
     minutesDropdownText.innerText = minutes;
 
     let dueDateInput = popupDiv.querySelector('.date-picker-input');
     fp.setDate(task.dueDate, true);
 
-    // turn employeelist into a map of id to employee
+    let currentAssignees = globalCurrentTask.assignments;
+
+    currentAssignees.forEach((empID) => {
+        assignedEmployees.add(empID);
+    });
+
     let employeeMap = new Map();
     employeeList.forEach((emp) => {
         employeeMap.set(emp.empID, emp);
     });
+    
+    updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
 
-    // add event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
+
+        let empID = option.getAttribute("data-id");
+        if (assignedEmployees.has(empID)) {
+            option.classList.add('selected');
+            option.querySelector('.icon').innerHTML = "check";
+        }
+
         option.addEventListener("click", () => {
 
             let empID = option.getAttribute("data-id");
@@ -3087,15 +3077,11 @@ let numberPickerInput = numberPicker.querySelector('input[type="number"]');
 
 }
 
-
-
-
 async function projectPopup(id){
     console.log(`[projectPopup] Running projectPopup`)
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
 
-    //stops the user being able click outside the popup
     fullscreenDiv.style.pointerEvents = 'none';
     Array.from(document.querySelectorAll('.main')).forEach((element) => {
         element.style.pointerEvents = 'none';
@@ -3304,7 +3290,6 @@ async function projectPopup(id){
         employeeMap.set(emp.empID, emp);
     });
 
-    // adds event listeners to employee list
     let employeeListOptions = empList.querySelectorAll(".name-card");
     employeeListOptions.forEach((option) => {
         option.addEventListener("click", () => {
@@ -3465,7 +3450,6 @@ async function projectPopup(id){
 
 document.querySelector(".edit-button").addEventListener("click", async () => {
     let taskID = explainerTaskContainer.getAttribute("task-id");
-    //get task from globalTasksList
     console.log(globalTasksList)
     let task = globalTasksList.find((task) => task.taskID == taskID);
 

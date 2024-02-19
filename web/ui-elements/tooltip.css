@@ -44,3 +44,8 @@
     border-style: solid;
     border-color: transparent transparent #2f2f2fcc transparent;
 }
+
+.tooltip .tooltiptext.bottom-left {
+    left: 0;
+    transform: translate(0);
+}

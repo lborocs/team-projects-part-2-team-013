@@ -471,7 +471,6 @@
     display: none;
 }
 
-
 [contenteditable]:empty:after {
     content: attr(placeholder);
     color: #aaaaaa;
@@ -494,4 +493,25 @@
 .icon-button.modal-skippable-active:hover {
     background-color: #ffe4dd !important;
     transition: background-color 0.05s ease-out;
+}
+
+.date-picker-input {
+    font-weight: 400;
+    color: rgba(0,0,0,0.5);
+    background-color: transparent;
+    width: min-content;
+}
+
+.date-picker {
+    border: solid 2px transparent;
+    background-color: transparent;
+    border-radius: 4px;
+}
+
+.date-picker-icon {
+    color: rgba(0,0,0,0.5);
+}
+
+.date-picker:hover {
+    background-color: transparent;
 }
