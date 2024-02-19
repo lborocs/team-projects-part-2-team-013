@@ -290,15 +290,16 @@ async function updatePost(postID, data) {
     const response = await patch_api("/wiki/post.php/post/" + postID, data);
     console.log(response);
 }
-async function updateTags(postID, data2) {
-    const response = await put_api("/wiki/post.php/post/" + postID + "/tags", data2);
+async function updateTags(postID, body) {
+    const response = await put_api("/wiki/post.php/post/" + postID + "/tags", body);
     console.log(response);
 }
 
 function submitPost() {
     var title = document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value;
 
-    const content = quill.getContents();
+    // js has no native deep copy so we have to use json
+    const content = JSON.parse(JSON.stringify(quill.getContents()));
     const images = {};
 
     Object.entries(content.ops).forEach(([key, value]) => {
@@ -319,33 +320,33 @@ function submitPost() {
                 tagsToSubmit.push(tag.tagID);
             });
             console.log(tagsToSubmit);
-            var data = {
+            var postBody = {
                 "isTechnical": isTechnical + 0,
                 "title": title,
                 "content": body,
                 "images": images,
             };
-            console.log(data);
-            var data2 = {
+            console.log(postBody);
+            var tagBody = {
                 "tags": tagsToSubmit,
             };
-            console.log("Next bit is data2")
-            console.log(data2);
+            console.log("tag body")
+            console.log(tagBody);
             if (editing) {
                 let postID = getQueryParam();
-                updatePost(postID, data).then(() => {
-                    updateTags(postID, data2).then(() => {
+                updatePost(postID, postBody).then(() => {
+                    updateTags(postID, tagBody).then(() => {
                         window.location.href = "../";
                     });
                 });
             } else {
-                let postID = createPost(data);
+                let postID = createPost(postBody);
                 postID.then((postID) => {
                     console.log(postID);
                     console.log("This is the post ID")
-                    console.log(data2);
-                    console.log("This is the data2")
-                    updateTags(postID, data2).then(() => {
+                    console.log(tagBody);
+                    console.log("This is the tagBody")
+                    updateTags(postID, tagBody).then(() => {
                         window.location.href = "../";
                     });
                 });

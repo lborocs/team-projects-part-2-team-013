@@ -8,8 +8,8 @@ var postsContainer = document.querySelector('.posts');
 var posts = document.querySelectorAll('.post');
 const searchInput = document.getElementById("inputField")
 const deleteTagsPopup = document.getElementById("delete-tags-popup");
-const deleteTagsHasPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .hasPosts');
-const deleteTagsNoPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .noPosts');
+const deleteTagsHasPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .hasPosts > .tags');
+const deleteTagsNoPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .noPosts > .tags');
 const deleteTagsConfirmButton = deleteTagsPopup.querySelector("#confirm-button");
 const tagSelection = document.querySelector('#tag-selection');
 

@@ -111,6 +111,12 @@ class RequestContext extends stdClass {
     function body_require_fields_as_types(Array $field_values, bool $allow_null=false) {
         $this->body_require_fields(array_keys($field_values));
         foreach ($field_values as $key => $value) {
+
+            if (is_null($this->request_body[$key]) && $allow_null) {
+                continue;
+            }
+
+
             if (gettype($this->request_body[$key]) != $value) {
                 respond_bad_request(
                     "Required field is not of required type (expected '" . $key . "' to be " . $value .")",

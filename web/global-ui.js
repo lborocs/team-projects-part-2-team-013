@@ -645,7 +645,7 @@ function fallbackAvatar(employee, colour) {
 export function employeeAvatarOrFallback(employee) {
 
     if (employee.deleted) {
-        return fallbackAvatar(employee, "a1a1a1");
+        return fallbackAvatar(employee, "d8d8d8");
     } else if (employee.avatar) {
         return assetToUrl(ASSET_TYPE_EMPLOYEE, employee.empID, employee.avatar.assetID, employee.avatar.contentType);
     } else {

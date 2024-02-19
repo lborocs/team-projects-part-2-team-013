@@ -134,6 +134,18 @@ label {
     gap: 10px;
 }
 
+.first-and-last-name {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#name-container {
+    display: flex;
+    flex-direction: column;
+    width: 9.5em;
+}
+
 #register {
     width: 100%;
     margin-top: 4px;

@@ -39,7 +39,7 @@ wiki.setAttribute('href', '/wiki/');
 export const dashboard = document.createElement('a')
 dashboard.classList.add('sidebar-item', 'manager-only', 'norender')
 dashboard.id = 'workload';
-dashboard.setAttribute('href', '/dashboard/');
+dashboard.setAttribute('href', '/dashboard/overview/');
 
 export const training = document.createElement('a')
 training.classList.add('sidebar-item', 'manager-only', 'norender')
@@ -113,7 +113,7 @@ if (items !== null) {
             return
         }
 
-        if (item.getAttribute('href') === window.location.pathname) {
+        if (window.location.pathname.startsWith(item.getAttribute('href'))) {
             item.classList.add("selected")
         }
     })
