@@ -273,6 +273,7 @@ async function addManHoursPopup(task) {
     let manhoursMinutes15 = document.querySelector("#manhours-minutes15")
     let manhoursMinutes30 = document.querySelector("#manhours-minutes30")
     let manhoursMinutes45 = document.querySelector("#manhours-minutes45")
+
     manhoursMinutesDropdown.addEventListener("click", function() {
         this.classList.toggle("open");
     });
@@ -298,8 +299,8 @@ async function addManHoursPopup(task) {
 
     // Event listeners for the number picker
     let numberPicker = document.querySelector("#add-man-hours-button2");
-    let numberPickerInput = numberPicker.querySelector('input[type="number"]');
     if (numberPicker) {
+        let numberPickerInput = numberPicker.querySelector('input[type="number"]');
         let numberPickerPlus = numberPicker.querySelector('.stepper.increment');
         let numberPickerMinus = numberPicker.querySelector('.stepper.decrement');
         if (numberPickerPlus) {
@@ -352,32 +353,18 @@ async function addManHoursPopup(task) {
         });
     }
 
-
-    addButton.addEventListener('click', async (event) => { //adds the man hours to the task
-        event.preventDefault(); 
-        //gets the hours value and converts to seconds
-        let hours = parseInt(numberPickerInput.value) * 3600;
-        //does the same for minutes
-        let minutes = parseInt(manhoursMinutesDropdown.querySelector(".dropdown-text").innerText) * 60;
-
-        //updates the task and closes the popup
-        let newManHours = parseInt(hours + minutes);
-        let res = await put_api(`/project/task.php/manhours/${globalCurrentProject.projID}/${task.taskID}`, {manHours: newManHours});
-
-        if (res.status === 204) {
-            console.log("[addManHoursPopup] added")
-        } else {
-            console.error("[addManHoursPopup] failed to add")
-            return
-        }
-
-        dialog.style.transform = 'translateY(-1%)'
-        dialog.style.opacity = '0';
-        dialog.style.display = 'none';
-        fullscreenDiv.style.filter = 'none';
-        console.log("[addManHoursAddButton] adding man hours")
-    });
-    
+    if (addButton) {
+        addButton.addEventListener('click', (event) => {
+            event.preventDefault(); 
+            // Add the man hours to the task
+            task.manHours += parseInt(numberPickerInput.value);
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addManHoursAddButton] adding man hours")
+        });
+    }
 
     dialog.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
@@ -621,7 +608,7 @@ function showTaskInExplainer(taskCard) {
 
 async function renderAssignmentsInExplainer(taskID) {
     let task = globalTasksList.find(task => task.taskID === taskID);
-    task.onTask = false;
+
     if (!task) return;
 
     let assignments = task.assignments;
@@ -648,20 +635,10 @@ async function renderAssignmentsInExplainer(taskID) {
         return employees.get(a).deleted - employees.get(b).deleted;
     });
 
-    assignments.forEach(async (empID) => {
-
-        //get current session
-        let session = await global.getCurrentSession();
-        let currentuserID = session.employee.empID;
-        if (empID == currentuserID) {
-            task.onTask = true;
-        }
-
+    assignments.forEach((empID) => {
         let emp = employees.get(empID); // Get employee from employees map
         let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
-
-
 
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
@@ -672,15 +649,6 @@ async function renderAssignmentsInExplainer(taskID) {
 
         usersAssignedExplainer.appendChild(assignmentElem);
     });
-
-    let manHoursButton = document.querySelector('.man-hours > #add-man-hours')
-    if (task.onTask) {
-        manHoursButton.classList.remove('disabled');
-    } else {
-        manHoursButton.classList.add('disabled');
-    }
-
-
 }
 
 function setUpTaskEventListeners(listeners = RENDER_BOTH) {
