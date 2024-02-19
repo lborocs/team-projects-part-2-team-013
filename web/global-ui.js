@@ -280,7 +280,7 @@ class GlobalEmployeeRequest {
 
 const DEFAULT_PREFERENCES = {
     "sidebarisopen": true,
-    "taskview": 0,
+    "taskview": 1,
     "tasksort": "name",
     "taskorder": "desc",
     "taskfilters.managermine": false,
