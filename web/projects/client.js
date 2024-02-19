@@ -263,7 +263,6 @@ function explainerTaskSetToDefault() {
 }
 
 function getTaskState(task) {
-
     let taskState = task.getAttribute("data-state");
     if (taskState == null) {
         console.error("[getTaskState] task has no state");
@@ -1419,7 +1418,9 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
             </div>
         </div>
     `
-    
+    if(state == 2) {
+        task.querySelector(".submenu").classList.add("menu-left");
+    }
 
     let statusIcon;
     let overdueContainerClass = "";
@@ -3313,14 +3314,14 @@ async function getProjectPreferences() {
     const prefDirection = await global.preferences.get('projectOrder');
     sortAttribute = prefSort.or_default();
     sortDirection = prefDirection.or_default();
-    let sortColumn = document.querySelector(`[data-attribute="${attributeSearch}"]`);
+    let sortColumn = document.querySelector(`[data-attribute="${sortAttribute}"]`);
     sortColumn.classList.add('sorting-by');
     if (sortDirection === 'asc') {
         sortColumn.classList.add('asc');
     } else {
         sortColumn.classList.add('desc');
     }
-    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${attributeSearch}`);
+    console.log(`[SET DEFAULT PREFERENCES] - projectSort: ${sortAttribute}`);
     console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
 }
 
