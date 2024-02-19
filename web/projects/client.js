@@ -3107,6 +3107,24 @@ async function editTaskPopup(task){
         }
     });
 
+    createButton.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        let projID = globalCurrentProject.projID;
+        let taskID = explainerTaskContainer.getAttribute("task-id");
+        console.log('UniqueIdentifier: Global Current Task', globalcurrentTask);
+
+        let data = {
+            taskID: taskID,
+            title: taskTitleInput.value,
+            description: description,
+            
+        };
+
+        patch_api(`/project/task.php/task/${projID}/${taskID}`, data);
+    });
+
 }
 
 async function projectPopup(id){
