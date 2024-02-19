@@ -302,6 +302,13 @@ const DEFAULT_PREFERENCES = {
     "notificationslastreadat": 0,
 }
 
+// we need to set dynamically
+getCurrentSession(true).then((session) => {
+    isManager = (session.auth_level ?? 0) >= 2;
+    DEFAULT_PREFERENCES.taskview = isManager ? 2 : 1;
+});
+
+
 class PreferenceValue {
     
     inner;
