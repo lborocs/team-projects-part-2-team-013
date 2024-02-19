@@ -99,7 +99,8 @@ async function getPostData(postID, tagsList) {
     console.log(post)
 
     let postType = post.isTechnical ? "Technical" : "Non-Technical";
-    global.setBreadcrumb(["Wiki", postType, post.title], ["../", "../", '#' + post.postID]);
+    const hash = post.isTechnical ? "#technical" : "#non-technical";
+    global.setBreadcrumb(["Wiki", postType, post.title], ["../", `../${hash}`, '#' + post.postID]);
 
     if (!post.tags) {
         return post;

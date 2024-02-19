@@ -14,6 +14,17 @@ const deleteTagsConfirmButton = deleteTagsPopup.querySelector("#confirm-button")
 const tagSelection = document.querySelector('#tag-selection');
 
 
+if (document.location.hash == "#nontechnical") {
+    document.getElementById("non-technical").checked = true;
+    document.getElementById("technical").checked = false;
+}
+
+function setCurrentBreadcrumb(nonTechnical) {
+    const label = nonTechnical ? "Non-Technical" : "Technical";
+    global.setBreadcrumb(["Wiki", label], ["/wiki/", `#${nonTechnical ? 'non' : ''}technical`]);
+}
+
+
 
 class Tag {
 
@@ -75,6 +86,9 @@ async function searchPosts() {
         tags.push(tag.getAttribute("tagID"));
     });
     var selectedCategory = document.querySelector('input[name="category"]:checked');
+
+    setCurrentBreadcrumb(selectedCategory.value == "0");
+
     await fetchPosts(selectedCategory.value, search, tags);
 }
 
@@ -399,4 +413,3 @@ function editTags() {
 
 
 //initialise the page
-global.setBreadcrumb(["Wiki"], ["./"]);
