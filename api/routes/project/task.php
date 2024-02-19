@@ -9,6 +9,7 @@ const TASK_METHOD_CHECKS = [
         "user_is_part_of_project",
         "user_is_admin_of_project",
         "task_exists",
+        "task_not_archived",
     ],
     "GET"=>[
         "duo_arg",
@@ -24,6 +25,7 @@ const TASK_METHOD_CHECKS = [
         "task_exists",
         "user_has_access_to_task",
         "task_edit_validation",
+        "task_not_archived",
     ],
     "POST"=>[
         "solo_arg",
@@ -34,12 +36,21 @@ const TASK_METHOD_CHECKS = [
 ];
 
 function fetchall_tasks(string $author_id, string $project_id, bool $is_team_admin) {
+
+    $archived_only = $_GET["archived"] ?? "0";
+    if (!in_array($archived_only, ["0", "1"])) {
+        respond_bad_request(
+            "Expected archived to be 0 or 1",
+            ERROR_QUERY_PARAMS_INVALID,
+        );
+    }
+    
     if (!$is_team_admin) {
         // user only, get all tasks for user
-        $data = db_employee_fetch_assigned_tasks_in($author_id, $project_id);
+        $data = db_employee_fetch_assigned_tasks_in($author_id, $project_id, $archived_only);
 
         // FOR PRODUCTION WE SHOULD FETCH ONLY SHARED ASSIGNMENTS
-        $asssignments = db_project_fetch_assignments($project_id);
+        $asssignments = db_project_fetch_assignments($project_id, $archived_only);
 
         respond_ok(array(
             "contains_assignments"=>true,
@@ -47,8 +58,8 @@ function fetchall_tasks(string $author_id, string $project_id, bool $is_team_adm
             "assignments"=>$asssignments
         ));
     } else {
-        $tasks = db_task_fetchall($project_id);
-        $asssignments = db_project_fetch_assignments($project_id);
+        $tasks = db_task_fetchall($project_id, $archived_only);
+        $asssignments = db_project_fetch_assignments($project_id, $archived_only);
         respond_ok(array(
             "contains_assignments"=>true,
             "tasks"=>$tasks,
@@ -85,6 +96,7 @@ function r_task_assignments(RequestContext $ctx, string $args) {
         ));
     }
     else if ($ctx->request_method == "PUT") {
+        object_check_task_not_archived($ctx, $resource_specifiers);
         $ctx->body_require_fields(["assignments"]);
         $assignments = $ctx->request_body["assignments"];
 

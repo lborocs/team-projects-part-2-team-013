@@ -585,13 +585,20 @@ function db_post_accesses_add(string $emp_id, string $post_id) {
     }
 }
 
-function db_post_accesses_fetchall() {
+function db_post_accesses_fetchall(int $delta) {
     global $db;
-    $epoch = timestamp() - POST_ACCESS_DELTA;
+    $epoch = timestamp() - $delta;
     $query = $db->prepare(
-        "SELECT postID, COUNT(postViewAccessedAt) as views 
-        FROM POST_VIEWS WHERE postViewAccessedAt > ?
-        GROUP BY postID
+        "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
+            COUNT(postViewAccessedAt) as views,
+            GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags
+        FROM POST_VIEWS
+        LEFT JOIN POSTS
+            ON `POSTS`.postID = `POST_VIEWS`.postID
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        WHERE postViewAccessedAt > ?
+        GROUP BY `POSTS`.postID
         ORDER BY views DESC
         LIMIT " . DATA_FETCH_LIMIT
     );
@@ -611,11 +618,86 @@ function db_post_accesses_fetchall() {
 
     $data = [];
     while ($row = $res->fetch_assoc()) {
-        $encoded = parse_database_row($row, TABLE_POST_VIEWS, ["views"=>"integer"]);
+        $encoded = parse_database_row($row, TABLE_POSTS, [
+            "views"=>"integer",
+            "tags"=>"a-binary",
+        ]);
         array_push($data, $encoded);
     }
     return $data;
 
+}
+
+function db_post_fetch_most_subscribed() {
+    global $db;
+
+    $query = $db->prepare(
+        "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
+        GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+        COUNT(`EMPLOYEE_POST_META`.empID) as subscriptions
+        FROM `POSTS`
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        LEFT JOIN `EMPLOYEE_POST_META`
+            ON `EMPLOYEE_POST_META`.postID = `POSTS`.postID AND `EMPLOYEE_POST_META`.postMetaSubscribed = 1
+        GROUP BY `POSTS`.postID
+        ORDER BY subscriptions DESC
+        LIMIT " . DATA_FETCH_LIMIT
+    );
+
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    $res = $query->get_result();
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_POSTS, [
+            "subscriptions"=>"integer",
+            "tags"=>"a-binary",
+        ]);
+        array_push($data, $encoded);
+    }
+    return $data;
+}
+
+function db_post_fetch_most_helpful() {
+    global $db;
+
+    $query = $db->prepare(
+        "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
+        GROUP_CONCAT(`POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+        COUNT(`EMPLOYEE_POST_META`.empID) as helpful
+        FROM `POSTS`
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        LEFT JOIN `EMPLOYEE_POST_META`
+            ON `EMPLOYEE_POST_META`.postID = `POSTS`.postID AND `EMPLOYEE_POST_META`.postMetaFeedback = 1
+        GROUP BY `POSTS`.postID
+        ORDER BY helpful DESC
+        LIMIT " . DATA_FETCH_LIMIT
+    );
+
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    $res = $query->get_result();
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_POSTS, [
+            "helpful"=>"integer",
+            "tags"=>"a-binary",
+        ]);
+        array_push($data, $encoded);
+    }
+    return $data;
 }
 
 
@@ -954,7 +1036,7 @@ function db_employee_assigned_to_task(string $task_id, string $employee_id) {
     return $query->get_result()->num_rows > 0;
 }
 
-function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id) {
+function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id, int $archived_only) {
     $bin_p_id = hex2bin($project_id);
     $bin_u_id = hex2bin($user_id);
 
@@ -963,12 +1045,17 @@ function db_employee_fetch_assigned_tasks_in(string $user_id, string $project_id
     $query = $db->prepare(
         "SELECT TASKS.* FROM TASKS, EMPLOYEE_TASKS
         WHERE `TASKS`.projID = ? AND `EMPLOYEE_TASKS`.empID = ?
-        AND `TASKS`.taskArchived = 0
+        AND `TASKS`.taskArchived = ?
         AND `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID 
         "
     );
 
-    $query->bind_param("ss", $bin_p_id, $bin_u_id);
+    $query->bind_param(
+        "ssi",
+        $bin_p_id,
+        $bin_u_id,
+        $archived_only
+    );
     $result = $query->execute();
     
     // select  error)
@@ -1330,7 +1417,7 @@ function db_task_fetch(string $task_id) {
     return parse_database_row($res->fetch_assoc(), TABLE_TASKS);
 }
 
-function db_task_fetchall(string $project_id) {
+function db_task_fetchall(string $project_id, $archived_only) {
     $bin_p_id = hex2bin($project_id);
 
     global $db;
@@ -1338,11 +1425,15 @@ function db_task_fetchall(string $project_id) {
     $query = $db->prepare(
         "SELECT TASKS.* FROM TASKS
         WHERE `TASKS`.projID = ?
-        AND `TASKS`.taskArchived = 0
+        AND `TASKS`.taskArchived = ?
         "
     );
 
-    $query->bind_param("s", $bin_p_id);
+    $query->bind_param(
+        "si",
+        $bin_p_id,
+        $archived_only
+    );
     $result = $query->execute();
     
     // select  error)
@@ -1443,12 +1534,14 @@ function db_task_fetch_assignments(string $task_id) {
         "SELECT `EMPLOYEE_TASKS`.* FROM `TASKS`, `EMPLOYEE_TASKS`
         WHERE
         `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID
-        AND `TASKS`.taskArchived = 0
         AND `TASKS`.taskID = ?
         "
     );
 
-    $query->bind_param("s", $bin_t_id);
+    $query->bind_param(
+        "s",
+        $bin_t_id
+    );
     $result = $query->execute();
 
     // select  error
@@ -1469,7 +1562,7 @@ function db_task_fetch_assignments(string $task_id) {
 
 
 
-function db_project_fetch_assignments(string $project_id) {
+function db_project_fetch_assignments(string $project_id, int $archived_only) {
     $bin_p_id = hex2bin($project_id);
 
     global $db;
@@ -1477,12 +1570,16 @@ function db_project_fetch_assignments(string $project_id) {
     $query = $db->prepare(
         "SELECT `EMPLOYEE_TASKS`.* FROM `TASKS`, `EMPLOYEE_TASKS`
         WHERE `EMPLOYEE_TASKS`.taskID = `TASKS`.taskID AND
-        `TASKS`.taskArchived = 0 AND
+        `TASKS`.taskArchived = ? AND
         `TASKS`.projID = ?
         "
     );
 
-    $query->bind_param("s", $bin_p_id);
+    $query->bind_param(
+        "is",
+        $archived_only,
+        $bin_p_id
+    );
     $result = $query->execute();
     
     // select  error)
@@ -1585,10 +1682,10 @@ function db_tag_fetchall() {
     return $data;
 }
 
-function db_tag_fetch_popular() {
+function db_tag_fetch_popular(int $delta) {
     global $db;
 
-    $epoch = timestamp() - POST_ACCESS_DELTA;
+    $epoch = timestamp() - $delta;
 
     $query = $db->prepare(
         "SELECT `TAGS`.*, `POPULAR_TAGS`.views FROM `TAGS`

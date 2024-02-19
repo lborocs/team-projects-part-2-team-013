@@ -164,6 +164,14 @@ function object_check_task_edit_validation(RequestContext $ctx, array $resource_
 
 }
 
+function object_check_task_not_archived(RequestContext $ctx, array $resource_ids) {
+    // requires task exists
+
+    if ($ctx->task["archived"]) {
+        respond_bad_request("Archived tasks do not support this operation", ERROR_BAD_REQUEST);
+    }
+}
+
 function object_check_employee_exists(RequestContext $ctx, array $resource_ids) {
 
     $emp = db_employee_fetch($resource_ids[0]);

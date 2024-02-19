@@ -66,7 +66,7 @@ Written/designed by aidan F223129
   - [x] DELETE (Delete from todolist)
 
 ## manager.php
-- [x] **/frequentedposts**
+- [x] **/employee/manager.php/mostviewedposts?delta=:MS_INTO_PAST:**
   - GET (return most viewed posts)
     ```jsonc
     {
@@ -74,13 +74,13 @@ Written/designed by aidan F223129
       "data":[
         {
           "posts":[
-            {"empID":"emp id","postID":"post id", "views":"number"}
+            {..post, "views":"int"}
           ]
         }
       ]
     }
     ``` 
-- [x] **/frequentedtags**
+- [x] **/employee/manager.php/mostviewedtags?delta=:MS_INTO_PAST:**
   - GET (return most viewed tags)
     ```jsonc
     {
@@ -88,12 +88,43 @@ Written/designed by aidan F223129
       "data":[
         {
           "tags":[
-            {"tagID":"tagid here","tagName":"tag name here", "views":"number"}
+            {"tagID":"tagid here","name":"tag name here", "views":"number"}
           ]
         }
       ]
     }
     ```
+
+- [x] **/employee/manager.php/mostsubscribedposts**
+  - GET (return most subscribed posts ever)
+        ```jsonc
+    {
+      "success":true,
+      "data":[
+        {
+          "posts":[
+            {..post, "subscriptions":"int"}
+          ]
+        }
+      ]
+    }
+    ```
+
+- [x] **/employee/manager.php/mosthelpfulposts**
+  - GET (return most helpful posts ever)
+        ```jsonc
+    {
+      "success":true,
+      "data":[
+        {
+          "posts":[
+            {..post, "helpful":"int"}
+          ]
+        }
+      ]
+    }
+    ```
+
 - [x] **/employee/manager.php/employeeprojects/:EMP_ID:**
   - GET (get another users projects they are in)
       @me for your own projects, not all,
@@ -186,7 +217,7 @@ Written/designed by aidan F223129
 # project
 
 ## task.php
-- [x] **/project/task.php/tasks/:PROJECT_ID**
+- [x] **/project/task.php/tasks/:PROJECT_ID?archived=0/1**
     - [x] GET (get all tasks)
       
       will return a body containing an array of tasks, and if the user is a manager, an array of assignments. otherwise it will just return the users tasks.

@@ -120,7 +120,6 @@
         border-spacing: 0;
    
         & td {
-            padding: 6px 8px;
             line-height: 1.5;
             vertical-align: middle;
             text-align: left;
@@ -129,7 +128,9 @@
             border-bottom: solid 1px var(--border-clr);
             & a {
                 text-decoration: none;
+                color: black;
                 display: flex;
+                padding: 10px 8px;
             }
         }
 
@@ -406,7 +407,7 @@
     }
 
     .search{
-        width: 15em;
+        width: 20em;
         transition: width 0.1s ease-in-out;
     }
 

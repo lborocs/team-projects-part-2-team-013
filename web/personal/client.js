@@ -686,6 +686,12 @@ document.addEventListener("click", (e) => {
     if (!personalsSortDropdown.contains(e.target)) {
         personalsSortDropdown.classList.remove("open")
     }
+
+    if (!mobilePersonalsSearch.contains(e.target)) {
+        mobilePersonalsSearchInput.classList.remove('open')
+        mobilePersonalsSearchInput.blur()
+        document.querySelector('.controls>.title').classList.remove('norender')
+    }
 })
 
 personalsSortDirection.addEventListener("click", reverseSortDirection);
