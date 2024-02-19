@@ -3,6 +3,11 @@
         height: max(auto, (100% - 3em));
     }
 
+    #view-archived-button{
+        position: absolute;
+        right: 6em;
+    }
+
     .sidebar{
         margin-left: -100%;
         position: fixed;
