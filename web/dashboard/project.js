@@ -52,39 +52,6 @@ export async function init(id) {
     
     
     
-    charts.push(new Chart(document.getElementById("manHoursChart"), {
-        type: 'line',
-        data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7'],
-            datasets: [{
-                label: 'Expected Man Hours',
-                data: [40, 50, 45, 60, 55, 54, 60],
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.15
-            }, {
-                label: 'Actual Man Hours',
-                data: [36, 48, 46, 65, 53, 60, 73],
-                fill: false,
-                borderColor: 'rgb(255, 99, 132)',
-                tension: 0.15
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: false
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'bottom'
-                }
-            }
-        }
-    }));
-    
     
     
     
@@ -211,38 +178,6 @@ export async function init(id) {
         }
     }));
     
-    //still example data at this point
-    charts.push(new Chart(document.getElementById("timeBudgetChart"), {
-        type: 'doughnut',
-        data: {
-            datasets: [{
-    
-                data: [60, 40],
-                backgroundColor: ['#4caf50', '#e0e0e0'],
-            }]
-        },
-        options: {
-            circumference: 180,
-            rotation: -90,
-            cutout: '80%',
-            plugins: {
-                tooltip: {
-                    enabled: false
-                },
-                legend: {
-                    display: false
-                },
-                title: {
-                    display: true,
-                    text: 'Project is due in 40 days'
-                },
-                subtitle: {
-                    display: true,
-                    text: 'Time budget used: 60%'
-                }
-            }
-        }
-    }));
 
 
     renderTableMetric();
@@ -456,13 +391,6 @@ function renderTableMetric() {
         <div class="title-text">
             Task List
         </div>
-        <div class="icon-button no-box context-menu">
-            <div class="button-icon">
-                <span class="material-symbols-rounded">
-                    more_horiz
-                </span>
-            </div>
-        </div> 
     `
 
     let taskList = document.createElement("div");

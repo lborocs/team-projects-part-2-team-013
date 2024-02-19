@@ -912,16 +912,146 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
     if (listeners & RENDER_LIST) {
         taskRows = document.querySelectorAll(".taskRow");
         taskRows.forEach((taskRow) => {
+            let contextMenuButton = taskRow.querySelector(".context-menu");
+            let contextMenuPopover = taskRow.querySelector(".context-menu-popover");
+    
+            contextMenuButton.addEventListener("click", (e) => {
+                e.stopPropagation();
+                //closes the rest of them first
+                let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+                contextMenus.forEach(menu => {
+                    if (menu !== contextMenuPopover) {
+                        menu.classList.remove("visible");
+                        menu.parentElement.classList.remove("active");
+                    }
+                });
+                contextMenuPopover.classList.toggle("visible");
+                contextMenuButton.classList.toggle("active");
+            });
+
+            function handleTaskStateChange(item, state) {
+                console.log(`[contextMenuItemOnClick] ${item.classList[1]} clicked`);
+                let taskID = taskRow.getAttribute("id");
+                let projID = globalCurrentProject.projID;
+                patch_api(`/project/task.php/task/${projID}/${taskID}`, {state: state}).then((res) => {
+                    if (res.success) {
+                        console.log(`[setUpTaskEventListeners] updated task ${taskID} to state ${state}`);
+                    } else {
+                        console.error(`[setUpTaskEventListeners] failed to update task ${taskID} to state ${state}`);
+                    }
+                });
+            }
+
+            let contextMenuItems = contextMenuPopover.querySelectorAll(".item");
+            contextMenuItems.forEach(item => {
+                let timeoutId;
+                item.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    console.log("[contextMenuItemOnClick] clicked")
+
+                    if (item.classList.contains("action-edit")) {
+                        console.log("[contextMenuItemOnClick] edit clicked")
+                        showTaskInExplainer(taskRow);
+                        editTaskPopup(globalCurrentTask);
+                        
+
+                    } else if (item.classList.contains("action-delete")) {
+                        console.log("[contextMenuItemOnClick] delete clicked")
+
+                        let taskID = taskRow.getAttribute("id");
+                        confirmDelete().then(() => {
+                            deleteTask(taskID)
+                            taskRow.remove()
+                            calculateTaskCount()
+                        }).catch((e) => {
+                            console.log('[DeleteTaskButtonsClick] Deletion cancelled');
+                            console.log(e)
+                        });
+
+
+                    } else if (item.classList.contains("action-copy")) {
+                        console.log("[contextMenuItemOnClick] copy clicked")
+
+                        if(timeoutId) {
+                            clearTimeout(timeoutId);
+                        }
+
+                        let taskID = taskRow.getAttribute("id");
+                        let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
+                        navigator.clipboard.writeText(link)
+
+                        item.querySelector(".text").innerHTML = "Copied!"
+                        timeoutId = setTimeout(() => {
+                            item.querySelector(".text").innerHTML = "Copy Link"
+                        }, 1000)
+
+
+                    } else if (item.classList.contains("action-open")) {
+                        console.log("[contextMenuItemOnClick] open clicked")
+
+                        let taskID = taskRow.getAttribute("id");
+                        let link = window.location.origin + "/projects/#" + globalCurrentProject.projID + "-" + taskID;
+                        window.open(link, "_blank")
+
+                    } else if (!item.classList.contains("disabled")) {
+                        let taskID = taskRow.getAttribute("id");
+                        if (item.classList.contains("not-started-state")) {
+                            console.log("[contextMenuItemOnClick] not started clicked")
+                            handleTaskStateChange(item, 0);
+                            globalTasksList.find(task => task.taskID === taskID).state = 0;
+                            renderTasks(globalTasksList);
+                        } else if (item.classList.contains("in-progress-state")) {
+                            console.log("[contextMenuItemOnClick] in progress clicked")
+                            handleTaskStateChange(item, 1);
+                            globalTasksList.find(task => task.taskID === taskID).state = 1;
+                            renderTasks(globalTasksList);
+                        } else if (item.classList.contains("finished-state")) {
+                            console.log("[contextMenuItemOnClick] finished clicked")
+                            handleTaskStateChange(item, 2);
+                            globalTasksList.find(task => task.taskID === taskID).state = 2;
+                            renderTasks(globalTasksList);
+                        }
+                    } else {
+                        console.log("[contextMenuItemOnClick] no known action")
+                    }
+                });
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!contextMenuButton.contains(e.target)) {
+                    contextMenuPopover.classList.remove("visible");
+                    contextMenuButton.classList.remove("active");
+                }
+            });
+
+            taskRow.addEventListener("contextmenu", (e) => {
+                e.preventDefault(); //stop the browser putting its own right click menu over the top
+                e.stopPropagation();
+            
+                //closes the rest of them first
+                let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
+                contextMenus.forEach(menu => {
+                    if (menu !== contextMenuPopover) {
+                        menu.classList.remove("visible");
+                        menu.parentElement.classList.remove("active");
+                    }
+                });
+            
+                contextMenuPopover.classList.toggle("visible");
+                contextMenuButton.classList.toggle("active");
+            });
+    
             taskRow.addEventListener("pointerdown", () => {
                 console.log("[taskRowOnMouseDown] clicked")
             });
-
+    
             taskRow.addEventListener("pointerup", () => {
                 console.log("[taskRowOnTouchStart] clicked")
                 showTaskInExplainer(taskRow);
             });
-        });
-    }
+
+        }
+    )}
 }
 
 
@@ -1372,13 +1502,108 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         `;
     }
 
+    let selectedState = ["", "", ""];
+    selectedState[state] = "disabled";
+
     taskRow.innerHTML += `
     <td>
-        <div id="more" class="small-icon more-icon-taskList">
+        <div id="more" class="small-icon more-icon-taskList context-menu">
             <span class="material-symbols-rounded">more_horiz</span>
+            <div class="context-menu-popover">
+                <div class="item action-edit">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            edit
+                        </span>
+                    </div>
+                    <div class="text">
+                        Edit
+                    </div>
+                </div>
+                <div class="item state-selector">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            move_group
+                        </span>
+                    </div>
+                    <div class="text">
+                        Move to
+                    </div>
+                    <div class="arrow">
+                        <span class="material-symbols-rounded">
+                            arrow_forward_ios
+                        </span>
+                    </div>
+                    <div class="submenu">
+                        <div class="item not-started-state ${selectedState[0]}">
+                            <div class="icon">
+                                <span class="material-symbols-rounded">
+                                    push_pin
+                                </span>
+                            </div>
+                            <div class="text">
+                                Not Started
+                            </div>
+                        </div>
+                        <div class="item in-progress-state ${selectedState[1]}">
+                            <div class="icon">
+                                <span class="material-symbols-rounded">
+                                    timeline
+                                </span>
+                            </div>
+                            <div class="text">
+                                In Progress
+                            </div>
+                        </div>
+                        <div class="item finished-state ${selectedState[2]}">
+                            <div class="icon">
+                                <span class="material-symbols-rounded">
+                                    check_circle
+                                </span>
+                            </div>
+                            <div class="text">
+                                Finished
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="item action-delete">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            inventory_2
+                        </span>
+                    </div>
+                    <div class="text">
+                        Archive
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="item action-copy">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            link
+                        </span>
+                    </div>
+                    <div class="text">
+                        Copy link
+                    </div>
+                </div>
+                <div class="item action-open">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">
+                            open_in_new
+                        </span>
+                    </div>
+                    <div class="text">
+                        Open in new tab
+                    </div>
+                </div>
+            </div>
         </div>
     </td>
     `;
+
+
 
     taskTableBody.appendChild(taskRow);
     taskTableBody.appendChild(listAddRow);
