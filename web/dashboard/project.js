@@ -286,7 +286,7 @@ async function getManHoursPerEmployee(projectData) {
         }
 
         employees.add(assignment.employee.empID);
-        taskEmpSpent.get(assignment.task.taskID).set(assignment.employee.empID, assignment.manHours);
+        taskEmpSpent.get(assignment.task.taskID).set(assignment.employee.empID, assignment.manHours / 3600);
     });
 
     var labels = Array.from(employees);
