@@ -148,6 +148,7 @@ function r_session_register(RequestContext $ctx, string $args) {
     $last_name = $ctx->request_body["lastName"];
     $email = $ctx->request_body["email"];
     $password = $ctx->request_body["password"];
+    $token = $ctx->request_body["token"];
 
     if ($first_name !== null && strlen($first_name) == 0) {
         respond_bad_request(
@@ -169,13 +170,8 @@ function r_session_register(RequestContext $ctx, string $args) {
     $banned_words = array_merge(PASSWORD_BANNED_PHRASES, [$first_name, $last_name, explode($email, "@")[0]]);
     validate_password_constraints($password, $banned_words);
 
-    // insertion
-
-
     // verify email
-
-
-
+    auth_signup_burn_token($token, $email);
 
 
     // here we are safe to check if the account already exists as we have validated the token
@@ -256,6 +252,24 @@ function r_session_session(RequestContext $ctx, string $args) {
     }
     
 };
+
+function r_session_register_otp(RequestContext $ctx, string $args) {
+    $ctx->body_require_fields_as_types([
+        "email"=>"string",
+    ]);
+
+    $email = $ctx->request_body["email"];
+
+    validate_email($email);
+
+    $token = auth_signup_create_token($email, SIGNUP_MODE::SIGNUP_SELF);
+
+    $message = "Please click the following link to complete your registration process, this link will expire in 30 minutes: https://013.team/register/#". $token;
+
+    send_email($email, $email, "Your registration verification", $message);
+
+    respond_no_content();
+}
 
 
 function r_session_logout_all(RequestContext $ctx, string $args) {
@@ -385,6 +399,7 @@ register_route(new Route(["GET"], "/generate_204", "r_session_204", 0));
 register_route(new Route(["GET", "POST"], "/register", "r_session_register", 0, ["REQUIRES_BODY"]));
 register_route(new Route(["POST", "PATCH", "PUT"], "/resetpassword", "r_session_reset_password", 0, ["REQUIRES_BODY"]));
 register_route(new Route(["POST"], "/logoutall", "r_session_logout_all", 1));
+register_route(new Route(["POST"], "/verifyemail", "r_session_register_otp", 0, ["REQUIRES_BODY"]));
 
 
 contextual_run();

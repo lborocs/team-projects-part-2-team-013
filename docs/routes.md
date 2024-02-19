@@ -189,6 +189,9 @@ Written/designed by aidan F223129
 - [x] **/employee/session.php/register**
     - POST (register account) {firstName:?string, lastName:string, password:string, email:string, token:string}
 
+- [x] **/employee/session.php/verifyemail**
+  - POST (request for a verification email to be sent to continue signup) {email:string}
+
 ## meta.php
 
 - [x] **/employee/meta.php/notifications**
