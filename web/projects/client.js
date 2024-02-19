@@ -1409,11 +1409,11 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                     <div class="item action-delete">
                         <div class="icon">
                             <span class="material-symbols-rounded">
-                                delete
+                                inventory_2
                             </span>
                         </div>
                         <div class="text">
-                            Delete
+                            Archive
                         </div>
                     </div>
                     <div class="divider"></div>
@@ -2251,14 +2251,14 @@ function confirmDelete() {
         console.log("[confirmDelete] before popup")
         popupDiv.innerHTML = `
             <dialog open class='popupDialog' id="delete-popup">
-                <div>Are you sure you want to delete this task?</div>
+                <div>Are you sure you want to archive this task?</div>
                 <div><strong>This change cannot be undone.</strong></div>
                 <form method="dialog" class = "buttonForm">
                     <div class="text-button" id="closeButton">
                     <div class="button-text">Cancel</div>
                     </div>
                     <div class="text-button red" id="deleteButton">
-                    <div class="button-text">Delete</div> 
+                    <div class="button-text">Archive</div> 
                     </div>
                 </form>
             </dialog>
