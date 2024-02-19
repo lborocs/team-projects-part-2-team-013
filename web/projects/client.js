@@ -207,9 +207,16 @@ views.forEach((view, i) => {
         }, 50)
     })
 
-    global.getCurrentSession().then((session) => {
+    global.preferences.get_or_default("taskview").then(async (pref) => {
 
-        if (session.auth_level >= 2) {
+        const session = await global.getCurrentSession();
+        const isTeamLeader = globalCurrentProject && globalCurrentProject.teamLeader.empID === session.employee.empID;
+
+
+        if (
+            pref == global.PREFERENCE_ALWAYS ||
+            (pref == global.PREFERENCE_I_LEAD && isTeamLeader)
+        ) {
 
             boardViewButton.classList.remove("selected");
             listViewButton.classList.add("selected");
@@ -220,7 +227,6 @@ views.forEach((view, i) => {
             
         }
     });
-
 })
 
 projectBackButton.addEventListener("click", () => {
