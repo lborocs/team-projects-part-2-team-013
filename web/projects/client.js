@@ -1691,16 +1691,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                             Open in new tab
                         </div>
                     </div>
-                    <div class="item disabled">
-                        <div class="icon">
-                            <span class="material-symbols-rounded">
-                                export_notes
-                            </span>
-                        </div>
-                        <div class="text">
-                            Export
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
