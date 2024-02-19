@@ -3177,6 +3177,7 @@ document.getElementById("task-search").addEventListener("input", (e) => {
 
 
 document.getElementById("delete-project-search").addEventListener("pointerup", () => {
+    projectSearchInput.value = "";
     searchAndRenderProjects();
     startOrRollProjectSearchTimeout();
 
