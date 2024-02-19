@@ -1429,3 +1429,38 @@ document.addEventListener("keyup", (e) => {
     });
 });
 
+function invitePopup() {
+    return new Promise((resolve) => {
+        let popupDiv = document.querySelector('.popup');
+        let fullscreenDiv = document.querySelector('.fullscreen');
+        popupDiv.innerHTML = `
+            <dialog open class='popup-dialog'>
+                <div class="popup-title">
+                    Enter email address of employee to invite:
+                </div>
+                <div class="popup-inputs">
+                    <input class="popup-input" type="text" placeholder="Enter email address">
+                </div>
+                <div class="popup-buttons">
+                    <button class="popup-button">Invite</button>
+                </div>
+            </dialog>
+        `;
+        fullscreenDiv.style.filter = 'brightness(0.75)';
+        document.querySelector('.popup-button');
+        let emailInput = document.querySelector('.popup-input');
+        let inviteButton = document.querySelector('.popup-button');
+        inviteButton.addEventListener('click', () => {
+        
+        });
+        resolve();
+    });
+}
+
+
+window.onload = function() {
+    let inviteButton = document.querySelector(".action-invite")
+    inviteButton.addEventListener("click", () => {
+        invitePopup()
+    });
+}
