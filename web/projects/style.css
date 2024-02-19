@@ -1,6 +1,5 @@
 #view-archived-button{
-    position: absolute;
-    right: 9.5em;
+    margin-left: auto;
 }
 
 .selection-screen {
@@ -420,10 +419,6 @@
         text-decoration: none;
     
     }
-}
-
-.views > :last-child {
-    margin-left: auto;
 }
 
 .view {
