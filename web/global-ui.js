@@ -304,7 +304,7 @@ const DEFAULT_PREFERENCES = {
 
 // we need to set dynamically
 getCurrentSession(true).then((session) => {
-    isManager = (session.auth_level ?? 0) >= 2;
+    const isManager = (session.auth_level ?? 0) >= 2;
     DEFAULT_PREFERENCES.taskview = isManager ? PREFERENCE_NEVER : PREFERENCE_I_LEAD;
 });
 
