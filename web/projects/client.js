@@ -2175,6 +2175,15 @@ if (mediaQueryMobile.matches) {
     explainer.classList.remove("popout")
     overlay.classList.add("hidden")
     explainerShowHide.classList.add("norender")
+    
+    // disable board view for mobile
+    boardViewButton.classList.remove("selected");
+    boardViewButton.classList.add("norender");
+    listViewButton.classList.add("selected");
+    taskGridWrapper.classList.add("norender");
+    taskList.classList.remove("norender");
+    taskList.classList.remove("fade");
+    boardViewButton.classList.add("norender")
 } else {
     console.log("[mediaQuery] desktop")
 }
