@@ -244,6 +244,18 @@ async function setUserData() {
     secondNameInput.innerHTML = lastName;
 };
 
+async function setAvatar() {
+    let employeeData = await getEmployee();
+    let emp = employeeData.employee;
+    let employeeAvatar = global.employeeAvatarOrFallback(emp);
+    console.log(employeeData)
+    console.log(employeeAvatar);
+
+    return employeeAvatar;
+}
+
+
+
 setUserData();
 
 
@@ -572,6 +584,113 @@ async function changePassword(currentPassword, newPassword, confirmPassword) {
             return false;
         }
     setUserData();
+}
+
+function avatarPopup() {
+    return new Promise((resolve, reject) => {
+
+        let popupDiv = document.querySelector('.popup');
+        let fullscreenDiv = document.querySelector('.fullscreen');
+        popupDiv.innerHTML = `
+            <dialog open class='popup-dialog'>
+                <div class="popup-title">
+                    Change Avatar
+                    <div class="small-icon close-button">
+                        <span class="material-symbols-rounded">
+                            close
+                        </span>
+                    </div>
+                </div>
+                <div class="popup-inputs">
+                    <div class="popup-subtitle">
+                        Upload new avatar:
+                    </div>
+                    <div class="avatar-container">
+                        <img class="avatar" id="user-icon-current">
+                    </div>
+                    <form>
+                        <input type="file" id="image-upload" accept="image/*">
+                    </form>
+                </div>
+                <div class="popup-buttons">
+                    <div class="text-button" id="popup-cancel">
+                        <div class="button-text">Cancel</div>
+                    </div>
+                    <div class="text-button blue" id="popup-confirm">
+                        <div class="button-text">Confirm</div>
+                    </div>
+                </div>
+            </dialog>
+        `;
+        fullscreenDiv.style.filter = 'brightness(0.75)';
+
+        let dialog = popupDiv.querySelector('.popup-dialog');
+        let popupClose = dialog.querySelector('.close-button');
+        let popupCancel = dialog.querySelector('#popup-cancel');
+        let popupConfirm = dialog.querySelector('#popup-confirm');
+        async function loadCurrentAvatar() {
+            let avatar = dialog.querySelector('.avatar');
+            let oldAvatar = await setAvatar();
+            console.log(oldAvatar);
+            avatar.src = oldAvatar;
+        }
+        loadCurrentAvatar();
+        document.getElementById('image-upload').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            let avatar = dialog.querySelector('.avatar');
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                avatar.src = reader.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        popupClose.addEventListener('click', (event) => {
+            event.preventDefault();
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            reject();
+        });
+
+        popupCancel.addEventListener('click', (event) => {
+            event.preventDefault();
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            reject();
+        });
+
+        popupConfirm.addEventListener('click', (event) => {
+            console.log('confirm button clicked');
+            event.preventDefault();
+            let avatar = dialog.querySelector('.avatar').src;
+            updateAvatar(avatar).then((res) => {
+                if (res) {
+                    dialog.style.display = 'none';
+                    fullscreenDiv.style.filter = 'none';
+                    setUserData();
+                    var userIcon = document.querySelector('#user-icon');
+                    userIcon.src = avatar;
+                    resolve();
+                }
+            });
+        });
+    });
+};
+
+
+let avatarButton = document.querySelector('.avatar-container');
+avatarButton.addEventListener('click', () => {
+    avatarPopup();
+});
+
+async function updateAvatar(avatar) {
+    let newAvatar = avatar.split(',')[1];
+    const body = {
+        avatar: newAvatar,
+    };
+    const data = await patch_api(`/employee/employee.php/employee/@me`, body);
+    console.log(data);
+    return data;
 }
 
 global.setBreadcrumb(["Settings", "Account"], ["./", "#account"])
