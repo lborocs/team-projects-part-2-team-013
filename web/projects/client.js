@@ -331,6 +331,9 @@ function updateTaskState(task) {
 //takes a task card HTML ELEMENT
 function showTaskInExplainer(taskCard) {
 
+
+    explainer.querySelector('.edit-button').classList.remove('disabled');
+    explainer.querySelector('.delete-button').classList.remove('disabled');
     let taskID = taskCard.getAttribute("id");
     let assignees = taskCard.getAttribute("data-assignments");
     explainerTaskContainer.setAttribute("task-id", taskID);
@@ -449,10 +452,12 @@ async function renderAssignmentsInExplainer(taskID) {
 //enable horizontal scrolling on the task card
 let isEventAdded = false;
 async function addHorizontalScrolling() {
-    if (!isEventAdded && taskGridWrapper.scrollHeight <= taskGridWrapper.clientHeight) {
+    console.log("[addHorizontalScrolling] checking if horizontal scrolling is needed")
+    console.log(taskGrid.scrollHeight, taskGrid.clientHeight)
+    if (!isEventAdded && taskGrid.scrollHeight <= taskGrid.clientHeight) {
         console.log("[addHorizontalScrolling] adding event listener")
-        taskGridWrapper.addEventListener("wheel", (event) => {
-            taskGridWrapper.scrollBy({
+        taskGrid.addEventListener("wheel", (event) => {
+            taskGrid.scrollBy({
                 left: event.deltaY < 0 ? -30 : 30,
             })
         });
@@ -3217,7 +3222,7 @@ async function projectPopup(id){
 }
 
 
-document.querySelector(".edit-button").addEventListener("pointerup", async () => {
+document.querySelector(".edit-button").addEventListener("click", async () => {
     let taskID = explainerTaskContainer.getAttribute("task-id");
     //get task from globalTasksList
     console.log(globalTasksList)
