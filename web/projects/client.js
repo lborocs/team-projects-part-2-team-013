@@ -116,18 +116,15 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         return false;
     }
     
-    const prefSort = await global.preferences.get('tasksort');
-    const prefDirection = await global.preferences.get('taskdirection');
-    const attributeSearch = prefSort.or_default();
-    const sortDirection = prefDirection.or_default();
+    const attributeSearch = await global.preferences.get_or_default('tasksort');
+    const sortDirection = await global.preferences.get_or_default('taskdirection');
+
 
     let sortColumn = taskList.querySelector(`[data-value=${attributeSearch}]`);
     sortColumn.classList.add("sorting-by");
     if (sortDirection === 'desc') {
         sortColumn.classList.add("desc");
-        console.error("CUMMM")
     } else {
-        console.error("NOOOOOO")
         sortColumn.classList.add("asc")
     }
 
