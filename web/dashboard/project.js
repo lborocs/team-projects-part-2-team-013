@@ -119,28 +119,28 @@ export async function init(id) {
         }
     }));
     //still example data at this point
-    let startData = Array.from({length: 20}, (_, i) => i + Math.floor(Math.random() * 3) - 1);
-    let durationData = Array.from({length: 20}, () => Math.floor(Math.random() * 10) + 1);
-    let overdueData = Array.from({length: 20}, () => Math.floor(Math.random() * 5));
+
+    const taskProgressData = await getTaskProgress(projectData);
+    console.error(taskProgressData);
     
     charts.push(new Chart(document.getElementById("taskProgressChart"), {
         type: 'bar',
         data: {
-            labels: ['Task A', 'Task B', 'Task C', 'Task D', 'Task E', 'Task F', 'Task G', 'Task H', 'Task I', 'Task J', 'Task K', 'Task L', 'Task M', 'Task N', 'Task O', 'Task P', 'Task Q', 'Task R', 'Task S', 'Task T'],
+            labels: taskProgressData.labels,
             datasets: [
                 {
                     label: 'Start',
-                    data: startData,
+                    data: taskProgressData.startData,
                     backgroundColor: 'transparent'
                 },
                 {
                     label: 'Duration',
-                    data: durationData,
+                    data: taskProgressData.durationData,
                     backgroundColor: 'rgba(54, 162, 235, 0.5)'
                 },
                 {
                     label: 'Overdue',
-                    data: overdueData,
+                    data: taskProgressData.overdueData,
                     backgroundColor: 'rgba(255, 0, 0, 0.5)'
                 }
             ]
@@ -150,6 +150,7 @@ export async function init(id) {
             scales: {
                 x: {
                     stacked: true,
+                    startData: taskProgressData.minStartDay,
                 },
                 y: {
                     stacked: true,
@@ -350,7 +351,7 @@ async function getManHoursPerEmployee(projectData) {
         }
 
         employees.add(assignment.employee.empID);
-        taskEmpSpent.get(assignment.task.taskID).set(assignment.employee.empID, Math.floor(Math.random() * 3));
+        taskEmpSpent.get(assignment.task.taskID).set(assignment.employee.empID, assignment.manHours);
     });
 
     var labels = Array.from(employees);
@@ -383,6 +384,61 @@ async function getManHoursPerEmployee(projectData) {
         data: data
     };
 
+
+}
+
+async function getTaskProgress(projectData) {
+    let tasks = projectData.tasks.tasks.sort((a, b) => a.createdAt - b.createdAt);
+    // get last 12 tasks
+    tasks = tasks.slice(-12);
+
+    const labels = tasks.map(task => task.title);
+    const startData = [];
+    const durationData = [];
+    const overdueData = [];
+    
+    const now = new Date().getTime();
+
+
+    tasks.forEach(task => {
+        let start = task.createdAt;
+        let duration;
+        let overdue;
+        // task completed
+        start = now - task.createdAt;
+        if (task.completedAt) {
+            duration = task.completedAt - task.dueDate
+            // completed late
+            if (task.completedAt > task.dueDate) {
+                overdue = task.completedAt - task.dueDate;
+            }
+        } 
+        // not completed and overdue
+        else if (now > task.dueDate) {
+            overdue = now - task.dueDate;
+            duration = task.createdAt - task.createdAt
+        }
+        // not completed and not overdue
+        else {
+            duration = now - task.createdAt;
+        }
+
+        start = start / (60 * 60 * 24);
+        duration = duration / (60 * 60 * 24);
+        overdue = overdue / (60 * 60 * 24);
+
+        startData.push(start);
+        durationData.push(duration);
+        overdueData.push(overdue);
+    });
+
+    return {
+        labels: labels,
+        startData: startData,
+        durationData: durationData,
+        overdueData: overdueData,
+        minStartDay: 0
+    }
 
 }
 
