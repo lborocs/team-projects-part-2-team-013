@@ -116,6 +116,21 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         return false;
     }
     
+    const prefSort = await global.preferences.get('tasksort');
+    const prefDirection = await global.preferences.get('taskdirection');
+    const attributeSearch = prefSort.or_default();
+    const sortDirection = prefDirection.or_default();
+
+    let sortColumn = taskList.querySelector(`[data-value=${attributeSearch}]`);
+    sortColumn.classList.add("sorting-by");
+    if (sortDirection === 'desc') {
+        sortColumn.classList.add("desc");
+        console.error("CUMMM")
+    } else {
+        console.error("NOOOOOO")
+        sortColumn.classList.add("asc")
+    }
+
     await renderTasks(tasks);
     console.log("[renderIndividualProject] fetched & rendered tasks for " + project.name)
     globalTasksList = tasks;
@@ -137,16 +152,7 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
-    const prefSort = await global.preferences.get('tasksort');
-    const prefDirection = await global.preferences.get('taskdirection');
-    const attributeSearch = await prefSort.or_default();
-    const sortDirection = await prefDirection.or_default();
-
-    let sortColumn = document.querySelector(`[data-value=${attributeSearch}]`);
-    sortColumn.classList.add("sorting-by");
-    if (sortDirection === 'desc') {
-        sortColumn.classList.add("reverse");
-    }
+    
 
     teamLeaderEnableElementsIfTeamLeader()
 
