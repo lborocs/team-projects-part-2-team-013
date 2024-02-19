@@ -3706,13 +3706,28 @@ archiveButton.addEventListener("click", async () => {
         console.log("[archiveButton] clicked");
         archiveButton.classList.remove("active");
         let projID = globalCurrentProject.projID;
-        let tasks = fetchTasks(projID)
         renderTasks(globalTasksList);
+        archiveButton.innerHTML = `
+        <div class="button-text desktop">
+            View Archived Tasks
+        </div>
+        <div class="button-text mobile">
+            View Archived Tasks
+        </div>
+        `;
     } else {
         console.log("[archiveButton] clicked");
         archiveButton.classList.add("active");
         let projID = globalCurrentProject.projID;
         let tasks = await getArchived(projID);
+        archiveButton.innerHTML = `
+        <div class="button-text desktop">
+            View Active Tasks
+        </div>
+        <div class="button-text mobile">
+            View Active Tasks
+        </div>
+        `;
         renderTasks(tasks);
     }
 });
