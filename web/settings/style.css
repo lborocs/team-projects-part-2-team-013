@@ -246,6 +246,7 @@
     max-width: 600px;
     width: calc(100% - 2.5em);
     gap: 0.75em;
+    padding: 2em;
 
     .popup-title {
         display: flex;
@@ -269,6 +270,40 @@
         gap: 0.5em;
     }
 
+}
+
+
+.popup-subtitle{
+    font-weight: 600;
+    font-size: 1em;
+    margin-bottom: 0.5em;
+}
+
+.password{
+    width: 50%;
+}
+
+.input-wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.textfield {
+    padding: 2px 8px;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    color: inherit;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: 'Open Sans', sans-serif;
+    outline: rgb(201, 201, 201) 2px solid;
+}
+
+.password:focus {
+    outline: rgb(119, 119, 119) 2px solid;
+    box-shadow: none;
 }
 
 .search-container {

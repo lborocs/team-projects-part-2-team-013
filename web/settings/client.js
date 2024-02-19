@@ -13,6 +13,7 @@ const preferencesOptions = document.querySelector('.preferences-options');
 const systemOptions = document.querySelector('.system-options');
 const manageUsersOptions = document.querySelector('.manage-users-options');
 const sidebarCheckbox = document.getElementById('sidebar-checkbox');
+const changePasswordButton = document.querySelector('.change-password');
 
 const logoutButton = document.querySelector('.log-out');
 
@@ -449,6 +450,108 @@ logoutButton.addEventListener('click', () => {
         window.location.href = "/";
     });
 });
+
+changePasswordButton.addEventListener('click', () => {
+    passwordPopup().then(() => {
+        console.log('password changed');
+    }
+    ).catch(() => {
+        console.log('password change cancelled');
+    });
+});
+
+
+function passwordPopup() {
+    console.error('password popup');
+    return new Promise((resolve, reject) => {
+
+        let popupDiv = document.querySelector('.popup');
+        let fullscreenDiv = document.querySelector('.fullscreen');
+        console.error("we got further")
+        popupDiv.innerHTML = `
+            <dialog open class='popup-dialog'>
+                <div class="popup-title">
+                    Change Password
+                    <div class="small-icon close-button">
+                        <span class="material-symbols-rounded">
+                            close
+                        </span>
+                    </div>
+                </div>
+                <div class="popup-inputs">
+                    <div class="popup-subtitle">
+                        Enter your current password:
+                    </div>
+                    <input class="password textfield" type="password" id="current-password" placeholder="Current Password">
+                </div>
+                <div class="popup-inputs">
+                    <div class="popup-subtitle">
+                        Set your new password:
+                    </div>
+                    <div class="input-wrapper">
+                        <input class="password textfield" type="password" id="new-password" placeholder="New Password">
+                        <input class="password textfield" type="password" id="confirm-new-password" placeholder="Confirm New Password">
+                    </div>
+                </div>
+
+                <div class="popup-buttons">
+                    <div class="text-button" id="popup-cancel">
+                        <div class="button-text">Cancel</div>
+                    </div>
+                    <div class="text-button blue" id="popup-confirm">
+                        <div class="button-text">Confirm</div>
+                    </div>
+                </div>
+            </dialog>
+        `;
+        console.error("after html")
+        fullscreenDiv.style.filter = 'brightness(0.75)';
+
+        let dialog = popupDiv.querySelector('.popup-dialog');
+        let popupCancel = dialog.querySelector('#popup-cancel');
+        let popupConfirm = dialog.querySelector('#popup-confirm');
+        console.error(popupConfirm);
+        let currentPassword = dialog.querySelector('#current-password');
+        let newPassword = dialog.querySelector('#new-password');
+        let confirmNewPassword = dialog.querySelector('#confirm-new-password');
+
+        popupCancel.addEventListener('click', (event) => {
+            event.preventDefault();
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            reject();
+        });
+
+        popupConfirm.addEventListener('click', (event) => {
+            console.log('confirm button clicked');
+            event.preventDefault();
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            if (!newPassword.value == confirmNewPassword.value) {
+                console.error('passwords do not match');
+            }
+            const oldPassword = currentPassword.value;
+            const newPassword = newPassword.value;
+            changePassword(oldPassword, newPassword);
+            resolve();
+        });
+    });
+}
+
+async function changePassword(currentPassword, newPassword) {
+    const body = {
+        password: currentPassword,
+        newPassword: newPassword,
+    };
+
+    const response = await patch_api('/employee/session.php/account', body);
+    if (response.success) {
+        console.log('password changed');
+    } else {
+        console.log('password change failed');
+    }
+    setUserData();
+}
 
 global.setBreadcrumb(["Settings", "Account"], ["./", '#' + "account"])
 
