@@ -2,6 +2,10 @@
 require_once("secrets.php");
 require_once("lib/http/client.php");
 
+enum SIGNUP_MODE {
+    const SIGNUP_INVITED = 0;
+    const SIGNUP_SELF = 1;
+};
 
 
 function crypto_encrypt_bytestream(
@@ -143,7 +147,10 @@ class Session {
 
         $session = Session::from_unencrypted_bytes($bytearray);
 
-        // this should NOT happen ever.
+        // this should NOT happen ever
+        // if it does it means the user has supplied a valid session
+        // but changed the outer employee id to something else
+        // in an attempt to fool us into thinking they are someone else
         if ($session->hex_associated_user_id != $user_id) {
             respond_session_tampering();
         }
@@ -282,11 +289,11 @@ function auth_password_validate_token(string $token) {
     $issued = $data["issued"];
 
     if ($issued + PASSWORD_RESET_TIMEOUT <= timestamp()) {
-        respond_not_authenticated("Password reset token has expired", ERROR_INSUFFICIENT_AUTHORIZATION);
+        respond_not_authenticated("Password reset token has expired", ERROR_TOKEN_EXPIRED);
     }
 
     if (!auth_session_account_check($token_id, $emp_id, $issued)) {
-        respond_not_authenticated("Password reset token has been revoked", ERROR_INSUFFICIENT_AUTHORIZATION);
+        respond_not_authenticated("Password reset token has been revoked", ERROR_TOKEN_EXPIRED);
     }
 
     return [
@@ -296,4 +303,74 @@ function auth_password_validate_token(string $token) {
     ];
 }
 
+function auth_signup_create_token(string $email, int $mode) {
+    $email = strtolower($email);
+    $issued = timestamp();
+    $digest = insecure_digest($email);
+
+
+    $plaintext = pack("a32Qc", $digest, $issued, $mode);
+
+    $ciphertext = crypto_encrypt_bytestream(
+        $plaintext,
+        SIGNUP_ENCRYPTION_KEY_HEX,
+        SIGNUP_ENCRYPTION_ALGO,
+        SIGNUP_SIGNING_KEY_HEX,
+        SIGNUP_SIGNING_ALGO
+    );
+
+    return $ciphertext;
+
+}
+
+function auth_signup_burn_token(string $ciphertext, string $email) {
+
+    $email = strtolower($email);
+
+    $plaintext = crypto_decrypt_bytestream(
+        $ciphertext,
+        SIGNUP_ENCRYPTION_KEY_HEX,
+        SIGNUP_ENCRYPTION_ALGO,
+        SIGNUP_SIGNING_KEY_HEX,
+        SIGNUP_SIGNING_ALGO
+    );
+
+    $data = @unpack("a32digest/Qissued/cmode", $plaintext);
+    if ($data == false) {
+        respond_internal_error(ERROR_CRYPTO_FAILURE);
+    }
+    $issued = $data["issued"];
+    $mode = $data["mode"];
+    $digest = $data["digest"];
+
+
+    switch ($mode) {
+        case SIGNUP_MODE::SIGNUP_SELF:
+            if ($issued + SIGNUP_SELF_TIMEOUT <= timestamp()) {
+                respond_not_authenticated("Signup token has expired", ERROR_TOKEN_EXPIRED);
+            }
+            break;
+        case SIGNUP_MODE::SIGNUP_INVITED:
+            if ($issued + SIGNUP_INVITED_TIMEOUT <= timestamp()) {
+                respond_not_authenticated("Signup token has expired", ERROR_TOKEN_EXPIRED);
+            }
+            break;
+        default:
+            respond_internal_error(ERROR_ILLEGAL_IMPLEMENTATION);
+    }
+
+    if (!hash_equals($digest, insecure_digest($email))) {
+        respond_not_authenticated("Signup token has been tampered with", ERROR_INSUFFICIENT_AUTHORIZATION);
+    }
+
+}
+
+
+// not neccessarily insecure but must only be used in a secure
+// context, this is NOT a HMAC or encryption.
+// anyone can make a sha256 hash
+// always returns 32 bytes
+function insecure_digest(string $bytestream) {
+    return hash("sha256", $bytestream, true);
+}
 ?>

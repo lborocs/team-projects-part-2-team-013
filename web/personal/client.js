@@ -123,6 +123,10 @@ function renderPersonal(id) {
 
     const checkedState = (personal.state === 1) ? 'checked' : ''
 
+    const hasDueDate = (personal.dueDate) ? '' : 'norender'
+
+    const date = personal.dueDate ? new Date(personal.dueDate).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) : "Add due date";
+
     personalCard.innerHTML = `
         <div class="personal-checkbox">
             <input type="checkbox" id="${id}" ${checkedState}>
@@ -136,6 +140,12 @@ function renderPersonal(id) {
                     </div>
                 </div>
             </div>
+            <div class="date-picker ${hasDueDate}">
+                <div class="date-picker-icon">
+                    <span class="material-symbols-rounded">event_upcoming</span>
+                </div>
+                <input disabled class="date-picker-input" type="text" placeholder="${date}" tabindex="0"></input>
+            </div>
             <div class="personal-icons">
                 <div class="icon-button no-box edit">
                     <div class="button-icon">
@@ -148,15 +158,33 @@ function renderPersonal(id) {
                     </div>
                 </div>
             </div>
+            
             <div class="text-button blue save norender">
                 <div class="button-text">
                     Save
                 </div>
             </div>
         </div>
-
-        
     `
+
+
+    //flatpickr datepicker
+    let datePickerInput = personalCard.querySelector('.date-picker-input')
+    const today  = new Date()
+
+    let fp = flatpickr(datePickerInput, {
+        dateFormat: 'd/m/Y',
+        altInput: true,
+        altFormat: 'F j, Y',
+        disableMobile: false,
+        onChange: (selectedDates, dateStr, instance) => {
+            datePickerInput.dispatchEvent(new Event('change'))
+        }
+    })
+
+    fp.allowInput = false
+
+    
 
     if (personal.state === 1) {
         completedList.appendChild(personalCard)
@@ -358,22 +386,27 @@ async function togglePersonalState(id) {
     renderPersonal(id)
 }
 
-async function editPersonal(id, title) {
+async function editPersonal(id, title, dueDate = null) {
 
     if (!title) {
         console.error(`[editPersonal] No title provided`)
         return false
     }
 
+    const body = {}
+
+    if (dueDate) {
+        body.dueDate = dueDate
+    }
+
+    if (title) {
+        body.title = title
+    }
+
     const session = await global.getCurrentSession()
     const employeeID = session.employee.empID
 
-    const body = {}
-
-    body = {
-        title: title
-    }
-    
+  
     const res = await patch_api(`/employee/employee.php/personal/${employeeID}/${id}`, body)
 
     if (!res.success) {
@@ -383,6 +416,9 @@ async function editPersonal(id, title) {
     const personal = globalPersonalsList.find(personal => personal.itemID === id);
     if (title) {
         personal.title = title
+    }
+    if (dueDate) {
+        personal.dueDate = dueDate
     }
 
     unrenderPersonal(id)
@@ -455,11 +491,14 @@ function personalCardEditMode(id) {
         const personalCard = getPersonalCardById(id)
         const saveButton = personalCard.querySelector('.save')
         const personalIcons = personalCard.querySelector('.personal-icons')
+        const datePicker = personalCard.querySelector('.date-picker')
+        const datePickerInput = personalCard.querySelector('.date-picker-input')
 
-
+        datePickerInput.disabled = false
         personalCard.classList.add('edit-mode')
         saveButton.classList.remove('norender')
         personalIcons.classList.add('norender')
+        datePicker.classList.remove('norender')
 
         const title = personalCard.querySelector('.title-text')
         var newTitle = title.innerHTML
@@ -474,7 +513,7 @@ function personalCardEditMode(id) {
         sel.removeAllRanges()
         sel.addRange(range)
 
-        title.addEventListener('keydown', (e) => {
+        personalCard.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault()
                 newTitle = title.innerHTML
@@ -482,6 +521,7 @@ function personalCardEditMode(id) {
                 personalCard.classList.remove('edit-mode')
                 saveButton.classList.add('norender')
                 personalIcons.classList.remove('norender')
+                datePickerInput.disabled = true
                 resolve()
             }
         })
@@ -490,12 +530,31 @@ function personalCardEditMode(id) {
             newTitle = title.innerHTML
         })
 
+        
+        //if personal has a due date, set it in the datepicker
+        if (globalPersonalsList.find(personal => personal.itemID === id).dueDate) {
+            const dueDate = new Date(globalPersonalsList.find(personal => personal.itemID === id).dueDate)
+            fp.setDate(dueDate)
+        }
+        let newDueDate = null
+        datePickerInput.addEventListener('change', () => {
+            const dueDate = fp.selectedDates[0]
+            console.log(dueDate)
+            //convert to ms for api
+            let time = dueDate.getTime()
+
+            if (dueDate) {
+                newDueDate = time
+            }
+        })
+
         saveButton.addEventListener('click', () => {
             //TODO: change to be a single server request
-            editPersonal(id, newTitle)
+            editPersonal(id, newTitle, newDueDate)
             personalCard.classList.remove('edit-mode')
             saveButton.classList.add('norender')
             personalIcons.classList.remove('norender')
+            datePickerInput.disabled = true
             resolve()
         })
 
