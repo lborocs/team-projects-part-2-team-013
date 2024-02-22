@@ -10,7 +10,7 @@
     
     <link rel="stylesheet" href="/global-styles.css">
     <link rel="stylesheet" href="style.css">
-    
+
     <link rel="stylesheet" href="/ui-elements/all.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.7/quill.min.js"
@@ -288,7 +288,7 @@
                                 <div class="date">Select a task</div>
                             </div>
                             <div class="manhours-container" id="explainer-man-hours">
-                                <div class="description-header">Estimated Man hours</div>
+                                <div class="description-header">Man hours</div>
                                 <div class="manhours">Select a task</div>
                             </div>
                             <div class="status explainer-task-status"></div>
@@ -336,30 +336,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="projects-container">
-                    <div class="search-row">
-                        <div class="search">
-                            <input id= "project-search" class="search-input" type="text" autocomplete="off" placeholder="Search Projects"></input>
-                            <div class="search-icon">
-                                <span class="material-symbols-rounded">search</span>
+
+                <div class="search-row">
+                    <div class="search">
+                        <input id= "project-search" class="search-input" type="text" autocomplete="off" placeholder="Search Projects"></input>
+                        <div class="search-icon">
+                            <span class="material-symbols-rounded">search</span>
+                        </div>
+                        <div class="search-icon clear-icon">
+                            <span class="material-symbols-rounded" id="delete-project-search">close</span>
+                        </div>
+                    </div>
+                    <div class="filters">
+                        <div class="text-button no-box" tabindex="0" id="project-filter">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">
+                                    filter_list
+                                </span>
                             </div>
-                            <div class="search-icon clear-icon">
-                                <span class="material-symbols-rounded" id="delete-project-search">close</span>
+                            <div class="button-text">
+                                All Projects
                             </div>
                         </div>
-                        <div class="filters">
-                            <div class="text-button no-box" tabindex="0" id="project-filter">
-                                <div class="button-icon">
-                                    <span class="material-symbols-rounded">
-                                        filter_list
-                                    </span>
-                                </div>
-                                <div class="button-text">
-                                    All Projects
-                                </div>
-                            </div>
-                        </div>
-                        <div class="project-table-pagination">
+                    </div>
+                    <div class="project-table-pagination">
                         <div class="label">
                             Projects per page
                         </div>
@@ -385,8 +385,6 @@
                                 </div>
                             </div>
                         </div>
-                            
-
                         <div class="left-arrow icon-button disabled" id="page-back-button">
                             <div class="button-icon">
                                 <span class="material-symbols-rounded">arrow_back</span>
@@ -401,8 +399,12 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="projects-container">
+                    
+                            
+
                         
-                    </div>
                     <div class="project-table-div">
                         
                         <table id="projects-table" class="table">
