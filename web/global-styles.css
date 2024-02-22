@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,75..100,300..800;1,75..100,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 :root {
 
-    --font-family: 'Open sans', system-ui;
+    --font-family: 'Inter', system-ui;
 
     --border-clr: #e0e0e0;
     --icon-clr: #5f6368;
