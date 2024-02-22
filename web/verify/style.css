@@ -110,7 +110,7 @@ label {
     color: inherit;
     box-sizing: border-box;
     font-size: 14px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     width: 100%;
 }
 

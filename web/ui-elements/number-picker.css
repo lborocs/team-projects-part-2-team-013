@@ -40,7 +40,7 @@
     padding: 2px;
     width: 42px;
 
-    font-family: 'Open Sans', system-ui;
+    font-family: var(--font-family);
     font-size: 15px;
     font-weight: 600;
 }

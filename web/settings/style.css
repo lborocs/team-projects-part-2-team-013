@@ -206,7 +206,7 @@
     box-sizing: border-box;
 
     font-size: 14px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
 
     width: 100%; /* firefox has a different default width for input elements to chrome so this is here to override it */
 
@@ -307,7 +307,7 @@
     color: inherit;
     box-sizing: border-box;
     font-size: 14px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     outline: rgb(201, 201, 201) 2px solid;
 }
 
@@ -347,7 +347,7 @@
     border-radius: 8px;
     font-size: 1em;
     font-weight: 600;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     color: #2d2e30;
     -webkit-appearance: none;
     -moz-appearance: none;

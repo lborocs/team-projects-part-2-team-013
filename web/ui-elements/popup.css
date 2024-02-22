@@ -71,7 +71,7 @@
 
     /* quill override */
     .ql-toolbar.ql-snow {
-        font-family: 'Open Sans', system-ui;
+        font-family: var(--font-family);
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
@@ -83,7 +83,7 @@
         text-align: left; 
         border: 1px solid #ccc;
         border-radius: 5px;
-        font-family: 'Open Sans', sans-serif;
+        font-family: var(--font-family);
         padding: 0.5em;
         font-size: 18px;
         font-weight: 500;

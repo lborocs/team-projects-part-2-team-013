@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wdth,wght@0,75..100,300..800;1,75..100,300..800&display=swap');
+
 :root {
+
+    --font-family: 'Open sans', system-ui;
+
     --border-clr: #e0e0e0;
     --icon-clr: #5f6368;
     /* --light-grey-bg: rgb(244,244,244); */
@@ -53,11 +58,12 @@
 
 }
 
+
+
 body {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     line-height: 1.5;
     /* caret-color: transparent; */
 }
@@ -214,7 +220,7 @@ input {
 }
 
 .tooltip:hover .tooltiptext {
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     visibility: visible;
     opacity: 1;
     transition: opacity 0.3s ease-out, transform 0.1s ease-out;

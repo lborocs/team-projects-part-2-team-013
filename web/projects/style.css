@@ -1297,7 +1297,7 @@
     font-size: 1em;
     font-weight: 200;
     font-family: sans-serif;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     box-sizing: border-box;
     transition: 0.1s ease-out;
     background-color: rgba(0,0,0,0);
@@ -1496,7 +1496,7 @@
     text-align: left; 
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     padding: 0.5em;
     font-size: 18px;
     font-weight: 500;
@@ -1530,14 +1530,14 @@
     line-height: 1;
     /* quill override */
     .ql-toolbar.ql-snow {
-        font-family: 'Open Sans', system-ui;
+        font-family: var(--font-family);
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
 }
 
 .dropdown-select {
-    font-family: 'Open Sans', system-ui;
+    font-family: var(--font-family);
     font-size: 15px;
     font-weight: 600;
 
@@ -1560,7 +1560,7 @@
     width: 100%;
     height: 10em;
     color: var(--text-off-black, #0f0f0f);
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     font-size: 14px;
     caret-color: var(--text-off-black, #0f0f0f);
 
@@ -1613,7 +1613,7 @@
     text-align: left; 
     border: 1px solid #cacaca;
     border-radius: 5px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     padding: 0.5em;
     font-size: 18px;
     font-weight: 500;
@@ -1630,7 +1630,7 @@
     line-height: 1;
     /* quill override */
     .ql-toolbar.ql-snow {
-        font-family: 'Open Sans', system-ui;
+        font-family: var(--font-family);
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
     }
@@ -1743,7 +1743,7 @@
     flex-direction: row;
     border: 1px solid #2e2e2e;
     border-radius: 5px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     padding: 1em;
 }
 

@@ -145,7 +145,7 @@
     box-sizing: border-box;
 
     font-size: 14px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
 
     width: 100%; /* firefox has a different default width for input elements to chrome so this is here to override it */
 

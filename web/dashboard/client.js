@@ -158,7 +158,7 @@ class Dashboard {
 
 
 //chartjs styling
-Chart.defaults.font.family = 'Open Sans, sans-serif';
+Chart.defaults.font.family = 'system-ui';
 Chart.defaults.font.size = 14;
 Chart.defaults.font.style = 'normal';
 Chart.defaults.font.weight = 'normal';

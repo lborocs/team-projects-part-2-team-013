@@ -29,7 +29,7 @@
 }
 
 .tooltip:hover .tooltiptext {
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     visibility: visible;
     opacity: 1;
 }

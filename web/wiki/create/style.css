@@ -117,7 +117,7 @@
     color: inherit;
     box-sizing: border-box;
     font-size: 14px;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     width: 100%; /* firefox has a different default width for input elements to chrome so this is here to override it */
 }
 
@@ -346,7 +346,7 @@ input[type="text"] {
     border-radius: 10px;
     font-size: 1em;
     font-weight: 600;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     color: #2d2e30;
 }
 
@@ -423,7 +423,7 @@ input[type="text"]:focus-within {
 
 /* quill override */
 .ql-editor {
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     font-size: 15px;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -435,7 +435,7 @@ input[type="text"]:focus-within {
 }
 
 .ql-toolbar.ql-snow {
-    font-family: 'Open Sans', system-ui;
+    font-family: var(--font-family);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     border: solid 1px #e0e0e0;
