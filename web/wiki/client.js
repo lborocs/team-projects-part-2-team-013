@@ -7,6 +7,7 @@ var tagsToDelete = new Set();
 var postsContainer = document.querySelector('.posts');
 var posts = document.querySelectorAll('.post');
 const searchInput = document.getElementById("inputField")
+const tagSearchInput = document.querySelector("#tag-search > .search-input")
 const deleteTagsPopup = document.getElementById("delete-tags-popup");
 const deleteTagsHasPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .hasPosts > .tags');
 const deleteTagsNoPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .noPosts > .tags');
@@ -42,6 +43,7 @@ class Tag {
 
         elem.classList.add('tag');
         elem.setAttribute('tagID', this.tag.tagID);
+        elem.setAttribute('name', this.tag.name);
         elem.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.tag.name}&nbsp;`;
         parent.appendChild(elem);
         this.element = elem;
@@ -163,6 +165,7 @@ function renderTag(tag) {
     const elem = document.createElement('div');
     elem.classList.add('tag');
     elem.setAttribute('tagID', tag.tagID);
+    elem.setAttribute('name', tag.name);
     elem.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag.name}`;
 
     elem.addEventListener('click', () => {
@@ -304,6 +307,38 @@ function renderPost(postID, title, author, isTechnical, tags) {
 
 searchInput.addEventListener("input", updatePosts)
 
+tagSearchInput.addEventListener("input", () => {
+
+    const tags = tagSelection.querySelectorAll('.tag')
+    console.log(tags)
+    let found = false
+    tags.forEach((tag) => {
+        const tagName = tag.getAttribute('name')
+        const query = tagSearchInput.value
+
+        if (query == null) {
+            tag.classList.remove('norender')
+            return
+        }
+
+        if (tagName.toLowerCase().includes(query.toLowerCase())) {
+            found = true
+            tag.classList.remove('norender')
+        } else {
+            tag.classList.add('norender')
+        }
+
+    })
+
+    if (!found) {
+        document.querySelector('.tag-selection-no-results').classList.remove('norender')
+        tagSelection.classList.add('norender')
+    } else {
+        document.querySelector('.tag-selection-no-results').classList.add('norender')
+        tagSelection.classList.remove('norender')
+    }
+
+})
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
     radio.addEventListener('change', () => {
@@ -411,5 +446,3 @@ function editTags() {
     });
 }
 
-
-//initialise the page
