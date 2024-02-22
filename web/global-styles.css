@@ -27,7 +27,7 @@
     --not-started-status-cell-active: #ffcda8;
     --not-started-bg: rgba(252,245,242,0.7);
     --not-started-title-bg: rgb(250,222,201);
-    --not-started-title-clr: rgb(33, 29, 26);
+    --not-started-title-clr: rgb(85 48 20);
     --not-started-add-task-hover: rgba(250,222,201,0.47);
 
     --in-progress-status-cell: rgba(188,219,245,0.7);
