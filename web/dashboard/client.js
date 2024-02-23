@@ -170,7 +170,8 @@ Chart.defaults.maintainAspectRatio = false;
 Chart.defaults.animation.duration = 0;
 Chart.defaults.animations.x = false;
 Chart.defaults.animations.y = false;
-Chart.defaults.animations = false;
+Chart.defaults.animations = true;
+
 
 
 

@@ -76,6 +76,11 @@ export async function init() {
                 y: {
                     beginAtZero: true
                 }
+            },
+            plugins: {
+                colors: {
+                    enabled: false
+                }
             }
         }
     });
@@ -97,6 +102,11 @@ export async function init() {
             scales: {
                 y: {
                     beginAtZero: true
+                }
+            },
+            plugins: {
+                colors: {
+                    enabled: false
                 }
             }
         }
@@ -122,6 +132,11 @@ export async function init() {
                     beginAtZero: true
                 }
             },
+            plugins: {
+                colors: {
+                    enabled: false
+                }
+            }
         }
     });
 
@@ -144,6 +159,11 @@ export async function init() {
                     beginAtZero: true
                 }
             },
+            plugins: {
+                colors: {
+                    enabled: false
+                }
+            }
         }
     });
 

@@ -6,6 +6,7 @@ export var projectData = null;
 export var completionData = null;
 export var tasksPerEmployeeData = null;
 export var workloadData = null;
+export var archivedData = null;
 
 
 const dashboardContainer = document.querySelector(".dashboard-container");
@@ -26,6 +27,8 @@ export async function init(id) {
 
     completionData = await getTaskCompletion(projectData);
 
+    archivedData = await getArchivedTasks(id);
+
     tasksPerEmployeeData = await getTasksPerEmployee(projectData);
 
     workloadData = await getManHoursPerEmployee(projectData);
@@ -45,6 +48,48 @@ export async function init(id) {
             plugins: {
                 title: {
                     display: false,
+                }
+            }
+        }
+    }));
+
+
+    charts.push(new Chart(document.getElementById("archivedChart"), {
+        type: 'bar',
+        data: {
+            labels: ['Tasks'],
+            datasets: [{
+                label: 'Archived',
+                data: [archivedData.values[0]],
+                backgroundColor: 'rgba(230,230,230,0.7)',
+                borderColor: 'rgba(200,200,200, 1)',
+                borderWidth: 2
+            }, {
+                label: 'Active',
+                data: [archivedData.values[1]],
+                backgroundColor: 'rgba(188,219,245,0.7)',
+                borderColor: 'rgba(188,219,245,1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: false,
+                },
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                x: {
+                    display: false,
+                    beginAtZero: true,
+                    stacked: true
+                },
+                y: {
+                    beginAtZero: true,
+                    stacked: true
                 }
             }
         }
@@ -85,7 +130,6 @@ export async function init(id) {
             }
         }
     }));
-    //still example data at this point
 
     const taskProgressData = await getTaskProgress(projectData);
     console.error(taskProgressData);
@@ -233,6 +277,18 @@ async function getTaskCompletion(projectData) {
         labels: ["To-do", "In-Progress", "Finished"],
         values:[toDo, inProgress, completed]
     };
+}
+
+async function getArchivedTasks(id) {
+
+    const res = await get_api(`/project/task.php/tasks/${id}?archived=1`, {no_track: true});
+    let archived = res.data.tasks.length;
+    console.error(res)
+    let active = projectData.tasks.tasks.length;
+    return {
+        labels: ["Archived", "Active"],
+        values: [archived, active]
+    }
 }
 
 
