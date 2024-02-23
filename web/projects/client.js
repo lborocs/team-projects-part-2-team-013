@@ -1152,7 +1152,17 @@ async function renderTasks(tasks, update = RENDER_BOTH) {
     }));
     setUpTaskEventListeners(update);
     await renderAssignments(globalAssignments, update);
+    ensureTaskColumnHeights();
 }
+
+function ensureTaskColumnHeights() {
+    // js to ensure columns are all the same max height
+    var maxHeight = 0;
+    taskColumns.forEach((e) => {maxHeight = e.clientHeight > maxHeight ? e.clientHeight : maxHeight});
+    taskColumns.forEach((e) => {e.style.height = `${maxHeight}px`});    
+    console.log(`[ensureTaskColumnHeights] set task columns to ${maxHeight}px`)
+}
+
 
 function taskObjectRenderAll(task, update = RENDER_BOTH) {
     console.log("[taskObjectRenderAll] rendering task object "+task.title)
@@ -2581,6 +2591,7 @@ async function addTask() {
                 let assignments = assignmentRes.data;
                 task.assignments = assignments;
                 taskObjectRenderAll(task, RENDER_BOTH);
+                ensureTaskColumnHeights();
                 dialog.style.transform = 'translateY(-1%)'
                 dialog.style.opacity = '0';
                 dialog.style.display = 'none';
