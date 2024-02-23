@@ -172,12 +172,17 @@
             transition: padding 0.05s ease-out;
 
             .title-chevron {
+                background-color: transparent;
                 color: var(--make-it-all);
+
+                & span {
+                    color: var(--make-it-all);
+                }
             }
         }
 
-        .title-chevron:hover {
-            background-color: transparent;
+        .title-chevron:active {
+            outline: none;
         }
 
         .title-text {
