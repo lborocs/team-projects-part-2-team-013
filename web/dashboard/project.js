@@ -7,9 +7,16 @@ export var completionData = null;
 export var tasksPerEmployeeData = null;
 export var workloadData = null;
 export var archivedData = null;
+export var overviewValues = {
+    "assignedTasks": 0,
+    "completedTasks": 0,
+    "overdueTasks": 0,
+    "totalManhours": 0
+}
 
 
 const dashboardContainer = document.querySelector(".dashboard-container");
+const overviewMetrics = document.querySelectorAll(".overview");
 
 
 export async function init(id) {
@@ -32,6 +39,24 @@ export async function init(id) {
     tasksPerEmployeeData = await getTasksPerEmployee(projectData);
 
     workloadData = await getManHoursPerEmployee(projectData);
+
+    overviewValues.assignedTasks = projectData.tasks.tasks.length
+    overviewValues.completedTasks = completionData.values[2]
+    overviewValues.overdueTasks = projectData.tasks.tasks.filter(task => task.dueDate < new Date().getTime() && task.state !== 'completed').length
+    overviewValues.totalManhours = 0
+    projectData.tasks.tasks.forEach(task => {
+        overviewValues.totalManhours += task.expectedManHours / 3600
+    });
+    console.log("[init] overviewValues: ", overviewValues)
+
+    overviewMetrics.forEach(metric => {
+
+        //the id of each .value element is the same as the id of the metric so we can easily unwrap the object into the UI
+        //to add more overviews just add more .overview elements and set their id to a key in the overviewValues object 
+
+        metric.querySelector(".value").innerText = overviewValues[metric.id];
+
+    });
 
 
     charts.push(new Chart(document.getElementById("completionChart"), {
