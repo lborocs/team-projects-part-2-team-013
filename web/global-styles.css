@@ -153,7 +153,6 @@ input {
 .tooltip {
     position: relative;
     display: inline-block;
-    
 }
   
 .tooltip .tooltiptext {
@@ -248,13 +247,17 @@ input {
     border-color: #2f2f2fcc transparent transparent transparent;
 }
 
-.tooltip:hover .tooltiptext {
-    font-family: var(--font-family);
-    visibility: visible;
-    opacity: 1;
-    transition: opacity 0.3s ease-out, transform 0.1s ease-out;
-    transform: translate(-50%, -10%);
+/* restricts the tooltips to only appear on desktop, as hover is handled badly on mobile */
+@media (min-width: 768px) {
+    .tooltip:hover .tooltiptext {
+        font-family: var(--font-family);
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.3s ease-out, transform 0.1s ease-out;
+        transform: translate(-50%, -10%);
+    }
 }
+
 
 
 .avatar {
