@@ -3375,7 +3375,7 @@ async function projectPopup(id){
     })
     
 
-    let projectData = await get_api(`/project/project.php/project/${id}`);
+    let projectData = await get_api(`/project/project.php/project/${id}`, {no_track:true});
 
     let project = projectData.data;
 
