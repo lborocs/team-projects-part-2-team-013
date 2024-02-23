@@ -168,12 +168,12 @@
 }
 
 .notification-card.unread {
-    border-left: solid 4px #ffc400;
-    background-color: #fffdf4;
+    border-left: solid 4px var(--make-it-all);
+    background-color: var(--make-it-all-tint);
 }
 
 .notification-card.unread:hover {
-    background-color: #fff5d9;
+    filter: brightness(1.01) saturate(1.5);
 }
 
                                                                         
