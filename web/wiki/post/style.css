@@ -7,7 +7,7 @@
 
 #scroll-to-top{
     z-index: 999;
-    display: none;
+    display: flex;
     bottom: 30px;
     right: 40px;
     position: fixed;

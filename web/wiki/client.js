@@ -310,7 +310,7 @@ searchInput.addEventListener("input", updatePosts)
 tagSearchInput.addEventListener("input", () => {
 
     const tags = tagSelection.querySelectorAll('.tag')
-    console.log(tags)
+
     let found = false
     tags.forEach((tag) => {
         const tagName = tag.getAttribute('name')

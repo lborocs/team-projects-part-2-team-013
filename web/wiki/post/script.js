@@ -115,13 +115,13 @@ async function getPostData(postID, tagsList) {
     return post
 }
 
-document.querySelector(".main").onscroll = function() {scrolling()};
+document.querySelector(".main").onscroll = scrolling;
 
 function scrolling() {
     if (document.querySelector(".main").scrollTop > 200) {
-        document.querySelector("#scroll-to-top").style.display = "block";
+        document.querySelector("#scroll-to-top").style.visibility = "visible";
     } else {
-        document.querySelector("#scroll-to-top").style.display = "none";
+        document.querySelector("#scroll-to-top").style.visibility = "hidden";
     }
 }
 
