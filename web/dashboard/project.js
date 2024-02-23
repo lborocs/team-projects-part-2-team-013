@@ -88,7 +88,6 @@ export async function init(id) {
     //still example data at this point
 
     const taskProgressData = await getTaskProgress(projectData);
-    console.error(taskProgressData);
     
     charts.push(new Chart(document.getElementById("taskProgressChart"), {
         type: 'bar',
@@ -117,7 +116,13 @@ export async function init(id) {
             scales: {
                 x: {
                     stacked: true,
-                    startData: taskProgressData.minStartDay,
+                    startData: 0,
+                    ticks: {
+                        callback: function(value, index) {
+                            const tickdate = new Date(taskProgressData.day0 + (index * 24 * 60 * 60 * 1000));
+                            return global.formatDate(tickdate);
+                        }
+                    }
                 },
                 y: {
                     stacked: true,
@@ -130,12 +135,12 @@ export async function init(id) {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            if (context.dataset.label === 'Duration') {
-                                return `Duration: ${context.raw} days`;
-                            } else if (context.dataset.label === 'Overdue') {
-                                return `Overdue: ${context.raw} days`;
+                            if (context.dataset.label === "Start") {
+
+                                const realDate = new Date(taskProgressData.day0 + (context.parsed.x * 24 * 60 * 60 * 1000));
+                                return `${context.dataset.label}: ${global.formatDate(realDate)}`
                             } else {
-                                return `Start: Day ${context.raw}`;
+                                return `${context.dataset.label}: ${context.raw} day${context.raw > 1 ? "s" : ""}`
                             }
                         }
                     },
@@ -144,6 +149,7 @@ export async function init(id) {
                 title: {
                     display: false,
                 }
+
             }
         }
     }));
@@ -334,33 +340,41 @@ async function getTaskProgress(projectData) {
     
     const now = new Date().getTime();
 
+    // get min start date
+    const day0 = tasks[0].createdAt;
+
 
     tasks.forEach(task => {
-        let start = task.createdAt;
+        let start;
         let duration;
         let overdue;
-        // task completed
-        start = now - task.createdAt;
+        
+        start = task.createdAt - day0;
+
+
         if (task.completedAt) {
-            duration = task.completedAt - task.dueDate
             // completed late
             if (task.completedAt > task.dueDate) {
-                overdue = task.completedAt - task.dueDate;
+                duration = start + task.completedAt - task.dueDate;
+                overdue = duration + task.completedAt - task.dueDate;
+            } else {
+                duration = start + task.completedAt - task.dueDate
             }
         } 
         // not completed and overdue
         else if (now > task.dueDate) {
-            overdue = now - task.dueDate;
-            duration = task.createdAt - task.createdAt
+            duration = start + (task.createdAt - task.createdAt)
+            overdue = duration + (now - task.dueDate);
+
         }
         // not completed and not overdue
         else {
-            duration = now - task.createdAt;
+            duration = start + (now - task.createdAt);
         }
 
-        start = start / (1000 * 60 * 60 * 24);
-        duration = duration / (1000 * 60 * 60 * 24);
-        overdue = overdue / (1000 * 60 * 60 * 24);
+        start = Math.floor(start / (1000 * 60 * 60 * 24));
+        duration = Math.floor(duration / (1000 * 60 * 60 * 24));
+        overdue = Math.floor(overdue / (1000 * 60 * 60 * 24));
 
         startData.push(start);
         durationData.push(duration);
@@ -372,7 +386,7 @@ async function getTaskProgress(projectData) {
         startData: startData,
         durationData: durationData,
         overdueData: overdueData,
-        minStartDay: 0
+        day0: day0
     }
 
 }
@@ -448,10 +462,7 @@ function renderTableMetric() {
     //here is where the data actually comes in
     let tasks = projectData.tasks.tasks;
     let assignments = projectData.tasks.assignments;
-    console.log(assignments)
     tasks.forEach(task => {
-        console.log(task)
-
         let avatars = "";
         assignments.forEach(assignment => {
             if (assignment.task.taskID === task.taskID) {
