@@ -5,6 +5,18 @@
     overflow-y: auto;
 }
 
+#scroll-to-top{
+    z-index: 999;
+    display: none;
+    bottom: 30px;
+    right: 40px;
+    position: fixed;
+}
+
+#scroll-to-top:hover {
+    cursor: pointer;
+    background-color: darkgray;
+}
 
 .post {
     max-width: 800px;

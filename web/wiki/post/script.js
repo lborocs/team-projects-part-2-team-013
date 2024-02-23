@@ -115,6 +115,23 @@ async function getPostData(postID, tagsList) {
     return post
 }
 
+document.querySelector(".main").onscroll = function() {scrolling()};
+
+function scrolling() {
+    if (document.querySelector(".main").scrollTop > 200) {
+        document.querySelector("#scroll-to-top").style.display = "block";
+    } else {
+        document.querySelector("#scroll-to-top").style.display = "none";
+    }
+}
+
+document.querySelector("#scroll-to-top").addEventListener("click", function () {
+    console.log("scrolling to top");
+    document.querySelector(".main").scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+});
+
+
 async function updateMeta(postID, subscribed, feedback) {
     subscribed = subscribed || 0;
     feedback = feedback || 0;
