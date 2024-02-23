@@ -861,12 +861,6 @@
     };
 }
 
-.delete-button {
-    position: absolute;
-    bottom: 0.5rem;
-    right: 0.5em;
-}
-
 .tasklist {
     width: 100%;
     height: 100%;
@@ -1457,10 +1451,14 @@
     color: var(--white, white);
 }
 
-.edit-button {
-    position: absolute;
-    bottom: 1rem;
-    left: 0.5rem;
+.edit-and-delete {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    margin-top: auto;
 }
 
 .createButton:hover {
@@ -1583,18 +1581,6 @@
     text-align: left;
     font-weight: 600;
     
-}
-
-
-
-
-.edit-button {
-    position: absolute;
-    bottom: 0.5em;
-    left: 0.5em;
-    padding: 0.3em;
-    cursor: pointer;
-    transition: 0.2s ease-out;
 }
 
 
