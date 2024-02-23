@@ -1466,7 +1466,7 @@ function invitePopup() {
 
 window.onload = function() {
     let inviteButton = document.querySelector(".action-invite")
-    inviteButton.addEventListener("click", () => {
+    inviteButton?.addEventListener("click", () => {
         invitePopup()
     });
 }
