@@ -274,6 +274,8 @@ async function addManHoursPopup(task) {
     let manhoursMinutes30 = document.querySelector("#manhours-minutes30")
     let manhoursMinutes45 = document.querySelector("#manhours-minutes45")
 
+
+    //man minutes picker logic
     manhoursMinutesDropdown.addEventListener("click", function() {
         this.classList.toggle("open");
     });
@@ -297,7 +299,7 @@ async function addManHoursPopup(task) {
         manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = "45";
     })
 
-    // Event listeners for the number picker
+    //man hours picker logic
     let numberPicker = document.querySelector("#add-man-hours-button2");
     if (numberPicker) {
         let numberPickerInput = numberPicker.querySelector('input[type="number"]');
@@ -356,8 +358,12 @@ async function addManHoursPopup(task) {
     if (addButton) {
         addButton.addEventListener('click', (event) => {
             event.preventDefault(); 
-            // Add the man hours to the task
-            task.manHours += parseInt(numberPickerInput.value);
+
+            let manHoursInput = dialog.querySelector('.number-input');
+
+            let minutesInput = dialog.querySelector('.dropdown-text')
+            task.manHours += parseInt(manHoursInput.value) * 3600 + parseInt(minutesInput.innerText) * 60;
+
             dialog.style.transform = 'translateY(-1%)'
             dialog.style.opacity = '0';
             dialog.style.display = 'none';
@@ -524,18 +530,22 @@ function updateTaskState(task) {
 }
 
 function showTaskInExplainer(taskCard) {
-
+    console.error(globalCurrentTask)
 
     explainer.querySelector('.edit-button').classList.remove('disabled');
     explainer.querySelector('.delete-button').classList.remove('disabled');
+
     let taskID = taskCard.getAttribute("id");
     let assignees = taskCard.getAttribute("data-assignments");
     explainerTaskContainer.setAttribute("task-id", taskID);
+
     globalCurrentTask = globalTasksList.find((task) => {
         return task.taskID == taskID;
     });
-    console.log(globalCurrentTask)
+
+    console.error(globalCurrentTask)
     explainerTask = globalCurrentTask
+
     explainerTaskTitle.innerHTML = globalCurrentTask.title;
     explainerTaskTitle.classList.remove("norender");
 
@@ -1090,25 +1100,45 @@ function findNext(container, y) {
  * @returns {Array} tasks
  */
 async function fetchTasks(projID) {
-    const data = await get_api(`/project/task.php/tasks/${projID}`);
+    const res = await get_api(`/project/task.php/tasks/${projID}`)
 
-    if (data.success == true) {
-        console.log(`[fetchTasks] tasks have been fetched for ${projID}`)
-        if (data.data.contains_assignments) {
-            globalAssignments = data.data.assignments;
-            
-            data.data.tasks.forEach((task) => {
-                task.assignments = [];
-                globalAssignments.forEach((assignment) => {
-                    if (assignment.task.taskID === task.taskID) {
-                        task.assignments.push(assignment.employee.empID);
-                    }
-                });
-            });
-        }
-        globalTasksList = data.data.tasks;
-        return data.data.tasks
+    if (res.success !== true) {
+        console.log(`[fetchTasks] failed to fetch tasks for ${projID}`)
+        return
     }
+
+    console.log(`[fetchTasks] tasks have been fetched for ${projID}`)
+    if (!res.data.contains_assignments) {
+        globalTasksList = res.data.tasks
+        return res.data.tasks
+    }
+
+    globalAssignments = res.data.assignments
+
+    res.data.tasks.forEach((task) => {
+        task.assignments = []
+        task.employeeManHours = []
+        task.totalManHours = 0
+
+        globalAssignments.forEach((assignment) => {
+
+            if (assignment.task.taskID === task.taskID) {
+
+                task.assignments.push(assignment.employee.empID)
+
+                task.employeeManHours.push({
+                    empID: assignment.employee.empID,
+                    manHours: assignment.manHours
+                })
+                
+                task.totalManHours += assignment.manHours
+            }
+        })
+    })
+
+    globalTasksList = res.data.tasks
+    return res.data.tasks
+    
 }
 
 /**

@@ -1,49 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Wiki</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="/global-styles.css">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="mobile.css">
     <link rel="stylesheet" href="medium.css">
-    <link rel="stylesheet" href="/ui-elements/search-bar.css">
-    <link rel="stylesheet" href="/ui-elements/dropdown.css">
-    <link rel="stylesheet" href="/ui-elements/text-button.css">
-    <link rel="stylesheet" href="/ui-elements/icon-button.css">
-    <link rel="stylesheet" href="/ui-elements/task-card.css">
-    <link rel="stylesheet" href="/ui-elements/small-icon.css">
-    <link rel="stylesheet" href="/ui-elements/popover.css">
-    <link rel="stylesheet" href="/ui-elements/notification-popover.css">
-    <link rel="stylesheet" href="/ui-elements/number-picker.css">
-    <link rel="stylesheet" href="/ui-elements/date-picker.css">
-    <link rel="stylesheet" href="/ui-elements/context-menu.css">
+
+    <link rel="stylesheet" href="/ui-elements/all.css">
+
     <link rel="stylesheet" href="/wiki/tag.css">
     <script src="/global-ui.js" type="module"></script>
     <script src="client.js" type="module"></script>
     <script src="/global-api.js"></script>
 </head>
+
 <body>
     <div class="fullscreen">
-        
+
         <header class="topbar"></header>
 
         <div class="sidebar-container sidebar-open">
-            
+
             <div class="sidebar"></div>
 
             <div class="main">
                 <div class="container">
                     <div class="left-nav">
                         <div class="items">
+                            <div class="title">
+                                Category
+                            </div>
                             <div class="type-of-post">
-                            <div class="category">
-                                    <input type="radio" name="category" id="technical" value="1" class="norender" checked>
+                                <div class="category">
+                                    <input type="radio" name="category" id="technical" value="1" class="norender"
+                                        checked>
                                     <label for="technical">Technical</label>
                                 </div>
                                 <div class="category">
@@ -54,23 +52,39 @@
                             <div class="divider"></div>
                             <div class="filters">
                                 <div class="topRow">
-                                <div class="title">
-                                    Topics
-                                </div>
-                                <div class="manageTagsButton manager-only">
-                                    <div class="text-button" id="manage-tags">
-                                        <div class="button-icon">
-                                            <span class="material-symbols-rounded">
-                                                settings
-                                            </span>
-                                        </div>
-                                        <div class="button-text">
-                                            Manage Tags
+                                    <div class="title">
+                                        Topics
+                                    </div>
+                                    <div class="manageTagsButton manager-only">
+                                        <div class="text-button no-box" id="manage-tags">
+                                            <div class="button-icon">
+                                                <span class="material-symbols-rounded">
+                                                    settings
+                                                </span>
+                                            </div>
+                                            <div class="button-text">
+                                                Manage
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="search white" id="tag-search">
+                                    <input class="search-input" type="text" autocomplete="off"
+                                        placeholder="Search Topics"></input>
+                                    <div class="search-icon">
+                                        <span class="material-symbols-rounded">search</span>
+                                    </div>
+                                    <div class="search-icon clear-icon" stlye="display: none;">
+                                        <span class="material-symbols-rounded">close</span>
+                                    </div>
                                 </div>
-                                    <div id="tag-selection">
+
+                                <div id="tag-selection">
+
+                                </div>
+                                <div class="tag-selection-no-results norender">
+                                    No results found
                                 </div>
                             </div>
                         </div>
@@ -103,12 +117,12 @@
     <div class="popup">
         <dialog open class='popup-dialog' id="delete-tags-popup">
             <div class="popup-title">
-            <span>Select Tags to Remove</span>
-            <div class="small-icon" id="close-button">
-                <span class="material-symbols-rounded">
-                    close
-                </span>
-            </div>
+                <span>Select Tags to Remove</span>
+                <div class="small-icon" id="close-button">
+                    <span class="material-symbols-rounded">
+                        close
+                    </span>
+                </div>
             </div>
             <div class="tagsContainer">
                 <div class="title">
@@ -138,4 +152,5 @@
         </dialog>
     </div>
 </body>
+
 </html>

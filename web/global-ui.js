@@ -1419,9 +1419,13 @@ document.addEventListener("keyup", (e) => {
     });
 });
 
-document.querySelector(".action-invite").addEventListener("pointerup", () => {
-    invitePopup();
-});
+const actionInvite = document.querySelector(".action-invite") || null;
+
+if (document.querySelector(".action-invite") !== null) {
+    document.querySelector(".action-invite").addEventListener("pointerup", () => {
+        invitePopup();
+    });
+}
 
 function invitePopup() {
     return new Promise((resolve) => {

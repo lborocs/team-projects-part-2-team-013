@@ -3,10 +3,13 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 1em;
+    gap: 1rem;
     width: 100%;
-    padding-left: 0.5em;
-    margin-bottom: 0.5em;
+}
+
+#tag-search {
+    margin-bottom: 0.5rem;
+    width: 100%;
 }
 
 .tagsList {
@@ -118,7 +121,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     line-height: 1.5;
     background-color: #f9f9f9
 }
@@ -151,9 +154,9 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    gap: 1em;
-    margin: 1em;
-    margin-right: 0em;
+    gap: 1rem;
+    margin: 1rem;
+    margin-right: 0;
     background-color: white;
     box-shadow: 0 4px 4px rgba(0,0,0,0.15);
     height: 100%;
@@ -171,11 +174,21 @@ body {
         flex-direction: column;
         justify-content: flex-start;
         align-items: flex-start;
-        gap: 0.5em;
-        padding: 1em;
+        gap: 0.5rem;
+        padding: 1rem;
+        padding-top: 0.75rem;
         height: 100%;
         width: 100%;
+
+        .title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d2e30;
+    
+        }
+
     }
+
 }
 
 .category {
@@ -214,12 +227,7 @@ body {
     width: 100%;
     gap: 0.5em;
 
-    .title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #2d2e30;
-
-    }
+    
 }
 
 
@@ -458,7 +466,7 @@ input[type="text"] {
     border-radius: 8px;
     font-size: 1em;
     font-weight: 600;
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font-family);
     color: #2d2e30;
 }
 
