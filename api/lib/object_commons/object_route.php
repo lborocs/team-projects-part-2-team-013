@@ -144,6 +144,9 @@ function object_manipulation_generic(array $method_checks, Table $model, Request
 
         foreach ($ctx->request_body as $user_field => $user_value) {
             $column = $model->get_column($user_field);
+            if (in_array($user_field, $allowed_fields)) {
+                continue;
+            }
 
             if (!$column->is_editable) {
                 respond_bad_request(
