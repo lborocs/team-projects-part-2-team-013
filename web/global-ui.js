@@ -608,7 +608,7 @@ export function generateAvatarSvg(text, colour) {
     return `
     <svg xmlns="http://www.w3.org/2000/svg" width="256px" height="256px" viewBox="0 0 256 256" version="1.1">
         <circle fill="#${colour}" cx="128" width="256" height="256" cy="128" r="128"/>
-        <text xmlns="http://www.w3.org/2000/svg" style="color: #fff; line-height: 1; font-family: system-ui" alignment-baseline="middle" text-anchor="middle" font-size="${fontSize}" font-weight="600" dy=".1em" dominant-baseline="middle" fill="#000" x="50%" y="50%">${text}</text>
+        <text xmlns="http://www.w3.org/2000/svg" style="color: #fff; line-height: 1; font-family: system-ui" alignment-baseline="middle" text-anchor="middle" font-size="${fontSize}" font-weight="600" dy=".1em" dominant-baseline="middle" fill="#0f0f0f" x="50%" y="50%">${text}</text>
     </svg>`
 }
 
