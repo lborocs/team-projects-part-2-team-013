@@ -405,7 +405,7 @@ async function addMetric() {
 
 
 
-const dashboard = new Dashboard()
+// const dashboard = new Dashboard()
 
 gridExpand.addEventListener("click", () => {
     dashboard.increaseColumns()
