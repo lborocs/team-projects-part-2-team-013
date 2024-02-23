@@ -12,9 +12,6 @@ export const sidebarContainer = document.querySelector('.sidebar-container');
 export const topbarContainer = document.querySelector('.topbar-container');
 const notificationReadButton = document.getElementById('read-all');
 
-//sidebar state is either "open" or "closed", default is open
-export var sidebarState = localStorage.getItem("sidebarState") || "open";
-localStorage.setItem("sidebarState", sidebarState);
 
 console.log("[import] loaded global-ui.js")
 

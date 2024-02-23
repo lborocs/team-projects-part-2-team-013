@@ -662,8 +662,6 @@ function avatarPopup() {
             console.log('default avatar');
             console.log(defaultAvatar);
             avatar.src = defaultAvatar;
-            var userIcon = document.querySelector('#user-icon');
-            userIcon.src = defaultAvatar;
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
             resolve();
@@ -679,8 +677,6 @@ function avatarPopup() {
                     dialog.style.display = 'none';
                     fullscreenDiv.style.filter = 'none';
                     setUserData();
-                    var userIcon = document.querySelector('#user-icon');
-                    userIcon.src = avatar;
                     resolve();
                 }
             });
