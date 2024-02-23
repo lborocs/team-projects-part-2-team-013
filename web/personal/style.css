@@ -409,23 +409,6 @@
     outline: solid 2px #388bffaa;
 }
 
-.no-results {
-    margin-right: auto;
-    opacity: 0.8;
-}
-
-.mobile-search-icon {
-    display: none;
-
-}
-
-#mobile-search-input {
-    width: 0;
-    padding: 0;
-    opacity: 0;
-    transition: opacity 0.2s ease-out;
-}
-
 
 /* popup css modified from wiki. */
 
@@ -471,6 +454,18 @@
 
 #mobile-search-icon {
     display: none;
+}
+
+.no-results {
+    margin-right: auto;
+    opacity: 0.8;
+}
+
+#mobile-search-input {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
 }
 
 #mobile-new-personal {
