@@ -17,6 +17,7 @@ const addMetricButtonSmall = document.querySelector("#add-metric-small")
 const viewWeek = document.querySelector("#view-week")
 const viewMonth = document.querySelector("#view-month")
 const viewAll = document.querySelector("#view-all")
+const backToProject = document.querySelector("#back-to-project")
 
 
 let gridActionsQueue = []
@@ -35,6 +36,8 @@ if (projectID !== "") {
     console.log("[client.js] projectID: ", projectID);
     projectData = await project.init(projectID);
     global.setBreadcrumb(["Manager's Dashboard", projectData.project.name], ["/dashboard/", "/dashboard/#" + projectData.project.projID]);
+    backToProject.href = `/projects/#${projectData.project.projID}/`;
+
 } else {
     console.log("[client.js] training dashboard");
     trainingData = training.init();
