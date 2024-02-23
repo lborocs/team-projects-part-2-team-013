@@ -164,14 +164,15 @@
 
         .title:hover {
             cursor: pointer;
-            background-color: rgba(255,255,255,0.5);
+            background-color: var(--make-it-all-tint);
+            color: var(--make-it-all);
             border-radius: 3px;
             padding-left: 0.5rem;
             padding-right: 0.25rem;
             transition: padding 0.05s ease-out;
 
             .title-chevron {
-                color: black;
+                color: var(--make-it-all);
             }
         }
 
@@ -338,7 +339,7 @@
 }
 
 .personal-task:hover {
-    background-color: #388bff11;
+    background-color: var(--make-it-all-tint);
     cursor: pointer;
     transition: background-color 0.1s ease-out;
 
