@@ -4,7 +4,7 @@
     overflow-y: auto;
     height: 100%;
     width: 100%;
-    padding: 1.5rem;
+    padding: 1.5rem calc(1.5rem - 10px); /* -10px horizontal is to account for the stable scrollbar gutter on each side */
     margin: 0;
     background-color: var(--light-grey-bg);
     grid-template-columns: repeat(2, 1fr);
@@ -69,7 +69,7 @@
     min-height: 22rem;
     height: 22rem;
 
-    background-color: var(--white, #fff);
+    background-color: var(--white);
     border-radius: 5px;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
     display: flex;
@@ -141,7 +141,7 @@
 }
 
 .metric-card.add-metric:hover {
-    background-color: var(--white, #fff);
+    background-color: var(--white);
     cursor: pointer;
     transition: background-color 0.1s ease-out, transform 0.05s ease-in;
     outline: 2px solid var(--box-shadow-clr);
@@ -316,7 +316,7 @@ a {
     align-items:flex-start;
     width: fit-content;
     max-height: 800px;
-    background-color: #fff;
+    background-color: var(--white);
     border: none;
     border-radius: 8px;
     box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));

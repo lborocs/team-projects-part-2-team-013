@@ -18,7 +18,7 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    background-color: #fff;
+    background-color: var(--white);
     border: solid 1px rgba(105,112,125, 0.1);
     border-radius: 5px;
     
@@ -119,7 +119,7 @@
             flex-direction: column;
             gap: 4px;
 
-            background-color: #fff;
+            background-color: var(--white);
             border: solid 1px rgba(105,112,125, 0.1);
             border-radius: 5px;
 

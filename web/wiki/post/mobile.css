@@ -51,7 +51,7 @@
         position: sticky;
         top: 0;
         z-index: 3;
-        background-color: #ffffff;
+        background-color: inherit;
         box-shadow: 0 0 4px rgba(0,0,0,0.1);
 
         
