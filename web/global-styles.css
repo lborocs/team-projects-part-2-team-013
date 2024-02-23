@@ -282,7 +282,7 @@ input {
 
 .sidebar {
     top: 0;
-    background-color: inherit;
+    background-color: var(--white);
     color: #1f2328;
     
     font-size: 20px;
