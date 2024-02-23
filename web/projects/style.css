@@ -1853,10 +1853,9 @@
     }
 
     & th:not(:last-child):hover {
-        background-color: #f8faff;
+        background-color: var(--sorting-background) !important;
         transition-duration: 0.05s;
-        outline: solid 1px #e2eaff;
-        outline-offset: -1px;
+        
     }
 
     & th:hover > .header-td .icon {
@@ -1896,10 +1895,10 @@
 
     .sorting-by {
         color: var(--sorting-color);
-        background-color: #f8faff !important;
+        background-color: var(--sorting-background) !important;
         transition-duration: 0.05s;
-        outline: solid 1px #e2eaff;
-        outline-offset: -1px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
     
         .icon {
             opacity: 1;
