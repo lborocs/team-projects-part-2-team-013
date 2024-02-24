@@ -215,7 +215,8 @@
     font-size: 15px;
     line-height: 1.5;
     padding-top: 1.5rem;
-
+    padding-left: 0;
+    padding-right: 1rem;
 }
 
 .ql-toolbar.ql-snow {
