@@ -691,11 +691,12 @@
 } */
 
 .taskgrid {
+    grid-auto-rows: auto;
+    grid-template-columns: repeat(3, 1fr);
     width: calc(100% - 2em);
     min-height: calc(100% - 1.5em);
-    display: flex;
+    display: grid;
     align-self: flex-start;
-    flex-wrap: nowrap;
     gap: 1em;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -780,11 +781,10 @@
     align-items: center;
     padding-bottom: 0.75em;
     gap: 0.85em;
-    width: clamp(22em, 32%, 34em);
+    width: clamp(22em, 100%, 34em);
     min-width: 330px;
     transition: 0.08s ease-out;
-    min-height: calc(100% - 7em);
-    height: fit-content;
+    height: auto;
 }
 
 .taskcolumn.highlight {
