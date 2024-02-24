@@ -221,9 +221,7 @@
     align-items: center;
     gap: 10px;
     padding: 5px;
-    background-color: white;
     z-index: 2;
-    box-shadow: 0px 0px 12px 0px #0000003d;
 
     .option {
         color: var(--text-off-black, #0f0f0f);
@@ -558,6 +556,11 @@ a {
         transition: background-color 0.1s ease-out;
         &:hover {
             background-color: var(--light-gray-bg, #f1f1f1);
+
+            .open-in-new {
+                opacity: 1;
+                transition: opacity 0.1s ease-out;
+            }
         }
 
         .task-name {
@@ -617,10 +620,15 @@ a {
                 }
             
             }
+
+        }
+
+        .open-in-new {
+            opacity: 0;
+            transition: opacity 0.1s ease-out;
         }
     
     }
-
 
 }
 

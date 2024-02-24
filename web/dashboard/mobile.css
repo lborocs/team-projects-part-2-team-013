@@ -89,3 +89,16 @@
 
 
 }
+
+@media (max-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+
+    .colspan-2 {
+        grid-column: 1 / span 1;
+    }
+
+
+}

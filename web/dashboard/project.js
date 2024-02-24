@@ -47,6 +47,10 @@ export async function init(id) {
     projectData.tasks.tasks.forEach(task => {
         overviewValues.totalManhours += task.expectedManHours / 3600
     });
+
+    //truncation is so the number is UI ready
+    overviewValues.totalManhours = Math.round(overviewValues.totalManhours * 100) / 100;
+
     console.log("[init] overviewValues: ", overviewValues)
 
     overviewMetrics.forEach(metric => {
@@ -610,10 +614,10 @@ function renderTableMetric() {
                 </div>
             </td>
             <td>
-                <div class="icon-button no-box context-menu">
+                <div class="icon-button no-box open-in-new">
                     <div class="button-icon">
                         <span class="material-symbols-rounded">
-                            more_horiz
+                            open_in_new
                         </span>
                     </div>
                 </div>
