@@ -1046,3 +1046,31 @@ sup {
     }
 }
 
+
+.icon-overlay-container {
+    position:relative;
+
+    display:flex;
+    justify-content: center;
+    align-items: center;
+
+    & > * {
+        position: absolute;
+    }
+    
+    & span {
+        display:none;
+        user-select: none;
+    }
+    
+    &:hover {
+        & :not(span) {
+            filter: brightness(0.5);
+            background-color: #00000080;
+        }
+        & span {
+            color: white;
+            display:block;
+        }
+    }
+}

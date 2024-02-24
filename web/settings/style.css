@@ -148,25 +148,8 @@
         position: relative;
         width: 4rem;
         height: 4rem;
-        
-        & > * {
-            position: absolute;
-        }
-
-        & #avatar-edit-icon {
-            display:none;
-        }
-
     }
-    .avatar-container:hover {
-        & .avatar {
-            filter: brightness(0.5);
-        }
-        & #avatar-edit-icon {
-            color: white;
-            display: block;
-        }
-    }
+
 
     .details {
         display: flex;
