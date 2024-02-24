@@ -5,10 +5,6 @@
         background-color: var(--light-grey-bg);
     }
 
-    .fullscreen {
-        height: auto;
-    }
-
     .left-nav {
         display: none;
     }
@@ -29,10 +25,12 @@
     }
 
     .post {
-        margin-left: 1em;
-        margin-right: 1em;
+        margin-left: 0;
+        margin-right: 0;
+        margin-top: 0.5rem;
         padding-left: 1.25em;
         padding-right: 1.25em;
+        width: calc(100% - 0.75rem);
     }
 
 }
