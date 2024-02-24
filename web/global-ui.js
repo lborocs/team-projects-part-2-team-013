@@ -1547,7 +1547,7 @@ export function popupModal(
             <dialog open class='popup-dialog'>
                 <div class="popup-title">
                     <div id="modal-icon"></div>
-                    ${title}
+                    <div class="title-content">${title}</div>
                     <div class="small-icon close-button">
                         <span class="material-symbols-rounded">
                             close

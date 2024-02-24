@@ -941,6 +941,14 @@ sup {
         .small-icon {
             margin-left: auto;
         }
+
+        #modal-icon {
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            margin-right: 0.25em;
+        }
+
     }
 
     .modal-actions {
@@ -949,8 +957,6 @@ sup {
             display: flex;
             justify-content: space-between;
         }
-
-        margin-top: 1em;
 
         .modal-buttons {
             display: flex;
