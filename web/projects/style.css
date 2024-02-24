@@ -628,6 +628,11 @@
     z-index: 0;
 }
 
+/* size the icon down a bit cause the container is tiny */
+.employee-list-item > .icon-overlay-container > span {
+    font-size: 2em;
+}
+
 .task-overview {
     display: flex;
     flex-direction: column;
