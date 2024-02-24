@@ -1004,7 +1004,3 @@ sup {
     }
 }
 
-.icon-button.modal-skippable-active:hover {
-    background-color: #ffe4dd !important;
-    transition: background-color 0.05s ease-out;
-}
