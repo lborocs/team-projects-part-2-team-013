@@ -3,12 +3,29 @@
         height: max(auto, (100% - 3em));
     }
 
-    .container {
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
+    .dashboard-container {
+        gap: 0.5rem;
+        padding: 0.5rem;
     }
+
+    .metric-card.overviews {
+        width: calc(100vw - 1rem);
+        padding: 0;
+        .overview {
+            font-size: 1rem;
+            align-items: flex-start;
+            width: min-content;
+            .value {
+                font-size: 1.5rem;
+            }
+            .title-text {
+                white-space: nowrap;
+            }
+        }
+    }
+
+        
+    
 
     .viewport {
         width: 100%;
@@ -92,7 +109,7 @@
 
 @media (max-width: 1024px) {
     .dashboard-container {
-        grid-template-columns: 1fr;
+        grid-template-columns: 100%;
         grid-template-rows: auto;
     }
 
@@ -100,5 +117,19 @@
         grid-column: 1 / span 1;
     }
 
+
+    .metric-card.overviews {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+        gap: 0;
+        min-height: 16rem;
+        width: auto;
+
+        .overview {
+            gap: 0;
+
+        }
+    }
 
 }
