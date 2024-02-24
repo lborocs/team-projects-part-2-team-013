@@ -213,7 +213,7 @@ function r_session_session(RequestContext $ctx, string $args) {
             "expires"=>$ctx->session->issued + SESSION_INACTIVITY_EPOCH,
             "id"=>$ctx->session->hex_id,
             "auth_level"=>$ctx->session->auth_level,
-            "employee" => db_employee_fetch($ctx->session->hex_associated_user_id),
+            "employee" => db_employee_fetch_with_email($ctx->session->hex_associated_user_id),
             "generation"=>$ctx->session->generation,
         ));   
     } else if ($ctx->request_method == "PUT") {
