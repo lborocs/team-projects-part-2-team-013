@@ -1351,6 +1351,14 @@ setInterval(async () => {
     console.log(`[sessionTimeout] ${diff}ms remaining on session`);
     console.log(`[sessionTimeout] user last active ${lastActive}ms ago`);
 
+
+    if (diff < 0) {
+        console.log("[sessionTimeout] session has expired, redirecting to login");
+        let after_login = window.location.pathname + window.location.hash
+        window.location.href = `/#${after_login}&sessionexpired`;
+    }
+
+    
     if (diff < 10 * 60 * 1000) {
 
         if (lastActive < 15 * 60 * 1000) {
@@ -1359,13 +1367,6 @@ setInterval(async () => {
             await renewCurrentSession(true);
         } else {
             console.log("[sessionTimeout] user has not been active in the last 15 minutes, wont renew session");
-
-            if (diff < 0) {
-                console.log("[sessionTimeout] session has expired, redirecting to login");
-                let after_login = window.location.pathname + window.location.hash
-                window.location.href = `/#${after_login}&sessionexpired`;
-            }
-
         }
     }
 }, 60 * 1000);
