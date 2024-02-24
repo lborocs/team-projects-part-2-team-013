@@ -1241,7 +1241,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         if (usersAssigned) {
             let count = taskUserCount.get(assignment.task.taskID) || 0;
             if (count < MAX_RENDERED_USERS) {
-                assignmentElem.classList.add("tooltip", "tooltip-under");
+                assignmentElem.classList.add("tooltip", "tooltip-left");
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
 
