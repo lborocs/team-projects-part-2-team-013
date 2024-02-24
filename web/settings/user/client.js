@@ -234,7 +234,7 @@ deleteAccountButton.addEventListener('click', () => {
         })
 });
 
-function confirmDelete(accountDisplay) {
+function confirmDelete() {
 
     const callback = (ctx) => {
         ctx.content.innerHTML = `
