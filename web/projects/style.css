@@ -693,10 +693,10 @@
 .taskgrid {
     grid-auto-rows: auto;
     grid-template-columns: repeat(3, 1fr);
-    width: calc(100% - 2em);
+    width: min(calc(100% - 2em), 120em);
     min-height: calc(100% - 1.5em);
     display: grid;
-    align-self: flex-start;
+    align-self: center;
     gap: 1em;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
