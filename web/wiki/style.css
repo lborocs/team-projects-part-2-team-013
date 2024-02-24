@@ -513,7 +513,7 @@ input[type="radio"]:not(:checked) + label:hover {
 
 
 .sidebar {
-    z-index: 1;
+    z-index: 999;
     border-right: 2px solid rgba(0,0,0,0.1);
 }
 
