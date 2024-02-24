@@ -208,12 +208,8 @@ window.addEventListener('load', async () => {
 
 
 async function getEmployee() {
-    const res = await get_api(`/employee/employee.php/employee/@me`);
-    if (res.success) {
-        return res.data;
-    } else {
-    console.error("[getEmployee] failed to get employee", empID)
-    }
+    const session = await global.getCurrentSession();
+    return session.employee
 }
 
 
@@ -696,6 +692,7 @@ async function updateAvatar(avatar) {
         avatar: newAvatar,
     };
     const data = await patch_api(`/employee/employee.php/employee/@me`, body);
+    await global.revalidateCurrentSession();
     console.log(data);
     return data;
 }
@@ -705,6 +702,7 @@ async function resetAvatar() {
         avatar: null,
     };
     const data = await patch_api(`/employee/employee.php/employee/@me`, body);
+    await global.revalidateCurrentSession();
     console.log(data);
     return data;
 }

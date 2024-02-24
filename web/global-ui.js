@@ -758,6 +758,11 @@ export async function getCurrentSession(lazy = false) {
     return session;
 }
 
+export function revalidateCurrentSession() {
+    console.log("[revalidateCurrentSession] session revalidation requested")
+    return fetchSession();
+}
+
 export async function renewCurrentSession(redirect_on_error = false) {
     let data = await put_api("/employee/session.php/session", undefined, {redirect_on_error:redirect_on_error});
 
