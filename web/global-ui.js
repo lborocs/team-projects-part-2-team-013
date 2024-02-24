@@ -1595,3 +1595,26 @@ export function popupModal(
         });
     });
 }
+
+
+/**
+ * Trims the given text to the desired length.
+ * 
+ * @param {string} text - The text to be trimmed.
+ * @param {number} desiredLength - The desired length of the trimmed text.
+ * @returns {string} - The trimmed text.
+ */
+const BRACKET_REGEX = /\(.+\) +/g;
+export function trimText(text, desiredLength) {
+    if (text.length > desiredLength) {
+
+        // remove brackets if they exist
+        if (text.match(BRACKET_REGEX)) {
+            return trimText(text.replace(BRACKET_REGEX, ""), desiredLength);
+        }
+        
+        return text.substring(0, desiredLength-3) + "...";
+    } else {
+        return text;
+    }
+}
