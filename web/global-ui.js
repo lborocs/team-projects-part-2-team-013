@@ -1626,7 +1626,7 @@ export function popupModal(
  * @param {string} type - The type of the alert. (error, warning, info, success)
  * @returns {Promise} - A promise that resolves OR rejects when the alert is closed.
  */
-export function alert(title, content, type) {
+export function popupAlert(title, content, type) {
 
     let icon;
     let colour;
