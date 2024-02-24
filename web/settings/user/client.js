@@ -225,6 +225,7 @@ deleteAccountButton.addEventListener('click', () => {
     confirmDelete()
         .then(() => {
             delete_api(`/employee/employee.php/employee/${empID}`).then(async () => {
+                await global.popupAlert("Account deleted", "Account was successfully deleted", "success").catch();
                 window.location.href = "/settings#manager-user";
             });
         })
@@ -233,69 +234,21 @@ deleteAccountButton.addEventListener('click', () => {
         })
 });
 
-function confirmDelete() {
-    return new Promise((resolve, reject) => {
+function confirmDelete(accountDisplay) {
 
-        if (global.queryModalSkip()) {
-            resolve();
-            return;
-        }
-
-        let popupDiv = document.querySelector('.popup');
-        let fullscreenDiv = document.querySelector('.fullscreen');
-
-        popupDiv.innerHTML = `
-            <dialog open class='popup-dialog'>
-                <div class="popup-title">
-                    Delete Account
-                    <div class="small-icon close-button">
-                        <span class="material-symbols-rounded">
-                            close
-                        </span>
-                    </div>
-                </div>
-                <div class="popup-text">Are you sure you want to delete this user's account?</div>
-                <div class="popup-text">Any employee specific data will be deleted</div>
-                <div class="popup-text">This action cannot be undone.</div>
-
-                <div class="popup-buttons">
-                    <div class="text-button" id="cancel-button">
-                        <div class="button-text">Cancel</div>
-                    </div>
-                    <div class="text-button red" id="delete-button">
-                        <div class="button-text">Delete</div>
-                    </div>
-                </div>
-            </dialog>
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+        <div class="modal-text"><b>Deleting an account will permanently remove all employee data</b></div>
+        <div class="modal-subtext">This will not delete projects this employee leads or other similar items</div>
         `;
-        fullscreenDiv.style.filter = 'brightness(0.75)';
+    }
 
-        let dialog = popupDiv.querySelector('.popup-dialog');
-        let closeButton = dialog.querySelector('.close-button');
-        let cancelButton = dialog.querySelector('#cancel-button');
-        let deleteButton = dialog.querySelector('#delete-button');
-
-        closeButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
-        });
-
-        cancelButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
-        });
-
-        deleteButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            resolve();
-        });
-    });
+    return global.popupModal(
+        false,
+        'Are you sure you want to delete this account?',
+        callback,
+        {class:"red", text:"Delete"}
+    )
 }
 
 var employeeEmail
