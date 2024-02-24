@@ -513,7 +513,19 @@ function passwordPopup() {
 
             if (res.success) {
                 ctx.completeModal(true);
-                global.popupAlert("Password Changed", "Your password has been changed successfully", "success");
+
+                const content = `
+                    <div class="modal-text">Your password has been changed successfully</div>
+                    <div class="modal-text">Please log in with your new password</div>
+                    <div class="modal-subtext">All other computers will be logged out too.</div>
+                `
+
+                await global.popupAlert(
+                    "Password Changed",
+                    content,
+                    "success"
+                ).catch();
+                document.location.href = "/";
             } else {
                 errorMessage.innerText = res.error.message;
             }
