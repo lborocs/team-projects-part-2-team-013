@@ -1465,7 +1465,7 @@ function invitePopup() {
  * Displays a popup modal with the given parameters.
  * @param {boolean} skippable - Indicates whether the modal can be skipped.
  * @param {string} title - The title of the modal.
- * @param {string} content - The html content of the modal.
+ * @param {function} contentCallback - A callback function given the content element.
  * @param {object} action_button - Object for action button properties.
  * @param {string} action_button.text - The text to display on the action button.
  * @param {string} action_button.class - The CSS class to apply to the action button.
@@ -1474,7 +1474,7 @@ function invitePopup() {
 export function popupModal(
     skippable,
     title,
-    content,
+    contentCallback,
     action_buttion,
 ) {
     return new Promise(async (resolve, reject) => {
@@ -1541,7 +1541,7 @@ export function popupModal(
                         </span>
                     </div>
                 </div>
-                <div class="popup-text">${content}</div>
+                <div id="popup-content"></div>
 
                 <div class="modal-actions">
                     ${skipableTip}
@@ -1557,6 +1557,15 @@ export function popupModal(
             </dialog>
         `;
         fullscreenDiv.style.filter = 'brightness(0.75)';
+
+        const content = popupDiv.querySelector('#popup-content');
+        try {
+            contentCallback(content);
+        } catch (e) {
+            console.error("[popupModal] contentCallback failed, abandoning modal");
+            console.error(e);
+            completeModal(false);
+        }
 
         let dialog = popupDiv.querySelector('.popup-dialog');
         let closeButton = dialog.querySelector('.close-button');
