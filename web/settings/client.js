@@ -701,5 +701,3 @@ async function resetAvatar() {
     return data;
 }
 
-global.setBreadcrumb(["Settings", "Account"], ["./", "#account"])
-

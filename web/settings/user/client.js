@@ -95,7 +95,7 @@ async function setUserData() {
     accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
 
     document.querySelector('.current-name').innerHTML = employeeName;
-    global.setBreadcrumb(["Settings", "Manage User", employeeName], ["./", "#manageusers", "#" + empID])
+    global.setBreadcrumb(["Settings", "Manage Users", `Managing ${employeeName}`], ["/settings/", "/settings/#manageusers", "#" + empID])
     accountCard.querySelector('.email').innerHTML = employeeEmail;
     accountCard.querySelector('.avatar').src = employeeAvatar;
     accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
