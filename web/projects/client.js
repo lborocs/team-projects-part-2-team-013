@@ -2779,52 +2779,19 @@ overlay.addEventListener('click', () => {
 });
 
 function confirmDelete() {
-    console.log("[confirmDelete] Running confirmDelete")
-    return new Promise((resolve, reject) => {
-        console.log("[confirmDelete] Creating popup")
-        let popupDiv = document.querySelector('.popup');
-        console.log(popupDiv)
-        let fullscreenDiv = document.querySelector('.fullscreen');
-        console.log("[confirmDelete] before popup")
-        popupDiv.innerHTML = `
-            <dialog open class='popupDialog' id="delete-popup">
-                <div>Are you sure you want to archive this task?</div>
-                <div><strong>This change cannot be undone.</strong></div>
-                <form method="dialog" class = "buttonForm">
-                    <div class="text-button" id="closeButton">
-                    <div class="button-text">Cancel</div>
-                    </div>
-                    <div class="text-button red" id="deleteButton">
-                    <div class="button-text">Archive</div> 
-                    </div>
-                </form>
-            </dialog>
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+            <div class="modal-text">Are you sure you want to archive this task?</div>
+            <div class="modal-subtext">This action cannot be undone.</div>
         `;
-        console.log(popupDiv.innerHTML)
-        console.log("[confirmDelete] after popup")
-        fullscreenDiv.style.filter = 'brightness(0.6)';
+    }
 
-        let dialog = popupDiv.querySelector('.popupDialog');
-        let closeButton = dialog.querySelector('#closeButton');
-        let deleteButton = dialog.querySelector('#deleteButton');
-
-        closeButton.addEventListener('click', (event) => {
-            event.preventDefault(); 
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            console.log("[confirmDeleteCloseButton] rejecting")
-            reject();
-        });
-
-        deleteButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            console.log("[confirmDeleteDeleteButton] resolving")
-            resolve();
-        });
-    });
+    return global.popupModal(
+        false,
+        "Archive Task",
+        callback,
+        {text: "Archive", class:"red"}
+    );
 }
 
 
