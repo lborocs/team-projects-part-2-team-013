@@ -2640,13 +2640,11 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
         listItem.classList.add("employee-list-item");
         listItem.classList.add("tooltip", "tooltip-under");
         listItem.innerHTML = `
-        <div>
         <div class="icon-overlay-container avatar">
             <img src="${emp_icon}" class="avatar">
             <span class="material-symbols-rounded">close</span>
         </div>
-        </div>
-        <p class="tooltiptext">${emp_name}</p>`;
+        <p class="tooltiptext">Remove ${emp_name}</p>`;
         element.appendChild(listItem);
 
         listItem.addEventListener("pointerup", (e) => {
