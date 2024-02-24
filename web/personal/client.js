@@ -667,8 +667,8 @@ getAllPersonals().then(() => {
 //modified confirmDelete from wiki.
 function confirmDelete() {
 
-    const callback = (content) => {
-        content.innerHTML = `
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
         <div class="popup-text">Are you sure you want to delete this To-Do item?</div>
         <div class="popup-text"><b>This action cannot be undone.</b></div>
         `

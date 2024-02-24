@@ -1433,7 +1433,9 @@ function invitePopup() {
     
     let emailValue;
 
-    const callback = (content, actionButton) => {
+    const callback = (ctx) => {
+
+        const {content, actionButton} = ctx;
 
         actionButton.classList.add("disabled");
 
@@ -1474,7 +1476,7 @@ function invitePopup() {
  * Displays a popup modal with the given parameters.
  * @param {boolean} skippable - Indicates whether the modal can be skipped.
  * @param {string} title - The title of the modal.
- * @param {function} contentCallback - A callback function given the content & actionButton elements.
+ * @param {function} popupCallback - A callback function given the popup elements.
  * @param {object} action_button - Object for action button properties.
  * @param {string} action_button.text - The text to display on the action button.
  * @param {string} action_button.class - The CSS class to apply to the action button.
@@ -1483,7 +1485,7 @@ function invitePopup() {
 export function popupModal(
     skippable,
     title,
-    contentCallback,
+    popupCallback,
     action_buttion,
 ) {
     return new Promise(async (resolve, reject) => {
@@ -1544,6 +1546,7 @@ export function popupModal(
         popupDiv.innerHTML = `
             <dialog open class='popup-dialog'>
                 <div class="popup-title">
+                    <div id="modal-icon"></div>
                     ${title}
                     <div class="small-icon close-button">
                         <span class="material-symbols-rounded">
@@ -1570,13 +1573,25 @@ export function popupModal(
         fullscreenDiv.style.pointerEvents = 'none';
 
         const content = popupDiv.querySelector('#popup-content');
-        let dialog = popupDiv.querySelector('.popup-dialog');
-        let closeButton = dialog.querySelector('.close-button');
-        let cancelButton = dialog.querySelector('#cancel-button');
-        let actionButton = dialog.querySelector('#action-button');
+        const dialog = popupDiv.querySelector('.popup-dialog');
+        const closeButton = dialog.querySelector('.close-button');
+        const cancelButton = dialog.querySelector('#cancel-button');
+        const actionButton = dialog.querySelector('#action-button');
+        const modalIcon = dialog.querySelector('#modal-icon');
+
+        const context = {
+            content: content,
+            dialog: dialog,
+            closeButton: closeButton,
+            cancelButton: cancelButton,
+            actionButton: actionButton,
+            completeModal: completeModal,
+            icon: modalIcon,
+        }
+
 
         try {
-            contentCallback(content, actionButton);
+            popupCallback(context);
         } catch (e) {
             console.error("[popupModal] contentCallback failed, abandoning modal");
             console.error(e);
@@ -1601,6 +1616,27 @@ export function popupModal(
             completeModal(true);
         });
     });
+}
+
+export function alert(title, content, icon = "info") {
+
+    const callback = (ctx) => {
+
+        ctx.icon.innerHTML = `<span class="material-symbols-rounded">${icon}</span>`;
+
+        ctx.content.innerHTML = content;
+        ctx.cancelButton.classList.add("norender");
+    }
+
+    return popupModal(
+        false,
+        title,
+        callback,
+        {text: "OK", class: "blue"}
+    );
+
+
+
 }
 
 
