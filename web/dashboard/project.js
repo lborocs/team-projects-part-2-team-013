@@ -443,7 +443,7 @@ async function getTaskProgress(projectData) {
                 duration = start + task.completedAt - task.dueDate;
                 overdue = duration + task.completedAt - task.dueDate;
             } else {
-                duration = start + task.completedAt - task.dueDate
+                duration = start + task.completedAt - task.createdAt;
             }
         } 
         // not completed and overdue
@@ -455,6 +455,11 @@ async function getTaskProgress(projectData) {
         // not completed and not overdue
         else {
             duration = start + (now - task.createdAt);
+        }
+
+        if (task.dueDate == null) {
+            duration = start + Math.min(task.completedAt || Number.MAX_VALUE, now) - task.createdAt;
+            overdue = undefined;
         }
 
         start = Math.floor(start / (1000 * 60 * 60 * 24));
