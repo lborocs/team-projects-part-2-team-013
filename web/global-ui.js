@@ -1440,7 +1440,7 @@ function invitePopup() {
         actionButton.classList.add("disabled");
 
         const text = document.createElement("div");
-        text.classList.add("popup-text");
+        text.classList.add("modal-text");
         text.innerText = "Enter the email of the employee you want to invite";
         content.appendChild(text);
 
@@ -1549,17 +1549,17 @@ export function popupModal(
 
 
         popupDiv.innerHTML = `
-            <dialog open class='popup-dialog'>
-                <div class="popup-title">
+            <dialog open class='modal-dialog'>
+                <div class="modal-title">
                     <div id="modal-icon"></div>
                     <div class="title-content">${title}</div>
-                    <div class="small-icon close-button">
+                    <div class="small-icon" id="close-button">
                         <span class="material-symbols-rounded">
                             close
                         </span>
                     </div>
                 </div>
-                <div id="popup-content"></div>
+                <div id="modal-content"></div>
 
                 <div class="modal-actions">
                     ${skipableTip}
@@ -1577,9 +1577,9 @@ export function popupModal(
         fullscreenDiv.style.filter = 'brightness(0.75)';
         fullscreenDiv.style.pointerEvents = 'none';
 
-        const content = popupDiv.querySelector('#popup-content');
-        const dialog = popupDiv.querySelector('.popup-dialog');
-        const closeButton = dialog.querySelector('.close-button');
+        const content = popupDiv.querySelector('#modal-content');
+        const dialog = popupDiv.querySelector('.modal-dialog');
+        const closeButton = dialog.querySelector('#close-button');
         const cancelButton = dialog.querySelector('#cancel-button');
         const actionButton = dialog.querySelector('#action-button');
         const modalIcon = dialog.querySelector('#modal-icon');
