@@ -207,15 +207,9 @@ window.addEventListener('load', async () => {
 });
 
 
-async function getEmployee() {
-    const session = await global.getCurrentSession();
-    return session.employee
-}
-
-
 
 async function setUserData() {
-    let employeeData = await getEmployee();
+    let employeeData = await global.getCurrentSession();
     console.log("[setUserData] got employee", employeeData);
     let emp = employeeData.employee;
     
@@ -241,7 +235,7 @@ async function setUserData() {
 };
 
 async function setAvatar() {
-    let employeeData = await getEmployee();
+    let employeeData = await global.getCurrentSession();
     let emp = employeeData.employee;
     let employeeAvatar = global.employeeAvatarOrFallback(emp);
     console.log(employeeData)
@@ -418,7 +412,7 @@ secondNameConfirm.addEventListener('click', async () => {
 
 async function resetName(n){
     console.log('resetting name');
-    let employeeData = await getEmployee();
+    let employeeData = await global.getCurrentSession();
     let emp = employeeData.employee;
     if (emp.firstName == null){
         var firstName = "N/A";
