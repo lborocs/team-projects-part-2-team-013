@@ -1450,10 +1450,15 @@ function invitePopup() {
         emailInput.id = "invite-email";
         content.appendChild(emailInput);
 
-        emailInput.addEventListener("input", () => {
+        emailInput.addEventListener("keypress", (e) => {
             emailValue = emailInput.value;
             if (emailInput.value.includes("@") && emailInput.value.includes(".")){
                 actionButton.classList.remove("disabled");
+
+                if (e.key == "Enter") {
+                    ctx.completeModal(true);
+                }
+
             } else {
                 actionButton.classList.add("disabled");
             }
@@ -1464,9 +1469,9 @@ function invitePopup() {
     popupModal(false, "Invite Employee", callback, {text: "Invite", class: "blue"}).then(async () => {
         const res = await post_api("/employee/session.php/invite", {email: emailValue});
         if (res.success) {
-            alert("Invite sent");
+            popupAlert("Invite sent", `We have sent an invitation to ${emailValue}`, "success");
         } else {
-            alert(`Failed to send invite : ${res.error.message}`);
+            popupAlert("Unable to send an invite", `Something went wrong: ${res.error.message}`, "error");
         }
     });
 }
