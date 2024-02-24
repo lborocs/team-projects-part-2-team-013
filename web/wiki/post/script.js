@@ -94,7 +94,7 @@ async function getPostData(postID, tagsList) {
     renderer.setContents(content);
     postElement.querySelector(".author").innerText = global.employeeToName(post.author)
     postElement.querySelector(".date").innerHTML = global.formatDateFull(new Date(post.createdAt))
-    postElement.querySelector(".typeOfPost").innerHTML = post.isTechnical ? "Technical" : "Non-Technical"
+    postElement.querySelector(".post-category").innerHTML = post.isTechnical ? "Technical" : "Non-Technical"
     console.log("Post Technical Status: ", post.isTechnical);
     console.log(post)
 

@@ -34,10 +34,16 @@
     border-radius: 8px;
     border: 1px solid var(--border-clr);
     box-shadow: 0 0 6px rgba(0,0,0,0.1);
+
+    .post-category {
+        font-weight: 500;
+    }
+
     .title{
         font-size: 1.5em;
         font-weight: 700;
         color: #1a1a1b;
+        text-wrap: pretty;
     }
     .content{
         font-size: 15px;
@@ -78,7 +84,7 @@
 
 .header {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     position: relative;
     
@@ -96,11 +102,20 @@
     gap: 0.25em;
 }
 
+.category-and-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+
+}
+
 .buttons {
     height: 100%;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: flex-end;
     gap: 0.25em;
 
     .active {
@@ -130,13 +145,15 @@
     .author {
         line-height: 2.4rem;
         font-size: 15px;
-        color: #2d2e30;
+        font-weight: 500;
+        color: #414347;
     }
 
     .date {
         line-height: 2.4rem;
         font-size: 15px;
-        color: #2d2e30;
+        font-weight: 500;
+        color: #414347;
         margin-left: auto;
     }
     
