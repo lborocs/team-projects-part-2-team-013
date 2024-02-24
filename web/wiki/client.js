@@ -348,67 +348,19 @@ document.querySelectorAll('input[name="category"]').forEach((radio) => {
 
 
 function confirmDelete() {
-    return new Promise((resolve, reject) => {
-        let popupDiv = document.querySelector('.popup');
-        let fullscreenDiv = document.querySelector('.fullscreen');
-
-        popupDiv.innerHTML = `
-            <dialog open class='popup-dialog'>
-                <div class="popup-title">
-                    Delete Post
-                    <div class="small-icon close-button">
-                        <span class="material-symbols-rounded">
-                            close
-                        </span>
-                    </div>
-                </div>
-                <div class="popup-text">Are you sure you want to delete this post?</div>
-                <div class="popup-text">This action cannot be undone?</div>
-                <div class="popup-text">Reason for deleting</div>
-                <ul class="popup-list">
-                    <li class="popup-list-item"><input type="radio" name="deleteReason" value="1">Duplicate</li>
-                    <li class="popup-list-item"><input type="radio" name="deleteReason" value="2">Out of Date</li>
-                    <li class="popup-list-item"><input type="radio" name="deleteReason" value="3">Incorrect information</li>
-                    <li class="popup-list-item"><input type="radio" name="deleteReason" value="4">Other</li>
-                </ul>
-                <div class="popup-buttons">
-                    <div class="text-button" id="cancel-button">
-                        <div class="button-text">Cancel</div>
-                    </div>
-                    <div class="text-button red" id="delete-button">
-                        <div class="button-text">Delete</div>
-                    </div>
-                </div>
-            </dialog>
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+            <div class="modal-text">Are you sure you want to delete this post?</div>
+            <div class="modal-subtext">This action cannot be undone.</div>
         `;
-        fullscreenDiv.style.filter = 'brightness(0.75)';
+    }
 
-        let dialog = popupDiv.querySelector('.popup-dialog');
-        let closeButton = dialog.querySelector('.close-button');
-        let cancelButton = dialog.querySelector('#cancel-button');
-        let deleteButton = dialog.querySelector('#delete-button');
-
-        closeButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
-        });
-
-        cancelButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
-        });
-
-        deleteButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            resolve();
-        });
-    });
+    return global.popupModal(
+        false,
+        "Delete post",
+        callback,
+        {text: "Delete", class:"red"}
+    );
 }
 
 document.getElementById("new-post").addEventListener("click", () => {
