@@ -49,6 +49,7 @@ settings.setAttribute('href', '/settings/');
 
 export const logout = document.createElement('div')
 logout.classList.add('sidebar-item')
+logout.tabIndex = 0;
 logout.id = 'logout';
 
 
