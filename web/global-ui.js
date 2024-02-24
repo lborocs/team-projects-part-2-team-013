@@ -1465,5 +1465,124 @@ window.onload = function() {
     let inviteButton = document.querySelector(".action-invite")
     inviteButton?.addEventListener("click", () => {
         invitePopup()
+/**
+ * Displays a popup modal with the given parameters.
+ * @param {boolean} skippable - Indicates whether the modal can be skipped.
+ * @param {string} title - The title of the modal.
+ * @param {string} content - The html content of the modal.
+ * @param {object} action_button - Object for action button properties.
+ * @param {string} action_button.text - The text to display on the action button.
+ * @param {string} action_button.class - The CSS class to apply to the action button.
+ * @returns {Promise} - A promise that resolves when the modal is completed successfully, and rejects when it is canceled or closed.
+ */
+export function popupModal(
+    skippable,
+    title,
+    content,
+    action_buttion,
+) {
+    return new Promise(async (resolve, reject) => {
+
+
+        if (checkMutex("popupModal")) {
+            console.log("[popupModal] mutex is taken")
+            reject();
+        }
+        console.log("[popupModal] taking mutex")
+        const handle = takeMutex("popupModal");
+
+
+        if (skippable && queryModalSkip()) {
+            console.log("[popupModal] modal skipped");
+            releaseMutex("popupModal", handle);
+            resolve();
+            return;
+        }
+
+        const escListener = (e) => {
+            if (e.key != "Escape") { return; };
+            completeModal(false);
+        }
+
+        document.addEventListener("keydown", escListener);
+
+
+        function completeModal(success) {
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            document.removeEventListener("keydown", escListener);
+
+            releaseMutex("popupModal", handle);
+
+            if (success) {
+                resolve();
+            } else {
+                reject();
+            }
+        }
+
+
+
+        let popupDiv = document.querySelector('.popup');
+        let fullscreenDiv = document.querySelector('.fullscreen');
+
+        let skipableTip = "";
+        if (skippable) {
+            skipableTip = `<div class="modal-tip">
+                <span class="modal-tip-title">TIP</span>
+                <span class="modal-tip-text">Hold <kbd>SHIFT</kbd> to skip this popup</span>
+            </div>`
+        }
+
+
+        popupDiv.innerHTML = `
+            <dialog open class='popup-dialog'>
+                <div class="popup-title">
+                    ${title}
+                    <div class="small-icon close-button">
+                        <span class="material-symbols-rounded">
+                            close
+                        </span>
+                    </div>
+                </div>
+                <div class="popup-text">${content}</div>
+
+                <div class="modal-actions">
+                    ${skipableTip}
+                    <div class="modal-buttons">
+                        <div class="text-button" id="cancel-button">
+                            <div class="button-text">Cancel</div>
+                        </div>
+                        <div class="text-button red" id="action-button">
+                            <div class="button-text">${action_buttion.text}</div>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
+        `;
+        fullscreenDiv.style.filter = 'brightness(0.75)';
+
+        let dialog = popupDiv.querySelector('.popup-dialog');
+        let closeButton = dialog.querySelector('.close-button');
+        let cancelButton = dialog.querySelector('#cancel-button');
+        let actionButton = dialog.querySelector('#action-button');
+
+        actionButton.classList.add(action_buttion.class);
+
+
+        closeButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            completeModal(false);
+        });
+
+        cancelButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            completeModal(false);
+        });
+
+        actionButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            completeModal(true);
+        });
     });
 }

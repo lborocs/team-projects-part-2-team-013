@@ -1157,6 +1157,8 @@ async function renderTasks(tasks, update = RENDER_BOTH) {
 
 function ensureTaskColumnHeights() {
     // js to ensure columns are all the same max height
+    // do this in css
+    return;
     var maxHeight = 0;
     taskColumns.forEach((e) => {maxHeight = e.clientHeight > maxHeight ? e.clientHeight : maxHeight});
     taskColumns.forEach((e) => {e.style.height = `${maxHeight}px`});    

@@ -677,96 +677,16 @@ getAllPersonals().then(() => {
 
 //modified confirmDelete from wiki.
 function confirmDelete() {
-    return new Promise((resolve, reject) => {
 
-        if (global.checkMutex("confirmDelete")) {
-            console.log("[confirmDelete] Mutex is locked, skipping modal")
-            reject();
-            return;
+    return global.popupModal(
+        true,
+        "Delete To-Do item",
+        "Are you sure you want to delete this To-Do item?<br><b>This action cannot be undone.</b>",
+        {
+            text: "Delete",
+            class: "red",
         }
-
-        const handle = global.takeMutex("confirmDelete");
-
-        const resolveAndUnlock = () => {
-            console.log("[confirmDelete] Resolving and releasing mutex")
-            global.releaseMutex("confirmDelete", handle);
-            resolve();
-        };
-        const rejectAndUnlock = () => {
-            console.log("[confirmDelete] Rejecting and releasing mutex")
-            global.releaseMutex("confirmDelete", handle);
-            reject();
-        };
-
-
-        if (global.queryModalSkip()) {
-            resolveAndUnlock();
-            return;
-        }
-
-        let popupDiv = document.querySelector('.popup');
-        let fullscreenDiv = document.querySelector('.fullscreen');
-
-        popupDiv.innerHTML = `
-            <dialog open class='popup-dialog'>
-                <div class="popup-title">
-                    Delete To-Do Item
-                    <div class="small-icon close-button">
-                        <span class="material-symbols-rounded">
-                            close
-                        </span>
-                    </div>
-                </div>
-                <div class="popup-text">Are you sure you want to delete this To-Do item?</div>
-                <div class="popup-text">
-                <b>This action cannot be undone.</b> 
-                    <br></br>
-                </div>
-                <div class="modal-buttons-and-tip">
-                    <div class="modal-tip">
-                        <span class="modal-tip-title">TIP</span>
-                        <span class="modal-tip-text">Hold <kbd>SHIFT</kbd> to skip this popup</span>
-                    </div>
-                    
-                    <div class="popup-buttons">
-                        <div class="text-button" id="cancel-button">
-                            <div class="button-text">Cancel</div>
-                        </div>
-                        <div class="text-button red" id="delete-button">
-                            <div class="button-text">Delete</div>
-                        </div>
-                    </div>
-                </div>
-            </dialog>
-        `;
-        fullscreenDiv.style.filter = 'brightness(0.75)';
-
-        let dialog = popupDiv.querySelector('.popup-dialog');
-        let closeButton = dialog.querySelector('.close-button');
-        let cancelButton = dialog.querySelector('#cancel-button');
-        let deleteButton = dialog.querySelector('#delete-button');
-
-        closeButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            rejectAndUnlock();
-        });
-
-        cancelButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            rejectAndUnlock();
-        });
-
-        deleteButton.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            resolveAndUnlock();
-        });
-    });
+    )
 }
 
 
