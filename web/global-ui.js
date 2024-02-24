@@ -1425,38 +1425,42 @@ if (actionInvite) {
 }
 
 function invitePopup() {
-    return new Promise((resolve) => {
-        let popupDiv = document.querySelector('.popup');
-        let fullscreenDiv = document.querySelector('.fullscreen');
-        popupDiv.innerHTML = `
-            <dialog open class='invite-popup-dialog'>
-                <div class="popup-title">
-                    Enter email address of employee to invite:
-                </div>
-                <div class="popup-inputs">
-                    <input class="popup-input" type="text" placeholder="Enter email address">
-                </div>
-                <div class="popup-buttons">
-                    <button class="popup-button">Invite</button>
-                </div>
-            </dialog>
-        `;
-        fullscreenDiv.style.filter = 'brightness(0.75)';
-        document.querySelector('.popup-button');
-        let emailInput = document.querySelector('.popup-input');
-        let inviteButton = document.querySelector('.popup-button');
-        inviteButton.addEventListener('click', async () => {
-            let email = emailInput.value;
-            const res = await post_api("/employee/session.php/invite", {email: email});
-            if (res.success) {
-                fullscreenDiv.style.filter = 'brightness(1)';
-                popupDiv.innerHTML = '';
-                alert("Invite sent");
+    
+    let emailValue;
+
+    const callback = (content, actionButton) => {
+
+        actionButton.classList.add("disabled");
+
+        const text = document.createElement("div");
+        text.classList.add("popup-text");
+        text.innerText = "Enter the email of the employee you want to invite";
+        content.appendChild(text);
+
+        const emailInput = document.createElement("input");
+        emailInput.type = "email";
+        emailInput.placeholder = "email@make-it-all.co.uk";
+        emailInput.id = "invite-email";
+        content.appendChild(emailInput);
+
+        emailInput.addEventListener("input", () => {
+            emailValue = emailInput.value;
+            if (emailInput.value.length > 0) {
+                actionButton.classList.remove("disabled");
             } else {
-                alert(`Failed to send invite : ${res.error.message}`);
+                actionButton.classList.add("disabled");
             }
         });
-        resolve();
+
+    }
+
+    popupModal(false, "Invite Employee", callback, {text: "Invite", class: "blue"}).then(async () => {
+        const res = await post_api("/employee/session.php/invite", {email: emailValue});
+        if (res.success) {
+            alert("Invite sent");
+        } else {
+            alert(`Failed to send invite : ${res.error.message}`);
+        }
     });
 }
 
@@ -1465,7 +1469,7 @@ function invitePopup() {
  * Displays a popup modal with the given parameters.
  * @param {boolean} skippable - Indicates whether the modal can be skipped.
  * @param {string} title - The title of the modal.
- * @param {function} contentCallback - A callback function given the content element.
+ * @param {function} contentCallback - A callback function given the content & actionButton elements.
  * @param {object} action_button - Object for action button properties.
  * @param {string} action_button.text - The text to display on the action button.
  * @param {string} action_button.class - The CSS class to apply to the action button.
@@ -1549,7 +1553,7 @@ export function popupModal(
                         <div class="text-button" id="cancel-button">
                             <div class="button-text">Cancel</div>
                         </div>
-                        <div class="text-button red" id="action-button">
+                        <div class="text-button" id="action-button">
                             <div class="button-text">${action_buttion.text}</div>
                         </div>
                     </div>
@@ -1559,33 +1563,33 @@ export function popupModal(
         fullscreenDiv.style.filter = 'brightness(0.75)';
 
         const content = popupDiv.querySelector('#popup-content');
+        let dialog = popupDiv.querySelector('.popup-dialog');
+        let closeButton = dialog.querySelector('.close-button');
+        let cancelButton = dialog.querySelector('#cancel-button');
+        let actionButton = dialog.querySelector('#action-button');
+
         try {
-            contentCallback(content);
+            contentCallback(content, actionButton);
         } catch (e) {
             console.error("[popupModal] contentCallback failed, abandoning modal");
             console.error(e);
             completeModal(false);
         }
 
-        let dialog = popupDiv.querySelector('.popup-dialog');
-        let closeButton = dialog.querySelector('.close-button');
-        let cancelButton = dialog.querySelector('#cancel-button');
-        let actionButton = dialog.querySelector('#action-button');
-
         actionButton.classList.add(action_buttion.class);
 
 
-        closeButton.addEventListener('click', (event) => {
+        closeButton.addEventListener('pointerup', (event) => {
             event.preventDefault();
             completeModal(false);
         });
 
-        cancelButton.addEventListener('click', (event) => {
+        cancelButton.addEventListener('pointerup', (event) => {
             event.preventDefault();
             completeModal(false);
         });
 
-        actionButton.addEventListener('click', (event) => {
+        actionButton.addEventListener('pointerup', (event) => {
             event.preventDefault();
             completeModal(true);
         });
