@@ -294,6 +294,23 @@ class ContentLengthConstraint extends Constraint {
     }
 }
 
+class FutureDateConstraint extends Constraint {
+    public function validate(string $user_column, $user_field) {
+        //error_log("running future date constraint on" . $user_column . ":" . $user_field);
+
+        if (is_null($user_field)) {
+            return;
+        }
+
+        if ($user_field < timestamp()) {
+            respond_bad_request(
+                "Invalid value for column '$user_column'. timestamp must be in the future",
+                ERROR_BODY_FIELD_INVALID_DATA
+            );
+        }
+    }
+}
+
 
 const _ASSETID = new Column("assetID", is_primary_key:true, type:"binary", is_nullable:false, is_editable:false, is_server_generated:true);
 
@@ -476,7 +493,10 @@ const TABLE_PROJECTS = new Table(
             constraints:[new ForeignKeyConstraint(TABLE_EMPLOYEES, _EMPID, "db_employee_fetch")]
         ),
         new Column("projectCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
-        new Column("projectDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column(
+            "projectDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false,
+            constraints:[new FutureDateConstraint()]
+        ),
     ],
     "project",
     "project"
@@ -513,7 +533,10 @@ const TABLE_TASKS = new Table(
         ),
         new Column("taskArchived", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("taskCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
-        new Column("taskDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column(
+            "taskDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false,
+            constraints:[new FutureDateConstraint()]
+        ),
         new Column("taskExpectedManHours", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
         new Column("taskCompletedAt", is_primary_key:false, type:"integer", is_nullable:true, is_editable:false, is_server_generated:true),
     ],
@@ -555,7 +578,10 @@ const TABLE_PERSONALS = new Table(
             "personalState", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new RestrictedDomainConstraint(TASK_VALID_STATES)]
         ),
-        new Column("personalDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false),
+        new Column(
+            "personalDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false,
+            constraints:[new FutureDateConstraint()]
+        ),
         new Column(
             "personalTitle", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
             constraints:[new ContentLengthConstraint(2, 254)]
