@@ -141,11 +141,6 @@
     background-color: var(--make-it-all-tint);
 
     .avatar-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        position: relative;
         width: 4rem;
         height: 4rem;
     }
