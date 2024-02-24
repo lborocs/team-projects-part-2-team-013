@@ -806,6 +806,7 @@ button:hover {
 } */
 
 
+/* MOBILE CSS */
 @media (max-width: 768px) {
     #global-search {
         display: none;
@@ -865,6 +866,10 @@ button:hover {
 
         .left {
             overflow: clip;
+        }
+        
+        .breadcrumb {
+            overflow: auto;
         }
     }
 
