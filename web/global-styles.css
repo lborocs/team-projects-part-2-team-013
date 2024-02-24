@@ -253,7 +253,8 @@ input {
         font-family: var(--font-family);
         visibility: visible;
         opacity: 1;
-        transition: opacity 0.3s ease-out, transform 0.1s ease-out;
+        transition: opacity 0.3s ease-out, transform 0.15s ease-out;
+        transition-behavior: allow-discrete;
         transform: translate(-50%, -10%);
     }
 }
