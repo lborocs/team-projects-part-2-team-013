@@ -590,7 +590,7 @@ function showTaskInExplainer(taskCard) {
             <div class="manhours">
                 ${timeDisplay}
             </div>
-            <div class="text-button" id="add-man-hours">
+            <div class="text-button" id="add-man-hours" tabindex="0">
                 <div class="button-text">+</div>
             </div> 
         </div>
@@ -830,7 +830,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             });
 
 
-            taskCard.addEventListener("click", (e) => {
+            const focusListener = (e) => {
                 if (e.target.classList.contains("context-menu")) {
                     return
                 }
@@ -844,31 +844,14 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 })
                 taskCard.classList.add("clicked")
                 taskCard.classList.add("task-focussed")
-            });
-            taskCard.addEventListener("click", (e) => {
-
-                if (e.target.classList.contains("context-menu")) {
-                    return
-                }
-
-                if (taskCard.classList.contains("beingdragged")) {
-                    return
-                }
-
-                if (e.button == 2) {
-                    return
-                }
-
                 explainer.classList.remove("hidden")
                 overlay.classList.remove("hidden")
-                
-                taskCards.forEach((card) => {
-                    card.classList.remove("clicked")
-                })
 
                 showTaskInExplainer(taskCard);
-                
-            });
+            }
+
+            taskCard.addEventListener("click", focusListener);
+            taskCard.addEventListener("focus", focusListener);
 
             taskCard.addEventListener("dragstart", () => {
                 taskCard.classList.add("beingdragged");
@@ -1825,6 +1808,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let task = document.createElement("div");
     task.classList.add("task");
     task.setAttribute("draggable", "true");
+    task.tabIndex = 0;
 
     //set id to the task id
     task.setAttribute("id", ID);
@@ -2138,7 +2122,7 @@ async function renderProject(project) {
     let projectTitle = document.querySelector(".project-bar .title");
     let mobileProjectTitle = document.querySelector(".mobile-icons .title");
     let projectRow = document.createElement("tr");
-    projectRow.setAttribute("tabindex", "0");
+    projectRow.setAttribute("tabindex", "-1");
     projectRow.classList.add("project-row");
 
     //checks if the current user is team leader, sets the icon accordingly
@@ -2158,7 +2142,7 @@ async function renderProject(project) {
     //constructing the table row for the project
     projectRow.innerHTML = `
         <td>
-            <a href="/projects/#${project.projID}">
+            <a href="/projects/#${project.projID}" tabindex="0">
                 <div class="project-card">
                     <div class="icon">
                         <span class="material-symbols-rounded">${icon}</span>
@@ -2170,7 +2154,7 @@ async function renderProject(project) {
             </a>
         </td>
         <td>
-            <a href="/projects/#${project.projID}">
+            <a href="/projects/#${project.projID}" tabindex="-1">
                 <div class="name-card">
                     <div class="icon">
                         <img src="${global.employeeAvatarOrFallback(teamLeader)}" class="avatar">
@@ -2182,7 +2166,7 @@ async function renderProject(project) {
             </a>
         </td>
         <td>
-            <a href="/projects/#${project.projID}">
+            <a href="/projects/#${project.projID}" tabindex="-1">
                 <div class="name-card">
                     <div class="name">
                         ${date}
@@ -2191,7 +2175,7 @@ async function renderProject(project) {
             </a>
         </td>
         <td>
-            <a href="/projects/#${project.projID}">
+            <a href="/projects/#${project.projID}" tabindex="-1">
                 <div class="name-card">
                     <div class="name">
                         ${dueDateFormatted}
@@ -2200,7 +2184,7 @@ async function renderProject(project) {
             </a>
         </td>
         <td>
-            <a href="/projects/#${project.projID}">
+            <a href="/projects/#${project.projID}" tabindex="-1">
                 <div class="tooltip tooltip-above name-card">
                     <p class="tooltiptext">${lastAccessedTooltip}</p>
                     <div class="name">
