@@ -655,17 +655,6 @@ document.addEventListener("click", (e) => {
 personalsSortDirection.addEventListener("click", reverseSortDirection);
 
 
-
-
-
-
-
-
-
-
-
-
-
 //initialise the page
 global.setBreadcrumb(["My List"], ["./"])
 
