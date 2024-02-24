@@ -1618,11 +1618,36 @@ export function popupModal(
     });
 }
 
-export function alert(title, content, icon = "info") {
+/**
+ * Displays an alert popup modal with the specified title, content, and type.
+ * 
+ * @param {string} title - The title of the alert.
+ * @param {string} content - The HTML content of the alert.
+ * @param {string} type - The type of the alert. (error, warning, info, success)
+ * @returns {Promise} - A promise that resolves OR rejects when the alert is closed.
+ */
+export function popupAlert(title, content, type) {
+
+    let icon;
+    let colour;
+    switch (type) {
+        case "error":
+            icon = "error";
+            break;
+        case "warning":
+            icon = "warning";
+            break;
+        case "info":
+            icon = "info";
+            break;
+        case "success":
+            icon = "check_circle";
+            break;
+    }
 
     const callback = (ctx) => {
 
-        ctx.icon.innerHTML = `<span class="material-symbols-rounded">${icon}</span>`;
+        ctx.icon.innerHTML = `<span class="material-symbols-rounded alert-icon ${type}">${icon}</span>`;
 
         ctx.content.innerHTML = content;
         ctx.cancelButton.classList.add("norender");
@@ -1640,6 +1665,7 @@ export function alert(title, content, icon = "info") {
 }
 
 
+const BRACKET_REGEX = /\(.+\) +/g;
 /**
  * Trims the given text to the desired length.
  * 
@@ -1647,7 +1673,6 @@ export function alert(title, content, icon = "info") {
  * @param {number} desiredLength - The desired length of the trimmed text.
  * @returns {string} - The trimmed text.
  */
-const BRACKET_REGEX = /\(.+\) +/g;
 export function trimText(text, desiredLength) {
     if (text.length > desiredLength) {
 

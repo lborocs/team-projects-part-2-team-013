@@ -60,6 +60,12 @@
     --make-it-all-highlight: #fcefb4;
     --cool-grey: #ebedef;
 
+    /* alert icons */
+    --error-icon: #ed0000;
+    --warning-icon: #ffe100;
+    --info-icon: #49b0ff;
+    --success-icon: #00b400;
+
 
 }
 
@@ -1001,6 +1007,21 @@ sup {
                 box-shadow: inset 0 -1px 0 #bbb;
             }
         }
+    }
+}
+
+.alert-icon {
+    &.error {
+        color: var(--error-icon);
+    }
+    &.warning {
+        color: var(--warning-icon);
+    }
+    &.info {
+        color: var(--info-icon);
+    }
+    &.success {
+        color: var(--success-icon);
     }
 }
 
