@@ -536,7 +536,6 @@ function updateTaskState(task) {
 }
 
 function showTaskInExplainer(taskCard) {
-    console.error(globalCurrentTask)
 
     explainer.querySelector('.edit-button').classList.remove('disabled');
     explainer.querySelector('.delete-button').classList.remove('disabled');
@@ -860,7 +859,6 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
                 explainer.classList.remove("hidden")
                 overlay.classList.remove("hidden")
-                document.querySelector('.viewport').style.pointerEvents = 'none';
                 
                 taskCards.forEach((card) => {
                     card.classList.remove("clicked")
@@ -1037,7 +1035,6 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
                 explainer.classList.remove("hidden")
                 overlay.classList.remove("hidden")
-                document.querySelector('.viewport').style.pointerEvents = 'none';
                 showTaskInExplainer(taskRow);
             });
 
@@ -2691,7 +2688,6 @@ if (mediaQueryMobile.matches) {
     explainer.classList.remove("popout")
     explainer.classList.add("hidden")
     overlay.classList.add("hidden")
-    document.querySelector('.viewport').style.pointerEvents = 'auto';
     explainerShowHide.classList.add("norender")
     
     //switches to list view as default
