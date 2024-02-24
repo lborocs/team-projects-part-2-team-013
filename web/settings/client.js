@@ -465,115 +465,71 @@ changePasswordButton.addEventListener('click', () => {
 
 
 function passwordPopup() {
-    return new Promise((resolve, reject) => {
 
-        let popupDiv = document.querySelector('.popup');
-        let fullscreenDiv = document.querySelector('.fullscreen');
-        popupDiv.innerHTML = `
-            <dialog open class='popup-dialog'>
-                <div class="popup-title">
-                    Change Password
-                    <div class="small-icon close-button">
-                        <span class="material-symbols-rounded">
-                            close
-                        </span>
-                    </div>
-                </div>
-                <div class="popup-inputs">
-                    <div class="popup-subtitle">
-                        Enter your current password:
-                    </div>
-                    <input class="password textfield" type="password" id="current-password" placeholder="Current Password">
-                </div>
-                <div class="popup-inputs">
-                    <div class="popup-subtitle">
-                        Set your new password:
-                    </div>
-                    <div class="input-wrapper">
-                        <input class="password textfield" type="password" id="new-password" placeholder="New Password">
-                        <input class="password textfield" type="password" id="confirm-new-password" placeholder="Confirm New Password">
-                        <div class="error-message " id="password-error"></div>
-                    </div>
-                </div>
+    const callback = (ctx) => {
+        ctx.actionButton.classList.add('disabled');
 
-                <div class="popup-buttons">
-                    <div class="text-button" id="popup-cancel">
-                        <div class="button-text">Cancel</div>
-                    </div>
-                    <div class="text-button blue" id="popup-confirm">
-                        <div class="button-text">Confirm</div>
-                    </div>
-                </div>
-            </dialog>
-        `;
-        fullscreenDiv.style.filter = 'brightness(0.75)';
+        ctx.content.innerHTML = `<div class="popup-inputs">
+            <div class="popup-subtitle">
+                Enter your current password:
+            </div>
+            <input class="password textfield" type="password" id="current-password" placeholder="Current Password">
+        </div>
+        <div class="popup-inputs">
+            <div class="popup-subtitle">
+                Set your new password:
+            </div>
+            <div class="input-wrapper">
+                <input class="password textfield" type="password" id="new-password" placeholder="New Password">
+                <input class="password textfield" type="password" id="confirm-new-password" placeholder="Confirm New Password">
+                <div class="error-message" id="password-error"></div>
+            </div>
+        </div>`
 
-        let dialog = popupDiv.querySelector('.popup-dialog');
-        let popupClose = dialog.querySelector('.close-button');
-        let popupCancel = dialog.querySelector('#popup-cancel');
-        let popupConfirm = dialog.querySelector('#popup-confirm');
-        let currentPassword = dialog.querySelector('#current-password');
-        let changedPassword = dialog.querySelector('#new-password');
-        let confirmNewPassword = dialog.querySelector('#confirm-new-password');
+        const newPasswordInput = ctx.content.querySelector('#new-password');
+        const confirmPasswordInput = ctx.content.querySelector('#confirm-new-password');
+        const currentPasswordInput = ctx.content.querySelector('#current-password');
+        const errorMessage = ctx.content.querySelector('#password-error');
 
-        popupClose.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
-        });
+        const validatePassword = () => {
+            if (newPasswordInput.value !== confirmPasswordInput.value) {
+                errorMessage.innerText = "Passwords do not match";
+                ctx.actionButton.classList.add('disabled');
+                return;
+            }
+            errorMessage.innerText = "";
+            ctx.actionButton.classList.remove('disabled');
+        }
 
-        popupCancel.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
-        });
+        newPasswordInput.addEventListener('input', validatePassword);
+        confirmPasswordInput.addEventListener('input', validatePassword);
 
-        popupConfirm.addEventListener('click', (event) => {
-            console.log('confirm button clicked');
-            event.preventDefault();
-            let oldPassword = currentPassword.value;
-            let newPassword = changedPassword.value;
-            let confirmPassword = confirmNewPassword.value;
-            changePassword(oldPassword, newPassword, confirmPassword).then((res) => {
-                if (res) {
-                    dialog.style.display = 'none';
-                    fullscreenDiv.style.filter = 'none';
-                    resolve();
-                }
+        ctx.actionButton.addEventListener('pointerup', async () => {
+            const res = await patch_api('/employee/session.php/account', {
+                newPassword: newPasswordInput.value,
+                password: currentPasswordInput.value
             });
-        });
-    });
-}
 
-async function changePassword(currentPassword, newPassword, confirmPassword) {
-    const body = {
-        password: currentPassword,
-        newPassword: newPassword,
-    };
-    if (newPassword !== confirmPassword) {
-        console.error('passwords do not match');
-        let errorMessage = document.querySelector('.error-message');
-        errorMessage.innerHTML = "Passwords do not match";
-        return false;
+
+            if (res.success) {
+                ctx.completeModal(true);
+                global.popupAlert("Password Changed", "Your password has been changed successfully", "success");
+            } else {
+                errorMessage.innerText = res.error.message;
+            }
+        });
+
     }
 
-        const res = await patch_api('/employee/session.php/account', body);
-        console.log("Password reset response:")
-        console.log(res);
-        console.error(res.error.message);
-        console.error(res.error.code);
-        let errorMessage = document.querySelector('.error-message');
-        errorMessage.innerHTML = res.error.message;
-        if (res.success) {
-            console.log('password changed');
-            return true;
-        } else {
-            console.log('password change failed');
-            return false;
-        }
-    setUserData();
+
+    return global.popupModal(
+        false,
+        "Change Password",
+        callback,
+        {text: "Change Password", class:"blue"},
+        false
+    );
+
 }
 
 function avatarPopup() {

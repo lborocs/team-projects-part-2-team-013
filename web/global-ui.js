@@ -1485,6 +1485,7 @@ function invitePopup() {
  * @param {object} action_button - Object for action button properties.
  * @param {string} action_button.text - The text to display on the action button.
  * @param {string} action_button.class - The CSS class to apply to the action button.
+ * @param {boolean} handleResolve - Indicates whether the modal should automatically resolve when the action button is pressed.
  * @returns {Promise} - A promise that resolves when the modal is completed successfully, and rejects when it is canceled or closed.
  */
 export function popupModal(
@@ -1492,6 +1493,7 @@ export function popupModal(
     title,
     popupCallback,
     action_buttion,
+    handleResolve = true,
 ) {
     return new Promise(async (resolve, reject) => {
 
@@ -1616,10 +1618,13 @@ export function popupModal(
             completeModal(false);
         });
 
-        actionButton.addEventListener('pointerup', (event) => {
-            event.preventDefault();
-            completeModal(true);
-        });
+        if (handleResolve) {
+            actionButton.addEventListener('pointerup', (event) => {
+                event.preventDefault();
+                completeModal(true);
+            });
+        }
+
     });
 }
 

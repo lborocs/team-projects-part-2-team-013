@@ -938,7 +938,12 @@ sup {
     #modal-content {
         .modal-subtext {
             opacity: 0.5;
-            
+        }
+
+        .modal-text {
+            font-size: 16px;
+            font-weight: 400;
+            color: var(--text-off-black, #0f0f0f);
         }
 
         &:last-child {
