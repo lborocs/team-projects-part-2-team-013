@@ -70,7 +70,26 @@
                             </div>
                         </div>
                         <div class="views">
-                            <div class="search">
+
+                            <div class="mobile-icons">
+                                <div id="mobile-project-title" class="title">
+                                    Project
+                                </div>
+                                <input type="text" id="mobile-search-input" class="search-input" placeholder="Search" autocomplete="false">
+                                <div class="icon-button circle no-box" id="mobile-search-icon">
+                                    <div class="button-icon">
+                                        <span class="material-symbols-rounded">search</span>
+                                    </div>
+                                </div>
+            
+                                <div class="icon-button circle no-box" id="mobile-new-task">
+                                    <div class="button-icon">
+                                        <span class="material-symbols-rounded">add</span>
+                                    </div>
+                                </div>    
+                            </div>
+
+                            <div class="search" id="task-search-bar">
                                 <input id="task-search" class="search-input" type="text" autocomplete="off" placeholder="Search Board"></input>
                                 <div class="search-icon">
                                     <span class="material-symbols-rounded">search</span>
@@ -128,7 +147,9 @@
                                     </div>
                                 </div>
                                 <div class="add-task team-leader-only norender" id="notstarted-add">
-                                    <i class="fa-solid fa-plus"></i> Create Task
+                                    <span class="material-symbols-rounded">
+                                        add
+                                    </span> Create Task
                                 </div>
 
                             </div>

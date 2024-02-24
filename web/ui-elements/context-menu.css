@@ -23,6 +23,7 @@
     border-radius: 5px;
     
     padding: 3px 0;
+    width: auto; /* reset to auto as global mobile explainer sets it */
 
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15),
                 0 0 24px rgb(0 0 0 / 6%);

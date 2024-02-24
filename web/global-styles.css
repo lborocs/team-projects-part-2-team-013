@@ -551,7 +551,7 @@ input {
 
 .topbar {
     position: relative;
-    background-color: inherit;
+    background-color: var(--white);
     display: flex;
     flex-direction: row;
     justify-content: space-between; 
@@ -878,22 +878,22 @@ button:hover {
         display: flex;
     }
 
+    /* 
+        breadcrumb queue, only shows last 2 nav elements so they fit on the bar.
+        lets them tap back to many previous pages.
+    */
     .breadcrumb-navigator {
         font-weight: 600;
         color: black;
     }
-
     .breadcrumb-navigator {
         display: none;
     }
-
-    .breadcrumb-divider {
-        display: none !important; /* once again needed to override the google material symbols */
-    }
-
-    .breadcrumb > .breadcrumb-navigator:last-child {
+    .breadcrumb > .breadcrumb-navigator:last-child,
+    .breadcrumb > .breadcrumb-navigator:nth-last-child(2),
+    .breadcrumb > .breadcrumb-navigator:nth-last-child(3) {
         display: flex;
-    }
+    } 
 
 }
 

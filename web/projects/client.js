@@ -32,6 +32,7 @@ const taskTableBody = document.querySelector(".tasktable-body")
 const overlay = document.querySelector(".overlay")
 const explainer = document.querySelector(".explainer")
 const projectTitle = document.querySelector("#project-title")
+const mobileProjectTitle = document.querySelector("#mobile-project-title")
 const explainerTitle = explainer.querySelector("#explainer-title")
 const explainerDescription = document.querySelector("#project-description")
 const explainerTeamLeaderAvatar = document.querySelector("#team-leader-avatar")
@@ -68,6 +69,10 @@ const pageBackButton = document.getElementById('page-back-button');
 const pageForwardButton = document.getElementById('page-forward-button');
 const pageNumberElement = document.querySelector('.page-number');
 const projectsTableEmptyState = document.querySelector('.projects-table-empty-state');
+
+const mobileNewTaskButton = document.getElementById('mobile-new-task')
+const mobileTaskSearch = document.getElementById('mobile-search-icon')
+const mobileTaskSearchInput = document.getElementById('mobile-search-input')
 
 //groups of things
 var projectRows = document.querySelectorAll(".project-row")
@@ -145,6 +150,7 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     }
 
     projectTitle.innerText = project.name;
+    mobileProjectTitle.innerText = project.name;
     explainerTitle.innerText = project.name;
     explainerDescription.innerHTML = project.description;
     explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
@@ -543,7 +549,6 @@ function showTaskInExplainer(taskCard) {
         return task.taskID == taskID;
     });
 
-    console.error(globalCurrentTask)
     explainerTask = globalCurrentTask
 
     explainerTaskTitle.innerHTML = globalCurrentTask.title;
@@ -854,7 +859,8 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 }
 
                 explainer.classList.remove("hidden")
-                overlay.classList.remove("norender")
+                overlay.classList.remove("hidden")
+                document.querySelector('.viewport').style.pointerEvents = 'none';
                 
                 taskCards.forEach((card) => {
                     card.classList.remove("clicked")
@@ -929,10 +935,10 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
                     if (item.classList.contains("action-edit")) {
                         console.log("[contextMenuItemOnClick] edit clicked")
+
                         showTaskInExplainer(taskRow);
                         editTaskPopup(globalCurrentTask);
                         
-
                     } else if (item.classList.contains("action-delete")) {
                         console.log("[contextMenuItemOnClick] delete clicked")
 
@@ -1019,12 +1025,19 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 contextMenuButton.classList.toggle("active");
             });
     
-            taskRow.addEventListener("pointerdown", () => {
-                console.log("[taskRowOnMouseDown] clicked")
-            });
-    
-            taskRow.addEventListener("pointerup", () => {
-                console.log("[taskRowOnTouchStart] clicked")
+            taskRow.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                console.log("[taskRow] clicked")
+
+                if (e.target.classList.contains("dropdown") || e.target.classList.contains("dropdown-menu")) {
+                    return;
+                }
+
+                explainer.classList.remove("hidden")
+                overlay.classList.remove("hidden")
+                document.querySelector('.viewport').style.pointerEvents = 'none';
                 showTaskInExplainer(taskRow);
             });
 
@@ -1138,7 +1151,7 @@ async function fetchTasks(projID) {
 
     globalTasksList = res.data.tasks
     return res.data.tasks
-    
+
 }
 
 /**
@@ -1542,7 +1555,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
                             arrow_forward_ios
                         </span>
                     </div>
-                    <div class="submenu">
+                    <div class="submenu menu-left">
                         <div class="item not-started-state ${selectedState[0]}">
                             <div class="icon">
                                 <span class="material-symbols-rounded">
@@ -2129,6 +2142,7 @@ async function renderProject(project) {
     //gets the projects table and makes the project row
     let projectsTable = document.querySelector("#projects-table");
     let projectTitle = document.querySelector(".project-bar .title");
+    let mobileProjectTitle = document.querySelector(".mobile-icons .title");
     let projectRow = document.createElement("tr");
     projectRow.setAttribute("tabindex", "0");
     projectRow.classList.add("project-row");
@@ -2211,7 +2225,10 @@ async function renderProject(project) {
     `;
 
     //TODO: figure out if this is necessary
-    projectTitle.innerHTML = project.name;
+    projectTitle.innerText = project.name;
+    mobileProjectTitle.innerText = project.name;
+
+
 
     //sets the data-attributes on the projectRow
     projectRow.setAttribute("data-ID", project.projID);
@@ -2652,27 +2669,48 @@ boardAddTaskButton.addEventListener("click", async () => {
     await addTask();
 });
 
-//mobile less than 775px
-let mediaQueryMobile = window.matchMedia("(max-width: 775px)")
+mobileNewTaskButton.addEventListener("click", async () => {
+    await addTask();
+});
+
+mobileTaskSearch.addEventListener('click', () => {
+    if (mobileTaskSearchInput.classList.contains('open') === false) {
+        mobileTaskSearchInput.value = ""
+        mobileTaskSearchInput.focus()
+        mobileTaskSearchInput.classList.add('open')
+        mobileProjectTitle.classList.add('norender')
+    } else {
+        mobileTaskSearchInput.classList.remove('open')
+        mobileTaskSearchInput.blur()
+        mobileProjectTitle.classList.remove('norender')
+    }
+})
+
+//mobile less than 768px
+let mediaQueryMobile = window.matchMedia("(max-width: 768px)")
 //between mobile and 1520px
-let mediaQueryMedium = window.matchMedia("(min-width: 776px) and (max-width: 1520px)")
+let mediaQueryMedium = window.matchMedia("(min-width: 769px) and (max-width: 1520px)")
 //larger than 1520px
 let mediaQueryDesktop = window.matchMedia("(min-width: 1521px)")
 
 //check for mobile on load
 if (mediaQueryMobile.matches) {
     console.log("[mediaQueryMobile] mobile")
+    explainer.classList.add("mobile")
     explainer.classList.remove("popout")
+    explainer.classList.add("hidden")
     overlay.classList.add("hidden")
+    document.querySelector('.viewport').style.pointerEvents = 'auto';
     explainerShowHide.classList.add("norender")
     
-    // disable board view for mobile
+    //switches to list view as default
     boardViewButton.classList.remove("selected");
-    boardViewButton.classList.add("norender");
     listViewButton.classList.add("selected");
     taskList.classList.remove("norender");
     taskList.classList.remove("fade");
-    boardViewButton.classList.add("norender")
+    taskGrid.classList.add("norender");
+    taskGrid.classList.add("fade");
+
 } else {
     console.log("[mediaQuery] desktop")
 }
@@ -2681,9 +2719,11 @@ if (mediaQueryMobile.matches) {
 mediaQueryMobile.addEventListener("change", (e) => {
     if (e.matches) {
         console.log("[mediaQuerymobileChange] mobile")
+        explainer.classList.add("mobile")
         explainer.classList.add("hidden")
         explainer.classList.remove("popout")
-        overlay.classList.add("norender")
+        overlay.classList.add("hidden")
+        document.querySelector('.viewport').style.pointerEvents = 'auto';
         explainerShowHide.classList.add("norender")
     }
 })
@@ -2692,6 +2732,7 @@ mediaQueryMobile.addEventListener("change", (e) => {
 if (mediaQueryMedium.matches) {
     console.log("[mediaQueryMedium] medium")
     explainer.classList.add("popout")
+    explainer.classList.remove("mobile")
     explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_open</span>`
 
 }
@@ -2701,6 +2742,7 @@ mediaQueryMedium.addEventListener("change", (e) => {
     if (e.matches) {
         console.log("[mediaQueryMediumChange] medium")
         explainer.classList.add("popout")
+        explainer.classList.remove("mobile")
         explainerShowHide.classList.remove("norender")
         explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_open</span>`
 
@@ -2711,6 +2753,7 @@ mediaQueryMedium.addEventListener("change", (e) => {
 if (mediaQueryDesktop.matches) {
     console.log("[mediaQueryDesktop] desktop")
     explainer.classList.remove("popout")
+    explainer.classList.remove("mobile")
     explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_close</span>`
 }
 
@@ -2720,14 +2763,28 @@ mediaQueryDesktop.addEventListener("change", (e) => {
         console.log("[mediaQueryDesktopChange] desktop")
         explainer.classList.remove("hidden")
         explainer.classList.remove("popout")
+        explainer.classList.remove("mobile")
         explainerShowHide.classList.remove("norender")
         explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_close</span>`
     }
 })
 
+
+//mobile tap-away logic
+document.addEventListener("click", (e) => {
+
+    //hides search bar on mobile when you tap away from it
+    if (!mobileTaskSearch.contains(e.target)) {
+        mobileTaskSearchInput.classList.remove('open')
+        mobileTaskSearchInput.blur()
+    }
+
+})
+
 overlay.addEventListener('click', () => {
     explainer.classList.add('hidden');
-    overlay.classList.add('norender');
+    overlay.classList.add('hidden');
+    document.querySelector('.viewport').style.pointerEvents = 'auto';
 });
 
 function confirmDelete() {
@@ -3769,10 +3826,22 @@ projectSearchInput.addEventListener("input", (e) => {
     projectSearchRollingTimeout.roll();
 })
 
-document.getElementById("task-search").addEventListener("input", (e) => {
+taskSearchInput.addEventListener("input", (e) => {
     sleep(10).then(() => {
-        searchAndRenderTasks()
+        searchAndRenderTasks(taskSearchInput.value)
     })
+})
+
+mobileTaskSearchInput.addEventListener("input", (e) => {
+
+    if (mobileTaskSearch.classList.contains('open') === false) {
+        mobileTaskSearch.classList.add('open')
+    }
+
+    sleep(10).then(() => {
+        searchAndRenderTasks(mobileTaskSearchInput.value)
+    })
+
 })
 
 
@@ -3785,7 +3854,7 @@ document.getElementById("delete-project-search").addEventListener("pointerup", (
 
 document.getElementById("delete-task-search").addEventListener("pointerup", () => {
     taskSearchInput.value = "";
-    searchAndRenderTasks()
+    searchAndRenderTasks(taskSearchInput.value)
 })
 
 const sleep = (ms) => {
@@ -3897,9 +3966,8 @@ async function searchTasks(query) {
     return filteredTasks;
 }
 
-async function searchAndRenderTasks() {
-    let search = taskSearchInput.value;
-    let tasks = await searchTasks(search);
+async function searchAndRenderTasks(query) {
+    let tasks = await searchTasks(query);
     console.log("[renderTasksFromSearch] filtered tasks");
     clearRenderedTasks()
     renderTasks(tasks);

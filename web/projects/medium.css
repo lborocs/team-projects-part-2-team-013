@@ -1,10 +1,7 @@
-@media screen and (max-width: 1520px) and (min-width: 776px) {
+@media screen and (max-width: 1520px) {
     .taskgrid {
         justify-content: flex-start;
     }
 
-    .taskgrid-wrapper {
-        overflow-x: auto;
-    }
 
 }

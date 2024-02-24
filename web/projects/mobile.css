@@ -1,81 +1,18 @@
-@media (max-width: 775px) {
+@media (max-width: 768px) {
     .fullscreen {
         height: max(auto, (100% - 3em));
     }
 
-    .sidebar{
-        margin-left: -100%;
-        position: fixed;
-        z-index: 1;
-        transition: 0.1s ease-out;
-        border-radius: 0;
-        height: 100dvh;
-        gap: 0;
-        box-shadow: 0 0 24px 12px rgba(0,0,0,0.2);
-
-        .mobile-sidebar-header {
-            display: flex;
-        }
-    }
-
-    #list-view-button {
-        display: none;
-    }
-
-    .sidebar-item {
-        font-size: 1.5rem;
-
-        & p {
-            margin: 0;
-        }
-    }
-
-    .sidebar-item:last-child {
-        position: relative;
-        bottom: 0;
-    }
-
-    .visible {
-        margin-left: 0;
-        position: fixed;
-        top: 0;
-        z-index: 9999;
-        transition: 0.2s ease-out;
-        width: min(70%, 300px);
-    }
-    
-    .topbar {
-       
-        position: sticky;
-        top: 0;
-        z-index: 3;
-        background-color: #ffffff;
-        box-shadow: 0 0 4px rgba(0,0,0,0.1);
-
-        
-
-        .fullLogo {
-            display: none;
-        }
-
-        .left {
-            overflow: clip;
-        }
-    }
-
-    #global-search {
-        display: none;
-    }
-
     .views {
-        height: 5rem;
-        flex: 0 0 5rem;
+        height: 5.5rem;
+        flex: 0 0 5.5rem;
         flex-wrap: wrap;
         position: relative;
         z-index: 0;
         justify-content: flex-start;
         align-content: space-between;
-        margin: 0.5em;
+        margin: 0.5rem;
+        margin-bottom: 1rem;
         gap: 0.5rem;
 
         .search {
@@ -87,6 +24,9 @@
         }
     }
 
+    .view {
+        margin-right: 0.25rem;
+    }
 
     #dashboard-redirect {
         background-color: rgba(255,255,255,0.1);
@@ -96,13 +36,12 @@
         border-bottom: none;
     }
     
-
-    .container {
+    /* .container {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
-    }
+    } */
 
     #finished {
         margin-bottom: 0.75em;
@@ -114,26 +53,24 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
         opacity: 1;
-        transition: opacity 0.15s ease-out;
         z-index: 1;
     }
 
     .explainer {
        
-        height: 60%;
+        height: 76%;
         width: calc(100% - 2em);
         background-color: white;
-        border-radius: 5px;
+        border-radius: 10px;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
-        box-shadow: 0 0 12px rgba(0,0,0,0.25);
+        box-shadow: 0 0 12px rgba(0,0,0,0.25), 0 0 0 600px rgba(0,0,0,0.05);
         transition: 0.15s ease-out;
-        z-index: 2;
+        z-index: 9999;
         position: fixed;
        
-        top: 70%;
+        top: 62%;
         left: 50%;
         transform: translate(-50%, -50%);
        
@@ -171,7 +108,7 @@
     }
 
     .popupDialog {
-        width: 400px;
+        width: calc(100% - 2rem);
     }
     
     .create-task {
@@ -186,34 +123,6 @@
         margin-top: 0px;
     }
 
-    .taskgrid {
-        align-items: flex-start;
-        flex-wrap: nowrap;
-        overflow-x: scroll;
-        width: 150vw;
-
-        
-        margin-right: 0;
-
-    }
-
-    .taskcolumn {
-        width: auto;
-        flex: 0 0 20em;
-
-        scroll-snap-align: start;
-        scroll-snap-stop: normal;
-
-        .title-container {
-            width: calc(100% - 1em);
-        }
-
-        .task {
-            width: calc(100% - 1em);
-        }
-
-    }
-
     .tasklist {
         width: 100%;
         height: 100%;
@@ -225,9 +134,13 @@
         width: 100%;
     }
 
+    & td.title {
+        min-width: 12rem;
+    }
+
     .viewport {
-        width: 100%;
-        height: 100%;
+        /* width: 100%;
+        height: 100%; */
         gap: 0;
     }
 
@@ -240,11 +153,7 @@
     ::-webkit-scrollbar {
         display: none;
     }
-    
-    .taksarea {
-       
-        overflow-y: hidden;
-    }
+
 
     th {
         padding-right: 0;
@@ -260,8 +169,9 @@
     }
 
     .selection-screen {
-        padding: 1rem;
+        padding: 0;
         .search-row {
+            padding: 0.5rem;
             flex-wrap: wrap;
             gap: 0.5rem;
             .search {
@@ -291,8 +201,109 @@
         display: block;
     }
 
-    .taskgrid {
+    /* .taskgrid {
         display: none !important;
+    } */
+
+    .taskgrid {
+        margin: 0;
+        padding: 0;
+        padding-left: 1em;
+        padding-right: 1em;
+        padding-bottom: 5em;
+        width: 100%;
+
+    }
+
+    #mobile-project-title {
+        width: 100%;
+        text-overflow: ellipsis;
+        overflow-x: clip;
+        overflow-y: hidden;
+        white-space: nowrap;
+
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--text-off-black);
+    }
+
+    #mobile-search-icon {
+        display: flex;
+        margin-left: auto;
+
+        & span {
+            font-size: 24px;
+        }
+    }
+
+    #mobile-search-icon:hover {
+        background-color: var(--light-grey-bg);
+    }
+
+    #mobile-search-icon:active {
+        background-color: white;
+        transition-duration: 0.05s;
+    }
+
+    #mobile-new-task {
+        display: flex;
+        margin-left: 0.25rem;
+        justify-content: flex-end;
+    }
+
+    #mobile-search-input.open {
+        width: 100%;
+        height: 100%;
+        padding: 4px 16px;
+        opacity: 1;
+        border-bottom: solid 2px #172b4d;
+        transition: opacity 0.2s ease-out;
+    }
+
+    .mobile-icons {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        width: 100%;
+        height: 48px;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+
+    #task-search-bar {
+        display: none;
+    }
+
+    #add-task-button {
+        display: none;
+    }
+
+    #view-archived-button {
+        display: none;
+    }
+
+    .project-table-pagination {
+
+        .label {
+            display: none;
+        }
+
+        .dropdown {
+            display: none;
+        }
+    
+    }
+
+    .project-table-div {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    
+    .selection-screen > .projects-container {
+        padding-left: 0;
+        padding-top: 0;
     }
 
 
