@@ -2640,9 +2640,21 @@ function updateAssignedEmployees(element, assignedSet, employeeMap) {
         listItem.classList.add("employee-list-item");
         listItem.classList.add("tooltip", "tooltip-under");
         listItem.innerHTML = `
-        <img src="${emp_icon}" class="avatar" id="task-create-avatar">
+        <div>
+        <div class="icon-overlay-container avatar">
+            <img src="${emp_icon}" class="avatar">
+            <span class="material-symbols-rounded">close</span>
+        </div>
+        </div>
         <p class="tooltiptext">${emp_name}</p>`;
         element.appendChild(listItem);
+
+        listItem.addEventListener("pointerup", (e) => {
+            e.stopPropagation();
+            assignedSet.delete(empID);
+            element.removeChild(listItem);
+        });
+
     });
 }
 
@@ -2896,7 +2908,7 @@ async function addProject() {
                         </div>
                     </div>
                 </div>
-                <div class="team-leader-selection">
+                <div class="assigned-team-leader name-card">
                 
                 </div>
             </div>
@@ -2947,49 +2959,78 @@ async function addProject() {
         }
     })
 
-    let teamLeader; //teamLeader id
-    let teamLeaderDiv = popupDiv.querySelector('.team-leader-selection');
+    let assignedTeamLeader;
+    let assignedTeamLeaderDiv = popupDiv.querySelector('.assigned-team-leader');
 
-    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); //this is crazy it should change later
-    let res = await get_api(`/employee/employee.php/all`);
-    let employeeList = res.data.employees;
-    employeeList.forEach((emp) => {
-        let emp_name = global.employeeToName(emp);
-        let avatar = global.employeeAvatarOrFallback(emp);
-        let option = document.createElement("div");
-        option.classList.add("name-card");
-        option.innerHTML = `
-            <img src="${avatar}" class="avatar">
-            <span>${emp_name}</span>
-            <span class="material-symbols-rounded icon">
-                person_add
-            </span>
-        `
-        option.setAttribute("data-id", emp.empID);
-        empList.appendChild(option);
-    });
+    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list'); 
 
-    // turn employeelist into a map of id to employee
-    let employeeMap = new Map();
-    employeeList.forEach((emp) => {
-        employeeMap.set(emp.empID, emp);
-    });
+    const employeeMap = new Map();
 
-    // add event listeners to employee list
-    let employeeListOptions = empList.querySelectorAll(".name-card");
-    employeeListOptions.forEach((option) => {
-        option.addEventListener("pointerup", () => {
-            let empID = option.getAttribute("data-id");
-            teamLeader = empID;
-            teamLeaderDiv.innerHTML = `
-                <div class="name-card">
-                    <img src="${global.employeeAvatarOrFallback(employeeMap.get(empID))}" class="avatar">
-                    <span>${global.employeeToName(employeeMap.get(empID))}</span>
-                </div>
-            `;
+    const searchEmployees = async (q) => {
+
+        empList.innerHTML = "";
+
+        let res = await get_api(`/employee/employee.php/all?q=${q}`);
+        let employeeList = res.data.employees;
+        employeeList.forEach((emp) => {
+            employeeMap.set(emp.empID, emp);
+            let emp_name = global.employeeToName(emp);
+            let avatar = global.employeeAvatarOrFallback(emp);
+            let option = document.createElement("div");
+            option.classList.add("name-card");
+            option.innerHTML = `
+                <img src="${avatar}" class="avatar">
+                <span>${emp_name}</span>
+                <span class="material-symbols-rounded icon">
+                    person_add
+                </span>
+            `
+            option.setAttribute("data-id", emp.empID);
+            empList.appendChild(option);
+        });
+
+        // turns employeelist into a map of id to employee
+
+        let employeeListOptions = empList.querySelectorAll(".name-card");
+        employeeListOptions.forEach((option) => {
+            option.addEventListener("click", () => {
+
+                let empID = option.getAttribute("data-id");
+                employeeListOptions.forEach((option) => {
+                    option.classList.remove('selected');
+                    option.querySelector('.icon').innerHTML = "person_add";
+                })
+
+                assignedTeamLeader = employeeMap.get(empID);
+                let avatar = global.employeeAvatarOrFallback(assignedTeamLeader);
+                let name = global.employeeToName(assignedTeamLeader);
+                assignedTeamLeaderDiv.innerHTML = `
+                    <div class="icon">
+                        <img src="${avatar}" class="avatar">
+                    </div>
+                    <div class="name">
+                        ${name}
+                    </div>
+                `;
+                
+
+                option.querySelector('.icon').innerHTML = "check";
+                option.classList.add('selected');
+            
+            })
         })
-    })
+    }
 
+    const searchElem = popupDiv.querySelector(".search-input");
+    const roller = new global.ReusableRollingTimeout(
+        () => {searchEmployees(searchElem.value);},
+        150
+    );
+
+    searchElem.addEventListener("input", (e) => {
+        roller.roll();
+    });
+    roller.roll();
 
     console.log(popupDiv.innerHTML)
     console.log("[addproject] after popup")
@@ -3642,6 +3683,7 @@ async function projectPopup(id){
         let res = await get_api(`/employee/employee.php/all?q=${q}`);
         let employeeList = res.data.employees;
         employeeList.forEach((emp) => {
+            employeeMap.set(emp.empID, emp);
             let emp_name = global.employeeToName(emp);
             let avatar = global.employeeAvatarOrFallback(emp);
             let option = document.createElement("div");
