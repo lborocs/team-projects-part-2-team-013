@@ -1515,6 +1515,7 @@ export function popupModal(
         function completeModal(success) {
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
+            fullscreenDiv.style.pointerEvents = 'auto';
             document.removeEventListener("keydown", escListener);
 
             releaseMutex("popupModal", handle);
@@ -1566,6 +1567,7 @@ export function popupModal(
             </dialog>
         `;
         fullscreenDiv.style.filter = 'brightness(0.75)';
+        fullscreenDiv.style.pointerEvents = 'none';
 
         const content = popupDiv.querySelector('#popup-content');
         let dialog = popupDiv.querySelector('.popup-dialog');
