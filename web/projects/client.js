@@ -99,6 +99,8 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     }
 
     globalCurrentProject = project;
+    document.title = project.name
+
 
     let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
     if (!teamLeader) {
@@ -3852,6 +3854,10 @@ async function checkNextPage() {
 }
 
 async function searchAndRenderProjects() {
+
+    document.title = "Projects";
+    
+
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
 
     const search = projectSearchInput.value;
