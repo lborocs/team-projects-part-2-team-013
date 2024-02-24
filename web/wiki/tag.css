@@ -6,7 +6,7 @@
     padding-left: 0.75em;
     padding-right: 0.75em;
     border-radius: 1em;
-    background-color: #ebedef;
+    background-color: var(--cool-grey);
     color: #2d2e30;
     font-size: 14px;
     font-weight: 600;

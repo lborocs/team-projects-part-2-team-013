@@ -122,19 +122,25 @@
 
         .title:hover {
             cursor: pointer;
-            background-color: rgba(255,255,255,0.5);
+            background-color: var(--make-it-all-tint);
+            color: var(--make-it-all);
             border-radius: 3px;
             padding-left: 0.5rem;
             padding-right: 0.25rem;
             transition: padding 0.05s ease-out;
 
             .title-chevron {
-                color: black;
+                background-color: transparent;
+                color: var(--make-it-all);
+
+                & span {
+                    color: var(--make-it-all);
+                }
             }
         }
 
-        .title-chevron:hover {
-            background-color: transparent;
+        .title-chevron:active {
+            outline: none;
         }
 
         .title-text {
@@ -296,7 +302,7 @@
 }
 
 .personal-task:hover {
-    background-color: #388bff11;
+    background-color: var(--make-it-all-tint);
     cursor: pointer;
     transition: background-color 0.1s ease-out;
 
@@ -381,6 +387,18 @@
 
 #mobile-search-icon {
     display: none;
+}
+
+.no-results {
+    margin-right: auto;
+    opacity: 0.8;
+}
+
+#mobile-search-input {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
 }
 
 #mobile-new-personal {

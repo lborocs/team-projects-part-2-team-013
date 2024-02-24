@@ -74,3 +74,7 @@ The site should now function like normal on your local machine.
 10. instead of running the web server like above select `RUN DEVELOPMENT API`
 11. the api will need a copy of the invalidation service running so make sure you can run (and possibly build) it
 12. in global-api.js uncomment the const API_BASE and change it to the address of the php server you just started
+
+# Developer Resources
+
+[Documentation](https://github.com/lborocs/team-projects-part-2-team-013/tree/main/docs)

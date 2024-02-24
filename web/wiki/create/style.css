@@ -197,7 +197,7 @@ input[type="text"] {
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     border-radius: 10px;
     width: 100%;
-    border: solid 1px #e0e0e0;
+    border: solid 1px var(--border-clr);
     border-top: none;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -251,7 +251,7 @@ input[type="text"] {
     color: #555555;
     background-color: #eeeeee;
     border-radius: 10px;
-    border: solid 1px #e0e0e0;
+    border: solid 1px var(--border-clr);
     transition: 0.1s ease-out;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
 }
@@ -280,7 +280,7 @@ label {
 input[type="radio"]:checked + label {
     display: flex;
     justify-content: center;
-    background-color: #fff;
+    background-color: var(--white);
     color: #2d2e30;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     width: 100%;
@@ -314,8 +314,8 @@ input[type="radio"] + label {
     height: 4em;
     margin-bottom: 0;
     border-radius: 10px;
-    border: 1px solid #e0e0e0;
-    background-color: #fff;
+    border: 1px solid var(--border-clr);
+    background-color: var(--white);
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
 }
 
@@ -348,6 +348,7 @@ input[type="text"] {
     font-weight: 600;
     font-family: var(--font-family);
     color: #2d2e30;
+    background-color: var(--white);
 }
 
 input[type="text"]:focus-within {
@@ -382,10 +383,10 @@ input[type="text"]:focus-within {
     height: 4em;
     padding: 5px;
 
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-clr);
     border-radius: 10px;
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
-    background-color: #fff;
+    background-color: var(--white);
 }
 
 .tag-input ul {
@@ -438,8 +439,8 @@ input[type="text"]:focus-within {
     font-family: var(--font-family);
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    border: solid 1px #e0e0e0;
-    background-color: #fff;
+    border: solid 1px var(--border-clr);
+    background-color: var(--white);
     box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
 }
 
@@ -448,7 +449,7 @@ input[type="text"]:focus-within {
 }
 
 .ql-container{
-    background-color: #fff;
+    background-color: var(--white);
 }
 
 .editor-container {

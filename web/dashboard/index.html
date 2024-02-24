@@ -28,53 +28,91 @@
             <div class="sidebar"></div>
             
             <div class="main">
-                <div class="dashboard-options">
-                    <div class="title project-only">
-                        <a class="icon-button" href="/projects/">
+                
+                <div class="dashboard-container">
+
+                    <div class="dashboard-options colspan-2">
+                        <div class="title project-only">
+                            <a class="icon-button" id="back-to-project" href="/projects/">
+                                <div class="button-icon">
+                                    <span class="material-symbols-rounded">
+                                        arrow_back_ios_new
+                                    </span>
+                                </div>
+                            </a>
+                            
+                            <span id="project-name"></span>
+    
+    
+                        </div>
+    
+                        <div class="title training-only">
+                            Training Dashboard
+                        </div>
+                        
+                        <div class="icon-button no-box option tooltip tooltip-under" id="grid-shrink" tabindex="0">
+                            <div class="tooltiptext">Zoom in</div>
                             <div class="button-icon">
                                 <span class="material-symbols-rounded">
-                                    arrow_back_ios_new
+                                    zoom_in
+                                </span>
+                            </div> 
+                        </div>
+                        <div class="icon-button no-box option tooltip tooltip-under" id="grid-expand" tabindex="0">
+                            <div class="tooltiptext">Zoom out</div>
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">
+                                    zoom_out
                                 </span>
                             </div>
-                        </a>
-                        
-                        <span id="project-name"></span>
-
-
-                    </div>
-
-                    <div class="title training-only">
-                        Training Dashboard
-                    </div>
-                    
-                    <div class="icon-button no-box option tooltip tooltip-under" id="grid-shrink" tabindex="0">
-                        <div class="tooltiptext">Zoom in</div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                zoom_in
-                            </span>
-                        </div> 
-                    </div>
-                    <div class="icon-button no-box option tooltip tooltip-under" id="grid-expand" tabindex="0">
-                        <div class="tooltiptext">Zoom out</div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                zoom_out
-                            </span>
+                        </div>
+                        <div class="icon-button no-box option disabled tooltip tooltip-under" id="grid-undo" tabindex="0">
+                            <div class="tooltiptext">Undo</div>
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">
+                                    restart_alt
+                                </span>
+                            </div> 
                         </div>
                     </div>
-                    <div class="icon-button no-box option disabled tooltip tooltip-under" id="grid-undo" tabindex="0">
-                        <div class="tooltiptext">Undo</div>
-                        <div class="button-icon">
-                            <span class="material-symbols-rounded">
-                                restart_alt
-                            </span>
-                        </div> 
+
+                    <div class="dashboard-overview colspan-2">
+                        <div class="metric-card overviews">
+                            <div class="overview" id="assignedTasks">
+                                <div class="title-text">
+                                    Assigned Tasks
+                                </div>
+                                <div class="value">
+                                    0
+                                </div>
+                            </div>
+                            <div class="overview" id="completedTasks">
+                                <div class="title-text">
+                                    Completed Tasks
+                                </div>
+                                <div class="value">
+                                    0
+                                </div>  
+                            </div>
+                            <div class="overview warning" id="overdueTasks">
+                                <div class="title-text">
+                                    Overdue Tasks
+                                </div>
+                                <div class="value">
+                                    0
+                                </div>
+                            </div>
+                            <div class="overview" id="totalManhours">
+                                <div class="title-text">
+                                    Total Manhours
+                                </div>
+                                <div class="value">
+                                    0
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-
-                </div>
-                <div class="dashboard-container">
                     <div class="metric-card">
                         <div class="metric-title">
                             <div class="title-text">
@@ -89,8 +127,8 @@
                                 <canvas id="archivedChart"></canvas>
                             </div>
                         </div>
-                           
                     </div>
+
                     <div class="metric-card">
                         <div class="metric-title">
                             <div class="title-text">
@@ -101,41 +139,28 @@
                             <canvas id="tasksPerEmployeeChart"></canvas>
                         </div>
                     </div>
+
                     <div class="metric-card">
                         <div class="metric-title">
                             <div class="title-text">
                                 Man Hours per Employee
                             </div>
-                            <div class="icon-button no-box context-menu">
-                                <div class="button-icon">
-                                    <span class="material-symbols-rounded">
-                                        more_horiz
-                                    </span>
-                                </div>
-                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="workloadChart"></canvas>
                         </div>
                     </div>
+
                     <div class="metric-card">
                         <div class="metric-title">
                             <div class="title-text">
                                 Task Progress
                             </div>
-                            <div class="icon-button no-box context-menu">
-                                <div class="button-icon">
-                                    <span class="material-symbols-rounded">
-                                        more_horiz
-                                    </span>
-                                </div>
-                            </div> 
                         </div>
                         <div class="chart-box">
                             <canvas id="taskProgressChart"></canvas>
                         </div>
                     </div>
-                
                 </div>
             </div>
         </div>

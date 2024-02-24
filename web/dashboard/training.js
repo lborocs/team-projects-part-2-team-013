@@ -13,7 +13,13 @@ export async function init() {
     projectElements.forEach(element => {
         element.classList.add("norender");
     });
-    dashboardContainer.innerHTML = ``;
+
+    const metrics = document.querySelectorAll(".metric-card");
+    metrics.forEach(metric => {
+        metric.remove();
+    });
+    
+    
 
     //creates metric-cards to put the charts in
     renderEmptyMetric("popular-posts-chart", "Top Viewed Posts");

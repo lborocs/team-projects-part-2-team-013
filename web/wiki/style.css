@@ -40,7 +40,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: var(--white);
     font-weight: bold;
 }
 
@@ -133,22 +133,6 @@ body {
     background-color: var(--light-grey-bg);
 }
 
-.type-of-post {
-    display: flex;
-    flex-direction: row-reverse;
-    list-style: none;
-    justify-content: flex-end;
-    align-items: center;
-    font-weight: 600;
-    height: 3em;
-    align-items: center;
-    color: #555555;
-    padding: 6px;
-    padding-left: 0;
-    padding-right: 0;
-    background-color: #eeeeee;
-}
-
 .left-nav {
     display: flex;
     flex-direction: column;
@@ -157,7 +141,7 @@ body {
     gap: 1rem;
     margin: 1rem;
     margin-right: 0;
-    background-color: white;
+    background-color: var(--white);
     box-shadow: 0 4px 4px rgba(0,0,0,0.15);
     height: 100%;
     overflow-x: hidden;
@@ -166,7 +150,7 @@ body {
     top: 16px;
     bottom: auto;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-clr);
     border-top: 0;
     border-bottom: 0;
     .items {
@@ -196,12 +180,9 @@ body {
     font-weight: 600;
     color: #0f0f0f;
     width: 50%;
-    height: 3em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
+    height: 3.5rem;
+    padding: 0.5rem;
     text-align: center;
-    
-    
 }
 
 .category i {
@@ -281,7 +262,7 @@ body {
 
     .selected {
         transition: background-color 0.05s ease-out;
-        background-color: #fcefb4;
+        background-color: var(--make-it-all-highlight);
     }
 }
 
@@ -292,9 +273,9 @@ body {
     padding: 0.75em;
     padding-left: 1em;
     width: 100%;
-    background-color: #fff;
+    background-color: var(--white);
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--border-clr);
     box-shadow: 2px 2px 4px 0px rgba(0,0,0,0.1);
 
     transition: 0.05s ease-out;
@@ -404,8 +385,8 @@ input[type="text"] {
     width: 100%;
     padding: 0.5em;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    background-color: #fff;
+    border: 1px solid var(--border-clr);
+    background-color: var(--white);
     position: relative;
 
     & span {
@@ -419,7 +400,7 @@ input[type="text"] {
 
 #new-post {
     background-color: #3098ff;
-    color: white;
+    color: var(--white);
     white-space: nowrap;
     height: 3.5rem;
     border-radius: 8px;
@@ -443,8 +424,8 @@ input[type="text"] {
     padding: 0.5em;
     margin: 0em;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
-    background-color: #fff;
+    border: 1px solid var(--border-clr);
+    background-color: var(--white);
     color: #2d2e30;
 }
 
@@ -478,12 +459,11 @@ input[type="text"] {
     justify-self: center;
     width: 100%;
     font-weight: 600;
-    height: 3.5em;
     align-items: center;
     color: #555555;
-    background-color: #eeeeee;
-    border-radius: 8px;
-    border: solid 1px #e0e0e0;
+    background-color: var(--white);
+    border-radius: 11px;
+    border: solid 1px var(--border-clr);
     transition: 0.1s ease-out;
 }
 
@@ -505,14 +485,14 @@ label {
     align-items: center;
     cursor: pointer;
     transition: 0.1s ease-out;
-    background-color: #eeeeee;
+    background-color: var(--cool-grey);
 }
 
 
 input[type="radio"]:checked + label {
     display: flex;
     justify-content: center;
-    background-color: #fcefb4;
+    background-color: var(--make-it-all-highlight);
     color: #2d2e30;
     width: 100%;
 
@@ -525,7 +505,7 @@ input[type="radio"] + label {
 }
 
 input[type="radio"]:not(:checked) + label:hover {
-    background-color: rgb(219, 219, 219);
+    background-color: rgb(220, 220, 220);
     color: #2d2e30;
     transition-duration: 0.1s;
 }
@@ -533,7 +513,7 @@ input[type="radio"]:not(:checked) + label:hover {
 
 
 .sidebar {
-    z-index: 1;
+    z-index: 999;
     border-right: 2px solid rgba(0,0,0,0.1);
 }
 
@@ -559,7 +539,7 @@ input[type="text"]:focus {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    background-color: #fff;
+    background-color: var(--white);
     border-radius: 8px;
     border: none;
     box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));

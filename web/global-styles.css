@@ -16,6 +16,7 @@
     --confirm-button-colour: rgb(66,116,255);
     --view-selected-bg:rgb(246,246,245);
     --text-off-black: rgb(15,15,15);
+    --black: rgb(0,0,0);
     --white: rgb(255,255,255);
     --team-leader-text-clr: rgb(47,47,47);
     --overdue-red: rgb(192,70,70);
@@ -51,13 +52,33 @@
     --error-text: #920000;
 
     --sorting-color: #2c75cf;
+    --sorting-background: #f2f7ff;
 
-    --make-it-all: #ffbf27;
-    --make-it-all-tint: #ffbf2730;
+    --make-it-all: rgb(250,190,0);
+    --make-it-all-shade: #e3ac00;
+    --make-it-all-tint: #fff8eb;
+    --make-it-all-highlight: #fcefb4;
+    --cool-grey: #ebedef;
 
 
 }
 
+/* if make-it-all ever want to do dark mode they just have to change the css variables in :root here  */
+/* @media (prefers-color-scheme: dark) {
+
+    body {
+        background-color: var(--white) !important;
+    }
+
+    * {
+        box-shadow: none !important;
+    }
+
+    :root {
+        e.g. --white: black;
+    }
+
+} */
 
 
 body {
@@ -65,10 +86,18 @@ body {
     padding: 0;
     font-family: var(--font-family);
     line-height: 1.5;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    
     /* caret-color: transparent; */
 }
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+
 }
 
 input {
@@ -111,12 +140,12 @@ input {
 
 
 .breadcrumb-navigator:hover {
-    background-color: rgb(244,244,244);
-    color: rgb(65,65,65);
+    background-color: var(--make-it-all-tint);
+    color: var(--make-it-all);
 }
 
 .breadcrumb-divider {
-    color: #ffaa00;
+    color: var(--make-it-all);
     user-select: none;
     padding: 0;
 }
@@ -124,7 +153,6 @@ input {
 .tooltip {
     position: relative;
     display: inline-block;
-    
 }
   
 .tooltip .tooltiptext {
@@ -138,7 +166,7 @@ input {
 
     background-color: #2f2f2f;
     box-shadow: 0 0 6px rgba(0,0,0,0.15);
-    color: #ffffff;
+    color: var(--white);
     text-align: center;
     padding: 5px 2px;
     border-radius: 3px;
@@ -219,13 +247,18 @@ input {
     border-color: #2f2f2fcc transparent transparent transparent;
 }
 
-.tooltip:hover .tooltiptext {
-    font-family: var(--font-family);
-    visibility: visible;
-    opacity: 1;
-    transition: opacity 0.3s ease-out, transform 0.1s ease-out;
-    transform: translate(-50%, -10%);
+/* restricts the tooltips to only appear on desktop, as hover is handled badly on mobile */
+@media (min-width: 768px) {
+    .tooltip:hover .tooltiptext {
+        font-family: var(--font-family);
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.3s ease-out, transform 0.15s ease-out;
+        transition-behavior: allow-discrete;
+        transform: translate(-50%, -10%);
+    }
 }
+
 
 
 .avatar {
@@ -233,7 +266,7 @@ input {
     height: 1.75rem;
     border-radius: 50%;
     aspect-ratio: 1;
-    border: solid 1px var(--white, white);
+    border: solid 1px var(--white);
     transition: 0.1s ease-out;
     z-index: 0;
 }
@@ -253,7 +286,7 @@ input {
 
 .sidebar {
     top: 0;
-    background-color: #fff;
+    background-color: var(--white);
     color: #1f2328;
     
     font-size: 20px;
@@ -380,7 +413,7 @@ input {
 }
 
 .sidebar-item.selected::before {
-    background-color: #ffc400;
+    background-color: var(--make-it-all);
     transition: background-color 0.1s ease-out;
 }
 
@@ -519,7 +552,7 @@ input {
 
 .topbar {
     position: relative;
-    background-color: white;
+    background-color: var(--white);
     display: flex;
     flex-direction: row;
     justify-content: space-between; 
@@ -767,9 +800,66 @@ button:hover {
 } */
 
 
-@media (max-width: 800px) {
+@media (max-width: 768px) {
     #global-search {
         display: none;
+    }
+
+    .sidebar{
+        margin-left: -100%;
+        position: fixed;
+        background-color: var(--white);
+        z-index: 1;
+        transition: 0.1s ease-out;
+        border-radius: 0;
+        height: 100dvh;
+        gap: 0;
+        box-shadow: 0 0 24px 12px rgba(0,0,0,0.2);
+
+        .mobile-sidebar-header {
+            display: flex;
+        }
+    }
+
+    .sidebar-item {
+        font-size: 1.5rem;
+
+        & p {
+            margin: 0;
+        }
+    }
+
+    .sidebar-item:last-child {
+        position: relative;
+        bottom: 0;
+    }
+
+    .visible {
+        margin-left: 0;
+        position: fixed;
+        top: 0;
+        z-index: 9999;
+        transition: 0.2s ease-out;
+        width: min(70%, 300px);
+    }
+    
+    .topbar {
+       
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        background-color: var(--white);
+        box-shadow: 0 0 4px rgba(0,0,0,0.1);
+
+        
+
+        .fullLogo {
+            display: none;
+        }
+
+        .left {
+            overflow: clip;
+        }
     }
 
     .notification-popover > .popover-content {
@@ -789,22 +879,22 @@ button:hover {
         display: flex;
     }
 
+    /* 
+        breadcrumb queue, only shows last 2 nav elements so they fit on the bar.
+        lets them tap back to many previous pages.
+    */
     .breadcrumb-navigator {
         font-weight: 600;
         color: black;
     }
-
     .breadcrumb-navigator {
         display: none;
     }
-
-    .breadcrumb-divider {
-        display: none !important; /* once again needed to override the google material symbols */
-    }
-
-    .breadcrumb > .breadcrumb-navigator:last-child {
+    .breadcrumb > .breadcrumb-navigator:last-child,
+    .breadcrumb > .breadcrumb-navigator:nth-last-child(2),
+    .breadcrumb > .breadcrumb-navigator:nth-last-child(3) {
         display: flex;
-    }
+    } 
 
 }
 
@@ -829,7 +919,7 @@ sup {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    background-color: #fff;
+    background-color: var(--white);
     border-radius: 8px;
     border: none;
     box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));

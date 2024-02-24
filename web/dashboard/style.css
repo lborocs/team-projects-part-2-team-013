@@ -1,15 +1,22 @@
 .dashboard-container {
     display: grid;
-    gap: 16px;
+    gap: 1.5rem;
     overflow-y: auto;
     height: 100%;
     width: 100%;
-    padding: 16px;
+    padding: 1.5rem calc(1.5rem - 10px); /* -10px horizontal is to account for the stable scrollbar gutter on each side */
     margin: 0;
     background-color: var(--light-grey-bg);
     grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: minmax(400px, 400px);
+    grid-auto-rows: auto;
+    grid-template-columns: repeat(2,minmax(0,1fr));
     transition-duration: 0s;
+
+    scrollbar-gutter: stable both-edges;
+}
+
+.colspan-2 {
+    grid-column: span 2;
 }
 
 .dashboard-container.fit-screen {
@@ -58,8 +65,11 @@
 
 .metric-card {
     position: relative;
-    padding: 10px;
-    background-color: var(--white, #fff);
+    padding: 1rem;
+    min-height: 22rem;
+    height: 22rem;
+
+    background-color: var(--white);
     border-radius: 5px;
     box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
     display: flex;
@@ -131,7 +141,7 @@
 }
 
 .metric-card.add-metric:hover {
-    background-color: var(--white, #fff);
+    background-color: var(--white);
     cursor: pointer;
     transition: background-color 0.1s ease-out, transform 0.05s ease-in;
     outline: 2px solid var(--box-shadow-clr);
@@ -143,8 +153,11 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    width: calc(100% - 40px);
-    height: calc(100% - 40px);
+    gap: min(4rem, 10%);
+    width: calc(100% - 80px);
+    max-height: calc(100% - 60px);
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .chart-box {
@@ -162,6 +175,45 @@
 }
 
 
+.metric-card.overviews {
+    display: flex;
+    flex-direction: row;
+    height: 10rem;
+    min-height: 10rem;
+    gap: 1.5rem;
+
+    .overview {
+        flex: 1;
+        border-radius: 3px;
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+
+        color: var(--text-off-black);
+        font-weight: 600;
+        font-size: 1.125rem;
+
+        .value {
+            font-size: 2rem;
+            font-weight: 700;
+        
+        }
+
+    }
+
+    .overview:hover {
+        cursor: pointer;
+        background-color: var(--light-grey-bg, #f1f1f1);
+    
+    }
+}
+
+
 .dashboard-options {
     display: flex;
     flex-direction: row;
@@ -169,9 +221,7 @@
     align-items: center;
     gap: 10px;
     padding: 5px;
-    background-color: white;
     z-index: 2;
-    box-shadow: 0px 0px 12px 0px #0000003d;
 
     .option {
         color: var(--text-off-black, #0f0f0f);
@@ -264,7 +314,7 @@ a {
     align-items:flex-start;
     width: fit-content;
     max-height: 800px;
-    background-color: #fff;
+    background-color: var(--white);
     border: none;
     border-radius: 8px;
     box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));
@@ -506,6 +556,11 @@ a {
         transition: background-color 0.1s ease-out;
         &:hover {
             background-color: var(--light-gray-bg, #f1f1f1);
+
+            .open-in-new {
+                opacity: 1;
+                transition: opacity 0.1s ease-out;
+            }
         }
 
         .task-name {
@@ -565,10 +620,15 @@ a {
                 }
             
             }
+
+        }
+
+        .open-in-new {
+            opacity: 0;
+            transition: opacity 0.1s ease-out;
         }
     
     }
-
 
 }
 

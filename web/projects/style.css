@@ -24,7 +24,7 @@
         padding: 0.5rem;
         padding-right: 0;
         margin: 0;
-        background-color: white;
+        background-color: var(--white);
         border-radius: 4px;
         height: calc(100% - 3rem);
 
@@ -68,7 +68,7 @@
         gap: 0.5em;
         border-radius: 4px;
         line-height: 1.25;
-        color: black;
+        color: var(--black);
 
         .icon {
             display: flex;
@@ -127,7 +127,7 @@
             border-bottom: solid 1px var(--border-clr);
             & a {
                 text-decoration: none;
-                color: black;
+                color: var(--black);
                 display: flex;
                 padding: 10px 8px;
             }
@@ -147,9 +147,9 @@
         }
 
         & tr:last-child {
-            border-bottom: solid 2px var(--border-clr, #e0e0e0);
+            border-bottom: solid 2px var(--border-clr);
             & td {
-                border-bottom: solid 2px var(--border-clr, #e0e0e0);
+                border-bottom: solid 2px var(--border-clr);
             }
         }
 
@@ -168,7 +168,7 @@
             transition-duration: 0.05s;
             .project-actions {
                 opacity: 1;
-                color: black;
+                color: var(--black);
             }
         }
 
@@ -176,10 +176,10 @@
     
     #projects-table thead th {
         position: sticky;
-        background-color: white;
+        background-color: var(--white);
         top: 0;
         z-index: 10;
-        border-bottom: solid 2px var(--border-clr, #e0e0e0);
+        border-bottom: solid 2px var(--border-clr);
     }
 
     .project-actions {
@@ -195,14 +195,14 @@
     .project-actions:hover {
         opacity: 1;
         transition: 0.05s ease-out;
-        background-color: white !important;
-        outline: solid 1px var(--border-clr, #e0e0e0);
+        background-color: var(--white) !important;
+        outline: solid 1px var(--border-clr);
         outline-offset: -1px;
     }
 
     .project-actions:active {
         background-color: #f0efef !important;
-        outline: solid 1px var(--border-clr, #e0e0e0);
+        outline: solid 1px var(--border-clr);
         outline-offset: -1px;
     }
 
@@ -366,7 +366,7 @@
     display: grid;
     scrollbar-gutter: stable;
     &::-webkit-scrollbar-track {
-        background-color: white;
+        background-color: var(--white);
     }
     
 }
@@ -387,11 +387,11 @@
     top: 0;
     color: #555555;
     z-index: 1;
-    border-bottom: solid 2px var(--border-clr, #e0e0e0);
+    border-bottom: solid 2px var(--border-clr);
     background-color: inherit;
     flex: 0 0 3em;
     .selected {
-        background-color: white;
+        background-color: var(--white);
         color: #000000;
         box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
         transition: 0.15s ease-out;
@@ -476,7 +476,7 @@
     border-bottom-right-radius: 0;
     border-top-right-radius: 0;
 
-    background-color: white;
+    background-color: var(--white);
     box-shadow: 0 4px 4px rgba(0,0,0,0.1),
                 0 0px 8px rgba(0,0,0,0.1);
 
@@ -736,20 +736,30 @@
 }
 
 .add-task {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-end;
+
     font-size: 0.9em;
     font-weight: 500;
-    margin-top: 0px;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    padding-top: 0.2em;
-    padding-bottom: 0.2em;
-    transition: 0.1s ease-out;
-    margin-left: auto;
-    margin-right: auto;
+
+    padding: 0.2em 0.5em;
     margin-top: auto;
+    margin-bottom: 0;
+
+    gap: 0.25em;
+
+    transition: 0.1s ease-out;
+
     border-radius: 4px;
     cursor: pointer;
     user-select: none;
+
+    & span {
+        line-height: 1;
+        font-size: 20px;
+    }
 }
 
 .add-task {
@@ -824,6 +834,9 @@
     }
     .add-task {
         color: var(--not-started-title-clr, rgb(73, 41, 14));
+        & span {
+            color: var(--not-started-title-clr, rgb(73, 41, 14));
+        }
     };
 }
 
@@ -841,6 +854,9 @@
     }
     .add-task {
         color: var(--in-progress-title-clr, rgb(24, 51, 71));
+        & span {
+            color: var(--in-progress-title-clr, rgb(24, 51, 71));
+        }
     };
 }
 
@@ -858,13 +874,10 @@
     }
     .add-task {
         color: var(--finished-title-clr, rgb(28, 56, 41));
+        & span {
+            color: var(--finished-title-clr, rgb(28, 56, 41));
+        }
     };
-}
-
-.delete-button {
-    position: absolute;
-    bottom: 0.5rem;
-    right: 0.5em;
 }
 
 .tasklist {
@@ -955,10 +968,10 @@
     box-shadow: none;
     border-collapse: separate;
     border-spacing: 0;
-    background-color: white;
+    background-color: var(--white);
 
     & thead {
-        background-color: #fff;
+        background-color: var(--white);
         color: var(--text-off-black, #0f0f0f);
         font-weight: 700;
     }
@@ -972,7 +985,7 @@
         text-align: left;
         position: sticky;
         top: 0;
-        background-color: white;
+        background-color: var(--white);
         z-index: 9999;
 
         padding-left: 1em;
@@ -1048,9 +1061,9 @@
 
     
     & tr:nth-last-child(2) {
-        border-bottom: solid 2px var(--border-clr, #e0e0e0);
+        border-bottom: solid 2px var(--border-clr);
         & td {
-            border-bottom: solid 2px var(--border-clr, #e0e0e0);
+            border-bottom: solid 2px var(--border-clr);
         }
     }
 
@@ -1104,7 +1117,7 @@
 }
 
 #list-add-row:hover {
-    background-color: white;
+    background-color: var(--white);
     cursor: pointer;
 
     color: var(--text-off-black, #0f0f0f);
@@ -1267,7 +1280,6 @@
 .taskRow:hover {
     cursor: pointer;
     position: relative;
-    z-index: 100;
     background-color: #daebffaa;
     box-shadow: 0 0 2px 0 rgba(94, 137, 255, 1);
     transition: 0.05s ease-out;  
@@ -1390,7 +1402,7 @@
     align-items:flex-start;
     width: fit-content;
     max-height: 800px;
-    background-color: #fff;
+    background-color: var(--white);
     border: none;
     border-radius: 8px;
     box-shadow: 0px 4px 14px 0px var(--box-shadow-lighter-clr, rgba(0,0,0,0.15));
@@ -1457,10 +1469,14 @@
     color: var(--white, white);
 }
 
-.edit-button {
-    position: absolute;
-    bottom: 1rem;
-    left: 0.5rem;
+.edit-and-delete {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5em;
+    width: 100%;
+    margin-top: auto;
 }
 
 .createButton:hover {
@@ -1586,18 +1602,6 @@
 }
 
 
-
-
-.edit-button {
-    position: absolute;
-    bottom: 0.5em;
-    left: 0.5em;
-    padding: 0.3em;
-    cursor: pointer;
-    transition: 0.2s ease-out;
-}
-
-
 #task-create-avatar {
     width: 2.4em;
     height: 2.4em;
@@ -1680,9 +1684,9 @@
     width: fit-content;
     height: 240px;
     max-height: 800px;
-    background-color: #fff;
+    background-color: var(--white);
     border-radius: 10px;
-    border: 1px solid var(--border-clr, #e0e0e0);
+    border: 1px solid var(--border-clr);
     box-shadow: 0px 0px 4px 1px var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
     top: 50%;
     transform: translate(0, -50%);
@@ -1853,10 +1857,9 @@
     }
 
     & th:not(:last-child):hover {
-        background-color: #f8faff;
+        background-color: var(--sorting-background) !important;
         transition-duration: 0.05s;
-        outline: solid 1px #e2eaff;
-        outline-offset: -1px;
+        
     }
 
     & th:hover > .header-td .icon {
@@ -1883,7 +1886,7 @@
             width: auto;
             aspect-ratio: 1;
             user-select: none;
-            color: var(--icon-clr, #777777);
+            color: var(--icon-clr);
             transition: 0.1s ease-out;
 
             & span {
@@ -1896,10 +1899,10 @@
 
     .sorting-by {
         color: var(--sorting-color);
-        background-color: #f8faff !important;
+        background-color: var(--sorting-background) !important;
         transition-duration: 0.05s;
-        outline: solid 1px #e2eaff;
-        outline-offset: -1px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
     
         .icon {
             opacity: 1;
@@ -1971,9 +1974,9 @@ td:has(#more) {
 #more:hover {
     cursor: pointer;
     opacity: 1;
-    background-color: white;
+    background-color: var(--white);
     transition-duration: 0.05s;
-    outline: solid 1px var(--border-clr, #e0e0e0);
+    outline: solid 1px var(--border-clr);
     outline-offset: -1px;
 
 }
@@ -2008,4 +2011,23 @@ td:has(#more) {
 
 #add-man-hours {
     height: 20px;
+}
+
+#mobile-search-icon {
+    display: none;
+}
+
+#mobile-search-input {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+
+#mobile-new-task {
+    display: none;
+}
+
+.mobile-icons {
+    display: none;
 }
