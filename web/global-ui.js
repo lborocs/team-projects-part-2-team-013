@@ -1416,10 +1416,10 @@ document.addEventListener("keyup", (e) => {
     });
 });
 
-const actionInvite = document.querySelector(".action-invite") || null;
+const actionInvite = document.querySelector(".action-invite");
 
-if (document.querySelector(".action-invite") !== null) {
-    document.querySelector(".action-invite").addEventListener("pointerup", () => {
+if (actionInvite) {
+    actionInvite.addEventListener("pointerup", () => {
         invitePopup();
     });
 }
@@ -1461,10 +1461,6 @@ function invitePopup() {
 }
 
 
-window.onload = function() {
-    let inviteButton = document.querySelector(".action-invite")
-    inviteButton?.addEventListener("click", () => {
-        invitePopup()
 /**
  * Displays a popup modal with the given parameters.
  * @param {boolean} skippable - Indicates whether the modal can be skipped.
