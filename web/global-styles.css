@@ -941,6 +941,14 @@ sup {
         .small-icon {
             margin-left: auto;
         }
+
+        #modal-icon {
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            margin-right: 0.25em;
+        }
+
     }
 
     .modal-actions {
@@ -949,8 +957,6 @@ sup {
             display: flex;
             justify-content: space-between;
         }
-
-        margin-top: 1em;
 
         .modal-buttons {
             display: flex;
@@ -998,7 +1004,3 @@ sup {
     }
 }
 
-.icon-button.modal-skippable-active:hover {
-    background-color: #ffe4dd !important;
-    transition: background-color 0.05s ease-out;
-}
