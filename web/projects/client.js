@@ -1,5 +1,6 @@
 import * as global from "../global-ui.js";
 import { animate, getEmployeesById } from "../global-ui.js";
+import * as contextMenu from "../ui-elements/context-menu.js";
 
 const RENDER_COLUMN = 1;
 const RENDER_LIST = 2;
@@ -687,19 +688,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             let contextMenuButton = taskCard.querySelector(".context-menu");
             let contextMenuPopover = taskCard.querySelector(".context-menu-popover");
 
-            contextMenuButton.addEventListener("click", (e) => {
-                e.stopPropagation();
-                //closes the rest of them first
-                let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
-                contextMenus.forEach(menu => {
-                    if (menu !== contextMenuPopover) {
-                        menu.classList.remove("visible");
-                        menu.parentElement.classList.remove("active");
-                    }
-                });
-                contextMenuPopover.classList.toggle("visible");
-                contextMenuButton.classList.toggle("active");
-            });
+            contextMenu.addEventListeners([contextMenuButton]);
 
             function handleTaskStateChange(item, state) {
                 console.log(`[contextMenuItemOnClick] ${item.classList[1]} clicked`);
@@ -790,15 +779,6 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 });
             });
 
-            //have to include mouse up and down this is crazy event propagation
-            contextMenuButton.addEventListener("click", (e) => {
-                e.stopPropagation();
-            });
-
-            contextMenuButton.addEventListener("click", (e) => {
-                e.stopPropagation();
-            });
-
             let taskStatusContainers = taskCard.querySelectorAll(".status-container");
             taskStatusContainers.forEach((icon) => {
 
@@ -812,30 +792,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             
             })
 
-            //closes the context menu if they click outside
-            document.addEventListener("click", (e) => {
-                if (!contextMenuButton.contains(e.target)) {
-                    contextMenuPopover.classList.remove("visible");
-                    contextMenuButton.classList.remove("active");
-                }
-            });
-
-            taskCard.addEventListener("contextmenu", (e) => {
-                e.preventDefault(); //stop the browser putting its own right click menu over the top
-                e.stopPropagation();
-            
-                //closes the rest of them first
-                let contextMenus = document.querySelectorAll(".context-menu-popover.visible");
-                contextMenus.forEach(menu => {
-                    if (menu !== contextMenuPopover) {
-                        menu.classList.remove("visible");
-                        menu.parentElement.classList.remove("active");
-                    }
-                });
-            
-                contextMenuPopover.classList.toggle("visible");
-                contextMenuButton.classList.toggle("active");
-            });
+            contextMenu.registerRightClickElement(taskCard);
 
 
             const focusListener = (e) => {
