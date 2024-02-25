@@ -119,10 +119,10 @@ async function updatePosts() {
 }
 
 
-async function fetchPosts(isTechnical = 1, searchQuery = "", selectedTags = []) {
+async function fetchPosts(isTechnical = null, searchQuery = "", selectedTags = []) {
 
     const tagParam = selectedTags.length ? `&tags=${selectedTags.join(",")}` : "";
-    const res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical}&q=${searchQuery}${tagParam}`);
+    const res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ?? ''}&q=${searchQuery}${tagParam}`);
 
     console.log(res);
 
