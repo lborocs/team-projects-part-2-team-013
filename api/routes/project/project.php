@@ -130,6 +130,7 @@ register_route(new Route(
     [
         "REQUIRES_BODY",
         "URL_PATH_ARGS_LEGAL",
+        "IDEMPOTENT_ON_NO_TRACK"
     ]
 ));
 

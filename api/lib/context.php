@@ -131,9 +131,33 @@ function contextual_run() {
         );
     }
 
+    if (
+        array_key_exists("Early-Data", apache_request_headers()) && !is_idempotent($ctx, $route)
+    ) {
+        error_log("Rejecting 0-RTT request on $ctx->request_method $route->callable");
+        respond_too_early();
+    }
+
     // all checks passed
     $route->run($ctx, $args ?? "");
     respond_illegal_implementation("Api route left dangling, catching lack of response after run call");
 };
+
+function is_idempotent(RequestContext $ctx, Route $route) {
+
+    if ($ctx->request_method != "GET") {
+        return false;
+    }
+
+    if (in_array("NOT_IDEMPOTENT", $route->route_flags)) {
+        return false;
+    }
+
+    if (in_array("IDEMPOTENT_ON_NO_TRACK", $route->route_flags) && !$ctx->no_track) {
+        return false;
+    }
+
+    return true;
+}
 
 ?>

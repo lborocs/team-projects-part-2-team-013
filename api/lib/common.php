@@ -8,7 +8,7 @@ require_once("lib/response.php");
 
 class Route {
     public Array $allowed_methods;
-    private string $callable;
+    public string $callable;
     public int $required_auth_level;
     public string $route;
     public Array $route_flags;

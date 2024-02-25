@@ -142,6 +142,12 @@ function respond_request_method_disallowed($allowed_methods) {
     );
 }
 
+function respond_too_early() {
+    // error code doesnt really matter cause the user agent
+    // should handle this, not the site/app
+    respond_error("User request is not elegible for 0-RTT", ERROR_BAD_REQUEST, 425);
+}
+
 function respond_database_failure(bool $inserting=false) {
     if ($inserting) {
         respond_internal_error(ERROR_DB_INSERTION_FAILED);
