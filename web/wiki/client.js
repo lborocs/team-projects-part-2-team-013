@@ -20,13 +20,37 @@ if (document.location.hash == "#nontechnical") {
     document.getElementById("technical").checked = false;
 }
 
-function setCurrentBreadcrumb(nonTechnical) {
-    const label = nonTechnical ? "Non-Technical" : "Technical";
-    global.setBreadcrumb(["Wiki", label], ["/wiki/", `#${nonTechnical ? 'non' : ''}technical`]);
+function setCurrentBreadcrumb(category) {
+    console.error(category);
+    category = parseInt(category);
+    let label;
+    if (category === 2) {
+        label = "All";
+    } else if (category === 0) {
+        label = "Non-Technical";
+    } else if (category === 1) {
+        label = "Technical";
+    } else {
+        console.error("Invalid category");
+    }
+
+    global.setBreadcrumb(["Wiki", label], ["/wiki/", `#${label.toLowerCase().replace(" ", "-")}`]);
 }
 
-function setSearchPlaceholder(nonTechnical) {
-    searchInput.placeholder = nonTechnical ? "Search non-technical posts" : "Search technical posts";
+function setSearchPlaceholder(category) {
+    let placeholder;
+    category = parseInt(category);
+    if (category === 2) {
+        placeholder = "Search all posts";
+    } else if (category === 0) {
+        placeholder = "Search non-technical posts";
+    } else if (category === 1) {
+        placeholder = "Search technical posts";
+    } else {
+        console.error("Invalid category");
+    }
+
+    searchInput.placeholder = placeholder;
 }
 
 
@@ -97,16 +121,24 @@ async function searchPosts() {
     let tags = [];
 
     var selectedTags = document.querySelectorAll('.tag.selected');
+    var selectedCategory = document.querySelector('input[name="category"]:checked');
+    var category = selectedCategory.value;
+    category = parseInt(category);
 
     selectedTags.forEach((tag) => {
         tags.push(tag.getAttribute("tagID"));
     });
-    var selectedCategory = document.querySelector('input[name="category"]:checked');
+    
+    if (category === 2) {
+        await fetchPosts(search, tags);
+        setCurrentBreadcrumb(category);
+        setSearchPlaceholder(category);
+    } else {
+        await fetchPosts(search, tags, category);
+        setCurrentBreadcrumb(category);
+        setSearchPlaceholder(category);
+    }
 
-    setCurrentBreadcrumb(selectedCategory.value == "0");
-    setSearchPlaceholder(selectedCategory.value == "0");
-
-    await fetchPosts(selectedCategory.value, search, tags);
 }
 
 
@@ -119,10 +151,14 @@ async function updatePosts() {
 }
 
 
-async function fetchPosts(isTechnical = null, searchQuery = "", selectedTags = []) {
-
+async function fetchPosts(searchQuery = "", selectedTags = [], isTechnical = 2) {
     const tagParam = selectedTags.length ? `&tags=${selectedTags.join(",")}` : "";
-    const res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ?? ''}&q=${searchQuery}${tagParam}`);
+    var res;
+    if (isTechnical === 2) {
+        res = await get_api(`/wiki/post.php/posts?q=${searchQuery}${tagParam}`);
+    } else {
+        res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ?? ''}&q=${searchQuery}${tagParam}`);
+    }
 
     console.log(res);
 
