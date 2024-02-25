@@ -228,7 +228,7 @@ input {
 .tooltip.tooltip-left .tooltiptext {
     top: 100%;
     right: 0;
-    transform: translate(-50%, 0);
+    transform: translate(0, 0);
 }
 
 .tooltip.tooltip-left .tooltiptext::after {
