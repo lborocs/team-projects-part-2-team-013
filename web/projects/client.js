@@ -839,25 +839,42 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 }
 
                 taskCards.forEach((card) => {
+                    if (card == taskCard) { return };
+                    card.classList.remove("clicked")
+                    card.classList.remove("task-focussed")
+                })
+                taskCard.classList.add("task-focussed")
+                explainer.classList.remove("hidden")
+                overlay.classList.remove("hidden")
+                showTaskInExplainer(taskCard);
+            }
+
+            const clickListener = (e) => {
+                if (e.target.classList.contains("context-menu")) {
+                    return
+                }
+                if (e.button == 2) {
+                    return
+                }
+
+                taskCards.forEach((card) => {
+                    if (card == taskCard) { return };
                     card.classList.remove("clicked")
                     card.classList.remove("task-focussed")
                 })
                 taskCard.classList.add("clicked")
                 taskCard.classList.add("task-focussed")
-                explainer.classList.remove("hidden")
-                overlay.classList.remove("hidden")
 
-                showTaskInExplainer(taskCard);
             }
 
-            taskCard.addEventListener("click", focusListener);
+            taskCard.addEventListener("pointerdown", clickListener);
             taskCard.addEventListener("focus", focusListener);
 
             taskCard.addEventListener("dragstart", () => {
                 taskCard.classList.add("beingdragged");
             });
 
-            taskCard.addEventListener("dragend", () => {
+            const focusOutListener = (e) => {
                 taskCard.classList.remove("beingdragged");
                 taskCard.classList.remove("clicked");
 
@@ -871,7 +888,11 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
                 updateTaskState(taskCard);
                 calculateTaskCount()
-            });
+            }
+
+            taskCard.addEventListener("dragend", focusOutListener);
+            taskCard.addEventListener("pointerup", focusOutListener);
+            taskCard.addEventListener("focusout", focusOutListener);
         });
     }
 
