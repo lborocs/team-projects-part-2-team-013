@@ -402,14 +402,22 @@ input[type="text"] {
     }
 }
 
-#new-post {
-    background-color: #3098ff;
-    color: var(--white);
+.search-and-button > .search-row-button {
     white-space: nowrap;
     height: 3.5rem;
     border-radius: 8px;
-    border: 1px solid #f4f4f4;
+    border: 1px solid var(--border-clr);
+}
 
+#mobile-filters {
+    background-color: var(--white);
+    color: var(--text-off-black);
+    display: none;
+}
+
+#new-post {
+    background-color: #3098ff;
+    color: var(--white);
 }
 
 #new-post:hover {

@@ -32,9 +32,11 @@
         width: 100%;
     }
 
-    #newPost {
-        font-size: 0.9em;
-        text-align: center;
-        white-space: nowrap;
+    #new-post {
+        display: none;
+    }
+
+    #mobile-filters {
+        display: flex;
     }
 }

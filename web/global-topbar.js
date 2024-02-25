@@ -61,7 +61,7 @@ notificationPopover.innerHTML = `
             Activity
             <div class="text-button no-box" id="read-all" tabindex="0">
                 <div class="button-text">
-                    Read all
+                    Mark all as read
                 </div>
                 <div class="button-icon">
                     <span class="material-symbols-rounded">
