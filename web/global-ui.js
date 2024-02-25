@@ -1451,7 +1451,7 @@ function invitePopup() {
         emailInput.id = "invite-email";
         content.appendChild(emailInput);
 
-        emailInput.addEventListener("keypress", (e) => {
+        emailInput.addEventListener("input", (e) => {
             emailValue = emailInput.value;
             if (emailInput.value.includes("@") && emailInput.value.includes(".")){
                 actionButton.classList.remove("disabled");
