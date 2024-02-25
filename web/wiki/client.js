@@ -42,6 +42,7 @@ class Tag {
         const parent =  this.tag.hasPosts ? deleteTagsHasPostContainer : deleteTagsNoPostContainer;
 
         elem.classList.add('tag');
+        elem.tabIndex = 0;
         elem.setAttribute('tagID', this.tag.tagID);
         elem.setAttribute('name', this.tag.name);
         elem.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.tag.name}&nbsp;`;
@@ -50,7 +51,8 @@ class Tag {
         this.addEventListeners();
     }
     addEventListeners() {
-        this.element.addEventListener('click', () => {
+
+        const deleteListener = () => {
             if (this.element.classList.contains('selectedDel')) {
                 this.element.classList.toggle('selectedDel');
                 tagsToDelete.delete(this.tag.tagID);
@@ -63,6 +65,14 @@ class Tag {
             }
             else {
                 document.getElementById("confirm-button").classList.add("disabled");
+            }
+        };
+
+
+        this.element.addEventListener('click', deleteListener);
+        this.element.addEventListener('keydown', (event) => {
+            if (event.key === "Enter") {
+                deleteListener();
             }
         });
     }
@@ -164,6 +174,7 @@ async function fetchTags() {
 function renderTag(tag) {
     const elem = document.createElement('div');
     elem.classList.add('tag');
+    elem.tabIndex = 0;
     elem.setAttribute('tagID', tag.tagID);
     elem.setAttribute('name', tag.name);
     elem.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag.name}`;
@@ -171,6 +182,13 @@ function renderTag(tag) {
     elem.addEventListener('click', () => {
         elem.classList.toggle('selected');
         searchPosts();
+    });
+
+    elem.addEventListener('keydown', (event) => {
+        if (event.key === "Enter") {
+            elem.classList.toggle('selected');
+            searchPosts();
+        }
     });
 
     tagSelection.appendChild(elem);
@@ -232,11 +250,6 @@ function setUpPostsEventListeners() {
             let postID = post.getAttribute("data-postID")
             window.location.href = `/wiki/create/#${postID}`;
         });
-        post.addEventListener("click", () => {
-            let postID = post.getAttribute("data-postID")
-            console.log("Post clicked")
-            window.location.href = `/wiki/post/#${postID}`;
-        })
     })
 }
 
@@ -251,7 +264,8 @@ function setUpPostsEventListeners() {
  * @param {Array<string>} tags - array of tags associated with the post. Defaults to ["No Tags"] to avoid null checks.
  */
 function renderPost(postID, title, author, isTechnical, tags) {
-    const post = document.createElement("div")
+    const post = document.createElement("a")
+    post.href = `/wiki/post/#${postID}`
     post.className = "post"
     post.setAttribute("data-postID", postID)
     post.setAttribute("data-isTechnical", isTechnical)

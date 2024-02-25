@@ -1697,3 +1697,74 @@ export function trimText(text, desiredLength) {
         return text;
     }
 }
+
+var arrowNavGeneration = 0;
+export function applyArrowNavigable() {
+
+    const selectors = [
+        '[tabindex]:not([tabindex="-1"])',
+        'a[href]:not([tabindex="-1"])',
+    ]
+
+    
+
+    const elements = document.querySelectorAll(
+        selectors.join(", ")
+    );
+
+    console.log(`[applyArrowNavigable] found ${elements.length} elements`);
+    arrowNavGeneration++;
+    const currentGeneration = arrowNavGeneration;
+
+    for (let i = 0; i < elements.length; i++) {
+        const element = elements[i];
+        element.addEventListener("keydown", (e) => {
+
+            // lousy workaround for the fact that we can't remove event listeners
+            // without a reference to the function
+            // and the function captures the current environment
+            // so we cant define it statically
+            if (arrowNavGeneration != currentGeneration) {
+                return;
+            }
+
+            // if element not focused, ignore
+            if (document.activeElement != element) {
+                return;
+            }
+
+
+            const previousElement = elements[i-1];
+            const nextElement = elements[i+1];
+        
+            if (e.key == "ArrowLeft") {
+                e.preventDefault();
+                console.log("[applyArrowNavigable] back to", previousElement)
+                if (previousElement) {
+                    previousElement.focus();
+                }
+            } else if (e.key == "ArrowRight") {
+                e.preventDefault();
+                console.log("[applyArrowNavigable] forward to", nextElement)
+                if (nextElement) {
+                    nextElement.focus();
+                }
+            }
+        });
+    }
+}
+
+const arrowNavObserver = new MutationObserver((mutations) => {
+    for (let mutation of mutations) {
+        if (mutation.addedNodes.length > 0) {
+            arrowNavRoller.roll();
+        }
+    }
+});
+
+// roll it so we dont waste resources as redraws happen a lot
+const arrowNavRoller = new ReusableRollingTimeout(() => {
+    applyArrowNavigable();
+}, 500);
+
+arrowNavObserver.observe(document.body, {childList: true, subtree: true});
