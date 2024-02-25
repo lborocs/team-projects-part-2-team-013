@@ -277,6 +277,7 @@
     width:  100%;
     gap: 1em;
 }
+
 .user-search {
     display: flex;
     flex-direction: row;
@@ -285,10 +286,83 @@
     height: 3.5em;
     width: 100%;
     padding: 0.5em;
+    margin-bottom: 0.5rem;
     border-radius: 8px;
     border: 1px solid var(--border-clr);
     background-color: var(--white);
     position: relative;
+}
+
+.results-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.employee-search-results {
+    .account-card {
+        background-color: var(--white);
+        border-radius: 0;
+        border-bottom: 1px solid var(--border-clr);
+        padding: 0.5rem;
+
+        .avatar-container {
+            width: 2.5rem;
+            height: 2.5rem;
+
+            .avatar {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+    
+    
+        .details {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 0;
+            
+        }
+    
+        .current-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .email {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+    
+        .role-container {     
+            opacity: 0.8;
+            width: 4rem;
+            
+            .icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                & span {
+                    font-size: 28px;
+                }
+            }
+    
+            .role {
+                font-weight: 600;
+                font-size: 12px;
+            }
+    
+    
+        }
+    }
+
+    .account-card:first-child {
+        border-top: solid 1px var(--border-clr);
+    }
+
+    .account-card:hover {
+        background-color: var(--make-it-all-tint);
+    }
 }
 
 #inputField {
@@ -353,4 +427,9 @@
 }
 .error-message{
     color: red;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
 }

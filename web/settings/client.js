@@ -33,6 +33,8 @@ const secondNameCancel = cancelButtons[1];
 const secondNameConfirm = confirmButtons[1];
 const secondNameInput = nameInputs[1];
 
+const employeeSearchResults = document.querySelector('.employee-search-results');
+
 
 function switchToTab(tab) {
     console.log(`[switchToTab] switching to tab ${tab.id}`);
@@ -295,32 +297,34 @@ window.onload = async function() {
 };
 
 async function renderEmployees(employees) {
-    var employeeList = document.querySelector('.employee-list');
-    employeeList.innerHTML = '';
+    employeeSearchResults.innerHTML = '';
     employees.forEach((employee) => {
-        if (employee.firstName == null){
-            var firstName = "N/A";
-        } else{
-            var firstName = employee.firstName;
-        }
-        employeeList.innerHTML += `
-            <div class="employee-card" data-empID="${employee.empID}">
-                <div class="first-name">${firstName}</div>
-                <div class="last-name">${employee.lastName}</div>
-                <div class="email">${employee.email}</div>
-            </div>
+
+        let name = global.employeeToName(employee);
+        let avatar = global.employeeAvatarOrFallback(employee);
+
+        let role = employee.isManager ? "Manager" : "Employee";
+        let roleIcon = employee.isManager ? "admin_panel_settings" : "person";
+
+        employeeSearchResults.innerHTML += `
+            <a class="account-card" href="/settings/user/#${employee.empID}">
+                <div class="avatar-container">
+                    <img src="${avatar}" class="avatar">
+                </div>
+                <div class="details">
+                    <div class="current-name">${name}</div>
+                    <div class="email">${employee.email}</div>
+                </div>
+                <div class="role-container">
+                    <div class="icon">
+                        <span class="material-symbols-rounded">${roleIcon}</span>
+                    </div>
+                    <div class="role">${role}</div>
+                </div>
+            </a>
         `;
     });
-    employeeCardEventListeners();
-}
 
-function employeeCardEventListeners(){
-    let employeeCards = document.querySelectorAll('.employee-card');
-    employeeCards.forEach((card) => {
-        card.addEventListener('click', (event) => {
-            window.location.href = `/settings/user/#${card.getAttribute('data-empID')}`;
-        });
-    });
 }
 
 logoutButton.addEventListener('click', () => {
