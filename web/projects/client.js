@@ -2717,7 +2717,7 @@ let mediaQueryMedium = window.matchMedia("(min-width: 769px) and (max-width: 152
 //larger than 1520px
 let mediaQueryDesktop = window.matchMedia("(min-width: 1521px)")
 
-//check for mobile on load
+//check for mobile on load, changes explainer to pull-out and forces hidden
 if (mediaQueryMobile.matches) {
     console.log("[mediaQueryMobile] mobile")
     explainer.classList.add("mobile")
@@ -2738,7 +2738,8 @@ if (mediaQueryMobile.matches) {
     console.log("[mediaQuery] desktop")
 }
 
-//check for mobile on resize
+//check for mobile on resize, changes explainer to pull-out and forces hidden
+//we force hidden because mobile needs all the space it can get
 mediaQueryMobile.addEventListener("change", (e) => {
     if (e.matches) {
         console.log("[mediaQuerymobileChange] mobile")
@@ -2751,16 +2752,17 @@ mediaQueryMobile.addEventListener("change", (e) => {
     }
 })
 
-//check for medium on load
+//check for medium on load, changes explainer to popout and forces hidden 
 if (mediaQueryMedium.matches) {
     console.log("[mediaQueryMedium] medium")
     explainer.classList.add("popout")
+    explainer.classList.add('hidden')
     explainer.classList.remove("mobile")
     explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_open</span>`
 
 }
 
-//check for medium on resize
+//check for medium on resize, changes explainer to popout but keeps state
 mediaQueryMedium.addEventListener("change", (e) => {
     if (e.matches) {
         console.log("[mediaQueryMediumChange] medium")

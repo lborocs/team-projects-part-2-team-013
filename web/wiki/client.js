@@ -25,6 +25,10 @@ function setCurrentBreadcrumb(nonTechnical) {
     global.setBreadcrumb(["Wiki", label], ["/wiki/", `#${nonTechnical ? 'non' : ''}technical`]);
 }
 
+function setSearchPlaceholder(nonTechnical) {
+    searchInput.placeholder = nonTechnical ? "Search non-technical posts" : "Search technical posts";
+}
+
 
 
 class Tag {
@@ -100,6 +104,7 @@ async function searchPosts() {
     var selectedCategory = document.querySelector('input[name="category"]:checked');
 
     setCurrentBreadcrumb(selectedCategory.value == "0");
+    setSearchPlaceholder(selectedCategory.value == "0");
 
     await fetchPosts(selectedCategory.value, search, tags);
 }

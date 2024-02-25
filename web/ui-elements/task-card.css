@@ -12,6 +12,7 @@
     box-shadow: 0 3px 3px rgba(0,0,0,0.1);
     padding: 0.55em;
     padding-top: 0.35em;
+    padding-right: 0.35em;
     cursor: pointer;
     transition: transform 0.05s ease-in-out !important; /* allowing this important, task cards have a very different click animation */
     transition: color 0.1s ease-out;
@@ -23,7 +24,7 @@
         align-items: flex-start;
         justify-content: space-between;
         gap: 0.5em;
-        padding-bottom: 4px;
+        padding-bottom: 2px;
     }
     .date {
         font-size: 0.85em;
@@ -72,6 +73,7 @@
     color: #777777;
     & span {
         color: #777777;
+        font-size: 26px;
     }
 }
 

@@ -20,6 +20,7 @@
 
 .post {
     max-width: 800px;
+    width: min(800px, calc(100% - 2rem));
     margin: 1em;
     margin-top: 1em;
     margin-bottom: 1em;
