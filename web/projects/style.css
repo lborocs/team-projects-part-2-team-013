@@ -818,7 +818,7 @@
     align-items: center;
     padding-bottom: 0.75em;
     gap: 0.85em;
-    width: clamp(22em, 100%, 34em);
+    width: clamp(21.5em, 100%, 34em);
     min-width: 330px;
     transition: 0.08s ease-out;
     height: auto;
