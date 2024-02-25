@@ -884,9 +884,6 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             });
 
             const focusOutListener = (e) => {
-                taskCard.classList.remove("beingdragged");
-                taskCard.classList.remove("clicked");
-
                 taskColumns.forEach((column) => {
                     column.classList.remove("highlight")
                 })
@@ -899,8 +896,18 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 calculateTaskCount()
             }
 
-            taskCard.addEventListener("dragend", focusOutListener);
-            taskCard.addEventListener("pointerup", focusOutListener);
+            const dropListener = (e) => {
+                taskCard.classList.remove("beingdragged");
+                focusOutListener(e);
+            }
+
+            const clickUpListener = (e) => {
+                taskCard.classList.remove("clicked");
+                focusOutListener(e);
+            }
+
+            taskCard.addEventListener("dragend", dropListener);
+            taskCard.addEventListener("pointerup", clickUpListener);
             taskCard.addEventListener("focusout", focusOutListener);
         });
     }
