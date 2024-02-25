@@ -176,18 +176,21 @@ body {
 }
 
 .category {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
     font-size: 0.9em;
     font-weight: 600;
     color: #0f0f0f;
-    width: 50%;
-    height: 3.5rem;
-    padding: 0.5rem;
+    width: 100%;
+    height: 2.5rem;
     text-align: center;
 }
 
-.category i {
+.category > span {
     color: #4e5057;
-    margin-right: 0.5em;
 }
 
 .category:hover {
@@ -454,11 +457,13 @@ input[type="text"] {
 
 .type-of-post {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: column;
     list-style: none;
     justify-content: space-between;
     justify-self: center;
     width: 100%;
+    gap: 0.5rem;
+    padding: 0.5rem;
     font-weight: 600;
     align-items: center;
     color: #555555;
@@ -477,22 +482,29 @@ input[type="radio"] {
 }
 
 label {
+    height: calc(100%);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 0.5rem;
+    gap: 0.5rem;
+    cursor: pointer;
     background-color: rgba(0,0,0,0);
     color: #2d2e30;
     border-radius: 6px;
-    height: calc(100%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
     transition: 0.1s ease-out;
-    background-color: var(--cool-grey);
+
+    .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+    }
 }
 
 
 input[type="radio"]:checked + label {
     display: flex;
-    justify-content: center;
     background-color: var(--make-it-all-highlight);
     color: #2d2e30;
     width: 100%;
@@ -500,13 +512,12 @@ input[type="radio"]:checked + label {
 }
 input[type="radio"] + label {
     display: flex;
-    justify-content: center;
     width: 100%;
 
 }
 
 input[type="radio"]:not(:checked) + label:hover {
-    background-color: rgb(220, 220, 220);
+    background-color: var(--cool-grey);
     color: #2d2e30;
     transition-duration: 0.1s;
 }
