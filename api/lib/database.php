@@ -352,16 +352,25 @@ function db_asset_fetch(string $asset_id) {
 
 // posts
 
-function db_post_fetchall(string $search_term, ?Array $tags, $is_technical) {
+function db_post_fetchall(string $search_term, ?Array $tags, ?int $is_technical) {
 
     global $db;
 
     $search = "%" . strtolower($search_term) . "%";
 
-    $tag_term = null;
+    $binds = [];
 
+    if ($is_technical === null) {
+        $technical_term = "";
+    } else {
+        $technical_term = "AND `POSTS`.postIsTechnical = ? ";
+        $binds[] = $is_technical;
+    }
+
+    $tag_term = null;
     if ($tags) {
         $tags = array_map("hex2bin", $tags);
+        $binds = array_merge($binds, $tags);
 
         $tag_term = "AND `POST_TAGS`.tagID IN (" . create_array_binding(count($tags)) . ")";
     } else {
@@ -386,19 +395,18 @@ function db_post_fetchall(string $search_term, ?Array $tags, $is_technical) {
             ON `POST_VIEWS`.postID = `POSTS`.postID
         LEFT JOIN (SELECT * FROM `POST_TAGS`) as tagList
             ON tagList.postID = `POSTS`.postID
-        WHERE LOWER(`POSTS`.postTitle) LIKE ? 
-        AND `POSTS`.postIsTechnical = ?
-        " . $tag_term . "
+        WHERE LOWER(`POSTS`.postTitle) LIKE ? "
+        . $technical_term
+        . $tag_term . "
         GROUP BY `POSTS`.postID
         ORDER BY views DESC
         LIMIT " . SEARCH_FETCH_DEFAULT
     );
 
     $query->bind_param(
-        "si" . str_repeat("s", count($tags)),
+        "s" . (is_null($is_technical) ? "" : "i") . str_repeat("s", count($tags)),
         $search,
-        $is_technical,
-        ...$tags,
+        ...$binds,
     );
 
     $result = $query->execute();

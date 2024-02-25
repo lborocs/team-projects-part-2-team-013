@@ -46,9 +46,12 @@ function r_post_fetchall_posts(RequestContext $ctx, string $args) {
 
     $tag_term = $_GET["tags"] ?? null;
 
-    $is_technical = $_GET["is_technical"] ?? '0';
+    $is_technical = $_GET["is_technical"] ?? null;
 
-    if ($is_technical !== "0" && $is_technical !== "1") {
+    if (
+        !is_null($is_technical) &&
+        ($is_technical !== "0" && $is_technical !== "1")
+    ) {
         respond_bad_request("Expected query param is_technical to be 0 or 1", ERROR_BODY_FIELD_INVALID_TYPE);
     }
 
