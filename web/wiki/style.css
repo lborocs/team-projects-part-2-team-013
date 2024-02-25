@@ -420,6 +420,7 @@ input[type="text"] {
     bottom: 0.5rem;
     right: 0.5rem;
     z-index: 99;
+    display: none;
 }
 
 #new-post {
