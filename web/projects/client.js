@@ -455,11 +455,13 @@ explainerShowHide.addEventListener("click", () => {
     console.log("[ExplainerShowHide] clicked")
 })
 
-explainerPopoutBack.addEventListener("click", () => {
+explainerPopoutBack.addEventListener("click", hideExplainer);
+
+function hideExplainer() {
     explainer.classList.add("hidden")
     explainerShowHide.innerHTML = `<span class="material-symbols-rounded">right_panel_open</span>`
     console.log("[ExplainerPopoutBack] clicked")
-})
+}
 
 function explainerTaskSetToDefault() {
 
@@ -4141,3 +4143,9 @@ archiveButton.addEventListener("click", async () => {
 });
 
 getProjectPreferences();
+
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        hideExplainer();
+    }
+})
