@@ -15,26 +15,39 @@ const deleteTagsConfirmButton = deleteTagsPopup.querySelector("#confirm-button")
 const tagSelection = document.querySelector('#tag-selection');
 
 
-if (document.location.hash == "#nontechnical") {
+if (document.location.hash === "#nontechnical") {
     document.getElementById("non-technical").checked = true;
     document.getElementById("technical").checked = false;
+    document.getElementById("all").checked = false;
+} else if (document.location.hash === "#all") {
+    document.getElementById("non-technical").checked = false;
+    document.getElementById("technical").checked = false;
+    document.getElementById("all").checked = true;
+} else if (document.location.hash === "#technical") {
+    document.getElementById("non-technical").checked = false;
+    document.getElementById("technical").checked = true;
+    document.getElementById("all").checked = false;
 }
 
 function setCurrentBreadcrumb(category) {
     console.error(category);
     category = parseInt(category);
     let label;
+    let hash;
     if (category === 2) {
         label = "All";
+        hash = "all";
     } else if (category === 0) {
         label = "Non-Technical";
+        hash = "nontechnical";
     } else if (category === 1) {
         label = "Technical";
+        hash = "technical";
     } else {
         console.error("Invalid category");
     }
 
-    global.setBreadcrumb(["Wiki", label], ["/wiki/", `#${label.toLowerCase().replace(" ", "-")}`]);
+    global.setBreadcrumb(["Wiki", label], ["/wiki/", `#${hash}`]);
 }
 
 function setSearchPlaceholder(category) {
