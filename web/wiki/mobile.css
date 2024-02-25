@@ -36,6 +36,10 @@
         display: none;
     }
 
+    #mobile-new-post {
+        display: flex;
+    }
+
     #mobile-filters {
         display: flex;
     }

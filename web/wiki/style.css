@@ -415,6 +415,13 @@ input[type="text"] {
     display: none;
 }
 
+#mobile-new-post {
+    position: sticky;
+    bottom: 0.5rem;
+    right: 0.5rem;
+    z-index: 99;
+}
+
 #new-post {
     background-color: #3098ff;
     color: var(--white);
