@@ -740,6 +740,7 @@
     margin-top: 0.75em;
     margin-left: 1em;
     margin-right: 1em;
+    padding: 1px; /* offset to stop the highlight outline clipping */
     padding-bottom: 8em;
     justify-content: center;
     overflow-y: auto;
@@ -822,6 +823,7 @@
     min-width: 330px;
     transition: 0.08s ease-out;
     height: auto;
+    outline: solid 0px transparent;
 }
 
 .taskcolumn.highlight {
