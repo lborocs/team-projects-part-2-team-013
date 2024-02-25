@@ -1843,6 +1843,7 @@
 #man-hours-and-minutes {
     display: flex;
     gap: 1em;
+    align-items: center;
 }
 /* project table column width definitions */
 #header-name {

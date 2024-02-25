@@ -1,13 +1,12 @@
 .number-picker {
     display: flex;
+    flex-direction: column-reverse;
     justify-content: center;
     align-items: center;
     gap: 5px;
     padding: 5px;
     border-radius: 3px;
     border: none;
-    background-color: #ebecee;
-    height: 32px;
     width: min-content;
 }
 

@@ -232,18 +232,17 @@ async function addManHoursPopup(task) {
                     <div class="number-picker" id="add-man-hours-button2">
                         <div class = "stepper decrement" tabindex="0">
                             <span class="material-symbols-rounded">
-                                remove
+                                expand_more
                             </span>
                         </div>
                         <input type="number" class="number-input" value="1" min="0" tabindex="0">
                         <div class="stepper increment" tabindex="0">
                             <span class="material-symbols-rounded">
-                                add
+                                expand_less
                             </span>
                         </div>
-                        <div class="manhours-label">Hours</div>
                     </div>
-                    <div class="number-picker" id="expected-man-minutes">
+                    <div class="manhours-label">Hours</div>
                         <div class="number-picker" id="expected-man-minutes">
                             <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
                                 <div class="dropdown-text">
@@ -261,9 +260,9 @@ async function addManHoursPopup(task) {
                                     <div class="dropdown-option" id="manhours-minutes45">45</div>
                                 </div>
                             </div>
-                            <div class="manhours-label">
-                                Minutes
-                            </div>
+                        </div>
+                        <div class="manhours-label">
+                            Minutes
                         </div>
                     </div>
                 </div>
@@ -324,12 +323,14 @@ async function addManHoursPopup(task) {
             numberPickerPlus.addEventListener('click', e => {
                 e.preventDefault();
                 numberPickerInput.stepUp();
+                animate(numberPickerInput, "flash");
             });
         }
         if (numberPickerMinus) {
             numberPickerMinus.addEventListener('click', e => {
                 e.preventDefault();
                 numberPickerInput.stepDown();
+                animate(numberPickerInput, "flash");
             });
         }
         if (numberPickerInput) {
@@ -2307,7 +2308,7 @@ async function addTask() {
                     <div class="number-picker" id="expected-man-hours">
                         <div class = "stepper decrement" tabindex="0">
                             <span class="material-symbols-rounded">
-                                remove
+                                expand_more
                             </span>
                         </div>
 
@@ -2315,7 +2316,7 @@ async function addTask() {
 
                         <div class="stepper increment" tabindex="0">
                             <span class="material-symbols-rounded">
-                                add
+                                expand_less
                             </span>
                         </div>
                         <div class="manhours-label">
@@ -3155,13 +3156,13 @@ async function editTaskPopup(task){
                     <div class="number-picker" id="add-man-hours-button2">
                         <div class = "stepper decrement" tabindex="0">
                             <span class="material-symbols-rounded">
-                                remove
+                                expand_more
                             </span>
                         </div>
                         <input type="number" class="number-input" value="1" min="0" tabindex="0">
                         <div class="stepper increment" tabindex="0">
                             <span class="material-symbols-rounded">
-                                add
+                                expand_less
                             </span>
                         </div>
                         <div class="manhours-label">Hours</div>
