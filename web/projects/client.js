@@ -162,7 +162,7 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     const projectActions = document.querySelector(".project-bar > .project-actions");
     projectActions.addEventListener("click", (e) => {
         e.stopPropagation()
-        projectPopup(project.projID)
+        projectPopup(project)
 
     });
 
@@ -858,6 +858,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             }
 
             const clickListener = (e) => {
+                console.warn(e);
                 if (e.target.classList.contains("context-menu")) {
                     return
                 }
@@ -2249,7 +2250,7 @@ async function renderProject(project) {
     const projectActions = projectRow.querySelector(".project-actions");
     projectActions.addEventListener("click", (e) => {
         e.stopPropagation()
-        projectPopup(project.projID)
+        projectPopup(project)
 
     });
 
@@ -3495,7 +3496,7 @@ async function editTaskPopup(task){
 
 }
 
-async function projectPopup(id){
+async function projectPopup(project){
     console.log(`[projectPopup] Running projectPopup`)
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
@@ -3504,11 +3505,6 @@ async function projectPopup(id){
     Array.from(document.querySelectorAll('.main')).forEach((element) => {
         element.style.pointerEvents = 'none';
     })
-    
-
-    let projectData = await get_api(`/project/project.php/project/${id}`, {no_track:true});
-
-    let project = projectData.data;
 
     let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
     teamLeader = teamLeader.get(project.teamLeader.empID);
