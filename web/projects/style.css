@@ -14,6 +14,8 @@
         width: 100%;
         height: 3rem;
         flex: 0 0 3rem;
+
+        
     }
 
     .projects-container {
@@ -290,6 +292,38 @@
     .title {
         font-weight: 700;
         font-size: 24px;
+        cursor: pointer;
+    }
+
+    .project-actions {
+        opacity: 0.5;
+        transition: 0.05s ease-out;
+        outline: solid 1px transparent;
+        outline-offset: -1px;
+        &span {
+            font-size: 26px;
+        }
+    }
+
+    .project-actions:hover {
+        opacity: 1;
+        transition: 0.05s ease-out;
+        background-color: var(--white) !important;
+        outline: solid 1px var(--border-clr);
+        outline-offset: -1px;
+    }
+
+    .project-actions:active {
+        background-color: #f0efef !important;
+        outline: solid 1px var(--border-clr);
+        outline-offset: -1px;
+    }
+
+    &:hover {
+        .project-actions {
+            opacity: 1;
+            transition: 0.1s ease-out;
+        }
     }
 
 }

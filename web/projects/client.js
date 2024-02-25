@@ -158,7 +158,13 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
     explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
     explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
 
-    
+    //sets up the context menu event listener
+    const projectActions = document.querySelector(".project-bar > .project-actions");
+    projectActions.addEventListener("click", (e) => {
+        e.stopPropagation()
+        projectPopup(project.projID)
+
+    });
 
     teamLeaderEnableElementsIfTeamLeader()
 
