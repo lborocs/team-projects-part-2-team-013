@@ -337,7 +337,7 @@
         .role-container {     
             opacity: 0.8;
             width: 4rem;
-            
+
             .icon {
                 display: flex;
                 align-items: center;
@@ -427,6 +427,11 @@
 }
 .error-message{
     color: red;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 a {

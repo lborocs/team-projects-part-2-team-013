@@ -227,7 +227,8 @@ async function setUserData() {
     accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
     accountCard.querySelector('.icon span').innerHTML = isManager ? "admin_panel_settings" : "person";
     if (emp.firstName == null){
-        var firstName = "N/A";
+        var firstName = "Not set";
+        firstNameInput.classList.add('disabled');
     } else{
         var firstName = emp.firstName;
     }
@@ -341,6 +342,7 @@ firstNameChange.addEventListener('click', () => {
     firstNameConfirm.classList.remove('norender');
     firstNameInput.setAttribute('contenteditable', 'true');
     firstNameInput.classList.add('editable');
+    firstNameInput.classList.remove('disabled');
     resetName(2);
     secondNameChange.classList.remove('norender');
     secondNameCancel.classList.add('norender');
