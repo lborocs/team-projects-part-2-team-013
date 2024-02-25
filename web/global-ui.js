@@ -1708,9 +1708,9 @@ export function applyArrowNavigable() {
 
     
 
-    const elements = document.querySelectorAll(
+    const elements = Array.from(document.querySelectorAll(
         selectors.join(", ")
-    );
+    )).filter((element) => { return element.offsetParent !== null });
 
     console.log(`[applyArrowNavigable] found ${elements.length} elements`);
     arrowNavGeneration++;
@@ -1718,6 +1718,34 @@ export function applyArrowNavigable() {
 
     for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
+
+        // backtrack to find an element with a different parent
+        let myParent = element.parentElement;
+
+        let firstSameParent;
+        let lastSameParent;
+        
+        for (let j = i-1; j >= 0; j--) {
+            if (elements[j].parentElement != myParent) {
+                firstSameParent = elements[j+1];
+                break;
+            }
+        }
+
+        for (let j = i+1; j < elements.length; j++) {
+            if (elements[j].parentElement != myParent) {
+                lastSameParent = elements[j-1];
+                break;
+            }
+        }
+
+
+        const previousElement = elements[i-1];
+        const nextElement = elements[i+1];
+
+        lastSameParent = lastSameParent == element ? null : lastSameParent;
+        firstSameParent = firstSameParent == element ? null : firstSameParent;
+    
         element.addEventListener("keydown", (e) => {
 
             // lousy workaround for the fact that we can't remove event listeners
@@ -1734,20 +1762,23 @@ export function applyArrowNavigable() {
             }
 
 
-            const previousElement = elements[i-1];
-            const nextElement = elements[i+1];
-        
             if (e.key == "ArrowLeft") {
                 e.preventDefault();
+
+                const elem = e.ctrlKey ? (firstSameParent ?? previousElement) : previousElement;
+
                 console.log("[applyArrowNavigable] back to", previousElement)
-                if (previousElement) {
-                    previousElement.focus();
+                if (elem) {
+                    elem.focus();
                 }
             } else if (e.key == "ArrowRight") {
                 e.preventDefault();
-                console.log("[applyArrowNavigable] forward to", nextElement)
-                if (nextElement) {
-                    nextElement.focus();
+
+                const elem = e.ctrlKey ? (lastSameParent ?? nextElement) : nextElement;
+
+                console.log("[applyArrowNavigable] forward to", elem)
+                if (elem) {
+                    elem.focus();
                 }
             }
         });

@@ -117,6 +117,7 @@ function renderPersonal(id) {
     const personal = globalPersonalsList.find(personal => personal.itemID === id)
     const personalCard = document.createElement('div')
     personalCard.classList.add('personal-task')
+    personalCard.tabIndex = 0;
 
     const checkedState = (personal.state === 1) ? 'checked' : ''
 
