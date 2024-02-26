@@ -132,12 +132,13 @@ function contextual_run() {
         );
     }
 
-    if (
-        array_key_exists("Early-Data", apache_request_headers()) && !is_idempotent($ctx, $route)
-    ) {
-        error_log("Rejecting 0-RTT request on $ctx->request_method $route->callable");
-        respond_too_early();
-    } else {
+    if (array_key_exists("Early-Data", apache_request_headers())) {
+        // reject 0-RTT requests on non-idempotent routes
+        if (!is_idempotent($ctx, $route)) {
+            error_log("Rejecting 0-RTT request on $ctx->request_method $route->callable");
+            respond_too_early();
+        }
+
         header("X-Early-Request: Accepted");
     }
 
