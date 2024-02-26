@@ -868,6 +868,11 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 if (e.target.classList.contains("context-menu")) {
                     return
                 }
+
+                if (e.target.classList.contains("status-container")) {
+                    return
+                }
+
                 if (e.button == 2) {
                     return
                 }
@@ -886,6 +891,9 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             const clickListener = (e) => {
                 console.warn(e);
                 if (e.target.classList.contains("context-menu")) {
+                    return
+                }
+                if (e.target.classList.contains("status-container")) {
                     return
                 }
                 if (e.button == 2) {
