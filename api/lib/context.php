@@ -136,6 +136,8 @@ function contextual_run() {
     ) {
         error_log("Rejecting 0-RTT request on $ctx->request_method $route->callable");
         respond_too_early();
+    } else {
+        header("X-RTT: Accepted");
     }
 
     // all checks passed
