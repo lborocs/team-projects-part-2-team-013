@@ -2,6 +2,8 @@ import * as global from '../global-ui.js';
 
 export var data = null;
 
+const CHART_DATA_LIMIT = 5;
+const CHART_LABEL_LIMIT = 16;
 const dashboardContainer = document.querySelector(".dashboard-container");
 
 export async function init() {
@@ -31,28 +33,33 @@ export async function init() {
     let trainingData = await getData();
     console.error(trainingData);
 
-    //formats the wiki data into the chartjs format
-    const postViews = trainingData.popularPosts.map(post => post.views);
-    const postLabels = trainingData.popularPosts.map(post => post.title);
+    //formats the wiki data into the chartjs format, limiting labels so they dont cram the chart really small
+    const postViews = trainingData.popularPosts.map(post => post.views)
+    const postLabels = trainingData.popularPosts.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
+    const postTooltips = trainingData.popularPosts.map(post => post.title)
 
-    const tagViews = trainingData.popularTags.map(tag => tag.views);
-    const tagLabels = trainingData.popularTags.map(tag => tag.name);
+    const tagViews = trainingData.popularTags.map(tag => tag.views)
+    const tagLabels = trainingData.popularTags.map(tag => global.trimText(tag.name, CHART_LABEL_LIMIT))
+    const tagTooltips = trainingData.popularTags.map(tag => tag.name)
 
-    const watchedPosts = trainingData.watchedPosts.map(post => post.subscriptions);
-    const watchedLabels = trainingData.watchedPosts.map(post => post.title);
+    const watchedPosts = trainingData.watchedPosts.map(post => post.subscriptions)
+    const watchedLabels = trainingData.watchedPosts.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
+    const watchedTooltips = trainingData.watchedPosts.map(post => post.title)
 
-    const helpfulPosts = trainingData.helpfulPosts.map(post => post.helpful);
-    const helpfulLabels = trainingData.helpfulPosts.map(post => post.title);
+    const helpfulPosts = trainingData.helpfulPosts.map(post => post.helpful)
+    const helpfulLabels = trainingData.helpfulPosts.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
+    const helpfulTooltips = trainingData.helpfulPosts.map(post => post.title)
 
-    //limits the number shown to 5 each
-    postViews.length = 5;
-    postLabels.length = 5;
-    tagViews.length = 5;
-    tagLabels.length = 5;
-    watchedPosts.length = 5;
-    watchedLabels.length = 5;
-    helpfulPosts.length = 5;
-    helpfulLabels.length = 5;
+    //limits the number of items shown by the charts so the data isnt overwhelming
+    //the ability to change this may be implemented
+    postViews.length = CHART_DATA_LIMIT;
+    postLabels.length = CHART_DATA_LIMIT;
+    tagViews.length = CHART_DATA_LIMIT;
+    tagLabels.length = CHART_DATA_LIMIT;
+    watchedPosts.length = CHART_DATA_LIMIT;
+    watchedLabels.length = CHART_DATA_LIMIT;
+    helpfulPosts.length = CHART_DATA_LIMIT;
+    helpfulLabels.length = CHART_DATA_LIMIT;
 
 
 

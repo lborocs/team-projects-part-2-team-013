@@ -1691,9 +1691,9 @@ export function trimText(text, desiredLength) {
         if (text.match(BRACKET_REGEX)) {
             return trimText(text.replace(BRACKET_REGEX, ""), desiredLength);
         }
-        
         return text.substring(0, desiredLength-3) + "...";
     } else {
+        
         return text;
     }
 }
