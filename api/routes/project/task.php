@@ -371,6 +371,7 @@ function _edit_task(RequestContext $ctx, array $data, array $url_specifiers) {
 
     if (
         array_key_exists("taskDueDate", $ctx->request_body) &&
+        !is_null($ctx->request_body["taskDueDate"]) &&
         $ctx->request_body["taskDueDate"] < $ctx->task["createdAt"]
     ) {
         respond_bad_request(

@@ -114,6 +114,7 @@ function _edit_project(RequestContext $ctx, array $body, array $url_specifiers) 
 
     if (
         array_key_exists("projectDueDate", $ctx->request_body) &&
+        !is_null($ctx->request_body["projectDueDate"]) &&
         $ctx->request_body["projectDueDate"] < $ctx->project["createdAt"]
     ) {
         respond_bad_request(
