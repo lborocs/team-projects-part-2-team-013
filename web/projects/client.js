@@ -865,12 +865,15 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
 
             const focusListener = (e) => {
-                if (e.target.classList.contains("context-menu")) {
+                if (e.target.classList.contains("dont-depress")) {
                     return
                 }
 
-                if (e.target.classList.contains("status-container")) {
-                    return
+                while (parent !== taskCard) {
+                    if (parent.classList.contains("dont-depress-children")) {
+                        return
+                    }
+                    parent = parent.parentElement;
                 }
 
                 if (e.button == 2) {
@@ -889,12 +892,16 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
             }
 
             const clickListener = (e) => {
-                console.warn(e);
-                if (e.target.classList.contains("context-menu")) {
+                if (e.target.classList.contains("dont-depress")) {
                     return
                 }
-                if (e.target.classList.contains("status-container")) {
-                    return
+
+                parent = e.target.parentElement;
+                while (parent !== taskCard) {
+                    if (parent.classList.contains("dont-depress-children")) {
+                        return
+                    }
+                    parent = parent.parentElement;
                 }
                 if (e.button == 2) {
                     return
@@ -925,6 +932,8 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 if (taskCard.getAttribute("id") !== explainerTaskContainer.getAttribute("task-id")) {
                     taskCard.classList.remove("task-focussed");
                 }
+
+                taskCard.classList.remove("clicked");
 
                 updateTaskState(taskCard);
                 calculateTaskCount()
@@ -1291,7 +1300,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         let usersAssignedList = taskTableTask.querySelector(".users-assigned-list");
         
         let assignmentElem = document.createElement("div");
-        assignmentElem.classList.add("assignment");
+        assignmentElem.classList.add("assignment", "dont-depresss", "dont-depress-children");
 
         if (usersAssigned) {
             let count = taskUserCount.get(assignment.task.taskID) || 0;
@@ -1905,7 +1914,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     task.innerHTML = `
         <div class="title">
             ${title}
-            <div class="small-icon task-context-menu-button context-menu">
+            <div class="small-icon task-context-menu-button context-menu dont-depress">
                 <span class="material-symbols-rounded">more_horiz</span>
                 <div class="context-menu-popover">
                     <div class="item action-edit">
@@ -2051,7 +2060,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     if (date !== "") {
         const formattedDate = formatDateWithOrdinals(date);
         taskInfo.innerHTML += `
-            <div class="tooltip tooltip-under status-container ${overdueContainerClass}">
+            <div class="dont-depresss dont-depress-children tooltip tooltip-under status-container ${overdueContainerClass}">
                 <p class="tooltiptext">${dateTooltip}</p>
                 ${statusIcon}
                 <div class="date" id="task-date">
@@ -2076,7 +2085,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         }
         taskInfo.innerHTML += `
 
-            <div class="tooltip tooltip-under manhours-container status-container">
+            <div class="dont-depresss dont-depress-children tooltip tooltip-under manhours-container status-container">
                 <p class="tooltiptext">${manHoursTooltip}</p>
                 <span class="material-symbols-rounded">
                     timer
@@ -2090,7 +2099,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
     if (desc !== "<p><br></p>" && desc !== null) {
         taskInfo.innerHTML += `
-        <div class="tooltip tooltip-under description-icon-container status-container">
+        <div class="dont-depresss dont-depress-children tooltip tooltip-under description-icon-container status-container">
             <p class="tooltiptext">This task contains a description</p>
             <span class="material-symbols-rounded">
                 subject
