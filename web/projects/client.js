@@ -2007,8 +2007,8 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
     let taskInfo = document.createElement("div");
     taskInfo.classList.add("task-info");
-    if (date !== "" || expectedManHours !== 0 || desc !== "<p><br></p>") {
-    task.appendChild(taskInfo);
+    if (date !== "" || expectedManHours !== 0 || desc !== "<p><br></p>" || assignments.length > 0) {
+        task.appendChild(taskInfo);
     }
     
     if (date !== "") {
