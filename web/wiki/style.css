@@ -248,6 +248,16 @@ body {
     width: 100%;
 }
 
+.posts-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1em;
+    background-color: inherit;
+    width: 100%;
+}
+
 #tag-selection{
     height: 100%;
     position: relative;
