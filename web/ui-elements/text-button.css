@@ -66,6 +66,12 @@
     color: #421212;
 }
 
+.text-button.white {
+    background-color: white;
+    color: #292c31;
+    outline: solid 1px var(--border-clr);
+}
+
 
 
 .text-button.red.text-button.disabled {
@@ -92,6 +98,10 @@
     }
     
     .text-button.no-box:hover {
+        background-color: #f1f2f4;
+    }
+
+    .text-button.white:hover {
         background-color: #f1f2f4;
     }
 

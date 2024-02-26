@@ -41,6 +41,12 @@
     pointer-events: none;
 }
 
+.icon-button.white {
+    background-color: white;
+    color: #292c31;
+    outline: solid 1px var(--border-clr);
+}
+
 .icon-button:active {
     background-color: #c4c9d2;
     transition: background-color 0.05s ease-out;
@@ -59,6 +65,10 @@
     .icon-button:hover {
         background-color: #dcdfe4;
         transition: background-color 0.05s ease-out;
+    }
+
+    .text-button.white:hover {
+        background-color: #f1f2f4;
     }
 
     .icon-button.no-box:hover {
