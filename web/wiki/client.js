@@ -4,7 +4,7 @@ import { animate } from "../global-ui.js"
 
 
 var tagsToDelete = new Set();
-var postsContainer = document.querySelector('.posts');
+var postsContainer = document.querySelector('.posts-container');
 var posts = document.querySelectorAll('.post');
 const searchInput = document.getElementById("inputField")
 const tagSearchInput = document.querySelector("#tag-search > .search-input")
@@ -143,11 +143,11 @@ async function searchPosts() {
     });
     
     if (category === 2) {
-        await fetchPosts(search, tags);
+        await fetchAndRenderPosts(search, tags);
         setCurrentBreadcrumb(category);
         setSearchPlaceholder(category);
     } else {
-        await fetchPosts(search, tags, category);
+        await fetchAndRenderPosts(search, tags, category);
         setCurrentBreadcrumb(category);
         setSearchPlaceholder(category);
     }
@@ -163,8 +163,15 @@ async function updatePosts() {
     roller.roll();
 }
 
-
-async function fetchPosts(searchQuery = "", selectedTags = [], isTechnical = 2) {
+/** 
+ * fetches posts from server and bactch renders them into PostsContainer.
+ * 
+ * @param {string} searchQuery - optional search query to filter posts by.
+ * @param {Array<string>} selectedTags - optional array of tagIDs to filter posts by.
+ * @param {number} isTechnical - optional flag to filter posts by category. 1 = technical, 0 = non-technical, 2 = all. Default 2.   
+ * 
+ */
+async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechnical = 2) {
     const tagParam = selectedTags.length ? `&tags=${selectedTags.join(",")}` : "";
     var res;
     if (isTechnical === 2) {
@@ -180,10 +187,11 @@ async function fetchPosts(searchQuery = "", selectedTags = [], isTechnical = 2) 
         return;
     }
 
-
-    document.querySelectorAll('.post').forEach((post) => { post.remove() });
-
     console.log("Posts have been fetched");
+
+    //fragment for batch rendering
+    const fragment = new DocumentFragment();
+
     res.data.posts.forEach(post => {
         console.log(post);
         console.log(post.tags);
@@ -196,12 +204,16 @@ async function fetchPosts(searchQuery = "", selectedTags = [], isTechnical = 2) 
         }
 
         console.log("Rendering post");
-        renderPost(post.postID, post.title, post.author, post.isTechnical, post.tags.map(tag => tag.name));
-        
+        const postElement = renderPostToFragment(post.postID, post.title, post.author, post.isTechnical, post.tags.map(tag => tag.name));
+        fragment.appendChild(postElement);
         postMap.set(post.postID, post);
         console.log(post);
 
     });
+
+    postsContainer.innerHTML = "";
+    postsContainer.appendChild(fragment);
+    animate(postsContainer, "flash");
     setUpPostsEventListeners();
     posts = document.querySelectorAll('.post');
     console.log(postMap);
@@ -309,15 +321,16 @@ function setUpPostsEventListeners() {
 
 
 /**
- * Constructs a post HTML element and appends it to the posts container.
+ * Constructs a post HTML element to be rendered in a fragment.
  *
  * @param {string} postID 
  * @param {string} title 
  * @param {string} author
  * @param {boolean} isTechnical - 1 if the post is technical, 0 if it is non-technical.
  * @param {Array<string>} tags - array of tags associated with the post. Defaults to ["No Tags"] to avoid null checks.
+ * @returns {HTMLElement} - constructed post element to be rendered in a fragment.
  */
-function renderPost(postID, title, author, isTechnical, tags) {
+function renderPostToFragment(postID, title, author, isTechnical, tags) {
     const post = document.createElement("a")
     post.href = `/wiki/post/#${postID}`
     post.className = "post"
@@ -369,7 +382,7 @@ function renderPost(postID, title, author, isTechnical, tags) {
     post.appendChild(postInfo)
    
 
-    postsContainer.appendChild(post)
+    return post
 }
 
 
