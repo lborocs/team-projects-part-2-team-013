@@ -1319,7 +1319,7 @@ function db_project_fetch(string $project_id) {
     $bin_id = hex2bin($project_id);
 
     $query = $db->prepare(
-        "SELECT * FROM `PROJECTS` WHERE projID = ?"
+        "SELECT * FROM `PROJECTS` WHERE projID = ? AND projectArchived = 0"
     );
     $query->bind_param("s", $bin_id);
     $result = $query->execute();
@@ -1339,6 +1339,28 @@ function db_project_fetch(string $project_id) {
     return parse_database_row($data, TABLE_PROJECTS);
 }
 
+
+function db_project_archive(string $project_id) {
+    global $db;
+
+    $bin_id = hex2bin($project_id);
+
+    $query = $db->prepare(
+        "UPDATE `PROJECTS` SET `projectArchived` = '1' WHERE `PROJECTS`.projID = ?"
+    );
+    $query->bind_param("s", $bin_id);
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    return $query->affected_rows > 0;
+}
+
+
+
+
 function db_project_fetchall(SearchParams $search, string $emp_id) {
     global $db;
 
@@ -1351,7 +1373,8 @@ function db_project_fetchall(SearchParams $search, string $emp_id) {
         LEFT JOIN `PROJECT_ACCESSED` ON
             `PROJECT_ACCESSED`.projID = `PROJECTS`.projID
             AND `PROJECT_ACCESSED`.empID = ?
-        WHERE `PROJECTS`.projectName LIKE ? "
+        WHERE `PROJECTS`.projectName LIKE ? 
+        AND `PROJECTS`.projectArchived = 0 "
         . $search->to_sql()
     );
     $query->bind_param(
