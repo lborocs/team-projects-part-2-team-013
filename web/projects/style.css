@@ -1994,6 +1994,9 @@ td:has(#more) {
     flex-direction: column;
     gap: 0.5em;
     width: 100%;
+}
+
+.manhours-submitted:has(.manhours-submitted-row) {
     border-bottom: solid 1px var(--border-clr);
     padding-bottom: 0.25em;
 }
