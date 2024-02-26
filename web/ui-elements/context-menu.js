@@ -42,7 +42,7 @@ export function addEventListeners(menuButtons = buttons) {
 
         })
 
-        document.addEventListener('click', (e) => {
+        document.addEventListener('pointerdown', (e) => {
             if (!button.contains(e.target)) {
                 close(thisMenu)
             }
