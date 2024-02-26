@@ -88,6 +88,10 @@ async function api_request(route, method, body, options={}) {
         }
     }
 
+    if (raw_response.headers.get("X-Early-Request")) {
+        console.warn(`[API] ${method} ${route} was serviced before the TLS handshake was complete.`);
+    }
+
 
     const res = new APIResponse(
         raw_response.status,

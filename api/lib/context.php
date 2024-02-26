@@ -81,6 +81,7 @@ function contextual_run() {
 
     header("Access-Control-Allow-Methods: ". implode(", ", $route->allowed_methods));
     header("Access-Control-Allow-Headers: content-type, authorization, x-no-track");
+    header("Access-Control-Expose-Headers: x-early-request, x-session-validation-time");
     header("Access-Control-Allow-Credentials: true");
     header("Access-Control-Max-Age: 86400"); // 1 day of access control
 
@@ -137,7 +138,7 @@ function contextual_run() {
         error_log("Rejecting 0-RTT request on $ctx->request_method $route->callable");
         respond_too_early();
     } else {
-        header("X-RTT: Accepted");
+        header("X-Early-Request: Accepted");
     }
 
     // all checks passed
