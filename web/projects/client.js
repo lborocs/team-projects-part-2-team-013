@@ -581,13 +581,10 @@ function showTaskInExplainer(taskCard) {
 //handles assignments and the man hours of those assignments
 async function renderAssignmentsInExplainer(taskID) {
     let task = globalTasksList.find(task => task.taskID === taskID);
-    console.error(task)
     if (!task) return;
 
     let assignments = task.assignments;
     let manHours = task.employeeManHours;
-    console.error(assignments)
-    console.error(manHours)
     console.log("[renderAssignmentsInExplainer] assignments: ", assignments);
 
     let usersAssignedExplainer = document.querySelector(".users-assigned-explainer");
@@ -610,18 +607,19 @@ async function renderAssignmentsInExplainer(taskID) {
     
     let employees = await getEmployeesById([...unique_users]);
 
-    assignments = assignments.sort((a, b) => {
-        return employees.get(a).deleted - employees.get(b).deleted;
-    });
-
     let manHoursMap = new Map();
     manHours.forEach((entry) => {
         manHoursMap.set(entry.empID, entry.manHours);
     });
-    console.error(manHoursMap)
+
+    assignments = assignments.sort((a, b) => {
+        return manHoursMap.get(b) - manHoursMap.get(a);
+    });
+    console.error(assignments)
+
 
     assignments.forEach((empID) => {
-        let emp = employees.get(empID); // Get employee from employees map
+        let emp = employees.get(empID);
         let emp_name = global.employeeToName(emp);
         let emp_icon = global.employeeAvatarOrFallback(emp);
 
@@ -639,25 +637,36 @@ async function renderAssignmentsInExplainer(taskID) {
         //manhours
         let submittedRow = document.createElement("div");
         submittedRow.classList.add("manhours-submitted-row");
+
+        let employeeContainer = document.createElement("div");
+        employeeContainer.classList.add("manhours-employee-container");
+
         let manHourIcon = document.createElement("div");
         manHourIcon.classList.add("assignment");
-        manHourIcon.classList.add("tooltip", "tooltip-under");
 
         manHourIcon.innerHTML = `
-            <p class="tooltiptext">${emp_name}</p>
             <img src="${emp_icon}" class="task-avatar">
         `
+        employeeContainer.appendChild(manHourIcon);
 
-        submittedRow.appendChild(manHourIcon);
+        let submittedName = document.createElement("div");
+        submittedName.classList.add("explainer-details");
+        submittedName.innerHTML = emp_name;
+        employeeContainer.appendChild(submittedName);
+
+        submittedRow.appendChild(employeeContainer);
+
         let submittedHours = document.createElement("div");
         submittedHours.classList.add("explainer-details");
 
         let submittedManHours = manHoursMap.get(empID) || 0;
         submittedManHours = submittedManHours / 3600;
 
-        let timeDisplay = "None"
-        
-        if (submittedManHours < 1) {
+        let timeDisplay;
+
+        if (submittedManHours == 0) {
+            timeDisplay = "None";
+        } else if (submittedManHours < 1) {
             let submittedManMinutes = submittedManHours * 60;
             let hours = Math.floor(submittedManMinutes / 60);
             let minutes = Math.floor(submittedManMinutes % 60);
@@ -3108,7 +3117,7 @@ async function addProject() {
                 name: name,
                 description: description,
                 dueDate: dueDateTimestamp,
-                teamLeader: teamLeader,
+                teamLeader: assignedTeamLeader.empID,
             }
         );
 
