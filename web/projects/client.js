@@ -595,15 +595,29 @@ function showTaskInExplainer(taskCard) {
     }
 
     explainerTaskManhours.innerHTML = `
-        <div class="description-header">Estimated Man hours</div>
+        <div class="description-header">Man hours</div>
+        <div class="manhours-submitted">
+
+        </div>
         <div class="man-hours">
+            <div class="explainer-details">
+                Allocated
+            </div>
             <div class="manhours">
                 ${timeDisplay}
             </div>
-            <div class="text-button" id="add-man-hours" tabindex="0">
-                <div class="button-text">+</div>
-            </div> 
         </div>
+        
+        <div class="text-button" id="add-man-hours" tabindex="0">
+            <div class="button-icon">
+                <span class="material-symbols-rounded">
+                    more_time
+                </span>
+            </div>
+            <div class="button-text">
+                Log your hours
+            </div>
+        </div> 
     `;
 
     let addManHoursButton = explainerTaskManhours.querySelector('#add-man-hours');
@@ -632,17 +646,24 @@ function showTaskInExplainer(taskCard) {
     global.setBreadcrumb(["Projects", globalCurrentProject.name, globalCurrentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + globalCurrentTask.taskID])
 }
 
+//handles assignments and the man hours of those assignments
 async function renderAssignmentsInExplainer(taskID) {
     let task = globalTasksList.find(task => task.taskID === taskID);
-
+    console.error(task)
     if (!task) return;
 
     let assignments = task.assignments;
+    let manHours = task.employeeManHours;
+    console.error(assignments)
+    console.error(manHours)
     console.log("[renderAssignmentsInExplainer] assignments: ", assignments);
-    let usersAssignedExplainer = document.querySelector(".users-assigned-explainer");
 
-    // This clears the explainer
+    let usersAssignedExplainer = document.querySelector(".users-assigned-explainer");
+    let manHoursSubmitted = document.querySelector(".manhours-submitted");
+
+    //resets containers before rendering new data
     usersAssignedExplainer.innerHTML = '';
+    manHoursSubmitted.innerHTML = '';
 
     if (assignments.length === 0) {
         usersAssignedExplainer.innerHTML = 'None set';
@@ -661,6 +682,12 @@ async function renderAssignmentsInExplainer(taskID) {
         return employees.get(a).deleted - employees.get(b).deleted;
     });
 
+    let manHoursMap = new Map();
+    manHours.forEach((entry) => {
+        manHoursMap.set(entry.empID, entry.manHours);
+    });
+    console.error(manHoursMap)
+
     assignments.forEach((empID) => {
         let emp = employees.get(empID); // Get employee from employees map
         let emp_name = global.employeeToName(emp);
@@ -670,10 +697,34 @@ async function renderAssignmentsInExplainer(taskID) {
         assignmentElem.classList.add("assignment");
         assignmentElem.classList.add("tooltip", "tooltip-under");
 
-        assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
-        <img src="${emp_icon}" class="task-avatar">`
+        assignmentElem.innerHTML = `
+            <p class="tooltiptext">${emp_name}</p>
+            <img src="${emp_icon}" class="task-avatar">
+        `
 
         usersAssignedExplainer.appendChild(assignmentElem);
+
+        //manhours
+        let submittedRow = document.createElement("div");
+        submittedRow.classList.add("manhours-submitted-row");
+        let manHourIcon = document.createElement("div");
+        manHourIcon.classList.add("assignment");
+        manHourIcon.classList.add("tooltip", "tooltip-under");
+
+        manHourIcon.innerHTML = `
+            <p class="tooltiptext">${emp_name}</p>
+            <img src="${emp_icon}" class="task-avatar">
+        `
+
+        submittedRow.appendChild(manHourIcon);
+        let submittedHours = document.createElement("div");
+        submittedHours.classList.add("explainer-details");
+        //makes sure 0 hours is rendered if the employee hasnt logged any hours
+        submittedHours.innerHTML = manHoursMap.get(empID) ? (manHoursMap.get(empID) / 3600) : "0 hours";
+        submittedRow.appendChild(submittedHours);
+
+        manHoursSubmitted.appendChild(submittedRow);
+
     });
 }
 
@@ -4081,32 +4132,26 @@ async function getArchived(projID){
 
 let archiveButton = document.getElementById("view-archived-button");
 archiveButton.addEventListener("click", async () => {
+    let icon = archiveButton.querySelector('.material-symbols-rounded');
+    let text = archiveButton.querySelector('.button-text');
     if(archiveButton.classList.contains("active")){
         console.log("[archiveButton] clicked");
         archiveButton.classList.remove("active");
         let projID = globalCurrentProject.projID;
         renderTasks(globalTasksList);
-        archiveButton.innerHTML = `
-        <div class="button-text desktop">
-            View Archived Tasks
-        </div>
-        <div class="button-text mobile">
-            View Archived Tasks
-        </div>
-        `;
+        
+        icon.innerText = "inventory_2"
+        text.innerText = "View Archive"
+
     } else {
         console.log("[archiveButton] clicked");
         archiveButton.classList.add("active");
         let projID = globalCurrentProject.projID;
         let tasks = await getArchived(projID);
-        archiveButton.innerHTML = `
-        <div class="button-text desktop">
-            View Active Tasks
-        </div>
-        <div class="button-text mobile">
-            View Active Tasks
-        </div>
-        `;
+        
+        icon.innerText = "door_open"
+        text.innerText = "Leave Archive"
+
         renderTasks(tasks);
     }
 });
