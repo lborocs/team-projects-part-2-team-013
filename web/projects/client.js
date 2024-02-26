@@ -320,14 +320,13 @@ async function addManHoursPopup(task) {
     }
 
     
-    global.popupModal(
+    await global.popupModal(
         false,
         "Submit Manhours",
         callback,
         {text:"Submit", class:"blue"},
-    ).then(() => {
-        let manHours = hoursInput * 3600 + minutesInput * 60;
-    })
+    )
+    let manHours = hoursInput * 3600 + minutesInput * 60;
 
 }
 
