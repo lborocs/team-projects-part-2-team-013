@@ -792,7 +792,9 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                     return
                 }
 
-                while (parent !== taskCard) {
+                let parent = e.target.parentElement;
+                while (parent != taskCard && parent !== null) {
+
                     if (parent.classList.contains("dont-depress-children")) {
                         return
                     }
@@ -819,7 +821,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                     return
                 }
 
-                parent = e.target.parentElement;
+                let parent = e.target.parentElement;
                 while (parent !== taskCard) {
                     if (parent.classList.contains("dont-depress-children")) {
                         return
