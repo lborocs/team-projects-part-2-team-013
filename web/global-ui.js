@@ -1523,7 +1523,7 @@ export function popupModal(
 
 
         function completeModal(success) {
-            dialog.style.display = 'none';
+            dialog.remove();
             fullscreenDiv.style.filter = 'none';
             fullscreenDiv.style.pointerEvents = 'auto';
             document.removeEventListener("keydown", escListener);
