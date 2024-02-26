@@ -2157,11 +2157,10 @@ function correctContextMenus() {
  * 
  * @returns {HTMLElement} a <tr> of the rendered project.
  */
-async function renderProject(project) {
+async function renderProjectToFragment(project) {
     console.log("[renderProject] rendering project: ", project.projID, project.name);
 
-    //gets the projects table and makes the project row
-    let projectsTable = document.querySelector("#projects-table");
+    //makes the project row- independent of the table
     let projectTitle = document.querySelector(".project-bar .title");
     let mobileProjectTitle = document.querySelector(".mobile-icons .title");
     let projectRow = document.createElement("tr");
@@ -2257,7 +2256,7 @@ async function renderProject(project) {
     projectRow.setAttribute("data-description", project.description !== null ? project.description : "Not set");
     projectRow.setAttribute("data-due-date", project.dueDate !== null ? project.dueDate : "Not set");
     projectRow.setAttribute("data-team-leader", JSON.stringify(teamLeader));
-    projectsTable.querySelector("tbody").appendChild(projectRow);
+    
 
     //sets up the context menu event listener
     const projectActions = projectRow.querySelector(".project-actions");
@@ -2270,6 +2269,7 @@ async function renderProject(project) {
     //enables the team leader UI elements if the current user is the team leader
     teamLeaderEnableElementsIfTeamLeader();
 
+    //returns the element so it can be rendered into a fragment
     return projectRow;
 }
 
@@ -3126,8 +3126,7 @@ async function addProject() {
             dialog.style.display = 'none';
             fullscreenDiv.style.filter = 'none';
             console.log("[addprojectCreateButton] resolving")
-            let newProject = res.data;
-            await renderProject(newProject);
+            await searchAndRenderProjects();
         } else {
             let error = `${res.error.message} (${res.error.code})`
             console.log("Error creating new project: " + error);   
@@ -3997,11 +3996,11 @@ async function checkNextPage() {
 async function searchAndRenderProjects() {
 
     document.title = "Projects";
-    
 
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
 
     const search = projectSearchInput.value;
+    const projectsTable = document.getElementById("projects-table");
 
     var route;
     if (!onlyMyProjects) {
@@ -4021,8 +4020,6 @@ async function searchAndRenderProjects() {
     if (res.success !== true) {
         return;
     }
-    
-    clearProjectList();
 
     if (res.data.projects.length < pageLimit) {
         pageForwardButton.classList.add('disabled');
@@ -4036,10 +4033,18 @@ async function searchAndRenderProjects() {
         pageBackButton.classList.remove('disabled');
     }
 
+    //fragment for batch rendering
+    const fragment = document.createDocumentFragment();
+
     console.log("[searchAndRenderAllProjects] projects have been fetched successfully");
+    
     await Promise.all(res.data.projects.map(async (project) => {
-        await renderProject(project);
+        let projectElement = await renderProjectToFragment(project);
+        fragment.appendChild(projectElement);
     }));
+
+    clearProjectList();
+    projectsTable.querySelector("tbody").appendChild(fragment);
 
     if (res.data.projects.length === 0) {
         projectsTableEmptyState.classList.remove('norender');
