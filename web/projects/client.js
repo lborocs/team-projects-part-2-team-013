@@ -719,8 +719,25 @@ async function renderAssignmentsInExplainer(taskID) {
         submittedRow.appendChild(manHourIcon);
         let submittedHours = document.createElement("div");
         submittedHours.classList.add("explainer-details");
+
+        let submittedManHours = manHoursMap.get(empID) || 0;
+        submittedManHours = submittedManHours / 3600;
+
+        let timeDisplay = "None"
+        
+        if (submittedManHours < 1) {
+            let submittedManMinutes = submittedManHours * 60;
+            let hours = Math.floor(submittedManMinutes / 60);
+            let minutes = Math.floor(submittedManMinutes % 60);
+            timeDisplay = `${hours}h ${minutes}m`;
+        } else {
+            let hours = Math.floor(submittedManHours);
+            let minutes = Math.floor((submittedManHours % 1) * 60);
+            timeDisplay = `${hours}h ${minutes}m`;
+        }
+
         //makes sure 0 hours is rendered if the employee hasnt logged any hours
-        submittedHours.innerHTML = manHoursMap.get(empID) ? (manHoursMap.get(empID) / 3600) : "0 hours";
+        submittedHours.innerHTML = timeDisplay;
         submittedRow.appendChild(submittedHours);
 
         manHoursSubmitted.appendChild(submittedRow);
@@ -1259,6 +1276,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
             console.log(`[renderAssignment] Task ${assignment.task.taskID} not found (we leaked an assignment)`)
             return
         }
+        
         let taskTable = document.querySelector(".tasktable-body");
         let taskTableTask = taskTable.querySelector(`[id="${assignment.task.taskID}"]`);
         let usersAssigned = task.querySelector(".users-assigned");

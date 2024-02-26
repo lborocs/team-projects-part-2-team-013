@@ -674,6 +674,7 @@
     align-items: flex-start;
     gap: 1em;
     padding: 0em;
+    width: 100%;
     .title {
         font-size: 18px;
         font-weight: 700;
