@@ -322,6 +322,13 @@ function _new_task(RequestContext $ctx, array $data, array $url_specifiers) {
     $createdAt = timestamp();
     $expectedManHours = $data["taskExpectedManHours"];
 
+    if ($dueDate != null && $dueDate < $createdAt) {
+        respond_bad_request(
+            "Expected field 'taskDueDate' to be after the creation time",
+            ERROR_BODY_FIELD_INVALID_TYPE,
+        );
+    }
+
     if (db_generic_new(
         TABLE_TASKS ,
         [
@@ -361,6 +368,17 @@ function _delete_task(RequestContext $ctx, array $url_specifiers) {
 function _edit_task(RequestContext $ctx, array $data, array $url_specifiers) {
 
     ensure_no_unchanged_fields($ctx->task, $data);
+
+    if (
+        array_key_exists("taskDueDate", $ctx->request_body) &&
+        $ctx->request_body["taskDueDate"] < $ctx->task["createdAt"]
+    ) {
+        respond_bad_request(
+            "Expected field 'taskDueDate' to be after the creation time",
+            ERROR_BODY_FIELD_INVALID_TYPE,
+        );
+    }
+
 
     // only dispatch notification if something other than task state changes
     if (count($data) > 1 || !array_key_exists("taskState", $data)) {
