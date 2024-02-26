@@ -69,6 +69,7 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
     $teamLeader = hex2bin($body["projectTeamLeader"]);
     $createdAt = timestamp();
     $dueDate = $body["projectDueDate"] ?? null;
+    $archived = 0;
 
     if ($dueDate != null && $dueDate < $createdAt) {
         respond_bad_request(
@@ -86,9 +87,10 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
             $createdBy,
             $teamLeader,
             $createdAt,
-            $dueDate
+            $dueDate,
+            $archived
         ],
-        "sssssss"
+        "sssssssi"
     )) {
 
         $body["projID"] = $projID;
@@ -104,13 +106,15 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
 
 
 function _delete_project(RequestContext $ctx, array $url_specifiers) {
-    respond_not_implemented();
+    db_project_archive($url_specifiers[0]);
+    respond_no_content();
 }
 
 function _edit_project(RequestContext $ctx, array $body, array $url_specifiers) {
 
     if (
         array_key_exists("projectDueDate", $ctx->request_body) &&
+        !is_null($ctx->request_body["projectDueDate"]) &&
         $ctx->request_body["projectDueDate"] < $ctx->project["createdAt"]
     ) {
         respond_bad_request(

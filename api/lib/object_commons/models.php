@@ -496,6 +496,7 @@ const TABLE_PROJECTS = new Table(
         new Column(
             "projectDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false
         ),
+        new Column("projectArchived", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
     ],
     "project",
     "project"
