@@ -723,6 +723,15 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                         });
 
 
+                    } else if (item.classList.contains("action-submit-hours")) {
+                        console.log("[contextMenuItemOnClick] submit hours clicked")
+                        let taskID = taskCard.getAttribute("id");
+                        let task = globalTasksList.find(task => task.taskID === taskID);
+
+                        addManHoursPopup(task).then(() => {
+                            renderTasks(globalTasksList);
+                        });
+
                     } else if (item.classList.contains("action-copy")) {
                         console.log("[contextMenuItemOnClick] copy clicked")
 
@@ -1897,14 +1906,14 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                             </div>
                         </div>
                     </div>
-                    <div class="item action-delete">
+                    <div class="item action-submit-hours">
                         <div class="icon">
                             <span class="material-symbols-rounded">
-                                inventory_2
+                                more_time
                             </span>
                         </div>
                         <div class="text">
-                            Archive
+                            Submit hours
                         </div>
                     </div>
                     <div class="divider"></div>
@@ -1926,6 +1935,17 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
                         </div>
                         <div class="text">
                             Open in new tab
+                        </div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="item action-delete">
+                        <div class="icon">
+                            <span class="material-symbols-rounded">
+                                inventory_2
+                            </span>
+                        </div>
+                        <div class="text">
+                            Archive
                         </div>
                     </div>
                 </div>
