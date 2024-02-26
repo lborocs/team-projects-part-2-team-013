@@ -973,7 +973,9 @@ sup {
             justify-content: center;
             align-items: center;
             display: flex;
-            margin-right: 0.25em;
+            span {
+                margin-right: 0.25em
+            }
         }
 
     }
