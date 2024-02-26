@@ -193,6 +193,15 @@ function setActivePane(newPane) {
     
 }
 
+function getActivePane() {
+    let activePane = document.querySelector(".main:not(.norender)");
+    if (!activePane) {
+        throw new Error("[getActivePane] no active pane");
+    }
+    return activePane.id;
+
+}
+
 async function addManHoursPopup(task) {
     console.log("[addManHoursPopup] Running addManHoursPopup")
 
@@ -801,7 +810,9 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                     return
                 }
 
-                while (parent !== taskCard) {
+                let parent = e.target.parentElement;
+                while (parent != taskCard && parent !== null) {
+
                     if (parent.classList.contains("dont-depress-children")) {
                         return
                     }
@@ -828,7 +839,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                     return
                 }
 
-                parent = e.target.parentElement;
+                let parent = e.target.parentElement;
                 while (parent !== taskCard) {
                     if (parent.classList.contains("dont-depress-children")) {
                         return
@@ -2281,6 +2292,7 @@ async function addTask() {
 
     console.log("[addTask] Creating popup")
     let popupDiv = document.querySelector('.popup');
+    popupDiv.replaceChildren();
     let fullscreenDiv = document.querySelector('.fullscreen');
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
@@ -2873,6 +2885,7 @@ async function addProject() {
     console.log(popupDiv)
     let fullscreenDiv = document.querySelector('.fullscreen');
     console.log("[addproject] before popup")
+    popupDiv.replaceChildren();
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-project-popup">
             <div class="popup-title">
@@ -3040,7 +3053,6 @@ async function addProject() {
     });
     roller.roll();
 
-    console.log(popupDiv.innerHTML)
     console.log("[addproject] after popup")
     fullscreenDiv.style.filter = 'brightness(0.75)';
     let dialog = popupDiv.querySelector('.popupDialog');
@@ -3130,6 +3142,7 @@ async function editTaskPopup(task){
     console.log("[editTaskPopup] Running editTaskPopup")
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
+    popupDiv.replaceChildren();
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
             <div class="popup-title">
@@ -3507,6 +3520,7 @@ async function projectPopup(project){
     let teamLeaderAvatar = global.employeeAvatarOrFallback(teamLeader);
 
     let hasDueDate = project.dueDate ? new Date(project.createdAt).toLocaleDateString() : "Not set";
+    popupDiv.replaceChildren();
 
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="project-popup">
@@ -3836,9 +3850,13 @@ async function projectPopup(project){
             console.error("[projectPopup] Couldn't update project")
         }
 
-        //refreshes the site with the changes
-        await searchAndRenderProjects();
-        await projectPopup(project.projID);
+        if (getActivePane() == "individual-project-pane") {
+            await renderFromBreadcrumb(global.getLocationHashArray());
+        } else {
+            await searchAndRenderProjects();
+        }
+
+        await projectPopup(project);
 
 
     })

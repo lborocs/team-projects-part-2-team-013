@@ -70,6 +70,13 @@ function _new_project(RequestContext $ctx, array $body, array $url_specifiers) {
     $createdAt = timestamp();
     $dueDate = $body["projectDueDate"] ?? null;
 
+    if ($dueDate != null && $dueDate < $createdAt) {
+        respond_bad_request(
+            "Expected field 'projectDueDate' to be after the creation time",
+            ERROR_BODY_FIELD_INVALID_TYPE,
+        );
+    }
+
     if (db_generic_new(
         TABLE_PROJECTS ,
         [
@@ -101,6 +108,16 @@ function _delete_project(RequestContext $ctx, array $url_specifiers) {
 }
 
 function _edit_project(RequestContext $ctx, array $body, array $url_specifiers) {
+
+    if (
+        array_key_exists("projectDueDate", $ctx->request_body) &&
+        $ctx->request_body["projectDueDate"] < $ctx->project["createdAt"]
+    ) {
+        respond_bad_request(
+            "Expected field 'projectDueDate' to be after the creation time",
+            ERROR_BODY_FIELD_INVALID_TYPE,
+        );
+    }
 
 
     _use_common_edit(TABLE_PROJECTS, $body, $url_specifiers);

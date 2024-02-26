@@ -494,8 +494,7 @@ const TABLE_PROJECTS = new Table(
         ),
         new Column("projectCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column(
-            "projectDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false,
-            constraints:[new FutureDateConstraint()]
+            "projectDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false
         ),
     ],
     "project",
@@ -534,8 +533,7 @@ const TABLE_TASKS = new Table(
         new Column("taskArchived", is_primary_key:false, type:"boolean", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column("taskCreatedAt", is_primary_key:false, type:"integer", is_nullable:false, is_editable:false, is_server_generated:true),
         new Column(
-            "taskDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false,
-            constraints:[new FutureDateConstraint()]
+            "taskDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false
         ),
         new Column("taskExpectedManHours", is_primary_key:false, type:"integer", is_nullable:false, is_editable:true, is_server_generated:false),
         new Column("taskCompletedAt", is_primary_key:false, type:"integer", is_nullable:true, is_editable:false, is_server_generated:true),
@@ -579,8 +577,7 @@ const TABLE_PERSONALS = new Table(
             constraints:[new RestrictedDomainConstraint(TASK_VALID_STATES)]
         ),
         new Column(
-            "personalDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false,
-            constraints:[new FutureDateConstraint()]
+            "personalDueDate", is_primary_key:false, type:"integer", is_nullable:true, is_editable:true, is_server_generated:false
         ),
         new Column(
             "personalTitle", is_primary_key:false, type:"string", is_nullable:false, is_editable:true, is_server_generated:false,
