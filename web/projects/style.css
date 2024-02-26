@@ -408,24 +408,20 @@
     flex-direction: row;
     list-style: none;
     justify-content: flex-start;
-    align-items: center;
+    align-items: flex-start;
     font-weight: 600;
-    height: 3em;
-    width: calc(100% - 2em);
-    align-items: center;
-    gap: 1em;
-    margin-bottom: 0.75em;
+    height: 2.75rem;
+    width: calc(100% - 2rem);
+    gap: 0.75rem;
     position: sticky;
     top: 0;
     color: #555555;
     z-index: 1;
     border-bottom: solid 2px var(--border-clr);
     background-color: inherit;
-    flex: 0 0 3em;
+    flex: 0 0 2.75rem;
     .selected {
-        background-color: var(--white);
-        color: #000000;
-        box-shadow: 0 0 6px var(--box-shadow-clr, rgba(0,0,0,0.15));
+        background-color: var(--white) !important;
         transition: 0.15s ease-out;
     };
 
@@ -453,32 +449,11 @@
     }
 }
 
-.view {
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    padding-left: 0.25em;
-    padding-right: 0.5em;
-    height: 28px;
-    font-weight: 600;
-    gap: 0.25em;
-    border-radius: 4px;
-    transition: 0.1s ease-out;
-    cursor: pointer;
-    user-select: none;
-    color: #555555;
+.view.selected:hover {
+    background-color: var(--white) !important;
 
-    & span {
-        font-size: 20px;
-    }
 }
 
-.view:hover {
-    color: var(--text-off-black, #0f0f0f);
-    transition-duration: 0.05s;
-    cursor: pointer;
-    background-color: var(--white, white);
-}
 
 .viewport-button {
     margin-left: auto;
