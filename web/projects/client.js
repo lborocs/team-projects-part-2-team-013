@@ -837,9 +837,11 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                     card.classList.remove("task-focussed")
                 })
                 taskCard.classList.add("task-focussed")
-                explainer.classList.remove("hidden")
-                overlay.classList.remove("hidden")
-                showTaskInExplainer(taskCard);
+                if (taskCard.getAttribute("id") !== explainerTaskContainer.getAttribute("task-id")) {
+                    explainer.classList.remove("hidden")
+                    overlay.classList.remove("hidden")
+                    showTaskInExplainer(taskCard);
+                }
             }
 
             const clickListener = (e) => {
