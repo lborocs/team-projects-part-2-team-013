@@ -43,8 +43,10 @@ const explainerTaskContainer = explainer.querySelector(".task-overview")
 const explainerTaskTitle = explainerTaskContainer.querySelector(".title")
 const explainerTaskDescriptionContainer = explainerTaskContainer.querySelector(".description-container")
 const explainerTaskDescription = explainerTaskContainer.querySelector(".description")
-const explainerTaskDateContainer = explainerTaskContainer.querySelector(".date-container")
+const explainerTaskDateContainer = explainerTaskContainer.querySelector("#explainer-duedate")
 const explainerTaskDate = explainerTaskContainer.querySelector(".date")
+const explainerTaskCompletedContainer = explainerTaskContainer.querySelector("#explainer-completed")
+const explainerTaskCompleted = explainerTaskCompletedContainer.querySelector(".date")
 const explainerShowHide = document.querySelector("#explainer-show-hide")
 const explainerPopoutBack = document.querySelector("#explainer-back")
 const notStartedColumn = document.querySelector("#notstarted")
@@ -531,6 +533,13 @@ function showTaskInExplainer(taskID) {
 
     let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
     explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "None set";
+
+    if (globalCurrentTask.completedAt) {
+        explainerTaskCompletedContainer.classList.remove("norender");
+        explainerTaskCompleted.innerHTML = global.formatDateFull(new Date(globalCurrentTask.completedAt))
+    } else {
+        explainerTaskCompletedContainer.classList.add("norender");
+    }
 
     let manHours = globalCurrentTask.expectedManHours;
     let timeDisplay = global.formatSecondsLong(manHours);
@@ -1220,7 +1229,7 @@ function taskObjectRenderAll(task, update = RENDER_BOTH) {
     let archived = task.archived || 0;
 
     if (update & RENDER_COLUMN) {
-        renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours, assignments);
+        renderTask(title, state, taskID, desc, createdBy, date, task.dueDate, expectedManHours, assignments, task.completedAt);
     }
     if (update & RENDER_LIST) {
         renderTaskInList(title, state, taskID, desc, createdBy, date, expectedManHours, assignments, archived);
@@ -1851,7 +1860,7 @@ function sortByAssignees(tasks, descending) {
 }
 
 //TODO: render the context menu
-async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours, assignments = []) {
+async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", date = "", timestamp, expectedManHours, assignments = [], completedAt) {
     state = state === null ? 0 : state;
     ID = ID === null ? "" : ID;
     desc = desc === null ? "" : desc;
@@ -2005,7 +2014,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     let dateTooltip;
 
     // Calculate the difference in days
-    const diffInDays = Math.floor((timestamp - dateToday) / (24 * 60 * 60 * 1000));
+    const diffInDays = Math.round((timestamp - dateToday) / (24 * 60 * 60 * 1000));
 
     if (timestamp === null) {
 
@@ -2019,23 +2028,37 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         overdueContainerClass = "overdue";
         dateTooltip = `Overdue by ${-diffInDays} day${-diffInDays !== 1 ? 's' : ''}`;
 
-    } else if (state === 2 && diffInDays > 0) {
-
-        // tasks which are finished but have a due date in the future
-        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        dateTooltip = `Finished but due in ${diffInDays} day${diffInDays !== 1 ? 's' : ''}`;
-
-    } else if (state !== 2){
-
-        // tasks which are not finished and have a due date in the future
-        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        dateTooltip = `Due in ${diffInDays} day${diffInDays !== 1 ? 's' : ''}`;
-
     } else {
-        
-        // tasks which are finished and have a due date in the past
+
+        // tasks which have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        dateTooltip = `Finished ${-diffInDays} day${-diffInDays !== 1 ? 's' : ''} ago`;
+        if (diffInDays === 0) {
+            dateTooltip = `Due today`;
+        }
+        else if (diffInDays === 1) {
+            dateTooltip = `Due tomorrow`;
+        }
+        else {
+            if (diffInDays > 0) {
+                dateTooltip = `Due in ${diffInDays} days`;
+            } else {
+                dateTooltip = `Due ${-diffInDays} days ago`;
+            }
+        }
+
+        if (completedAt !== null) {
+            const delta = -Math.round((completedAt - dateToday) / (24 * 60 * 60 * 1000));
+            if (delta == 0) {
+                dateTooltip += `<br>Completed today`;
+            }
+            else if (delta == 1) {
+                dateTooltip += `<br>Completed yesterday`;
+            }
+            else {
+                dateTooltip += `<br>Completed ${delta} days ago`;
+            }
+        }
+
     }
 
     let taskInfo = document.createElement("div");

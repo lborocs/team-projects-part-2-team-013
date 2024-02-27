@@ -187,6 +187,10 @@ input {
 
     position: absolute;
     z-index: 999;
+
+    &:has(br) {
+        text-align: left;
+    }
 }
 
 
