@@ -3180,7 +3180,7 @@ async function editTaskPopup(task){
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
                     <div class="search white">
-                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Assign Employees">
             
                         
                         <div class="search-icon">
