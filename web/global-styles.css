@@ -97,6 +97,9 @@ body {
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+
+    scrollbar-color: var(--border-clr);
+    scrollbar-width: thin;
     
     /* caret-color: transparent; */
 }
@@ -752,7 +755,7 @@ button:hover {
 .confirmation {
     z-index: 100;
 }
-
+/* 
 ::-webkit-scrollbar {
     width: 0.5rem;
     height: 0.5rem;
@@ -773,7 +776,7 @@ button:hover {
 
 ::-webkit-scrollbar-thumb:active {
     background: #999;
-}
+} */
 
 /* [contenteditable]:empty:after {
     content: attr(placeholder);
