@@ -22,6 +22,7 @@
     font-size :14px;
     font-weight: 600;
     margin-top: 0.25rem;
+    color: var(--text-off-black);
 }
 
 .created-at {

@@ -91,4 +91,5 @@
 .search.white {
     color: black;
     background-color: white;
+    border: solid 2px var(--border-clr);
 }
