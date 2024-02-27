@@ -3380,10 +3380,7 @@ async function editTaskPopup(task){
     let taskTitleInput = popupDiv.querySelector('.add-task-title-input');
     taskTitleInput.value = task.title;
 
-    let description = task.description.replace(/<p>|<\/p>|<br>/g, '');
-    quill.setContents([
-        { insert: description }
-    ]);
+    quill.root.innerHTML = task.description;
 
     let hours = Math.floor(task.expectedManHours / 3600);
     let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
