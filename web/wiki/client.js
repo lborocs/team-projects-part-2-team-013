@@ -6,12 +6,9 @@ import { animate } from "../global-ui.js"
 var tagsToDelete = new Set();
 var postsContainer = document.querySelector('.posts-container');
 var posts = document.querySelectorAll('.post');
+const postSearchBar = document.querySelector(".post-search");
 const searchInput = document.getElementById("inputField")
-const tagSearchInput = document.querySelector("#tag-search > .search-input")
-const deleteTagsPopup = document.getElementById("delete-tags-popup");
-const deleteTagsHasPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .hasPosts > .tags');
-const deleteTagsNoPostContainer = deleteTagsPopup.querySelector('.tagsContainer > .noPosts > .tags');
-const deleteTagsConfirmButton = deleteTagsPopup.querySelector("#confirm-button");
+const tagSearchInput = document.querySelector("#tag-search > .search-input");
 const tagSelection = document.querySelector('#tag-selection');
 
 
@@ -77,10 +74,10 @@ class Tag {
         this.tag = inner;
     }
 
-    renderTag() {
+    renderTag(hasPostsContainer, noPostsContainer) {
         const elem = document.createElement('div');
 
-        const parent =  this.tag.hasPosts ? deleteTagsHasPostContainer : deleteTagsNoPostContainer;
+        const parent =  this.tag.hasPosts ? hasPostsContainer : noPostsContainer;
 
         elem.classList.add('tag');
         elem.tabIndex = 0;
@@ -94,12 +91,14 @@ class Tag {
     addEventListeners() {
 
         const deleteListener = () => {
+
+            this.element.classList.toggle('selectedDel');
             if (this.element.classList.contains('selectedDel')) {
-                this.element.classList.toggle('selectedDel');
-                tagsToDelete.delete(this.tag.tagID);
-            } else {
-                this.element.classList.toggle('selectedDel');
                 tagsToDelete.add(this.tag.tagID);
+                console.log(tagsToDelete)
+            } else {
+                tagsToDelete.delete(this.tag.tagID);
+                console.log(tagsToDelete)
             }
             if (tagsToDelete.size > 0) {
                 document.getElementById("confirm-button").classList.remove("disabled");
@@ -120,8 +119,8 @@ class Tag {
 }
 
 
-function renderTagInDeleter(tag) {
-    (new Tag(tag)).renderTag();
+function renderTagInDeleter(tag, hasPostsContainer, noPostsContainer) {
+    (new Tag(tag)).renderTag(hasPostsContainer, noPostsContainer);
 }
 
 
@@ -140,6 +139,7 @@ async function searchPosts() {
 
     selectedTags.forEach((tag) => {
         tags.push(tag.getAttribute("tagID"));
+        postSearchBar.appendChild(tag);
     });
     
     if (category === 2) {
@@ -220,21 +220,20 @@ async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechni
 }
 
 async function fetchTags() {
-    const data = await get_api("/wiki/post.php/tags");
+    const res = await get_api("/wiki/post.php/tags");
 
-    if (data.success !== true) {
+    if (res.success !== true) {
         console.log("Tags failed to be fetched");
         return;
     }
 
     console.log("Tags have been fetched");
     tagSelection.replaceChildren();
-    data.data.tags.forEach(tag => {
+    res.data.tags.forEach(tag => {
         tagMap.set(tag.tagID, tag);
         renderTag(tag);
-        renderTagInDeleter(tag);
     });
-    return data.data.tags;
+    return res.data.tags;
 }
 
 function renderTag(tag) {
@@ -269,24 +268,6 @@ async function deleteTag(tagID) {
     }
 }
 
-deleteTagsConfirmButton.addEventListener('click', () => {
-    if (tagsToDelete.size > 0) {
-        const deleteSelectedTags = tagsToDelete.map((tag) => deleteTag(tag));
-        Promise.all(deleteSelectedTags).then(() => {
-            console.log("Tags have been deleted");
-            //location.reload();
-            tagsToDelete = new Set();
-            document.querySelectorAll(".tag.selectedDel").forEach((tag) => {
-                tag.remove();
-            });
-            deleteTagsConfirmButton.classList.add("disabled");
-            searchPosts();
-            fetchTags()
-            closePopup();
-            });
-
-    }
-});
 
 fetchTags().then((tags) => {
     searchPosts();
@@ -444,12 +425,65 @@ function confirmDelete() {
     );
 }
 
+function manageTagsPopup() {
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+            <div class="tagsContainer">
+                <div class="title">
+                    Assigned to posts
+                </div>
+                <div class="hasPosts">
+                    <div class="tags">
+
+                    </div>
+                </div>
+                <div class="title">
+                    Not assigned to any post
+                </div>
+                <div class="noPosts">
+                    <div class="tags">
+
+                    </div>
+                </div>
+            </div>
+        `;
+
+        let hasPostsContainer = ctx.content.querySelector('.hasPosts');
+        let noPostsContainer = ctx.content.querySelector('.noPosts');
+
+        tagMap.forEach((tag) => {
+            renderTagInDeleter(tag, hasPostsContainer, noPostsContainer);
+        });
+
+    }
+
+    
+
+    return global.popupModal(
+        false,
+        "Manage Tags",
+        callback,
+        {text: "Remove", class:"red"}
+    );
+}
+
 document.getElementById("new-post").addEventListener("click", () => {
     window.location.href = "/wiki/create/";
 });
 
 document.getElementById("manage-tags").addEventListener("click", () => {
-    editTags();
+    manageTagsPopup().then(() => {
+        tagsToDelete.forEach((tagID) => {
+            deleteTag(tagID);
+        });
+        tagsToDelete.clear();
+        document.getElementById("confirm-button").classList.add("disabled");
+        fetchTags().then(() => {
+            searchPosts();
+        });
+    }).catch(() => {
+        console.log('Deletion cancelled');
+    });
 });
 
 function closePopup() {
@@ -461,21 +495,3 @@ function closePopup() {
     dialog.style.display = 'none';
     fullscreenDiv.style.filter = 'none';
 }
-
-function editTags() {
-    let popupDiv = document.querySelector('.popup');
-    let fullscreenDiv = document.querySelector('.fullscreen');
-    fullscreenDiv.style.filter = 'brightness(0.75)';
-    let dialog = popupDiv.querySelector('.popup-dialog');
-    dialog.style.transform = 'translateY(0px)'
-    dialog.style.opacity = '1';
-    dialog.style.display = 'flex';
-
-    let closeButton = dialog.querySelector('#close-button');
-
-    closeButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        closePopup();
-    });
-}
-
