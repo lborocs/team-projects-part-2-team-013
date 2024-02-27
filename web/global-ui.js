@@ -494,6 +494,44 @@ export function formatDate(date) {
     return formattedDate;
 }
 
+function formatSecondsIner(seconds) {
+
+    if (seconds == 0) {
+        return {zero: true};
+    }
+
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+    let remainingMinutes = minutes % 60;
+
+    return {
+        zero: false,
+        hours: hours,
+        minutes: remainingMinutes
+    }
+}
+
+
+export function formatSeconds(seconds) {
+    let f = formatSecondsIner(seconds);
+
+    if (f.zero) {
+        return "None";
+    }
+
+    return `${f.hours}h ${f.minutes}m`;
+}
+
+export function formatSecondsLong(seconds) {
+    let f = formatSecondsIner(seconds);
+
+    if (f.zero) {
+        return "None";
+    }
+
+    return `${f.hours} Hours ${f.minutes} Minutes`;
+}
+
 export function formatDateFull(date) {
 
     if (date == null) {

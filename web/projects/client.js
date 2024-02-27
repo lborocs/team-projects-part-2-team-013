@@ -510,20 +510,8 @@ function showTaskInExplainer(taskCard) {
     explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "None set";
 
     let manHours = globalCurrentTask.expectedManHours;
-    let timeDisplay = "";
+    let timeDisplay = global.formatSecondsLong(manHours);
 
-    let hours = Math.floor(manHours / 3600);
-    let minutes = Math.round((manHours / 3600 - hours) * 60);
-
-    if (manHours === 0 || manHours === null) {
-        timeDisplay = "Not set";
-    } else if (hours < 1) {
-        timeDisplay = `${minutes} Minute${minutes !== 1 ? 's' : ''}`;
-    } else if (minutes > 0) {
-        timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''} ${minutes} Minute${minutes !== 1 ? 's' : ''}`;
-    } else {
-        timeDisplay = `${hours} Hour${hours !== 1 ? 's' : ''}`;
-    }
 
     explainerTaskManhours.innerHTML = `
         <div class="description-header">Man hours</div>
@@ -607,8 +595,10 @@ async function renderAssignmentsInExplainer(taskID) {
     let employees = await getEmployeesById([...unique_users]);
 
     let manHoursMap = new Map();
+    let totalManHours = 0;
     manHours.forEach((entry) => {
         manHoursMap.set(entry.empID, entry.manHours);
+        totalManHours += entry.manHours;
     });
 
     assignments = assignments.sort((a, b) => {
@@ -659,22 +649,8 @@ async function renderAssignmentsInExplainer(taskID) {
         submittedHours.classList.add("explainer-details");
 
         let submittedManHours = manHoursMap.get(empID) || 0;
-        submittedManHours = submittedManHours / 3600;
 
-        let timeDisplay;
-
-        if (submittedManHours == 0) {
-            timeDisplay = "None";
-        } else if (submittedManHours < 1) {
-            let submittedManMinutes = submittedManHours * 60;
-            let hours = Math.floor(submittedManMinutes / 60);
-            let minutes = Math.floor(submittedManMinutes % 60);
-            timeDisplay = `${hours}h ${minutes}m`;
-        } else {
-            let hours = Math.floor(submittedManHours);
-            let minutes = Math.floor((submittedManHours % 1) * 60);
-            timeDisplay = `${hours}h ${minutes}m`;
-        }
+        let timeDisplay= global.formatSeconds(submittedManHours)
 
         //makes sure 0 hours is rendered if the employee hasnt logged any hours
         submittedHours.innerHTML = timeDisplay;
@@ -683,6 +659,17 @@ async function renderAssignmentsInExplainer(taskID) {
         manHoursSubmitted.appendChild(submittedRow);
 
     });
+
+    if (totalManHours > 0 && assignments.length > 1) {
+        const spentHours = document.createElement("div");
+        spentHours.innerHTML = `
+        <div class="man-hours">
+            <div class="explainer-details">Total</div>
+            <div class="manhours">${global.formatSecondsLong(totalManHours)}</div>
+        </div>
+        `
+        manHoursSubmitted.appendChild(spentHours);
+    }
 }
 
 function setUpTaskEventListeners(listeners = RENDER_BOTH) {
