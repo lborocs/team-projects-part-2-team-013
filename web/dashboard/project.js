@@ -82,7 +82,11 @@ export async function init(id) {
             labels: completionData.labels,
             datasets: [{
                 backgroundColor: ["rgba(245,205,188,0.7)", "rgba(188,219,245,0.7)", "rgba(188,245,188,0.7)"],
-                borderColor: ["rgba(245,205,188,1)", "rgba(188,219,245,1)", "rgba(188,245,188,1)"],
+                borderColor: ['rgba(255,255,255,1)'],
+                hoverBorderColor: ['rgba(255,255,255,1)'],
+                borderWidth: 2,
+                borderRadius: 4,
+                hoverOffset: 8,
                 data: completionData.values
             }]
         },
@@ -104,14 +108,28 @@ export async function init(id) {
                 label: 'Archived',
                 data: [archivedData.values[0]],
                 backgroundColor: 'rgba(230,230,230,0.7)',
-                borderColor: 'rgba(200,200,200, 1)',
-                borderWidth: 2
+                borderColor: ['rgba(255,255,255,1)'],
+                hoverBorderColor: ['rgba(255,255,255,1)'],
+                borderRadius: {
+                    topLeft: 4,
+                    topRight: 4,
+                    bottomLeft: 4,
+                    bottomRight: 4
+                },
+                borderWidth: 2,
             }, {
                 label: 'Active',
                 data: [archivedData.values[1]],
                 backgroundColor: 'rgba(188,219,245,0.7)',
-                borderColor: 'rgba(188,219,245,1)',
-                borderWidth: 2
+                borderColor: ['rgba(255,255,255,1)'],
+                hoverBorderColor: ['rgba(255,255,255,1)'],
+                borderRadius: {
+                    topLeft: 4,
+                    topRight: 4,
+                    bottomLeft: 4,
+                    bottomRight: 4
+                },
+                borderWidth: 2,
             }]
         },
         options: {
