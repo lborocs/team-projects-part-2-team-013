@@ -294,6 +294,39 @@ export async function init(id) {
     }));
     
 
+    const historicalCompletionData = await getHistoricalCompletionData(projectData, 7);
+    console.log("[init] historicalCompletionData: ", historicalCompletionData);
+    charts.push(new Chart(document.getElementById("historicalTaskCompletionChart"), {
+        type: 'line',
+        data: {
+            labels: historicalCompletionData.labels,
+            datasets: [{
+                label: 'Tasks Completed',
+                data: historicalCompletionData.perDay,
+                backgroundColor: 'rgba(188,219,245,0.7)',
+                borderColor: 'rgba(188,219,245,1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    //beginAtZero: true,
+                    suggestedMax: Math.max(...historicalCompletionData.perDay) * 1.3
+                }
+            },
+            plugins: {
+                title: {
+                    display: false
+                },
+                legend: {
+                    display: false
+                }
+            }
+        }
+    }));
+
+
 
     renderTableMetric();
     
@@ -323,6 +356,30 @@ async function getProjectData(id) {
         project: project,
         tasks: tasks.data,
         employees: employees,
+    }
+}
+
+async function getHistoricalCompletionData(projectData, dayDelta) {
+    const now = new Date().getTime();
+    const day0 = now - (dayDelta * 24 * 60 * 60 * 1000);
+    const days = [];
+    for (let i = 0; i < dayDelta; i++) {
+        days.push(global.formatDate(new Date(day0 + (i * 24 * 60 * 60 * 1000))));
+    }
+
+    const tasks = projectData.tasks.tasks.filter(task => task.completedAt && task.completedAt > day0);
+    const tasksCompletedPerDay = [];
+
+    for (let i = 0; i < dayDelta; i++) {
+        const thisDay = day0 + (i * 24 * 60 * 60 * 1000);
+        const dayTasks = tasks.filter(task => task.completedAt > thisDay && task.completedAt < thisDay + (24 * 60 * 60 * 1000));
+        tasksCompletedPerDay.push(dayTasks.length);
+    }
+
+    return {
+        day0: day0,
+        perDay: tasksCompletedPerDay,
+        labels: days
     }
 }
 
