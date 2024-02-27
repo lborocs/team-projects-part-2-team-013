@@ -1325,7 +1325,8 @@ if (window.location.pathname !== '/' || window.location.pathname !== '/register/
                 if (window.innerWidth < 600 && sidebarVisible && !clickSidebar && !clickHamburger) {
                     sidebar.sidebar.classList.toggle('visible');
                     sidebarContainer.classList.toggle('sidebar-open');
-                    sidebar.items.forEach((paragraph) => {
+                    sidebar.items.forEach((item) => {
+                        const paragraph = item.querySelector('p');
                         paragraph.classList.toggle('norender');
                     });
                 }
