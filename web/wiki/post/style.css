@@ -176,6 +176,10 @@
     padding: 0.2em;
     padding-left: 0;
     gap: 0.5em;
+
+    .tag {
+        font-size: 12px;
+    }
 }
 
 
