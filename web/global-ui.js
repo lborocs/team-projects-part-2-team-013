@@ -494,6 +494,25 @@ export function formatDate(date) {
     return formattedDate;
 }
 
+export function formatDayDelta(days) {
+    if (days === 0) {
+        return "today";
+    }
+    else if (days === 1) {
+        return "tomorrow";
+    } else if (days === -1) {
+        return "yesterday";
+    }
+    else {
+        if (days > 0) {
+            return `in ${days} days`;
+        } else {
+            return `${-days} days ago`;
+        }
+    }
+}
+
+
 function formatSecondsInner(seconds) {
 
     if (seconds == 0) {
