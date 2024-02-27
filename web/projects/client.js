@@ -334,9 +334,8 @@ async function addManHoursPopup(task) {
     }
 
     //api requires the full man hours, not just the current addition
-    let totalManHours = task.manHours + manHours;
+    let totalManHours = task.totalManHours + manHours;
     totalManHours = parseInt(totalManHours);
-    console.error(typeof totalManHours);
     totalManHours = Math.floor(totalManHours);
 
     let projID = globalCurrentProject.projID;
