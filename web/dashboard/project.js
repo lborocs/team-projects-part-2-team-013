@@ -20,7 +20,7 @@ const dashboardContainer = document.querySelector(".dashboard-container");
 const overviewMetrics = document.querySelectorAll(".overview");
 
 
-var historicalTaskCompletionTimeframe;
+var historicalTaskCompletionTimeframe = 30;
 
 
 export async function init(id) {
@@ -35,7 +35,6 @@ export async function init(id) {
     });
 
     const historicalTaskCompletionDropdown = document.getElementById("historicalTaskCompletionDropdown");
-    console.log(historicalTaskCompletionDropdown);
 
     
     
@@ -50,9 +49,20 @@ export async function init(id) {
     });
     
     historicalTaskCompletionDropdown.querySelectorAll(".dropdown-option").forEach((option) => {
-        option.addEventListener("click", () => {
+        option.addEventListener("click", async () => {
             historicalTaskCompletionDropdown.querySelector(".dropdown-text").innerText = option.innerText;
             historicalTaskCompletionTimeframe = parseInt(option.getAttribute("value"));
+
+            const newData = await getHistoricalCompletionData(projectData, historicalTaskCompletionTimeframe);
+            console.log("[historicalTaskCompletionDropdown] recalculated for: ", historicalTaskCompletionTimeframe, " days: ", newData);
+
+            const chart = charts.find(chart => chart.canvas.id === "historicalTaskCompletionChart")
+            chart.data.labels = newData.labels;
+            chart.data.datasets[0].data = newData.perDay;
+            chart.data.datasets[1].data = newData.perDay;
+
+            chart.update();
+
         })
     })
 
@@ -319,7 +329,7 @@ export async function init(id) {
     }));
     
 
-    const historicalCompletionData = await getHistoricalCompletionData(projectData, 30);
+    const historicalCompletionData = await getHistoricalCompletionData(projectData, historicalTaskCompletionTimeframe);
     console.log("[init] historicalCompletionData: ", historicalCompletionData);
     charts.push(new Chart(document.getElementById("historicalTaskCompletionChart"), {
 
@@ -416,7 +426,13 @@ async function getProjectData(id) {
 
 async function getHistoricalCompletionData(projectData, dayDelta) {
     const now = new Date().getTime();
+
+    if (dayDelta == 0) {
+        dayDelta = (now - projectData.project.createdAt) / (24 * 60 * 60 * 1000);
+    }
+
     const day0 = now - (dayDelta * 24 * 60 * 60 * 1000);
+
     const days = [];
     for (let i = 0; i < dayDelta; i++) {
         days.push(global.formatDate(new Date(day0 + (i * 24 * 60 * 60 * 1000))));
