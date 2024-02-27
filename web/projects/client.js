@@ -521,6 +521,14 @@ function showTaskInExplainer(taskID) {
         <div class="manhours-submitted">
 
         </div>
+        <div id="total-man-hours" class="man-hours norender">
+            <div class="explainer-details">
+                Total
+            </div>
+            <div class="manhours">
+                ${timeDisplay}
+            </div>
+        </div>
         <div class="man-hours">
             <div class="explainer-details">
                 Allocated
@@ -655,7 +663,7 @@ async function renderAssignmentsInExplainer(taskID) {
         let timeDisplay= global.formatSeconds(submittedManHours)
 
         //makes sure 0 hours is rendered if the employee hasnt logged any hours
-        submittedHours.innerHTML = timeDisplay;
+        submittedHours.innerText = timeDisplay;
         submittedRow.appendChild(submittedHours);
 
         manHoursSubmitted.appendChild(submittedRow);
@@ -663,14 +671,10 @@ async function renderAssignmentsInExplainer(taskID) {
     });
 
     if (totalManHours > 0 && assignments.length > 1) {
-        const spentHours = document.createElement("div");
-        spentHours.innerHTML = `
-        <div class="man-hours">
-            <div class="explainer-details">Total</div>
-            <div class="manhours">${global.formatSecondsLong(totalManHours)}</div>
-        </div>
-        `
-        manHoursSubmitted.appendChild(spentHours);
+        const container = document.querySelector("#total-man-hours")
+        container.classList.remove("norender");
+        const value = container.querySelector(".manhours");
+        value.innerText = global.formatSecondsLong(totalManHours);
     }
 }
 
@@ -1036,7 +1040,17 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
                 console.log("[taskRow] clicked")
 
-                if (e.target.classList.contains("dropdown") || e.target.classList.contains("dropdown-menu")) {
+                const classes = e.target.classList;
+
+                if (
+                    (
+                        classes.contains("dropdown") ||
+                        classes.contains("dropdown-menu") ||
+                        classes.contains("dropdown-chevron") ||
+                        classes.contains("dropdown-text") ||
+                        classes.contains("dropdown-icon")
+                    )
+                ) {
                     return;
                 }
 
@@ -1221,7 +1235,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         return employees.get(a.employee.empID).deleted - employees.get(b.employee.empID).deleted;
     });
 
-    const MAX_RENDERED_USERS = 3;
+    const MAX_RENDERED_USERS = 5;
 
 
     assignments.forEach((assignment) => {
@@ -1260,7 +1274,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
 
             } else if (count === MAX_RENDERED_USERS) {
                 assignmentElem.classList.add("tooltip", "tooltip-left");
-                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
+                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - MAX_RENDERED_USERS;
 
                 const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
                 const url = "data:image/svg+xml;base64," + btoa(icon);
@@ -1470,11 +1484,11 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 
     taskRow.innerHTML = `
         <td class="${stateClass} td-class">
-            <div class="dropdown status-cell" id="list-task-status" tabindex="0">
-                <span class="material-symbols-rounded">${icon}</span>
+            <div class="dropdown status-cell list-task-status" tabindex="0">
+                <span class="material-symbols-rounded dropdown-icon">${icon}</span>
                 <div class="dropdown-text">${statusText}</div>
                 <div class="dropdown-chevron">
-                    <span class="material-symbols-rounded">
+                    <span class="material-symbols-rounded dropdown-icon">
                         expand_more
                     </span>
                 </div>
@@ -1633,7 +1647,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 }
 
 function setupDropdownEventListeners(taskRow) {
-    let listTaskStatus = taskRow.querySelector("#list-task-status");
+    let listTaskStatus = taskRow.querySelector(".list-task-status");
     let dropdownNotStarted = taskRow.querySelector("#dropdown-not-started");
     let dropdownInProgress = taskRow.querySelector("#dropdown-in-progress");
     let dropdownFinished = taskRow.querySelector("#dropdown-finished");
