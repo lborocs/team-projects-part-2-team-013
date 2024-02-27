@@ -2320,7 +2320,7 @@ async function addTask() {
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
                     <div class="search">
-                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Assign Employees">
             
                         
                         <div class="search-icon">
@@ -3168,7 +3168,7 @@ async function editTaskPopup(task){
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
                     <div class="search">
-                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Assign Employees">
             
                         
                         <div class="search-icon">
@@ -3199,7 +3199,7 @@ async function editTaskPopup(task){
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Add man hours
+                    Allocate expected man hours
                 </div>
                 <div id="man-hours-and-minutes">
                     <div class="number-picker" id="add-man-hours-button2">
