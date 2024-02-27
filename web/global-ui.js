@@ -1243,13 +1243,6 @@ export function setBreadcrumb(breadcrumbPaths, hrefs) {
         child.classList.add("breadcrumb-child", "breadcrumb-navigator");
         child.innerText = path;
         child.href = navigator;
-        
-        // set breadcrumb to what we just navigated to 
-        child.addEventListener("click", (e) => {
-            
-            setBreadcrumb(breadcrumbPaths.slice(0, i+1), hrefs.slice(0, i+1));
-            dispatchBreadcrumbnavigateEvent(e);
-        });
 
         breadcrumb.appendChild(child);
         let divider = document.createElement("span");
