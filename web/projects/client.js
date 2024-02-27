@@ -230,7 +230,7 @@ async function addManHoursPopup(task) {
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Add man hours
+                    Allocate expected man hours
                 </div>
                 <div id="man-hours-and-minutes">
                     <div class="number-picker" id="add-man-hours-button2">
