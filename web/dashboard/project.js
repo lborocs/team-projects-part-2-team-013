@@ -294,7 +294,7 @@ export async function init(id) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    suggestedMax: Math.max(...historicalCompletionData.y) * 1.5
+                    suggestedMax: Math.max(...historicalCompletionData.y) * 1.3
                 }
             },
             plugins: {
