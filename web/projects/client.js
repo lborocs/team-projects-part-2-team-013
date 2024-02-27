@@ -43,8 +43,10 @@ const explainerTaskContainer = explainer.querySelector(".task-overview")
 const explainerTaskTitle = explainerTaskContainer.querySelector(".title")
 const explainerTaskDescriptionContainer = explainerTaskContainer.querySelector(".description-container")
 const explainerTaskDescription = explainerTaskContainer.querySelector(".description")
-const explainerTaskDateContainer = explainerTaskContainer.querySelector(".date-container")
+const explainerTaskDateContainer = explainerTaskContainer.querySelector("#explainer-duedate")
 const explainerTaskDate = explainerTaskContainer.querySelector(".date")
+const explainerTaskCompletedContainer = explainerTaskContainer.querySelector("#explainer-completed")
+const explainerTaskCompleted = explainerTaskCompletedContainer.querySelector(".date")
 const explainerShowHide = document.querySelector("#explainer-show-hide")
 const explainerPopoutBack = document.querySelector("#explainer-back")
 const notStartedColumn = document.querySelector("#notstarted")
@@ -531,6 +533,13 @@ function showTaskInExplainer(taskID) {
 
     let dueDate = globalCurrentTask.dueDate ? new Date(globalCurrentTask.dueDate) : null;
     explainerTaskDate.innerHTML = global.formatDateFull(dueDate) || "None set";
+
+    if (globalCurrentTask.completedAt) {
+        explainerTaskCompletedContainer.classList.remove("norender");
+        explainerTaskCompleted.innerHTML = global.formatDateFull(new Date(globalCurrentTask.completedAt))
+    } else {
+        explainerTaskCompletedContainer.classList.add("norender");
+    }
 
     let manHours = globalCurrentTask.expectedManHours;
     let timeDisplay = global.formatSecondsLong(manHours);
