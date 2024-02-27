@@ -192,7 +192,7 @@
         justify-content: flex-start;
         align-items: center;
         gap: 0.5rem;
-        padding: 1rem;
+        padding: 0.5rem;
 
         color: var(--text-off-black);
         font-weight: 600;
@@ -201,6 +201,15 @@
         .value {
             font-size: 2rem;
             font-weight: 700;
+        
+        }
+
+        .double-col {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
         
         }
 
