@@ -230,7 +230,7 @@ async function addManHoursPopup(task) {
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Add man hours
+                    Allocate expected man hours
                 </div>
                 <div id="man-hours-and-minutes">
                     <div class="number-picker" id="add-man-hours-button2">
@@ -2319,7 +2319,7 @@ async function addTask() {
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
                     <div class="search white">
-                        <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
+                        <input class="search-input" type="text" autocomplete="off" placeholder="Assign Employees">
             
                         
                         <div class="search-icon">
@@ -3387,10 +3387,7 @@ async function editTaskPopup(task){
     let taskTitleInput = popupDiv.querySelector('.add-task-title-input');
     taskTitleInput.value = task.title;
 
-    let description = task.description.replace(/<p>|<\/p>|<br>/g, '');
-    quill.setContents([
-        { insert: description }
-    ]);
+    quill.root.innerHTML = task.description;
 
     let hours = Math.floor(task.expectedManHours / 3600);
     let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
