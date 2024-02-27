@@ -178,7 +178,7 @@
 .metric-card.overviews {
     display: flex;
     flex-direction: row;
-    height: 10rem;
+    height: min-content;
     min-height: 10rem;
     gap: 1.5rem;
 
@@ -223,24 +223,36 @@
 }
 
 
-.dashboard-options {
+.dashboard-header {
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
     gap: 10px;
-    padding: 5px;
+    padding: 0;
     z-index: 2;
 
-    .option {
-        color: var(--text-off-black, #0f0f0f);
-    }
+    .metric-card.overview {
+        padding: 0.5rem;
+        padding-right: 1rem;
+        height: 100%;
+        min-height: 100%;
+        min-width: 10rem;
 
-    .option.disabled {
-        opacity: 0.5;
-        pointer-events: none;
-    }
+        align-items: flex-end;
 
+        .title-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--icon-clr);
+            text-transform: uppercase;
+        }
+
+        .value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+    }
 
     .title {
         font-size: 1.2rem;
