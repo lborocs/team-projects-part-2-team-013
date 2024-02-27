@@ -3448,7 +3448,7 @@ async function editTaskPopup(task){
     dialog.style.transform = 'translateY(0px)'
     dialog.style.opacity = '1';
     
-    let createButton = dialog.querySelector('#create-button');
+    let saveButton = dialog.querySelector('#create-button');
     let closeButton = dialog.querySelector('#close-button');
     let discardButton = dialog.querySelector('#discard-button');
 
@@ -3482,7 +3482,7 @@ async function editTaskPopup(task){
         }
     });
 
-    createButton.addEventListener('click', async (event) => {
+    saveButton.addEventListener('click', async (event) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -3512,6 +3512,15 @@ async function editTaskPopup(task){
             assignments: assignedEmployeesArray
         });
         console.log(assignmentRes);
+
+        if (res.success && assignmentRes.success) {
+            dialog.style.transform = 'translateY(-1%)'
+            dialog.style.opacity = '0';
+            dialog.style.display = 'none';
+            fullscreenDiv.style.filter = 'none';
+            console.log("[addTaskCreateButton] resolving")
+            await searchAndRenderTasks();
+        }
     });
 
 }
@@ -4076,7 +4085,7 @@ async function searchTasks(query) {
     return filteredTasks;
 }
 
-async function searchAndRenderTasks(query) {
+async function searchAndRenderTasks(query = "") {
     let tasks = await searchTasks(query);
     console.log("[renderTasksFromSearch] filtered tasks");
     clearRenderedTasks()
