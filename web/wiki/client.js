@@ -7,6 +7,7 @@ var tagsToDelete = new Set();
 var postsContainer = document.querySelector('.posts-container');
 var posts = document.querySelectorAll('.post');
 const postSearchBar = document.querySelector(".post-search");
+const searchBarFilters = document.querySelector(".post-filters");
 const searchInput = document.getElementById("inputField")
 const tagSearchInput = document.querySelector("#tag-search > .search-input");
 const tagSelection = document.querySelector('#tag-selection');
@@ -133,13 +134,26 @@ async function searchPosts() {
     let tags = [];
 
     var selectedTags = document.querySelectorAll('.tag.selected');
+    var searchBarTags = searchBarFilters.querySelectorAll('.tag');
     var selectedCategory = document.querySelector('input[name="category"]:checked');
     var category = selectedCategory.value;
     category = parseInt(category);
 
+    //removs all tags from search bar to re render new tags
+    searchBarTags.forEach((tag) => {
+        searchBarFilters.removeChild(tag);
+    });
+    postSearchBar.classList.remove('contains-tags')
+    //adds selected tags to search bar
     selectedTags.forEach((tag) => {
-        tags.push(tag.getAttribute("tagID"));
-        postSearchBar.appendChild(tag);
+        tags.push(tag.getAttribute("tagID")); 
+        postSearchBar.classList.add('contains-tags')
+        let tagClone = tag.cloneNode(true);
+        tagClone.classList.remove('selected');
+        tagClone.classList.add('disabled');
+        tagClone.removeAttribute('tabindex');
+        tagClone.classList.add('filter-tag');
+        searchBarFilters.appendChild(tagClone);
     });
     
     if (category === 2) {
