@@ -78,35 +78,46 @@
 
                     <div class="dashboard-overview colspan-2">
                         <div class="metric-card overviews">
-                            <div class="overview" id="assignedTasks">
+                            <div class="overview">
                                 <div class="title-text">
                                     Assigned Tasks
                                 </div>
-                                <div class="value">
+                                <div class="value" id="assignedTasks">
                                     0
                                 </div>
                             </div>
-                            <div class="overview" id="completedTasks">
+                            <div class="overview">
                                 <div class="title-text">
                                     Completed Tasks
                                 </div>
-                                <div class="value">
+                                <div class="value" id="completedTasks">
                                     0
                                 </div>  
                             </div>
-                            <div class="overview warning" id="overdueTasks">
+                            <div class="overview warning">
                                 <div class="title-text">
                                     Overdue Tasks
                                 </div>
-                                <div class="value">
-                                    0
+                                <div class="double-col">
+                                    <div class="subtitle-text">
+                                        Total
+                                    </div>
+                                    <div class="value small" id="overdueTasksTotal">
+                                        0
+                                    </div>
+                                    <div class="subtitle-text">
+                                        Right Now
+                                    </div>
+                                    <div class="value small" id="overdueTasksCurrent">
+                                        0
+                                    </div>
                                 </div>
                             </div>
-                            <div class="overview" id="totalManhours">
+                            <div class="overview">
                                 <div class="title-text">
                                     Total Manhours
                                 </div>
-                                <div class="value">
+                                <div class="value" id="totalManhours">
                                     0
                                 </div>
                             </div>

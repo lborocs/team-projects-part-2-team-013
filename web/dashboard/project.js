@@ -10,7 +10,8 @@ export var archivedData = null;
 export var overviewValues = {
     "assignedTasks": 0,
     "completedTasks": 0,
-    "overdueTasks": 0,
+    "overdueTasksCurrent": 0,
+    "overdueTasksTotal": 0,
     "totalManhours": 0
 }
 
@@ -42,7 +43,10 @@ export async function init(id) {
 
     overviewValues.assignedTasks = projectData.tasks.tasks.length
     overviewValues.completedTasks = completionData.values[2]
-    overviewValues.overdueTasks = projectData.tasks.tasks.filter(task => task.dueDate < new Date().getTime() && task.state !== 'completed').length
+
+    overviewValues.overdueTasksCurrent = projectData.tasks.tasks.filter(task => (task.dueDate && task.dueDate < new Date().getTime()) && task.state != 2).length,
+    overviewValues.overdueTasksTotal = projectData.tasks.tasks.filter(task => (task.dueDate && task.completedAt && task.dueDate < task.completedAt) && task.state == 2).length
+    
     overviewValues.totalManhours = 0
     projectData.tasks.tasks.forEach(task => {
         overviewValues.totalManhours += task.expectedManHours / 3600
@@ -52,13 +56,13 @@ export async function init(id) {
     overviewValues.totalManhours = Math.round(overviewValues.totalManhours * 100) / 100;
 
     console.log("[init] overviewValues: ", overviewValues)
-
-    overviewMetrics.forEach(metric => {
+    let metricValues = document.querySelectorAll(".value");
+    metricValues.forEach((value) => {
 
         //the id of each .value element is the same as the id of the metric so we can easily unwrap the object into the UI
         //to add more overviews just add more .overview elements and set their id to a key in the overviewValues object 
-
-        metric.querySelector(".value").innerText = overviewValues[metric.id];
+        value.innerText = overviewValues[value.id];
+        
 
     });
 
