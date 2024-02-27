@@ -2038,7 +2038,6 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
         }
 
         if (completedAt !== null) {
-            console.error(completedAt, dateToday)
             const delta = -Math.round((completedAt - dateToday) / (24 * 60 * 60 * 1000));
             if (delta == 0) {
                 dateTooltip += `<br>Completed today`;
