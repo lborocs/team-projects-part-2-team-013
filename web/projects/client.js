@@ -2030,35 +2030,34 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
     } else {
 
-        // tasks which have a due date in the future
-        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        if (diffInDays === 0) {
-            dateTooltip = `Due today`;
-        }
-        else if (diffInDays === 1) {
-            dateTooltip = `Due tomorrow`;
-        }
-        else {
-            if (diffInDays > 0) {
-                dateTooltip = `Due in ${diffInDays} days`;
-            } else {
-                dateTooltip = `Due ${-diffInDays} days ago`;
-            }
-        }
-
         if (completedAt !== null) {
             const delta = -Math.round((completedAt - dateToday) / (24 * 60 * 60 * 1000));
             if (delta == 0) {
-                dateTooltip += `<br>Completed today`;
+                dateTooltip = `Completed today<br>`;
             }
             else if (delta == 1) {
-                dateTooltip += `<br>Completed yesterday`;
+                dateTooltip = `Completed yesterday<br>`;
             }
             else {
-                dateTooltip += `<br>Completed ${delta} days ago`;
+                dateTooltip = `Completed ${delta} days ago<br>`;
             }
         }
 
+        // tasks which have a due date in the future
+        statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
+        if (diffInDays === 0) {
+            dateTooltip += `Due today`;
+        }
+        else if (diffInDays === 1) {
+            dateTooltip += `Due tomorrow`;
+        }
+        else {
+            if (diffInDays > 0) {
+                dateTooltip += `Due in ${diffInDays} days`;
+            } else {
+                dateTooltip += `Due ${-diffInDays} days ago`;
+            }
+        }
     }
 
     let taskInfo = document.createElement("div");
@@ -3927,7 +3926,7 @@ const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
         console.log("[RollingProjectSearch] starting search for", search);
         searchAndRenderProjects();
     },
-    150
+    50
 );
 projectSearchInput.addEventListener("input", (e) => {
     projectSearchRollingTimeout.roll();

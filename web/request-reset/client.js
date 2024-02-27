@@ -10,7 +10,11 @@ async function sendResetEmail(email) {
     const res = await post_api("/employee/session.php/resetpassword", {"email": email});
 
     if (!res.success) {
-        alert(res.error.message);
+        await global.popupAlert(
+            "Failed to Send Email",
+            `An error has occured: ${res.error.message}`,
+            "error"
+        );
         return false;
     }
     return true;
@@ -26,12 +30,21 @@ async function handleClick() {
     }
 
     if (await sendResetEmail(email)) {
-        alert("Email sent if it is linked to an account");
+        await global.popupAlert(
+            "Email Sent",
+            "An email has been sent to the provided address if it is linked to an account. Please check your inbox.",
+            "success"
+        );
         window.location.href = "/";
     }
 
 }
 
+
+document.querySelector("#email-form")?.addEventListener("submit", function(e) {
+    e.preventDefault();
+    handleClick();
+});
 
 
 
@@ -46,10 +59,3 @@ emailInput.addEventListener('input', function(e) {
 })
 
 sendButton.addEventListener("click", handleClick);
-
-emailInput.addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        console.log("enter")
-        handleClick();
-    }
-});

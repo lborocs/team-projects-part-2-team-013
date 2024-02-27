@@ -129,9 +129,9 @@ document.querySelector(".main").onscroll = scrolling;
 
 function scrolling() {
     if (document.querySelector(".main").scrollTop > 200) {
-        document.querySelector("#scroll-to-top").style.visibility = "visible";
+        document.querySelector("#scroll-to-top").classList.remove("norender");
     } else {
-        document.querySelector("#scroll-to-top").style.visibility = "hidden";
+        document.querySelector("#scroll-to-top").classList.add("norender");
     }
 }
 
