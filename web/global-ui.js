@@ -494,7 +494,7 @@ export function formatDate(date) {
     return formattedDate;
 }
 
-function formatSecondsIner(seconds) {
+function formatSecondsInner(seconds) {
 
     if (seconds == 0) {
         return {zero: true};
@@ -513,7 +513,7 @@ function formatSecondsIner(seconds) {
 
 
 export function formatSeconds(seconds) {
-    let f = formatSecondsIner(seconds);
+    let f = formatSecondsInner(seconds);
 
     if (f.zero) {
         return "None";
@@ -523,13 +523,23 @@ export function formatSeconds(seconds) {
 }
 
 export function formatSecondsLong(seconds) {
-    let f = formatSecondsIner(seconds);
+    let f = formatSecondsInner(seconds);
 
     if (f.zero) {
         return "None";
     }
 
-    return `${f.hours} Hours ${f.minutes} Minutes`;
+    const minuteText = f.minutes == 1 ? "Minute" : "Minutes";
+    const hourText = f.hours == 1 ? "Hour" : "Hours";
+
+    if (f.hours == 0) {
+        return `${f.minutes} ${minuteText}`;
+    }
+    if (f.minutes == 0) {
+        return `${f.hours} ${hourText}`;
+    }
+
+    return `${f.hours} ${hourText} ${f.minutes} ${minuteText}`;
 }
 
 export function formatDateFull(date) {

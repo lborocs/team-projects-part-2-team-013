@@ -518,6 +518,14 @@ function showTaskInExplainer(taskCard) {
         <div class="manhours-submitted">
 
         </div>
+        <div id="total-man-hours" class="man-hours norender">
+            <div class="explainer-details">
+                Total
+            </div>
+            <div class="manhours">
+                ${timeDisplay}
+            </div>
+        </div>
         <div class="man-hours">
             <div class="explainer-details">
                 Allocated
@@ -652,7 +660,7 @@ async function renderAssignmentsInExplainer(taskID) {
         let timeDisplay= global.formatSeconds(submittedManHours)
 
         //makes sure 0 hours is rendered if the employee hasnt logged any hours
-        submittedHours.innerHTML = timeDisplay;
+        submittedHours.innerText = timeDisplay;
         submittedRow.appendChild(submittedHours);
 
         manHoursSubmitted.appendChild(submittedRow);
@@ -660,14 +668,10 @@ async function renderAssignmentsInExplainer(taskID) {
     });
 
     if (totalManHours > 0 && assignments.length > 1) {
-        const spentHours = document.createElement("div");
-        spentHours.innerHTML = `
-        <div class="man-hours">
-            <div class="explainer-details">Total</div>
-            <div class="manhours">${global.formatSecondsLong(totalManHours)}</div>
-        </div>
-        `
-        manHoursSubmitted.appendChild(spentHours);
+        const container = document.querySelector("#total-man-hours")
+        container.classList.remove("norender");
+        const value = container.querySelector(".manhours");
+        value.innerText = global.formatSecondsLong(totalManHours);
     }
 }
 
