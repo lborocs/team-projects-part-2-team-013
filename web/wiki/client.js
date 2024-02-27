@@ -497,3 +497,6 @@ function closePopup() {
     dialog.style.display = 'none';
     fullscreenDiv.style.filter = 'none';
 }
+
+
+

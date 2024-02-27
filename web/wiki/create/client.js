@@ -4,6 +4,8 @@ const tags = document.getElementById("tags");
 const input = document.getElementById("input-tag");
 const submitButton = document.getElementById("submitButton");
 var editing = false;
+var postBeingEdited = null;
+var anyChanges = false;
 var currentTags = [];
 var selectTags = [];
 
@@ -182,6 +184,7 @@ tagsList.then((tagsList) => {
         document.querySelector("#title").innerHTML = "Edit Post";
         getPostData(postID).then((post) => {
             console.log(post);
+            postBeingEdited = post;
             const postContent = JSON.parse(post.content);
             document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value = post.title;
             console.log("setting cotnent to", postContent);
@@ -243,6 +246,7 @@ document.editor = quill;
 
 
 input.addEventListener("keydown", function (event) {
+    anyChanges = true;
     if (event.key === "Enter") {
         event.preventDefault();
         let tagContent = input.value.trim();
@@ -419,4 +423,51 @@ if (editing) {
 } else {
     global.setBreadcrumb(["Wiki", "Create Post"], ["/wiki/", `/wiki/create/#${getQueryParam()}`]);
 }
+
+//stops user accidentally discarding changes by refreshing or closing the page
+const changeListener = setInterval(() => {
+    let quillContent = JSON.stringify(quill.getContents());
+    let postTitle = document.querySelector(".post-title input").value;
+    let isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
+
+    anyChanges = false;
+    if (editing && postBeingEdited) {
+        
+        if (quillContent !== JSON.stringify(postBeingEdited.content)) {
+            anyChanges = true;
+        }
+
+        if (postTitle !== postBeingEdited.title) {
+            anyChanges = true;
+        }
+
+        if (isTechnical !== postBeingEdited.isTechnical) {
+            anyChanges = true;
+        }
+
+    } else {
+        if (quillContent !== '{"ops":[{"insert":"\\n"}]}') {
+            anyChanges = true;
+        }
+        if (postTitle !== "") {
+            anyChanges = true;
+        }
+    }
+}, 1000);
+
+window.addEventListener('beforeunload', (event) => {
+    if (!anyChanges) {
+        return;
+    }
+    event.preventDefault();
+
+    //resets the sidebar item selection if they made one
+    let sidebarItems = document.querySelectorAll(".sidebar-item")
+    sidebarItems.forEach((item) => {
+        item.classList.remove("selected");
+    })
+    document.getElementById('wiki').classList.add("selected");
+    
+    return "";
+})
 
