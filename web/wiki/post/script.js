@@ -81,9 +81,19 @@ async function getPostData(postID, tagsList) {
 
     const content = JSON.parse(post.content);
 
+
+    const indexMap = {};
+
+    content.ops.forEach((op, key) => {
+        if (op.insert.image) {
+            indexMap[op.insert.image] = key;
+        }
+    });
+
+
     post.images.forEach((image) => {
         const asset = image.asset;
-        content.ops[image.index].insert.image = global.assetToUrl(global.ASSET_TYPE_POST, post.postID, asset.assetID, asset.contentType)
+        content.ops[indexMap[image.index]].insert.image = global.assetToUrl(global.ASSET_TYPE_POST, post.postID, asset.assetID, asset.contentType)
     });
 
 

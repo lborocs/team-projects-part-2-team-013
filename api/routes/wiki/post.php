@@ -265,18 +265,48 @@ function post_body_get_image_indexes(string $content) {
 }
 
 
-function create_post_assets(array $body, $bucket_id) {
+function edit_post_images($bucket_id, string $before, string $after, array $before_assets, array $to_add) {
+    $before_indexes = post_body_get_image_indexes($before);
+    $after_indexes = post_body_get_image_indexes($after);
 
-    // having to pass a ptr of an array to fill is crazy
-    // this is not c
-    // ????? just return it
-    // especially when arrays are HEAP ALLOCATED
-    $indexes = post_body_get_image_indexes($body["postContent"]);
+    $indexes_to_delete = array_diff($before_indexes, $after_indexes);
+    $indexes_to_add = array_diff($after_indexes, $before_indexes);
 
-    $uploads = $body["images"] ?? [];
+    $assets_to_delete = [];
+
+    $asset_map = [];
+    foreach ($before_assets as $asset) {
+        $asset_map[$asset["index"]] = $asset;
+    }
+
+    foreach ($indexes_to_delete as $index) {
+        $assets_to_delete[] = $asset_map[$index];
+    }
+
+    foreach ($indexes_to_add as $index) {
+        if (!array_key_exists($index, $to_add)) {
+            respond_bad_request(
+                "Expected a key for image '$index' in the images map",
+                ERROR_BODY_INVALID
+            );
+        }
+    }
+
+    $assets_to_add = create_post_assets($indexes_to_add, $to_add, $bucket_id);
+
+    foreach ($assets_to_delete as $asset) {
+        Asset::from_db($asset)->delete();
+    }
+
+    db_post_bind_assets($bucket_id, $assets_to_add);
+
+}
+
+
+function create_post_assets(array $indexes, array $uploads, $bucket_id) {
 
     if (count($indexes) != count($uploads)) {
-        respond_bad_request("Expected the number of images to match the number of {{img}} tags", ERROR_BODY_INVALID);
+        respond_bad_request("Expected the number of images to match the number of unique image indexes", ERROR_BODY_INVALID);
     }
 
     foreach ($indexes as $index) {
@@ -339,8 +369,9 @@ function _new_post(RequestContext $ctx, array $body, array $url_specifiers) {
 
     $hex_id = bin2hex($postID);
 
+    $indexes = post_body_get_image_indexes($body["postContent"]);
 
-    $assets = create_post_assets($body, $hex_id);
+    $assets = create_post_assets($indexes, $body["images"] ?? [], $hex_id);
 
     $title = $body["postTitle"];
     $content = $body["postContent"];
@@ -384,27 +415,26 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
         $before_content = $ctx->post["content"];
         $after_content = $body["postContent"];
 
-        
-        ensure_html_is_clean($after_content);
-
-
-        // asset management on edit should follow
-        // to delete = (before_tags - after_tags) UNION provided_tags
-        // to add = (after_tags - before_tags) UNION provided_tags
-
-
-        if (
-            array_key_exists("images", $body)
-            || post_body_get_image_indexes($before_content) != post_body_get_image_indexes($after_content)
-        ) {
-            respond_not_implemented("Editing images is not yet supported");
-        }
+        $assets = db_post_fetch_assets($ctx->post["postID"]);
 
         if (strcmp($before_content, $after_content) == 0) {
             respond_bad_request("Expected post content to be different", ERROR_BODY_FIELD_INVALID_DATA);
         } else {
             notification_post_edited($url_specifiers[0], $ctx->session->hex_associated_user_id);
         }
+
+        if (
+            array_key_exists("images", $body)
+            || post_body_get_image_indexes($before_content) != post_body_get_image_indexes($after_content)
+        ) {
+            edit_post_images($url_specifiers[0], $before_content, $after_content, $assets, $body["images"]);
+        }
+        unset($body["images"]);
+
+    }
+
+    if (array_key_exists("images", $body)) {
+        respond_bad_request("Expected images to change only when post content changes (use a different index)", ERROR_BODY_FIELD_INVALID_DATA);
     }
 
     _use_common_edit(TABLE_POSTS, $body, $url_specifiers);
