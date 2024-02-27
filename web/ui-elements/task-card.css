@@ -33,6 +33,7 @@
         font-weight: 600;
         color: #0f0f0faa;
         line-height: 24px;
+        
     }
     .description {
         text-overflow: ellipsis;
@@ -124,6 +125,7 @@
     gap: 0.2rem;
 
     font-size: 14px;
+    white-space: nowrap;
 
     border-radius: 3px;
     background-color: #f4f4f4;
