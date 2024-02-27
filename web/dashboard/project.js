@@ -20,6 +20,9 @@ const dashboardContainer = document.querySelector(".dashboard-container");
 const overviewMetrics = document.querySelectorAll(".overview");
 
 
+var historicalTaskCompletionTimeframe;
+
+
 export async function init(id) {
 
     const trainingElements = document.querySelectorAll(`.training-only`);
@@ -30,6 +33,28 @@ export async function init(id) {
     projectElements.forEach(element => {
         element.classList.remove("norender");
     });
+
+    const historicalTaskCompletionDropdown = document.getElementById("historicalTaskCompletionDropdown");
+    console.log(historicalTaskCompletionDropdown);
+
+    
+    
+    historicalTaskCompletionDropdown.addEventListener("click", function() {
+        this.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+        if (!historicalTaskCompletionDropdown.contains(e.target)) {
+            historicalTaskCompletionDropdown.classList.remove("open")
+        }
+    });
+    
+    historicalTaskCompletionDropdown.querySelectorAll(".dropdown-option").forEach((option) => {
+        option.addEventListener("click", () => {
+            historicalTaskCompletionDropdown.querySelector(".dropdown-text").innerText = option.innerText;
+            historicalTaskCompletionTimeframe = parseInt(option.getAttribute("value"));
+        })
+    })
 
     projectData = await getProjectData(id);
 
