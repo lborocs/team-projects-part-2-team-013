@@ -294,25 +294,55 @@ export async function init(id) {
     }));
     
 
-    const historicalCompletionData = await getHistoricalCompletionData(projectData, 7);
+    const historicalCompletionData = await getHistoricalCompletionData(projectData, 30);
     console.log("[init] historicalCompletionData: ", historicalCompletionData);
     charts.push(new Chart(document.getElementById("historicalTaskCompletionChart"), {
-        type: 'line',
+
         data: {
             labels: historicalCompletionData.labels,
             datasets: [{
                 label: 'Tasks Completed',
                 data: historicalCompletionData.perDay,
-                backgroundColor: 'rgba(188,219,245,0.7)',
-                borderColor: 'rgba(188,219,245,1)',
-                borderWidth: 2
-            }]
+                backgroundColor: 'rgba(120,190,32,0.05)',
+                borderColor: 'rgba(0,150,57, 0.5)',
+                borderWidth: 2,
+                pointRadius: 0,
+                type: 'line',
+                tension: 0.3,
+                fill: {
+                    target: 'origin',
+                    below: 'rgba(176,24,32,0.05)',  
+                    above: 'rgba(120,190,32,0.05)'    
+                },
+                spangaps: false,
+            }, {
+                label: 'Tasks Completed',
+                data: historicalCompletionData.perDay,
+                backgroundColor: 'rgba(199,200,183, 0.15)',
+                borderWidth: 0,
+                type: 'bar',
+                borderRadius: 6,
+                barPercentage: 1.0,
+            }
+
+        ]
         },
         options: {
             scales: {
                 y: {
-                    //beginAtZero: true,
-                    suggestedMax: Math.max(...historicalCompletionData.perDay) * 1.3
+                    beginAtZero: true,
+                    suggestedMax: Math.max(...historicalCompletionData.perDay) * 1.3,
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    },
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxTicksLimit: 5
+                    }
                 }
             },
             plugins: {
