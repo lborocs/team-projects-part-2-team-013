@@ -77,7 +77,7 @@ export async function init(id) {
 
 
     charts.push(new Chart(document.getElementById("completionChart"), {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: completionData.labels,
             datasets: [{

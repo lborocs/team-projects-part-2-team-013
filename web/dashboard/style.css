@@ -182,6 +182,14 @@
     min-height: 10rem;
     gap: 1.5rem;
 
+    padding: 0;
+
+    overflow-x: visible;
+
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+
     .overview {
         flex: 1;
         border-radius: 3px;
@@ -194,7 +202,11 @@
         gap: 0.5rem;
         padding: 0.5rem;
 
+        border-radius: 5px;
+
         color: var(--text-off-black);
+        background-color: white;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
         font-weight: 600;
         font-size: 1.125rem;
 
@@ -207,10 +219,26 @@
         .double-col {
             display: flex;
             flex-direction: row;
-            justify-content: center;
+            justify-content: space-evenly;
             align-items: center;
             gap: 0.5rem;
+
+            width: 100%;
+
+            .left, .right {
+                display: flex;
+                flex-direction: column;
+
+
+            }
         
+        }
+
+        .subtitle-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--icon-clr);
+            text-transform: uppercase
         }
 
     }
