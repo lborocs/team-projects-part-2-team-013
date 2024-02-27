@@ -4,7 +4,6 @@
     justify-content: center;
     align-items: center;
     gap: 5px;
-    padding: 5px;
     border-radius: 3px;
     border: none;
     width: min-content;
@@ -38,10 +37,13 @@
     border-radius: 3px;
     padding: 2px;
     width: 42px;
+    height: 32px;
 
     font-family: var(--font-family);
     font-size: 15px;
     font-weight: 600;
+
+    border: solid 2px #dcdfe4;
 }
 
 .number-input:focus {
