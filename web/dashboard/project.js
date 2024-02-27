@@ -52,6 +52,15 @@ export async function init(id) {
         overviewValues.totalManhours += task.expectedManHours / 3600
     });
 
+    if (projectData.project.dueDate) {
+        const dueInDays = Math.ceil((projectData.project.dueDate - new Date().getTime()) / (1000 * 60 * 60 * 24));
+        overviewValues.dueInDays = global.formatDayDelta(dueInDays);
+    } else {
+        overviewValues.dueInDays = "No Due Date";
+        document.querySelector("#due-date-container")?.classList.add("norender");
+    }
+
+
     //truncation is so the number is UI ready
     overviewValues.totalManhours = Math.round(overviewValues.totalManhours * 100) / 100;
 
@@ -61,7 +70,7 @@ export async function init(id) {
 
         //the id of each .value element is the same as the id of the metric so we can easily unwrap the object into the UI
         //to add more overviews just add more .overview elements and set their id to a key in the overviewValues object 
-        value.innerText = overviewValues[value.id];
+        value.innerHTML = overviewValues[value.id];
         
 
     });

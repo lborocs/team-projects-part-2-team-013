@@ -2031,33 +2031,14 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
     } else {
 
         if (completedAt !== null) {
-            const delta = -Math.round((completedAt - dateToday) / (24 * 60 * 60 * 1000));
-            if (delta == 0) {
-                dateTooltip = `Completed today<br>`;
-            }
-            else if (delta == 1) {
-                dateTooltip = `Completed yesterday<br>`;
-            }
-            else {
-                dateTooltip = `Completed ${delta} days ago<br>`;
-            }
+            const delta = Math.round((completedAt - dateToday) / (24 * 60 * 60 * 1000));
+            dateTooltip = `Completed ${global.formatDayDelta(delta)}<br>`;
+
         }
 
         // tasks which have a due date in the future
         statusIcon = `<span class="material-symbols-rounded">event_upcoming</span>`;
-        if (diffInDays === 0) {
-            dateTooltip += `Due today`;
-        }
-        else if (diffInDays === 1) {
-            dateTooltip += `Due tomorrow`;
-        }
-        else {
-            if (diffInDays > 0) {
-                dateTooltip += `Due in ${diffInDays} days`;
-            } else {
-                dateTooltip += `Due ${-diffInDays} days ago`;
-            }
-        }
+        dateTooltip += `Due ${global.formatDayDelta(diffInDays)}`;
     }
 
     let taskInfo = document.createElement("div");
