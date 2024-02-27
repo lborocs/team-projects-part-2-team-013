@@ -3153,7 +3153,6 @@ createProjectButton.addEventListener("pointerup", async () => {
 async function editTaskPopup(task) {
     console.log("[editTaskPopup] Running editTaskPopup")
     let popupDiv = document.querySelector('.popup');
-    let fullscreenDiv = document.querySelector('.fullscreen');
 
     const createdAt = new Date(task.createdAt);
 

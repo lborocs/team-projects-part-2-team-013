@@ -126,12 +126,12 @@ function scrolling() {
 }
 
 document.querySelector("#scroll-to-top").addEventListener("click", function () {
-    console.log("scrolling to top");
+    console.log("scrolling to top")
     document.querySelector(".main").scroll({
         top: 0,
         behavior: "smooth",
-      });
-});
+      })
+})
 
 
 async function updateMeta(postID, subscribed, feedback) {
