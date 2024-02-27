@@ -281,10 +281,10 @@ export async function init(id) {
     charts.push(new Chart(document.getElementById("historicalTaskCompletionChart"), {
         type: 'line',
         data: {
-            labels: historicalCompletionData.x.map((date) => global.formatDate(new Date(date))),
+            labels: historicalCompletionData.labels,
             datasets: [{
                 label: 'Tasks Completed',
-                data: historicalCompletionData.y,
+                data: historicalCompletionData.perDay,
                 backgroundColor: 'rgba(188,219,245,0.7)',
                 borderColor: 'rgba(188,219,245,1)',
                 borderWidth: 2
@@ -293,8 +293,8 @@ export async function init(id) {
         options: {
             scales: {
                 y: {
-                    beginAtZero: true,
-                    suggestedMax: Math.max(...historicalCompletionData.y) * 1.3
+                    //beginAtZero: true,
+                    suggestedMax: Math.max(...historicalCompletionData.perDay) * 1.3
                 }
             },
             plugins: {
@@ -346,7 +346,7 @@ async function getHistoricalCompletionData(projectData, dayDelta) {
     const day0 = now - (dayDelta * 24 * 60 * 60 * 1000);
     const days = [];
     for (let i = 0; i < dayDelta; i++) {
-        days.push(day0 + (i * 24 * 60 * 60 * 1000));
+        days.push(global.formatDate(new Date(day0 + (i * 24 * 60 * 60 * 1000))));
     }
 
     const tasks = projectData.tasks.tasks.filter(task => task.completedAt && task.completedAt > day0);
@@ -360,8 +360,8 @@ async function getHistoricalCompletionData(projectData, dayDelta) {
 
     return {
         day0: day0,
-        y: tasksCompletedPerDay,
-        x: days
+        perDay: tasksCompletedPerDay,
+        labels: days
     }
 }
 
