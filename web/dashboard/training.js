@@ -87,6 +87,9 @@ export async function init() {
         options: {
             scales: {
                 y: {
+                    ticks: {
+                        precision: 0
+                    },
                     beginAtZero: true
                 }
             },
@@ -114,6 +117,9 @@ export async function init() {
         options: {
             scales: {
                 y: {
+                    ticks: {
+                        precision: 0
+                    },
                     beginAtZero: true
                 }
             },
@@ -142,6 +148,9 @@ export async function init() {
         options: {
             scales: {
                 y: {
+                    ticks: {
+                        precision: 0
+                    },
                     beginAtZero: true
                 }
             },
@@ -169,6 +178,9 @@ export async function init() {
         options: {
             scales: {
                 y: {
+                    ticks: {
+                        precision: 0
+                    },
                     beginAtZero: true
                 }
             },
