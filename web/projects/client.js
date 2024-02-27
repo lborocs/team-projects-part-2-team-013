@@ -3926,7 +3926,7 @@ const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
         console.log("[RollingProjectSearch] starting search for", search);
         searchAndRenderProjects();
     },
-    150
+    50
 );
 projectSearchInput.addEventListener("input", (e) => {
     projectSearchRollingTimeout.roll();
