@@ -1222,7 +1222,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         return employees.get(a.employee.empID).deleted - employees.get(b.employee.empID).deleted;
     });
 
-    const MAX_RENDERED_USERS = 3;
+    const MAX_RENDERED_USERS = 5;
 
 
     assignments.forEach((assignment) => {
@@ -1261,7 +1261,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
 
             } else if (count === MAX_RENDERED_USERS) {
                 assignmentElem.classList.add("tooltip", "tooltip-left");
-                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - 3;
+                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - MAX_RENDERED_USERS;
 
                 const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
                 const url = "data:image/svg+xml;base64," + btoa(icon);
