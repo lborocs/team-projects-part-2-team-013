@@ -327,7 +327,28 @@ async function addManHoursPopup(task) {
         {text:"Submit", class:"blue"},
     )
     let manHours = hoursInput * 3600 + minutesInput * 60;
-    console.error("RESOLVE")
+    
+    //we dont submit if they havent entered any hours
+    if (manHours === 0) {
+        return;
+    }
+
+    //api requires the full man hours, not just the current addition
+    let totalManHours = task.manHours + manHours;
+    totalManHours = parseInt(totalManHours);
+    console.error(typeof totalManHours);
+    totalManHours = Math.floor(totalManHours);
+
+    let projID = globalCurrentProject.projID;
+    let taskID = task.taskID;
+
+    let res = await put_api(`/project/task.php/manhours/${projID}/${taskID}`, {manHours: totalManHours});
+
+    if (res.success) {
+        console.log(`[addManHoursPopup] Added ${manHours} to task ${taskID}`);
+    } else {
+        console.error(`[addManHoursPopup] Failed to add ${manHours} to task ${taskID}`);
+    }
 
 }
 
