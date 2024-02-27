@@ -546,7 +546,7 @@ function showTaskInExplainer(taskCard) {
                 </span>
             </div>
             <div class="button-text">
-                Log your hours
+                Submit Hours
             </div>
         </div> 
     `;
@@ -614,7 +614,6 @@ async function renderAssignmentsInExplainer(taskID) {
     assignments = assignments.sort((a, b) => {
         return manHoursMap.get(b) - manHoursMap.get(a);
     });
-    console.error(assignments)
 
 
     assignments.forEach((empID) => {
@@ -2319,7 +2318,7 @@ async function addTask() {
             </div>
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
-                    <div class="search">
+                    <div class="search white">
                         <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
             
                         
@@ -3149,6 +3148,9 @@ async function editTaskPopup(task){
     console.log("[editTaskPopup] Running editTaskPopup")
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
+
+    const createdAt = new Date(task.createdAt);
+
     popupDiv.replaceChildren();
     popupDiv.innerHTML = `
         <dialog open class='popupDialog' id="add-task-popup">
@@ -3165,9 +3167,19 @@ async function editTaskPopup(task){
             <div class="add-task-description-container">
                 <div id="description-editor"></div>
             </div>
+            <div class="popup-subtitle">
+                Due Date
+            </div>
+            <div class="date-picker" id="due-date">
+                <div class="date-picker-icon">
+                    <span class="material-symbols-rounded">event</span>
+                </div>
+                <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
+            </div>
+            <div class="popup-subtitle">Assigned Employees</div>
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
-                    <div class="search">
+                    <div class="search white">
                         <input class="search-input" type="text" autocomplete="off" placeholder="Add Employees">
             
                         
@@ -3197,10 +3209,10 @@ async function editTaskPopup(task){
                 
                 </div>
             </div>
+            <div class="popup-subtitle">
+                Allocated Man Hours
+            </div>
             <div class="manhours-row">
-                <div class="manhours-label">
-                    Add man hours
-                </div>
                 <div id="man-hours-and-minutes">
                     <div class="number-picker" id="add-man-hours-button2">
                         <div class = "stepper decrement" tabindex="0">
@@ -3214,7 +3226,7 @@ async function editTaskPopup(task){
                                 expand_less
                             </span>
                         </div>
-                        <div class="manhours-label">Hours</div>
+                        <div class="popup-subtitle">Hours</div>
                     </div>
                     <div class="number-picker" id="expected-man-minutes">
                         <div class="number-picker" id="expected-man-minutes">
@@ -3234,21 +3246,17 @@ async function editTaskPopup(task){
                                     <div class="dropdown-option" id="manhours-minutes45">45</div>
                                 </div>
                             </div>
-                            <div class="manhours-label">
+                            <div class="popup-subtitle">
                                 Minutes
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="date-picker" id="due-date">
-                <div class="date-picker-icon">
-                    <span class="material-symbols-rounded">event</span>
-                </div>
-                <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
-            </div>
             <div class="confirm-buttons-row">
+                <div class="created-at">
+                    Task created ${createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                </div>
                 <div class="text-button" id="discard-button">
                     <div class="button-text">
                         Discard
@@ -3269,8 +3277,7 @@ async function editTaskPopup(task){
     var quill = new Quill('#description-editor', {
         modules: {
             toolbar: [
-                ['bold', 'italic', 'underline'],
-                ['code-block']
+                ['bold', 'italic', 'underline']
             ]
         },
         placeholder: 'Description...',
@@ -3557,7 +3564,7 @@ async function projectPopup(project){
             </div>
             <div class="dropdown-and-employee-list edit-only">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
-                    <div class="search">
+                    <div class="search white">
                         <input class="search-input" type="text" autocomplete="off" placeholder="Change Team Leader">
             
                         

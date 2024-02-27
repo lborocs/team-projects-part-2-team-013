@@ -1725,8 +1725,9 @@
 .manhours-row{
     display: flex;
     flex-direction: column;
-    align-items: left;
-    gap: 0.2em;
+    align-items: flex-start;
+    width: 100%;
+    gap: 0.25rem;
     font-weight: 600;
     font-size: 14px;
     color: var(--text-off-black, #0f0f0f);
@@ -1776,8 +1777,19 @@
 
 #man-hours-and-minutes {
     display: flex;
-    gap: 1em;
     align-items: center;
+
+    gap: 0.5rem;
+    padding: 0.5rem;
+    width: 100%;
+
+    border-radius: 3px;
+    background-color: var(--light-grey-bg);
+
+
+    .manhours-label {
+        margin-right: 1rem;
+    }
 }
 /* project table column width definitions */
 #header-name {
