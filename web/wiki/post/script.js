@@ -127,8 +127,10 @@ function scrolling() {
 
 document.querySelector("#scroll-to-top").addEventListener("click", function () {
     console.log("scrolling to top");
-    document.querySelector(".main").scrollTop = 0;
-    document.documentElement.scrollTop = 0;
+    document.querySelector(".main").scroll({
+        top: 0,
+        behavior: "smooth",
+      });
 });
 
 
