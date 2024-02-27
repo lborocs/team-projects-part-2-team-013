@@ -84,18 +84,23 @@
                                     Overdue Tasks
                                 </div>
                                 <div class="double-col">
-                                    <div class="subtitle-text">
-                                        Total
+                                    <div class="left">
+                                        <div class="subtitle-text">
+                                            Total
+                                        </div>
+                                        <div class="value small" id="overdueTasksTotal">
+                                            0
+                                        </div>
                                     </div>
-                                    <div class="value small" id="overdueTasksTotal">
-                                        0
-                                    </div>
-                                    <div class="subtitle-text">
-                                        Right Now
-                                    </div>
-                                    <div class="value small" id="overdueTasksCurrent">
-                                        0
-                                    </div>
+                                    <div class="right">
+                                        <div class="subtitle-text">
+                                            Pending
+                                        </div>
+                                        <div class="value small" id="overdueTasksCurrent">
+                                            0
+                                        </div>
+                                    </div> 
+                                    
                                 </div>
                             </div>
                             <div class="overview">
@@ -150,12 +155,22 @@
                     <div class="metric-card">
                         <div class="metric-title">
                             <div class="title-text">
-                                Task Progress
+                                Gantt Chart
                             </div>
                         </div>
                         <div class="chart-box">
                             <canvas id="taskProgressChart"></canvas>
                         </div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">
+                            <div class="title-text">
+                                Task Completion Timeline
+                            </div>
+                        </div>
+                        <div class="chart-box">
+                            <canvas id="completionTimelineChart"></canvas>
+                        </div>  
                     </div>
                 </div>
             </div>
