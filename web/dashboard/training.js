@@ -88,6 +88,7 @@ export async function init() {
             scales: {
                 y: {
                     ticks: {
+                        maxTicksLimit: 5,
                         precision: 0
                     },
                     beginAtZero: true
@@ -118,6 +119,7 @@ export async function init() {
             scales: {
                 y: {
                     ticks: {
+                        maxTicksLimit: 5,
                         precision: 0
                     },
                     beginAtZero: true

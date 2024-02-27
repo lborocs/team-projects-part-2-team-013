@@ -454,7 +454,6 @@ const changeListener = setInterval(() => {
         }
     }
 }, 1000);
-
 window.addEventListener('beforeunload', (event) => {
     if (!anyChanges) {
         return;

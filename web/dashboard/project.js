@@ -122,7 +122,11 @@ export async function init(id) {
                 },
                 y: {
                     beginAtZero: true,
-                    stacked: true
+                    stacked: true,
+                    ticks: {
+                        stepSize: 1,
+                        maxTicksLimit: 5
+                    }
                 }
             }
         }
@@ -155,9 +159,10 @@ export async function init(id) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    suggestedMax: tasksPerEmployeeData.max,
                     ticks: {
-                        stepSize: 1
+                        stepSize: 1,
+                        maxTicksLimit: 5,
+                        precision: 0
                     }
                 }
             }
