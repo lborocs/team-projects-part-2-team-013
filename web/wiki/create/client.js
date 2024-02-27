@@ -7,6 +7,7 @@ var editing = false;
 var currentTags = [];
 var selectTags = [];
 
+
 class Tag {
     constructor(name, tagID) {
         this.tagID = tagID;
@@ -295,7 +296,7 @@ async function updateTags(postID, body) {
     console.log(response);
 }
 
-function submitPost() {
+async function submitPost() {
     var title = document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value;
 
     // js has no native deep copy so we have to use json
@@ -313,34 +314,74 @@ function submitPost() {
 
     var body = JSON.stringify(content);
     var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
+
     const checkTempPromises = currentTags.map((tag) => tag.checkTemp());
     Promise.all(checkTempPromises)
-        .then(() => {
+        .then(async () => {
             var tagsToSubmit = [];
             currentTags.forEach((tag) => {
                 tagsToSubmit.push(tag.tagID);
             });
             console.log(tagsToSubmit);
-            var postBody = {
-                "isTechnical": isTechnical + 0,
-                "title": title,
-                "content": body,
-                "images": images,
-            };
-            console.log(postBody);
+           
             var tagBody = {
                 "tags": tagsToSubmit,
             };
             console.log("tag body")
             console.log(tagBody);
             if (editing) {
-                let postID = getQueryParam();
+
+                let postBody = {}
+
+                let postID = getQueryParam()
+
+                const existingData = await getPostData(postID)
+
+                if (existingData.title != title) {
+                    console.log(existingData.title, title)
+                    postBody.title = title;
+                }
+
+                if (existingData.content != body) {
+                    console.log(existingData.content)
+                    console.log(body)
+                    postBody.content = body;
+                }
+
+                if (existingData.isTechnical != isTechnical) {
+                    console.log(existingData.isTechnical, isTechnical)
+                    postBody.isTechnical = isTechnical + 0;
+                }
+
+                if (Object.keys(images).length > 0) {
+                    console.log(images)
+                    postBody.images = images;
+                }
+
+                if (Object.keys(postBody).length === 0) {
+                    console.log("No changes to post")
+                    updateTags(postID, tagBody).then(() => {
+                        // window.location.href = "../";
+                    });
+                    return;
+                }
+
                 updatePost(postID, postBody).then(() => {
                     updateTags(postID, tagBody).then(() => {
-                        window.location.href = "../";
+                        // window.location.href = "../";
                     });
                 });
             } else {
+
+                let postBody = {
+                    "isTechnical": isTechnical + 0,
+                    "title": title,
+                    "content": body,
+                    "images": images
+                }
+                
+                console.log(postBody);
+
                 let postID = createPost(postBody);
                 postID.then((postID) => {
                     console.log(postID);
@@ -348,7 +389,7 @@ function submitPost() {
                     console.log(tagBody);
                     console.log("This is the tagBody")
                     updateTags(postID, tagBody).then(() => {
-                        window.location.href = "../";
+                        // window.location.href = "../";
                     });
                 });
             }
