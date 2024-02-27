@@ -142,6 +142,7 @@ function r_post_post_tags(RequestContext $ctx, string $args, string $post_id) {
 function r_post_post_meta(RequestContext $ctx, string $args) {
 
     [$post_id] = explode_args_into_array($args);
+    $emp_id = $ctx->session->hex_associated_user_id;
 
     object_check_post_exists($ctx, [$post_id]);
 
@@ -157,7 +158,7 @@ function r_post_post_meta(RequestContext $ctx, string $args) {
 
         db_post_meta_set(
             $post_id,
-            $ctx->session->hex_associated_user_id,
+            $emp_id,
             $ctx->request_body
         );
 
@@ -165,10 +166,10 @@ function r_post_post_meta(RequestContext $ctx, string $args) {
     
     } else if ($ctx->request_method == "GET") {
 
-        $meta = db_post_meta_fetch($post_id, $ctx->session->hex_associated_user_id);
+        $meta = db_post_meta_fetch($post_id, $emp_id);
 
         if ($meta === false) {
-            respond_resource_not_found("No employee post meta set");
+            respond_resource_not_found("post $post_id meta for emp $emp_id");
         } else {
             respond_ok(array(
                 "meta"=>$meta
