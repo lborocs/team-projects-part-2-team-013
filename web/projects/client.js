@@ -327,6 +327,7 @@ async function addManHoursPopup(task) {
         {text:"Submit", class:"blue"},
     )
     let manHours = hoursInput * 3600 + minutesInput * 60;
+    console.error("RESOLVE")
 
 }
 
@@ -477,14 +478,16 @@ function updateTaskState(task) {
         });
     }
 }
-
-function showTaskInExplainer(taskCard) {
+/**
+ *  renders the task details for the given task ID in the explainer
+ * 
+ * @param taskID 
+ */
+function showTaskInExplainer(taskID) {
 
     explainer.querySelector('.edit-button').classList.remove('disabled');
     explainer.querySelector('.delete-button').classList.remove('disabled');
 
-    let taskID = taskCard.getAttribute("id");
-    let assignees = taskCard.getAttribute("data-assignments");
     explainerTaskContainer.setAttribute("task-id", taskID);
 
     globalCurrentTask = globalTasksList.find((task) => {
@@ -708,7 +711,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
                     if (item.classList.contains("action-edit")) {
                         console.log("[contextMenuItemOnClick] edit clicked")
-                        showTaskInExplainer(taskCard);
+                        showTaskInExplainer(taskCard.getAttribute("id"));
                         editTaskPopup(globalCurrentTask);
                         
 
@@ -826,7 +829,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                 if (taskCard.getAttribute("id") !== explainerTaskContainer.getAttribute("task-id")) {
                     explainer.classList.remove("hidden")
                     overlay.classList.remove("hidden")
-                    showTaskInExplainer(taskCard);
+                    showTaskInExplainer(taskCard.getAttribute("id"));
                 }
             }
 
@@ -938,7 +941,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
                     if (item.classList.contains("action-edit")) {
                         console.log("[contextMenuItemOnClick] edit clicked")
 
-                        showTaskInExplainer(taskRow);
+                        showTaskInExplainer(taskRow.getAttribute("id"));
                         editTaskPopup(globalCurrentTask);
                         
                     } else if (item.classList.contains("action-delete")) {
@@ -1039,7 +1042,7 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
                 explainer.classList.remove("hidden")
                 overlay.classList.remove("hidden")
-                showTaskInExplainer(taskRow);
+                showTaskInExplainer(taskRow.getAttribute("id"));
             });
 
         }
@@ -1406,7 +1409,7 @@ async function renderFromBreadcrumb(locations) {
         alert("You appear to have followed a link to a task that either does not exist or you do not have access to.");
         return;
     } 
-    showTaskInExplainer(task);
+    showTaskInExplainer(taskID);
 
     return true;
 }
@@ -3133,25 +3136,37 @@ createProjectButton.addEventListener("pointerup", async () => {
     }
 );
 
-async function editTaskPopup(task){
+async function editTaskPopup(task) {
     console.log("[editTaskPopup] Running editTaskPopup")
     let popupDiv = document.querySelector('.popup');
     let fullscreenDiv = document.querySelector('.fullscreen');
 
     const createdAt = new Date(task.createdAt);
 
+    //need to declare all these outside of callback scope so they can be accessed in the event listeners
+    let hoursInput = Math.floor(task.expectedManHours / 3600);
+    let minutesInput = Math.floor((task.expectedManHours % 3600) / 60);
+
+    let assignedEmployees = new Set();
+    task.assignments.forEach((assignment) => {
+        assignedEmployees.add(assignment);
+    })
+    console.error(assignedEmployees)
+
+    const employeeMap = await global.getEmployeesById(task.assignments);
+
+    let taskTitleInput;
+    let dueDateInput;
+
+    let quill;
+    let fp;
+    
+
     popupDiv.replaceChildren();
-    popupDiv.innerHTML = `
-        <dialog open class='popupDialog' id="add-task-popup">
-            <div class="popup-title">
-            <span>Edit Task</span>
-            <div class="small-icon" id="close-button">
-                <span class="material-symbols-rounded">
-                    close
-                </span>
-            </div>
-            </div>
-            <input type="text" placeholder="Task title" class="add-task-title-input">
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+
+            <input type="text" placeholder="${task.title}" class="add-task-title-input">
             
             <div class="add-task-description-container">
                 <div id="description-editor"></div>
@@ -3209,7 +3224,7 @@ async function editTaskPopup(task){
                                 expand_more
                             </span>
                         </div>
-                        <input type="number" class="number-input" value="1" min="0" tabindex="0">
+                        <input type="number" class="number-input" value="${hoursInput}" min="0" tabindex="0">
                         <div class="stepper increment" tabindex="0">
                             <span class="material-symbols-rounded">
                                 expand_less
@@ -3221,7 +3236,7 @@ async function editTaskPopup(task){
                         <div class="number-picker" id="expected-man-minutes">
                             <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
                                 <div class="dropdown-text">
-                                    0
+                                    ${minutesInput}
                                 </div>
                                 <div class="dropdown-chevron">
                                     <span class="material-symbols-rounded">
@@ -3229,10 +3244,10 @@ async function editTaskPopup(task){
                                     </span>
                                 </div>
                                 <div class="dropdown-menu">
-                                    <div class="dropdown-option" id="manhours-minutes0">0</div>
-                                    <div class="dropdown-option" id="manhours-minutes15">15</div>
-                                    <div class="dropdown-option" id="manhours-minutes30">30</div>
-                                    <div class="dropdown-option" id="manhours-minutes45">45</div>
+                                    <div class="dropdown-option" id="manhours-minutes0" value="0">0</div>
+                                    <div class="dropdown-option" id="manhours-minutes15" value="15">15</div>
+                                    <div class="dropdown-option" id="manhours-minutes30" value="30">30</div>
+                                    <div class="dropdown-option" id="manhours-minutes45" value="45">45</div>
                                 </div>
                             </div>
                             <div class="popup-subtitle">
@@ -3242,275 +3257,213 @@ async function editTaskPopup(task){
                     </div>
                 </div>
             </div>
-            <div class="confirm-buttons-row">
-                <div class="created-at">
-                    Task created ${createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
-                </div>
-                <div class="text-button" id="discard-button">
-                    <div class="button-text">
-                        Discard
-                    </div>
-                </div>
-                <div class="text-button blue" id="create-button">
-                    <div class="button-text">
-                        Save
-                    </div>
-                </div>
+            <div class="created-at">
+                Task created ${createdAt.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
             </div>
-        </dialog>
-    `;
+        `;
 
+        ctx.dialog.classList.add('wide');
+
+        let manhoursMinutesDropdown = ctx.content.querySelector("#manhours-minutes-dropdown")
+        //man minutes picker logic
+        manhoursMinutesDropdown.addEventListener("click", function() {
+            this.classList.toggle("open");
+        });
     
-
-    //quill for description
-    var quill = new Quill('#description-editor', {
-        modules: {
-            toolbar: [
-                ['bold', 'italic', 'underline']
-            ]
-        },
-        placeholder: 'Description...',
-        theme: 'snow'
-    });
-
-    //event listeners for the number picker
-    let numberPicker = document.querySelector("#add-man-hours-button2");
-    let numberPickerInput = numberPicker.querySelector('input[type="number"]');
-    let numberPickerPlus = numberPicker.querySelector('.stepper.increment')
-    let numberPickerMinus = numberPicker.querySelector('.stepper.decrement')
-    numberPickerPlus.addEventListener('click', e => {
-        e.preventDefault()
-        numberPickerInput.stepUp()
-    })
-    numberPickerMinus.addEventListener('click', e => {
-        e.preventDefault()
-        numberPickerInput.stepDown()
-    })
-    numberPickerInput.addEventListener('focus', e => {
-        numberPickerInput.select()
-    })
-
-    //flatpickr for date picker
-    let datePickerInput = popupDiv.querySelector('.date-picker-input')
-    let fp = flatpickr(datePickerInput, {
-        dateFormat: 'd/m/Y',
-        altInput: true,
-        altFormat: 'F j, Y',
-        disableMobile: true,
-        onChange: (selectedDates, dateStr, instance) => {
-            datePickerInput.dispatchEvent(new Event('change'))
-        }
-    })
-
-    let assignedEmployees = new Set();
-    const employeeMap = await global.getEmployeesById(task.assignments);
-    let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
-    let empList = popupDiv.querySelector('#employee-select > .popover > .employee-list');
-
-    const searchEmployees = async (q) => {
-        let res = await get_api(`/employee/employee.php/all?q=${q}`);
-        let employeeList = res.data.employees;
-        console.log(employeeList)
-        empList.innerHTML = "";
-        employeeList.forEach((emp) => {
-            let emp_name = global.employeeToName(emp);
-            let avatar = global.employeeAvatarOrFallback(emp);
-            let option = document.createElement("div");
-            option.classList.add("name-card");
-            option.innerHTML = `
-                <img src="${avatar}" class="avatar">
-                <span>${emp_name}</span>
-                <span class="material-symbols-rounded icon">
-                    person_add
-                </span>
-            `
-            option.setAttribute("data-id", emp.empID);
-            empList.appendChild(option);
+        ctx.content.addEventListener("click", (e) => {
+            if (!manhoursMinutesDropdown.contains(e.target)) {
+                manhoursMinutesDropdown.classList.remove("open")
+            }
         });
-
-            // turn employeelist into a map of id to employee
-        employeeList.forEach((emp) => {
-            employeeMap.set(emp.empID, emp);
-        });
-
-        // add event listeners to employee list
-        let employeeListOptions = empList.querySelectorAll(".name-card");
-        employeeListOptions.forEach((option) => {
+        
+        
+        manhoursMinutesDropdown.querySelectorAll(".dropdown-option").forEach((option) => {
             option.addEventListener("click", () => {
-
-                let empID = option.getAttribute("data-id");
-
-                if (!assignedEmployees.has(empID)) {
-
-                    option.classList.add('selected');
-                    option.querySelector('.icon').innerHTML = "check";
-
-                    assignedEmployees.add(empID);
-
-                } else {
-
-                    option.classList.remove('selected');
-                    option.querySelector('.icon').innerHTML = "person_add";
-                    assignedEmployees.delete(empID);
-
-                }
-
-                updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
-
+                manhoursMinutesDropdown.querySelector(".dropdown-text").innerText = option.getAttribute("value");
+                minutesInput = parseInt(option.getAttribute("value"));
             })
         })
         
+        //man hours picker logic
+        let numberPicker = ctx.content.querySelector("#add-man-hours-button2");
+
+        let numberPickerInput = numberPicker.querySelector('input[type="number"]');
+        let numberPickerPlus = numberPicker.querySelector('.stepper.increment');
+        let numberPickerMinus = numberPicker.querySelector('.stepper.decrement');
+        numberPickerPlus.addEventListener('click', e => {
+            e.preventDefault();
+            numberPickerInput.stepUp();
+            hoursInput = numberPickerInput.value;
+            animate(numberPickerInput, "flash");
+        });
+        numberPickerMinus.addEventListener('click', e => {
+            e.preventDefault();
+            numberPickerInput.stepDown();
+            hoursInput = numberPickerInput.value;
+            animate(numberPickerInput, "flash");
+        });
+        numberPickerInput.addEventListener('focus', e => {
+            numberPickerInput.select();
+        });
+        numberPickerInput.addEventListener('input', e => {
+            hoursInput = numberPickerInput.value;
+        });
+
+        //quill for description
+        let descriptionEditor = ctx.content.querySelector("#description-editor");
+        quill = new Quill(descriptionEditor, {
+            modules: {
+                toolbar: [
+                    ['bold', 'italic', 'underline']
+                ]
+            },
+            placeholder: 'Description...',
+            theme: 'snow'
+        });
+
+        //flatpickr for date picker
+        let datePickerInput = ctx.content.querySelector('.date-picker-input')
+        fp = flatpickr(datePickerInput, {
+            dateFormat: 'd/m/Y',
+            altInput: true,
+            altFormat: 'F j, Y',
+            disableMobile: true,
+            onChange: (selectedDates, dateStr, instance) => {
+                datePickerInput.dispatchEvent(new Event('change'))
+            }
+        })
+
+        let assignedEmployeesDiv = ctx.content.querySelector('.assigned-employees');
+        let empList = ctx.content.querySelector('#employee-select > .popover > .employee-list');
+
+        const searchEmployees = async (q) => {
+            let res = await get_api(`/employee/employee.php/all?q=${q}`);
+            let employeeList = res.data.employees;
+            console.log(employeeList)
+            empList.innerHTML = "";
+            employeeList.forEach((emp) => {
+                let emp_name = global.employeeToName(emp);
+                let avatar = global.employeeAvatarOrFallback(emp);
+                let option = document.createElement("div");
+                option.classList.add("name-card");
+                option.innerHTML = `
+                    <img src="${avatar}" class="avatar">
+                    <span>${emp_name}</span>
+                    <span class="material-symbols-rounded icon">
+                        person_add
+                    </span>
+                `
+                option.setAttribute("data-id", emp.empID);
+                empList.appendChild(option);
+            });
+        
+
+            //turns employeelist into a map of id to employee
+            employeeList.forEach((emp) => {
+                employeeMap.set(emp.empID, emp);
+            });
+
+            //adds event listeners to employee list
+            let employeeListOptions = empList.querySelectorAll(".name-card");
+            employeeListOptions.forEach((option) => {
+                option.addEventListener("click", () => {
+
+                    let empID = option.getAttribute("data-id");
+
+                    if (!assignedEmployees.has(empID)) {
+
+                        option.classList.add('selected');
+                        option.querySelector('.icon').innerHTML = "check";
+
+                        assignedEmployees.add(empID);
+
+                    } else {
+
+                        option.classList.remove('selected');
+                        option.querySelector('.icon').innerHTML = "person_add";
+                        assignedEmployees.delete(empID);
+
+                    }
+
+                    updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+
+                })
+            })
+
+        }
+
+        const searchElem = ctx.content.querySelector(".search-input");
+        const roller = new global.ReusableRollingTimeout(
+            () => {searchEmployees(searchElem.value);},
+            150
+        );
+
+        searchElem.addEventListener("input", (e) => {
+            roller.roll();
+        });
+        roller.roll();
+
+        taskTitleInput = ctx.content.querySelector('.add-task-title-input');
+        taskTitleInput.value = task.title;
+
+        quill.root.innerHTML = task.description;
+
+
+        dueDateInput = ctx.content.querySelector('.date-picker-input');
+        fp.setDate(task.dueDate, true);
+
+        let currentAssignees = globalCurrentTask.assignments;
+
+        currentAssignees.forEach((empID) => {
+            assignedEmployees.add(empID);
+        });
+
+        
+        updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
+
     }
 
-    const searchElem = popupDiv.querySelector(".search-input");
-    const roller = new global.ReusableRollingTimeout(
-        () => {searchEmployees(searchElem.value);},
-        150
-    );
+    await global.popupModal(
+        false,
+        "Edit Task",
+        callback,
+        {text:"Save", class:"blue"},
+    )
 
-    searchElem.addEventListener("input", (e) => {
-        roller.roll();
-    });
-    roller.roll();
+    let expectedManHours = hoursInput * 3600 + minutesInput * 60;
 
-    let taskTitleInput = popupDiv.querySelector('.add-task-title-input');
-    taskTitleInput.value = task.title;
 
-    quill.root.innerHTML = task.description;
+    let projID = globalCurrentProject.projID;
+    let taskID = task.taskID
+    let description = quill.root.innerHTML;
 
-    let hours = Math.floor(task.expectedManHours / 3600);
-    let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
-
-    let manHoursInput = document.querySelector('#add-man-hours-button2 .number-input');
-    manHoursInput.value = hours;
-
-    let minutesDropdownText = document.querySelector('#manhours-minutes-dropdown .dropdown-text');
-    minutesDropdownText.innerText = minutes;
-
-    let dueDateInput = popupDiv.querySelector('.date-picker-input');
-    fp.setDate(task.dueDate, true);
-
-    let currentAssignees = globalCurrentTask.assignments;
-
-    currentAssignees.forEach((empID) => {
-        assignedEmployees.add(empID);
-    });
-
+    let dueDate = fp.selectedDates[0];
+    dueDate = dueDate ? dueDate.getTime() : null;
     
-    updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
 
-    let employeeListOptions = empList.querySelectorAll(".name-card");
-    employeeListOptions.forEach((option) => {
 
-        let empID = option.getAttribute("data-id");
-        if (assignedEmployees.has(empID)) {
-            option.classList.add('selected');
-            option.querySelector('.icon').innerHTML = "check";
-        }
+    let data = {
+        title: taskTitleInput.value,
+        description: description,
+        expectedManHours: expectedManHours,
+        dueDate: dueDate,
+    };
 
-        option.addEventListener("click", () => {
+    let res = await patch_api(`/project/task.php/task/${projID}/${taskID}`, data);
+    console.log(res);
 
-            let empID = option.getAttribute("data-id");
-
-            if (!assignedEmployees.has(empID)) {
-
-                option.classList.add('selected');
-                option.querySelector('.icon').innerHTML = "check";
-
-                assignedEmployees.add(empID);
-
-            } else {
-
-                option.classList.remove('selected');
-                option.querySelector('.icon').innerHTML = "person_add";
-                assignedEmployees.delete(empID);
-
-            }
-
-            updateAssignedEmployees(assignedEmployeesDiv, assignedEmployees, employeeMap);
-
-        })
-    })
-
-    fullscreenDiv.style.filter = 'brightness(0.75)';
-    let dialog = popupDiv.querySelector('.popupDialog');
-    dialog.style.transform = 'translateY(0px)'
-    dialog.style.opacity = '1';
-    
-    let saveButton = dialog.querySelector('#create-button');
-    let closeButton = dialog.querySelector('#close-button');
-    let discardButton = dialog.querySelector('#discard-button');
-
-    closeButton.addEventListener('click', (event) => {
-        event.preventDefault(); 
-        dialog.style.transform = 'translateY(-1%)'
-        dialog.style.opacity = '0';
-        dialog.style.display = 'none';
-        
-        
-        fullscreenDiv.style.filter = 'none';
-        console.log("[addTaskCloseButton] rejecting")
+    let assignedEmployeesArray = [...assignedEmployees];
+    let assignmentRes = await put_api(`/project/task.php/assignments/${projID}/${taskID}`, {
+        assignments: assignedEmployeesArray
     });
+    console.log(assignmentRes);
 
-    discardButton.addEventListener('click', (event) => {
-        event.preventDefault(); 
-        dialog.style.transform = 'translateY(-1%)'
-        dialog.style.opacity = '0';
-        dialog.style.display = 'none';
-        fullscreenDiv.style.filter = 'none';
-        console.log("[addTaskDiscardButton] rejecting")
-    });
-
-    dialog.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            dialog.style.transform = 'translateY(-1%)'
-            dialog.style.opacity = '0';
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            console.log("[addTaskEscape] rejecting")
-        }
-    });
-
-    saveButton.addEventListener('click', async (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-
-        let projID = globalCurrentProject.projID;
-        let taskID = task.taskID
-        let description = quill.root.innerHTML;
-        let manHours = manHoursInput.value;
-        let minutes = minutesDropdownText.innerText;
-        let expectedManHours = parseInt(manHours * 3600 + minutes * 60);
-        let dueDate = fp.selectedDates[0];
-        dueDate = dueDate ? dueDate.getTime() : null;
-        
-
-
-        let data = {
-            title: taskTitleInput.value,
-            description: description,
-            expectedManHours: expectedManHours,
-            dueDate: dueDate,
-        };
-
-        let res = await patch_api(`/project/task.php/task/${projID}/${taskID}`, data);
-        console.log(res);
-
-        let assignedEmployeesArray = [...assignedEmployees];
-        let assignmentRes = await put_api(`/project/task.php/assignments/${projID}/${taskID}`, {
-            assignments: assignedEmployeesArray
-        });
-        console.log(assignmentRes);
-
-        if (res.success && assignmentRes.success) {
-            dialog.style.transform = 'translateY(-1%)'
-            dialog.style.opacity = '0';
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            console.log("[addTaskCreateButton] resolving")
-            await searchAndRenderTasks();
-        }
-    });
+    if (res.success && assignmentRes.success) {
+        console.log("[editTaskPopup] resolving")
+        let newTasks = await fetchTasks(projID);
+        renderTasks(newTasks);
+        showTaskInExplainer(taskID);
+    }
 
 }
 
