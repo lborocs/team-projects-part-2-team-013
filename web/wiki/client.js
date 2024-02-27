@@ -280,6 +280,7 @@ function setUpPostsEventListeners() {
     postList.forEach((post) => {
         post.querySelector(".delete-post").addEventListener("click", (event) => {
             event.stopPropagation();
+            event.preventDefault();
             confirmDelete().then(() => {
                 post.remove();
                 let postID = post.getAttribute("data-postID");
@@ -294,6 +295,7 @@ function setUpPostsEventListeners() {
 
         post.querySelector(".edit-post").addEventListener("click", (event) => {
             event.stopPropagation();
+            event.preventDefault();
             let postID = post.getAttribute("data-postID")
             window.location.href = `/wiki/create/#${postID}`;
         });
