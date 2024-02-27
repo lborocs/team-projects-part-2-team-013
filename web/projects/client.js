@@ -1037,7 +1037,17 @@ function setUpTaskEventListeners(listeners = RENDER_BOTH) {
 
                 console.log("[taskRow] clicked")
 
-                if (e.target.classList.contains("dropdown") || e.target.classList.contains("dropdown-menu")) {
+                const classes = e.target.classList;
+
+                if (
+                    (
+                        classes.contains("dropdown") ||
+                        classes.contains("dropdown-menu") ||
+                        classes.contains("dropdown-chevron") ||
+                        classes.contains("dropdown-text") ||
+                        classes.contains("dropdown-icon")
+                    )
+                ) {
                     return;
                 }
 
@@ -1471,11 +1481,11 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 
     taskRow.innerHTML = `
         <td class="${stateClass} td-class">
-            <div class="dropdown status-cell" id="list-task-status" tabindex="0">
-                <span class="material-symbols-rounded">${icon}</span>
+            <div class="dropdown status-cell list-task-status" tabindex="0">
+                <span class="material-symbols-rounded dropdown-icon">${icon}</span>
                 <div class="dropdown-text">${statusText}</div>
                 <div class="dropdown-chevron">
-                    <span class="material-symbols-rounded">
+                    <span class="material-symbols-rounded dropdown-icon">
                         expand_more
                     </span>
                 </div>
@@ -1634,7 +1644,7 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
 }
 
 function setupDropdownEventListeners(taskRow) {
-    let listTaskStatus = taskRow.querySelector("#list-task-status");
+    let listTaskStatus = taskRow.querySelector(".list-task-status");
     let dropdownNotStarted = taskRow.querySelector("#dropdown-not-started");
     let dropdownInProgress = taskRow.querySelector("#dropdown-in-progress");
     let dropdownFinished = taskRow.querySelector("#dropdown-finished");
