@@ -49,7 +49,7 @@ if (projectID !== "") {
 
 //chartjs styling
 Chart.defaults.font.family = 'system-ui';
-Chart.defaults.font.size = 14;
+Chart.defaults.font.size = 13;
 Chart.defaults.font.style = 'normal';
 Chart.defaults.font.weight = 'normal';
 Chart.defaults.color = '#666';
