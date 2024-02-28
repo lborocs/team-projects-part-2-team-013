@@ -143,37 +143,6 @@ async function fetchTags() {
     }
 }
 
-// function organiseSelect() {
-//     console.log("Organising select");
-//     console.log(currentTags);
-//     selectTags.sort((a, b) => a.name.localeCompare(b.name));
-//     sleep(10).then(() => {
-//         var input = document.querySelector("#input-tag").value.trim();
-//         if (input === "") {
-//             var index = 0;
-//             selectTags.forEach((tag) => {
-//                 if (index < 5) {
-//                     tag.render();
-//                     index++;
-//                 } else {
-//                     tag.deRender();
-//                 }
-//             });
-//         } else {
-//             var count = 0;
-//             selectTags.forEach((tag) => {
-//                 if (count < 5 && tag.name.includes(input)) {
-//                     tag.render();
-//                     count++;
-//                 } else {
-//                     tag.deRender();
-//                 }
-//             });
-//         }
-//     });
-// }
-
-
 let tagsList = fetchTags();
 tagsList.then((tagsList) => {
     tagsList.forEach((tag) => {
@@ -183,7 +152,12 @@ tagsList.then((tagsList) => {
 
     });
 
-    //organiseSelect();
+    setEditing()
+    
+});
+
+
+function setEditing() {
     let postID = getQueryParam();
 
     if (postID == "") {
@@ -194,49 +168,52 @@ tagsList.then((tagsList) => {
 
     if (postID != "") {
         editing = true;
-
-        //sets the breadcrumb and title for editing
+    
+        //sets the breadcrumb, title, submit button text for editing
         if (editing) {
             global.setBreadcrumb(["Wiki", "Edit Post"], ["/wiki/", `/wiki/create/#${postID}`]);
             pageTitle.innerHTML = "Edit Post";
             document.title = "Edit Post";
-        } 
-
-        submitButton.innerHTML = '<div class="button-text">Update post </div> <div class="button-icon"> <span class="material-symbols-rounded">done</span> </div>';
-        document.querySelector("#title").innerHTML = "Edit Post";
-        getPostData(postID).then((post) => {
-
-            console.log(post);
-            postBeingEdited = post;
-
-            const postContent = JSON.parse(post.content);
-            postTitleInput.value = post.title;
-
-            console.log("setting cotnent to", postContent);
-            quill.setContents(postContent);
-
-            if (post.isTechnical == 1) {
-                document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked = true;
-            } else {
-                document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[1].checked = true;
-            }
-
-            if (post.tags == null || post.tags.length == 0) {
-                //if the post you're editing has no tags
-            }
-
-            else {
-                document.querySelector("#placeholderTag").classList.add("norender")
-                post.tags.forEach((tag) => {
-                    let temp = new Tag(tagsList.find(findTag(tag)).name, tag);
-                    currentTags.push(temp);
-                    temp.addTag();
-                });
-            }
-
-        })
+            submitButton.innerHTML = '<div class="button-text">Update post </div> <div class="button-icon"> <span class="material-symbols-rounded">done</span> </div>';
+            getPostData(postID).then((post) => {
+                renderPostInEditor(post);
+            });
+        }
     }
-});
+        
+}
+
+function renderPostInEditor(post) {
+    console.log("Rendering post in editor");
+    console.log(post);
+    postBeingEdited = post;
+
+    const postContent = JSON.parse(post.content);
+    postTitleInput.value = post.title;
+
+    console.log("setting cotnent to", postContent);
+    quill.setContents(postContent);
+
+    if (post.isTechnical == 1) {
+        document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked = true;
+    } else {
+        document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[1].checked = true;
+    }
+
+    if (post.tags == null || post.tags.length == 0) {
+        //if the post you're editing has no tags
+    }
+
+    else {
+        document.querySelector("#placeholderTag").classList.add("norender")
+        post.tags.forEach((tag) => {
+            let temp = new Tag(tagsList.find(findTag(tag)).name, tag);
+            currentTags.push(temp);
+            temp.addTag();
+        });
+    }
+}
+
 
 
 
@@ -273,45 +250,6 @@ document.editor = quill;
 
 
 
-// input.addEventListener("keydown", function (event) {
-//     anyChanges = true;
-//     if (event.key === "Enter") {
-//         event.preventDefault();
-//         let tagContent = input.value.trim();
-//         if (tagContent === "") {
-//             return;
-//         }
-//         const tagExists = selectTags.find(tag => tag.name === tagContent);
-//         console.log(tagExists);
-//         console.log("This is tagExists")
-//         if (tagExists) {
-//             currentTags.push(tagExists);
-//             tagExists.addTag();
-//             selectTags = selectTags.filter(tag => tag.tagID !== tagExists.tagID);
-//             tagExists.removeFromSelect();
-//         }
-//         else {
-//             let tempTag = new Tag(tagContent, 0);
-//             currentTags.push(tempTag);
-//             tempTag.addTag();
-//         }
-//         input.value = "";
-//         organiseSelect();
-//     }
-//     else if (event.key === "Backspace" && input.value === "") {
-//         currentTags.pop().removeTag();
-//     }
-//     else if (event.key === "Tab") {
-//         event.preventDefault();
-//         if (selectTags.length > 0) {
-//             selectTags.find(tag => !tag.element.classList.contains("norender")).clickedSelect();
-//             input.value = "";
-//         }
-//     }
-//     else {
-//         organiseSelect();
-//     }
-// });
 
 
 async function createPost(data) {
@@ -486,3 +424,6 @@ window.addEventListener('beforeunload', (event) => {
     return "";
 })
 
+
+//init the page
+setEditing();
