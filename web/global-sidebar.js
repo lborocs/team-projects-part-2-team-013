@@ -34,7 +34,7 @@ personal.setAttribute('href', '/personal/');
 export const wiki = document.createElement('a')
 wiki.classList.add('sidebar-item')
 wiki.id = 'wiki';
-wiki.setAttribute('href', '/wiki/');
+wiki.setAttribute('href', '/wiki/#all');
 
 export const training = document.createElement('a')
 training.classList.add('sidebar-item', 'manager-only', 'norender')
@@ -107,8 +107,8 @@ if (items !== null) {
             return
         }
 
-        if (window.location.pathname.startsWith(item.getAttribute('href'))) {
-            item.classList.add("selected")
+        if (window.location.pathname.startsWith(item.getAttribute('href')) || window.location.href.endsWith(item.getAttribute('href'))) {
+            item.classList.add("selected");
         }
     })
 }
