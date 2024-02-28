@@ -199,6 +199,7 @@ export async function init(id) {
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 2,
+                borderRadius: 4,
                 data: tasksPerEmployeeData.values
             }]
         },
@@ -294,7 +295,8 @@ export async function init(id) {
         type: 'bar',
         data: {
             labels: workloadData.labels,
-            datasets: workloadData.data
+            datasets: workloadData.data,
+            borderRadius: 4,
         },
         options: {
             scales: {

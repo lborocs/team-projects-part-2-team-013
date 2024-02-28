@@ -179,7 +179,7 @@
     display: flex;
     flex-direction: row;
     height: min-content;
-    min-height: 10rem;
+    min-height: 8rem;
     gap: 1.5rem;
 
     padding: 0;
@@ -193,7 +193,7 @@
     .overview {
         flex: 1;
         border-radius: 3px;
-        height: 100%;
+        height: 8rem;
 
         display: flex;
         flex-direction: column;
@@ -219,6 +219,7 @@
         .double-col {
             display: flex;
             flex-direction: row;
+            flex-grow: 1;
             justify-content: space-evenly;
             align-items: center;
             gap: 0.5rem;
@@ -228,6 +229,12 @@
             .left, .right {
                 display: flex;
                 flex-direction: column;
+                flex-grow: 1;
+                align-items: flex-end;  
+                width: 100%;
+                height: 100%;
+                border-radius: 3px;
+                padding: 0.25rem 0.5rem;
 
 
             }
@@ -237,8 +244,19 @@
         .subtitle-text {
             font-size: 0.875rem;
             font-weight: 600;
-            color: var(--icon-clr);
+            opacity: 0.8;
             text-transform: uppercase
+        }
+
+        .red {
+            color: #d32c2c;
+            background-color: rgba(255,0,0,0.1);
+        }
+
+        .orange {
+            color: #c45800;
+            background-color: rgba(255,165,0,0.1);
+        
         }
 
     }
