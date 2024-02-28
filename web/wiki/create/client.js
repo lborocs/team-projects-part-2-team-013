@@ -42,8 +42,8 @@ class Tag {
         document.querySelector("#listOfTags").removeChild(this.newTag);
         if (this.tagID != 0) {
             selectTags.push(this);
-            this.addToSelect();
-            organiseSelect();
+            //this.addToSelect();
+            //organiseSelect();
         }
         const index = currentTags.indexOf(this);
         if (index !== -1) {
@@ -79,15 +79,15 @@ class Tag {
         return result.data.tagID;
     }
 
-    addToSelect() {
-        const newSelectTag = document.createElement("div");
-        newSelectTag.className = "name-card";
-        newSelectTag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}`;
-        document.querySelector(".employee-list").appendChild(newSelectTag);
-        this.element = newSelectTag;
-        console.log('Added to select: ', this.name);
-        this.addSelectListener();
-    }
+    // addToSelect() {
+    //     const newSelectTag = document.createElement("div");
+    //     newSelectTag.className = "name-card";
+    //     newSelectTag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}`;
+    //     document.querySelector(".employee-list").appendChild(newSelectTag);
+    //     this.element = newSelectTag;
+    //     console.log('Added to select: ', this.name);
+    //     this.addSelectListener();
+    // }
 
     addSelectListener() {
         console.log('Adding click listener to: ', this.element);
@@ -107,7 +107,7 @@ class Tag {
     removeFromSelect() {
         document.querySelector(".employee-list").removeChild(this.element);
         selectTags = selectTags.filter(a => a.tagID !== this.tagID);
-        organiseSelect();
+        //organiseSelect();
     }
 
     deRender() {
@@ -143,35 +143,35 @@ async function fetchTags() {
     }
 }
 
-function organiseSelect() {
-    console.log("Organising select");
-    console.log(currentTags);
-    selectTags.sort((a, b) => a.name.localeCompare(b.name));
-    sleep(10).then(() => {
-        var input = document.querySelector("#input-tag").value.trim();
-        if (input === "") {
-            var index = 0;
-            selectTags.forEach((tag) => {
-                if (index < 5) {
-                    tag.render();
-                    index++;
-                } else {
-                    tag.deRender();
-                }
-            });
-        } else {
-            var count = 0;
-            selectTags.forEach((tag) => {
-                if (count < 5 && tag.name.includes(input)) {
-                    tag.render();
-                    count++;
-                } else {
-                    tag.deRender();
-                }
-            });
-        }
-    });
-}
+// function organiseSelect() {
+//     console.log("Organising select");
+//     console.log(currentTags);
+//     selectTags.sort((a, b) => a.name.localeCompare(b.name));
+//     sleep(10).then(() => {
+//         var input = document.querySelector("#input-tag").value.trim();
+//         if (input === "") {
+//             var index = 0;
+//             selectTags.forEach((tag) => {
+//                 if (index < 5) {
+//                     tag.render();
+//                     index++;
+//                 } else {
+//                     tag.deRender();
+//                 }
+//             });
+//         } else {
+//             var count = 0;
+//             selectTags.forEach((tag) => {
+//                 if (count < 5 && tag.name.includes(input)) {
+//                     tag.render();
+//                     count++;
+//                 } else {
+//                     tag.deRender();
+//                 }
+//             });
+//         }
+//     });
+// }
 
 
 let tagsList = fetchTags();
@@ -179,11 +179,11 @@ tagsList.then((tagsList) => {
     tagsList.forEach((tag) => {
         let temp = new Tag(tag.name, tag.tagID);
         selectTags.push(temp);
-        temp.addToSelect();
+        //temp.addToSelect();
 
     });
 
-    organiseSelect();
+    //organiseSelect();
     let postID = getQueryParam();
 
     if (postID == "") {
@@ -273,45 +273,45 @@ document.editor = quill;
 
 
 
-input.addEventListener("keydown", function (event) {
-    anyChanges = true;
-    if (event.key === "Enter") {
-        event.preventDefault();
-        let tagContent = input.value.trim();
-        if (tagContent === "") {
-            return;
-        }
-        const tagExists = selectTags.find(tag => tag.name === tagContent);
-        console.log(tagExists);
-        console.log("This is tagExists")
-        if (tagExists) {
-            currentTags.push(tagExists);
-            tagExists.addTag();
-            selectTags = selectTags.filter(tag => tag.tagID !== tagExists.tagID);
-            tagExists.removeFromSelect();
-        }
-        else {
-            let tempTag = new Tag(tagContent, 0);
-            currentTags.push(tempTag);
-            tempTag.addTag();
-        }
-        input.value = "";
-        organiseSelect();
-    }
-    else if (event.key === "Backspace" && input.value === "") {
-        currentTags.pop().removeTag();
-    }
-    else if (event.key === "Tab") {
-        event.preventDefault();
-        if (selectTags.length > 0) {
-            selectTags.find(tag => !tag.element.classList.contains("norender")).clickedSelect();
-            input.value = "";
-        }
-    }
-    else {
-        organiseSelect();
-    }
-});
+// input.addEventListener("keydown", function (event) {
+//     anyChanges = true;
+//     if (event.key === "Enter") {
+//         event.preventDefault();
+//         let tagContent = input.value.trim();
+//         if (tagContent === "") {
+//             return;
+//         }
+//         const tagExists = selectTags.find(tag => tag.name === tagContent);
+//         console.log(tagExists);
+//         console.log("This is tagExists")
+//         if (tagExists) {
+//             currentTags.push(tagExists);
+//             tagExists.addTag();
+//             selectTags = selectTags.filter(tag => tag.tagID !== tagExists.tagID);
+//             tagExists.removeFromSelect();
+//         }
+//         else {
+//             let tempTag = new Tag(tagContent, 0);
+//             currentTags.push(tempTag);
+//             tempTag.addTag();
+//         }
+//         input.value = "";
+//         organiseSelect();
+//     }
+//     else if (event.key === "Backspace" && input.value === "") {
+//         currentTags.pop().removeTag();
+//     }
+//     else if (event.key === "Tab") {
+//         event.preventDefault();
+//         if (selectTags.length > 0) {
+//             selectTags.find(tag => !tag.element.classList.contains("norender")).clickedSelect();
+//             input.value = "";
+//         }
+//     }
+//     else {
+//         organiseSelect();
+//     }
+// });
 
 
 async function createPost(data) {
@@ -433,14 +433,6 @@ const sleep = (ms) => {
         setTimeout(resolve, ms);
     });
 };
-
-document.querySelector(".search-input").addEventListener("focus", function () {
-    document.querySelector("#glass").classList.add("norender");
-});
-
-document.querySelector(".search-input").addEventListener("blur", function () {
-    document.querySelector("#glass").classList.remove("norender");
-});
 
 submitButton.addEventListener("click", submitPost);
 
