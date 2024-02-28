@@ -962,6 +962,19 @@ sup {
             color: var(--text-off-black, #0f0f0f);
         }
 
+        .modal-input {
+
+            height: 2em;
+            min-width: 20em;
+
+            &.text {
+                border: solid 1px var(--border-clr);
+                box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+                border-radius: 3px;
+            }
+            
+        }
+
         &:last-child {
             margin-bottom: 0.5em;
         }
@@ -993,7 +1006,8 @@ sup {
 
     .modal-actions {
 
-        &:has(.modal-tip) {
+        /* if multiple actions display between */
+        &:has(> *:nth-child(n+2)) {
             display: flex;
             justify-content: space-between;
         }

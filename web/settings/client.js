@@ -237,16 +237,6 @@ async function setUserData() {
     secondNameInput.innerHTML = lastName;
 };
 
-async function setAvatar() {
-    let employeeData = await global.getCurrentSession();
-    let emp = employeeData.employee;
-    let employeeAvatar = global.employeeAvatarOrFallback(emp);
-    console.log(employeeData)
-    console.log(employeeAvatar);
-
-    return employeeAvatar;
-}
-
 
 
 setUserData();
@@ -479,15 +469,15 @@ function passwordPopup() {
             <div class="popup-subtitle">
                 Enter your current password:
             </div>
-            <input class="password textfield" type="password" id="current-password" placeholder="Current Password">
+            <input class="modal-input text" type="password" id="current-password" placeholder="Current Password">
         </div>
         <div class="popup-inputs">
             <div class="popup-subtitle">
                 Set your new password:
             </div>
             <div class="input-wrapper">
-                <input class="password textfield" type="password" id="new-password" placeholder="New Password">
-                <input class="password textfield" type="password" id="confirm-new-password" placeholder="Confirm New Password">
+                <input class="modal-input text" type="password" id="new-password" placeholder="New Password">
+                <input class="modal-input text" type="password" id="confirm-new-password" placeholder="Confirm New Password">
                 <div class="error-message" id="password-error"></div>
             </div>
         </div>`
@@ -550,58 +540,81 @@ function passwordPopup() {
 
 }
 
-function avatarPopup() {
-    return new Promise((resolve, reject) => {
+async function avatarPopup() {
+    const callback = (ctx) => {
 
-        let popupDiv = document.querySelector('.popup');
-        let fullscreenDiv = document.querySelector('.fullscreen');
-        popupDiv.innerHTML = `
-            <dialog open class='popup-dialog'>
-                <div class="popup-title">
-                    Change Avatar
-                    <div class="small-icon close-button">
-                        <span class="material-symbols-rounded">
-                            close
-                        </span>
-                    </div>
-                </div>
-                <div class="popup-inputs">
+        ctx.content.innerHTML = `
+            <div class="avatar-change-content">
+                <div class="avatar-upload">
                     <div class="popup-subtitle">
                         Upload new avatar:
                     </div>
-                    <div class="avatar-container">
-                        <img class="avatar" id="user-icon-current">
-                    </div>
                     <form>
-                        <input type="file" id="image-upload" accept="image/*">
+                        <input type="file" id="image-upload" class="modal-input" accept="image/*">
                     </form>
                 </div>
-                <div class="popup-buttons">
-                    <div class="text-button" id="popup-reset">
-                        <div class="button-text">Reset</div>
-                    </div>
-                    <div class="text-button blue" id="popup-confirm">
-                        <div class="button-text">Confirm</div>
-                    </div>
+                <div class="avatar-container">
+                    <img class="avatar-preview">
                 </div>
-            </dialog>
+            </div>
+                <div class="error-message"></div>
+            </div>
         `;
-        fullscreenDiv.style.filter = 'brightness(0.75)';
 
-        let dialog = popupDiv.querySelector('.popup-dialog');
-        let popupClose = dialog.querySelector('.close-button');
-        let popupReset = dialog.querySelector('#popup-reset');
-        let popupConfirm = dialog.querySelector('#popup-confirm');
-        async function loadCurrentAvatar() {
-            let avatar = dialog.querySelector('.avatar');
-            let oldAvatar = await setAvatar();
-            console.log(oldAvatar);
-            avatar.src = oldAvatar;
-        }
-        loadCurrentAvatar();
-        document.getElementById('image-upload').addEventListener('change', function(event) {
+        const errorMessage = ctx.content.querySelector('.error-message');
+
+        const resetContainer = document.createElement('div');
+        resetContainer.classList.add("modal-buttons");
+
+
+        const resetButtonPrompt = document.createElement('div');
+        resetButtonPrompt.classList.add("text-button");
+        resetButtonPrompt.innerHTML = `<div class="button-text">Delete My Avatar</div>`;
+        resetContainer.appendChild(resetButtonPrompt);
+
+        const cancelResetButton = document.createElement('div');
+        cancelResetButton.classList.add("text-button", "norender");
+        cancelResetButton.innerHTML = `<div class="button-text">Go Back</div>`;
+        resetContainer.appendChild(cancelResetButton);
+
+
+        const resetButton = document.createElement('div');
+        resetButton.classList.add("text-button", "red", "norender");
+        resetButton.innerHTML = `<div class="button-text">Delete It</div>`;
+        resetContainer.appendChild(resetButton);
+
+
+        cancelResetButton.addEventListener('pointerup', () => {
+            resetButtonPrompt.classList.remove('norender');
+            cancelResetButton.classList.add('norender');
+            resetButton.classList.add('norender');
+            errorMessage.innerText = "";
+        });
+        resetButtonPrompt.addEventListener('pointerup', () => {
+            resetButtonPrompt.classList.add('norender');
+            cancelResetButton.classList.remove('norender');
+            resetButton.classList.remove('norender');
+            errorMessage.innerText = "Are you sure you want to delete your avatar?";
+        });
+
+
+        const modalActions = ctx.dialog.querySelector('.modal-actions');
+        modalActions.insertBefore(resetContainer, modalActions.firstChild);
+
+
+
+        global.getCurrentSession().then(session => {
+            ctx.content.querySelector('.avatar-preview').src = global.employeeAvatarOrFallback(session.employee);
+            if (session.employee.avatar == null) {
+                resetButton.classList.add('norender');
+                resetButton.classList.remove('modal-tip');
+            }
+        });
+
+
+        ctx.content.querySelector('#image-upload').addEventListener('change', function(event) {
             var file = event.target.files[0];
-            let avatar = dialog.querySelector('.avatar');
+            let avatar = ctx.content.querySelector('.avatar-preview');
             var reader = new FileReader();
             reader.onloadend = function() {
                 avatar.src = reader.result;
@@ -609,42 +622,44 @@ function avatarPopup() {
             reader.readAsDataURL(file);
         });
 
-        popupClose.addEventListener('click', (event) => {
-            event.preventDefault();
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            reject();
+        const resHandler = async (res) => {
+            ctx.content.classList.remove("animate-spinner");
+            if (res.success) {
+                ctx.completeModal(true);
+                await global.revalidateCurrentSession();
+            } else {
+                errorMessage.innerText = res.error.message;
+            }
+        }
+
+        
+        ctx.actionButton.addEventListener('pointerup', async () => {
+            let avatar = ctx.content.querySelector('.avatar-preview').src;
+            errorMessage.innerText = "";
+            ctx.content.classList.add("animate-spinner");
+            resHandler(await updateAvatar(avatar));
         });
 
-        popupReset.addEventListener('click', async (event) => {
-            event.preventDefault();
-            let avatar = document.querySelector('#user-icon-current');
-            console.log('reset button clicked');
-            resetAvatar();
-            setUserData();
-            let defaultAvatar = await setAvatar();
-            console.log('default avatar');
-            console.log(defaultAvatar);
-            avatar.src = defaultAvatar;
-            dialog.style.display = 'none';
-            fullscreenDiv.style.filter = 'none';
-            resolve();
-            
+        resetButton.addEventListener('pointerup', async () => {
+            errorMessage.innerText = "";
+            ctx.content.classList.add("animate-spinner");
+            resHandler(await resetAvatarToDefault());
         });
 
-        popupConfirm.addEventListener('click', (event) => {
-            console.log('confirm button clicked');
-            event.preventDefault();
-            let avatar = dialog.querySelector('.avatar').src;
-            updateAvatar(avatar).then((res) => {
-                if (res) {
-                    dialog.style.display = 'none';
-                    fullscreenDiv.style.filter = 'none';
-                    setUserData();
-                    resolve();
-                }
-            });
-        });
+    }
+
+    global.popupModal(
+        false,
+        "Change Avatar",
+        callback,
+        {text: "Save", class:"blue"},
+        false
+    ).then(() => {
+        global.popupAlert(
+            "Avatar Updated",
+            "Your avatar has been updated successfully, it make take a few minutes to update everywhere.",
+            "success"
+        ).catch();
     });
 };
 
@@ -659,19 +674,13 @@ async function updateAvatar(avatar) {
     const body = {
         avatar: newAvatar,
     };
-    const data = await patch_api(`/employee/employee.php/employee/@me`, body);
-    await global.revalidateCurrentSession();
-    console.log(data);
-    return data;
+    return await patch_api(`/employee/employee.php/employee/@me`, body);
 }
 
-async function resetAvatar() {
+async function resetAvatarToDefault() {
     const body = {
         avatar: null,
     };
-    const data = await patch_api(`/employee/employee.php/employee/@me`, body);
-    await global.revalidateCurrentSession();
-    console.log(data);
-    return data;
+    return await patch_api(`/employee/employee.php/employee/@me`, body);
 }
 
