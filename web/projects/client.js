@@ -104,7 +104,11 @@ console.log("[import] loaded client.js")
 async function renderIndividualProject(id, setBreadcrumb = true) {
 
     // we can render tasks and projects asynchronously
+    const projectLoader = getProjectById(id);
     const taskLoader = fetchTasks(id)
+    
+    const projectLoadedHandle = global.takeMutex("projectLoaded");
+
     taskLoader.then(async (tasks) => {
         globalTasksList = tasks;        
         const attributeSearch = await global.preferences.get_or_default('tasksort');
@@ -119,6 +123,9 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
             sortColumn.classList.add("asc")
         }
 
+        // render tasks must wait for the project
+        await global.waitMutex("projectLoaded");
+
         // tasks sort by for default sorting
         taskListSortBy(sortColumn);
 
@@ -128,12 +135,11 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         console.log("global tasks list:")
         console.log(globalTasksList)
     });
-    const projectLoader = getProjectById(id);
-    projectLoader.then((project) => {
+    projectLoader.then(async (project) => {
 
         globalCurrentProject = project;
         document.title = project.name
-
+        global.releaseMutex("projectLoaded", projectLoadedHandle);
 
         global.getEmployeesById([project.teamLeader.empID]).then(map => {
             let teamLeader = map.get(project.teamLeader.empID);
