@@ -130,6 +130,17 @@ const tagMap = new Map();
 const tagPromise = fetchTags();
 const searchPromise = searchPosts();
 
+global.siteSettings.get('postsEnabled').then((enabled) => {
+    if (enabled == 2) {
+    document.getElementById("new-post").classList.add("disabled");
+    }
+    else if (enabled == 1) {
+        if (!me.isManager) {
+            document.getElementById("new-post").classList.add("disabled");
+        }
+    }
+});
+
 
 async function searchPosts() {
     let search = searchInput.value;
@@ -315,16 +326,6 @@ async function deleteTag(tagID) {
 
 async function setUpPostsEventListeners() {
     const me = (await global.getCurrentSession()).employee;
-    global.siteSettings.get('postsEnabled').then((enabled) => {
-    if (enabled == 2) {
-    document.getElementById("new-post").classList.add("disabled");
-    }
-    else if (enabled == 1) {
-        if (!me.isManager) {
-            document.getElementById("new-post").classList.add("disabled");
-        }
-    }
-});
     const postList = document.querySelectorAll('.post');
     postList.forEach((post) => {
         
