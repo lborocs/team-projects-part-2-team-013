@@ -1,5 +1,7 @@
 import * as global from "../../global-ui.js";
 
+const postElement = document.querySelector(".post");
+
 
 let currentPost;
 
@@ -45,6 +47,10 @@ async function fetchTags() {
 
 const postPromise = getPostData(postID);
 
+postPromise.finally(() => {
+    postElement.classList.remove("animate-spinner");
+});
+
 fetchTags().then(async (tagMap) => {
 
     await postPromise;
@@ -88,7 +94,6 @@ async function getPostData(postID) {
     });
 
 
-    let postElement = document.querySelector(".post")
     document.querySelector(".title").innerText = post.title
     postElement.querySelector("#postTitle").innerHTML = post.title
     console.log("setting cotnent to", content);
