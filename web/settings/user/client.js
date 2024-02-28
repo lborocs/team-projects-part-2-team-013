@@ -242,7 +242,7 @@ deleteAccountButton.addEventListener('click', () => {
 let resetAvatarButton = document.querySelector('.reset-button');
 resetAvatarButton.addEventListener('click', () => {
     let popupCallback = (context) => {
-        context.content.innerHTML = 'Are you sure you want to reset this user\'s avatar?';
+        context.content.innerHTML = 'Are you sure you want to remove this user\'s avatar?';
         context.actionButton.addEventListener('click', async () => {
             await resetAvatarToDefault();
             setUserData()
@@ -252,7 +252,7 @@ resetAvatarButton.addEventListener('click', () => {
 
     global.popupModal(
         true,
-        'Reset Avatar',
+        'Remove Avatar',
         popupCallback,
         {
             text: 'Confirm',
