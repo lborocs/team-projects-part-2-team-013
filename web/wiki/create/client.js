@@ -9,6 +9,8 @@ var anyChanges = false;
 var currentTags = [];
 var selectTags = [];
 
+const pageTitle = document.getElementById("page-title");
+
 const postTitleInput = document.getElementById("post-title-input");
 const categorySelector = document.querySelector(".type-of-post");
 var isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
@@ -190,7 +192,7 @@ tagsList.then((tagsList) => {
             console.log(post);
             postBeingEdited = post;
             const postContent = JSON.parse(post.content);
-            document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value = post.title;
+            postTitleInput.value = post.title;
             console.log("setting cotnent to", postContent);
             quill.setContents(postContent);
             if (post.isTechnical == 1) {
@@ -421,9 +423,10 @@ document.querySelector(".search-input").addEventListener("blur", function () {
 submitButton.addEventListener("click", submitPost);
 
 
-//sets the breadcrumb to wiki/create
+//sets the breadcrumb and title to wiki/create
 if (editing) {
     global.setBreadcrumb(["Wiki", "Edit Post"], ["/wiki/", "/wiki/create/"]);
+    pageTitle.innerHTML = "Edit Post";
 } else {
     global.setBreadcrumb(["Wiki", "Create Post"], ["/wiki/", `/wiki/create/#${getQueryParam()}`]);
 }
