@@ -66,6 +66,11 @@
     --info-icon: #49b0ff;
     --success-icon: #00b400;
 
+    --scrollbar-thumb-clr: #d8d8d8;
+
+    scrollbar-color: var(--scrollbar-thumb-clr) transparent;
+    scrollbar-width: thin;
+
 
 }
 
@@ -98,7 +103,7 @@ body {
     -ms-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
 
-    scrollbar-color: var(--border-clr);
+    scrollbar-color: var(--scrollbar-thumb-clr) transparent;
     scrollbar-width: thin;
     
     /* caret-color: transparent; */
@@ -106,7 +111,8 @@ body {
 * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-
+    scrollbar-color: var(--border-clr);
+    scrollbar-width: thin;
 }
 
 input {
