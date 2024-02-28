@@ -111,7 +111,26 @@ export async function init(id) {
 
     });
 
+    const totalTasksLabel = {
+        id: "totalTasks",
+        beforeDatasetsDraw(chart, args, pluginOptions) {
+            const { ctx, data } = chart;
+            
+            ctx.save();
 
+            const x = chart.getDatasetMeta(0).data[0].x;
+            const y = chart.getDatasetMeta(0).data[0].y;
+
+            ctx.font = "bold 20px system-ui";
+            ctx.fillStyle = "rgba(0,0,0,0.5)";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.fillText(`${data.datasets[0].data[0]+ data.datasets[0].data[1]}`, x, y - 10);
+            ctx.font = "bold 14px system-ui";
+            ctx.fillText(`Pending`, x, y + 10);
+
+        }
+    }
     charts.push(new Chart(document.getElementById("completionChart"), {
         type: 'doughnut',
         data: {
@@ -127,12 +146,11 @@ export async function init(id) {
             }]
         },
         options: {
-            plugins: {
-                title: {
-                    display: false,
-                }
+            title: {
+                display: false,
             }
-        }
+        },
+        plugins: [totalTasksLabel]
     }));
 
 
@@ -181,14 +199,22 @@ export async function init(id) {
                 x: {
                     display: false,
                     beginAtZero: true,
-                    stacked: true
+                    stacked: true,
+                    grid: {
+                        display: false
+                    }
                 },
                 y: {
                     beginAtZero: true,
                     stacked: true,
+                    position: 'right',
+                    suggestedMax: archivedData.length,
                     ticks: {
-                        stepSize: 1,
+                        precision: 0,
                         maxTicksLimit: 5
+                    },
+                    grid: {
+                        display: false
                     }
                 }
             }
