@@ -2674,9 +2674,9 @@ async function addTask() {
                 assignments: assignedEmployeesArray
             });   
             if (assignmentRes.success) {
-                let assignments = assignmentRes.data;
-                task.assignments = assignments;
-                taskObjectRenderAll(task, RENDER_BOTH);
+                task.assignments = assignmentRes.data.assigned;
+                globalTasksList.push(task);
+                searchAndRenderTasks();
                 dialog.style.transform = 'translateY(-1%)'
                 dialog.style.opacity = '0';
                 dialog.style.display = 'none';
@@ -2684,10 +2684,18 @@ async function addTask() {
                 console.log("[addTaskCreateButton] resolving")
             } else {
                 console.error("[addTaskCreateButton] Error creating assignments: ", assignmentRes.error.message);
-                alert("An error occurred while creating the task. Please try again later.");
+                global.popupAlert(
+                    "Error assigning users",
+                    "An error occurred while assigning employees to the task, the task has still been created",
+                    "error"
+                );
             }
         } else {
-            console.log("[addTaskCreateButton] rejecting")
+            global.popupAlert(
+                "Error creating task",
+                "An error occured while creating the task: " + taskRes.error.message,
+                "error"
+            );
         }
     })
 
