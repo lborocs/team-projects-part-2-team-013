@@ -13,6 +13,10 @@ const tagSearchInput = document.querySelector("#tag-search > .search-input");
 const tagSelection = document.querySelector('#tag-selection');
 
 
+const postDisabled = await global.siteSettings.get('postsEnabled');
+postDisabled ? document.getElementById("new-post").classList.add("disabled") : null;
+
+
 if (document.location.hash === "#nontechnical") {
     document.getElementById("non-technical").checked = true;
     document.getElementById("technical").checked = false;

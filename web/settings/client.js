@@ -210,8 +210,14 @@ window.addEventListener('load', async () => {
 
 
 
-async function setUserData() {
-    let employeeData = await global.getCurrentSession();
+async function setUserData(revalidate = false) {
+    let employeeData;
+    if (revalidate) {
+        employeeData = await global.revalidateCurrentSession();
+    } else {
+        employeeData = await global.getCurrentSession();
+    }
+
     console.log("[setUserData] got employee", employeeData);
     let emp = employeeData.employee;
     
@@ -431,8 +437,12 @@ async function changeFirstName(newName) {
         firstName: newName,
     };
 
-    const response = await patch_api('/employee/employee.php/employee/@me', body);
-    setUserData();
+    const res = await patch_api('/employee/employee.php/employee/@me', body);
+    if (res.success) {
+        setUserData(true);
+    } else {
+        global.popupAlert("Failed to change name", "The following error occured:" + res.error.message, "error");
+    }
 }
 
 async function changeLastName(newName) {
@@ -440,8 +450,12 @@ async function changeLastName(newName) {
         lastName: newName,
     };
 
-    const response = await patch_api('/employee/employee.php/employee/@me', body);
-    setUserData();
+    const res = await patch_api('/employee/employee.php/employee/@me', body);
+    if (res.success) {
+        setUserData(true);
+    } else {
+        global.popupAlert("Failed to change name", "The following error occured:" + res.error.message, "error");
+    }
 }
 
 logoutButton.addEventListener('click', () => {

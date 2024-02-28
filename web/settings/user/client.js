@@ -241,30 +241,43 @@ deleteAccountButton.addEventListener('click', () => {
 
 let resetAvatarButton = document.querySelector('.reset-button');
 resetAvatarButton.addEventListener('click', () => {
-    let popupCallback = (context) => {
-        context.content.innerHTML = 'Are you sure you want to remove this user\'s avatar?';
-        context.actionButton.addEventListener('click', async () => {
-            await resetAvatarToDefault();
-            setUserData()
-            context.completeModal(true);
-        });
-    };
+    confirmResetAvatar();
+});
+
+let avatarContainer = document.querySelector('.avatar-container');
+avatarContainer.addEventListener("pointerup", () => {
+    confirmResetAvatar();
+});
+
+function confirmResetAvatar() {
+
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+            <div class="modal-text">Are you sure you want to remove the avatar?</div>
+            <div class="modal-subtext">This will log the user out in order to update their client.</div>
+        `;
+    }
+
+
 
     global.popupModal(
-        true,
+        false,
         'Remove Avatar',
-        popupCallback,
+        callback,
         {
-            text: 'Confirm',
-            class: 'blue'
+            text: 'Delete',
+            class: 'red'
         },
-        false
     ).then(() => {
-        console.log('Modal completed successfully');
-    }).catch(() => {
-        console.log('Modal was canceled or closed');
-    });
-});
+        const res = resetAvatarToDefault();
+        if (res.success) {
+            global.popupAlert("Avatar removed", "The avatar was successfully removed", "success").catch();
+            setUserData(true);
+        } else {
+            global.popupAlert("Failed to remove avatar", "The following error occured: " + res.error.message, "error").catch();
+        }
+    }).catch();
+}
 
 function confirmDelete() {
 
