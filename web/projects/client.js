@@ -101,11 +101,11 @@ var taskDragLastDrawnColumn = 0;
 console.log("[import] loaded client.js")
 
 
-async function renderIndividualProject(id, setBreadcrumb = true) {
+async function renderIndividualProject(id, setBreadcrumb = true, archived=0) {
 
     // we can render tasks and projects asynchronously
     const projectLoader = getProjectById(id);
-    const taskLoader = fetchTasks(id);
+    const taskLoader = fetchTasks(id, archived);
     
     const projectLoadedHandle = global.takeMutex("projectLoaded");
 
@@ -161,9 +161,13 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
         // unselect not this project
         console.log("[renderIndividualProject] selected " + project.name)
         if (setBreadcrumb) {
-            global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
-            dashboardRedirect.href = `/dashboard/#${id}`
+            if (archived) {
+                global.setBreadcrumb(["Projects", project.name, "Archive"], [window.location.pathname, "#" + id, "#" + id + "-archive"]);
+            } else {
+                global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
+            }
         }
+        dashboardRedirect.href = `/dashboard/#${id}`
 
         projectTitle.innerText = project.name;
         mobileProjectTitle.innerText = project.name;
@@ -442,7 +446,7 @@ views.forEach((view, i) => {
 
 projectBackButton.addEventListener("click", () => {
     global.setBreadcrumb(["Projects"], [window.location.pathname]);
-    renderFromBreadcrumb([null, null]);
+    global.dispatchBreadcrumbnavigateEvent();
 })
 
 explainerShowHide.addEventListener("click", () => {
@@ -641,7 +645,27 @@ function showTaskInExplainer(taskID) {
 
     renderAssignmentsInExplainer(taskID);
 
-    global.setBreadcrumb(["Projects", globalCurrentProject.name, globalCurrentTask.title], [window.location.pathname, "#" + globalCurrentProject.projID, "#" + globalCurrentProject.projID + "-" + globalCurrentTask.taskID])
+    if (globalCurrentTask.archived) {
+        global.setBreadcrumb(
+            ["Projects", globalCurrentProject.name, "Archive", globalCurrentTask.title],
+            [
+                window.location.pathname,
+                "#" + globalCurrentProject.projID,
+                "#" + globalCurrentProject.projID + "-archive",
+                "#" + globalCurrentProject.projID + "-archive-" + globalCurrentTask.taskID
+            ]
+        )
+    } else {
+        global.setBreadcrumb(
+            ["Projects", globalCurrentProject.name, globalCurrentTask.title],
+            [
+                window.location.pathname,
+                "#" + globalCurrentProject.projID,
+                "#" + globalCurrentProject.projID + "-" + globalCurrentTask.taskID
+            ]
+        )
+
+    }
 }
 
 //handles assignments and the man hours of those assignments
@@ -1198,8 +1222,8 @@ function findNext(container, y) {
  * @param {*} projID 
  * @returns {Array} tasks
  */
-async function fetchTasks(projID) {
-    const res = await get_api(`/project/task.php/tasks/${projID}`)
+async function fetchTasks(projID, archived=0) {
+    const res = await get_api(`/project/task.php/tasks/${projID}?archived=${archived}`)
 
     if (res.success !== true) {
         console.log(`[fetchTasks] failed to fetch tasks for ${projID}`)
@@ -1250,6 +1274,7 @@ async function renderTasks(tasks, update = RENDER_BOTH) {
         taskObjectRenderAll(task, update)
     }));
     setUpTaskEventListeners(update);
+    calculateTaskCount();
     await renderAssignments(globalAssignments, update);
 }
 
@@ -1466,9 +1491,32 @@ console.log("[dashboard/client.js] rendering from breadcrumb INITIAL.")
 global.dispatchBreadcrumbnavigateEvent("initial");
 
 async function renderFromBreadcrumb(locations) {
-    let [projID, taskID] = locations;
 
-    console.log(`[renderFromBreadcrumb] project: ${projID} task: ${taskID}`)
+    let archive = 0;
+    let projID;
+    let taskID;
+
+    if (locations.length === 0) {
+        return await fetchAndRenderAllProjects();
+    } else if (locations.length === 1) {
+        projID = locations[0];
+    } else if (locations.length === 2) {
+        projID = locations[0];
+        if (locations[1] == "archive") {
+            archive = 1;
+        } else {
+            taskID = locations[1];
+        }
+    } else if (locations.length === 3) {
+        projID = locations[0];
+        taskID = locations[2];
+        if (locations[1] == "archive") {
+            archive = 1;
+        }
+    }
+
+
+    console.log(`[renderFromBreadcrumb] project: ${projID} archive: ${archive} task: ${taskID}`)
 
     if (!projID) {
         return await fetchAndRenderAllProjects();
@@ -1477,7 +1525,7 @@ async function renderFromBreadcrumb(locations) {
 
     try {
         setActivePane("individual-project-pane");
-        await renderIndividualProject(projID, true);
+        await renderIndividualProject(projID, true, archive);
     } catch (e) {
         setActivePane("select-projects-pane");
         await fetchAndRenderAllProjects();
@@ -4192,36 +4240,44 @@ async function getProjectPreferences() {
     console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
 }
 
-async function getArchived(projID){
-    let res = await get_api(`/project/task.php/tasks/${projID}?archived=1`);
-    return res.data.tasks;
-}
-
 let archiveButton = document.getElementById("view-archived-button");
 archiveButton.addEventListener("click", async () => {
-    let icon = archiveButton.querySelector('.material-symbols-rounded');
-    let text = archiveButton.querySelector('.button-text');
+
+    let projID = globalCurrentProject.projID;
+
     if(archiveButton.classList.contains("active")){
-        console.log("[archiveButton] clicked");
-        archiveButton.classList.remove("active");
-        let projID = globalCurrentProject.projID;
+        updateArchiveButton(false)
+        global.setBreadcrumb(["Projects", globalCurrentProject.name], [window.location.pathname, "#" + projID]);
+        console.log("[archiveButton] switching to default view");
+
+        
+        globalTasksList = await fetchTasks(projID);
         renderTasks(globalTasksList);
-        
-        icon.innerText = "inventory_2"
-        text.innerText = "View Archive"
-
     } else {
-        console.log("[archiveButton] clicked");
-        archiveButton.classList.add("active");
-        let projID = globalCurrentProject.projID;
-        let tasks = await getArchived(projID);
-        
-        icon.innerText = "door_open"
-        text.innerText = "Leave Archive"
+        updateArchiveButton(true)
+        global.setBreadcrumb(["Projects", globalCurrentProject.name, "Archive"], [window.location.pathname, "#" + projID, "#" + projID + "-archive"]);
+        console.log("[archiveButton] switching to archive view");
 
-        renderTasks(tasks);
+        globalTasksList = await fetchTasks(projID, 1);
+
+        renderTasks(globalTasksList);
     }
 });
+
+function updateArchiveButton(inArchive) {
+    let icon = archiveButton.querySelector('.material-symbols-rounded');
+    let text = archiveButton.querySelector('.button-text');
+
+    if (inArchive) {
+        archiveButton.classList.add("active");
+        icon.innerText = "door_open"
+        text.innerText = "Leave Archive"
+    } else {
+        archiveButton.classList.remove("active");
+        icon.innerText = "inventory_2"
+        text.innerText = "View Archive"
+    }
+}
 
 getProjectPreferences();
 
