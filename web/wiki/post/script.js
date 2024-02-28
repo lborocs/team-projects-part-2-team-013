@@ -1,6 +1,8 @@
 import * as global from "../../global-ui.js";
 
 
+let currentPost;
+
 const renderer = new Quill("#renderer-content", {
     readOnly: true,
     theme: "snow",
@@ -11,7 +13,7 @@ const renderer = new Quill("#renderer-content", {
 
 document.renderer = renderer;
 
-window.postMeta = [0, 0]; // Subscribed, Liked
+const postMeta = {subscribed:0, feedback: 0};
 
 function getQueryParam() {
     return window.location.hash.substring(1);
@@ -20,57 +22,46 @@ let postID = getQueryParam();
 
 console.log("query param : " + postID);
 
-function findTag(tagID) {
-    return function (tag) {
-        return tag.tagID === tagID;
-    }
-}
 
 async function fetchTags() {
 
-    const data = await get_api("/wiki/post.php/tags");
+    const res = await get_api("/wiki/post.php/tags");
 
-    console.log(data);
-    if (data.success != true) {
+    if (res.success != true) {
         console.log("Tags failed to be fetched")
         return false;
     }
 
     console.log("Tags have been fetched")
-    return data.data.tags;
+    
+    const tagMap = new Map();
+    res.data.tags.forEach((tag) => {
+        tagMap.set(tag.tagID, tag);
+    });
+
+    return tagMap;
 
 }
 
-let tagsList = fetchTags();
+const postPromise = getPostData(postID);
 
-tagsList.then((tagsList) => {
-    getPostData(postID, tagsList).then((postData) => {
-        if (postData.tags == null || postData.tags.length == 0) {
-            document.querySelector(".tags").innerHTML += `<div class="tag">No Tags</div>`
-        }
-        else {
-            for (let i = 0; i < postData.tags.length; i++) {
-                let currentTag = tagsList.find(findTag(postData.tags[i]));
-                document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${currentTag.name} &nbsp </div>`
-            }
-        }
-        console.log(postData.author.userID);
-        let emp_icon = global.employeeAvatarOrFallback(postData.author);
-        document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
-    });
+fetchTags().then(async (tagMap) => {
+
+    await postPromise;
+
+    if (currentPost.tags == null || currentPost.tags.length == 0) {
+        document.querySelector(".tags").innerHTML += `<div class="tag">No Tags</div>`
+    }
+    else {
+        currentPost.tags.forEach((tagID) => {
+            let tag = tagMap.get(tagID);
+            document.querySelector(".tags").innerHTML += `<div class="tag"><span class="material-symbols-rounded">sell</span>${tag.name} &nbsp </div>`
+        });
+    }
 });
 
-async function getPostMeta(postID) {
-    const response = await get_api(`/wiki/post.php/meta/${postID}`);
-    if (!response.success || !response.data) {
-        console.error("[getPostMeta] error fetching post meta: ", response.data);
-        return { subscribed: 0, feedback: 0 };
-    }
-    console.log("[getPostMeta] post meta fetched: ", response.data);
-    return response.data.meta;
-}
 
-async function getPostData(postID, tagsList) {
+async function getPostData(postID) {
     const response = await get_api(`/wiki/post.php/post/${postID}`);
     if (!response.success) {
         console.error("[getPostData] error fetching post: ", response.data);
@@ -78,9 +69,9 @@ async function getPostData(postID, tagsList) {
     }
 
     const post = response.data;
+    currentPost = post;
 
     const content = JSON.parse(post.content);
-
 
     const indexMap = {};
 
@@ -113,15 +104,18 @@ async function getPostData(postID, tagsList) {
     const hash = post.isTechnical ? "#technical" : "#nontechnical";
     global.setBreadcrumb(["Wiki", postType, post.title], ["../", `../${hash}`, '#' + post.postID]);
 
-    if (!post.tags) {
-        return post;
-    }
-    let newtags = [];
+    postMeta.subscribed = post.subscribed;
+    postMeta.feedback = post.feedback;
 
-    post.tags.forEach((tag) => {
-        newtags.push(tagsList.find(findTag(tag)).name)
-    });
-    post.tagsNames = newtags;
+    if (postMeta.subscribed) {
+        document.querySelector("#watching").classList.add("active");
+    }
+    if (postMeta.feedback) {
+        document.querySelector("#useful").classList.add("active");
+    }
+
+    let emp_icon = global.employeeAvatarOrFallback(post.author);
+    document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
 
     return post
 }
@@ -145,59 +139,33 @@ document.querySelector("#scroll-to-top").addEventListener("click", function () {
 })
 
 
-async function updateMeta(postID, subscribed, feedback) {
-    subscribed = subscribed || 0;
-    feedback = feedback || 0;
-    console.log("[updateMeta] updating post meta: ", postID, subscribed, feedback);
-    const response = await put_api(`/wiki/post.php/meta/${postID}`, { subscribed, feedback });
-    if (!response.success) {
-        console.error("[updateMeta] error updating post meta: ", response.data);
-        return;
-    }
-    console.log("[updateMeta] post meta updated: ", response.data);
+async function updateMeta(postID) {
+    const response = await put_api(`/wiki/post.php/meta/${postID}`, postMeta);
 }
-
-getPostMeta(postID).then((meta) => {
-    if (!meta) {
-        return;
-    }
-    console.log("Post Meta: " + meta.subscribed + " " + meta.feedback);
-    postMeta = [meta.subscribed, meta.feedback];
-    if (meta.subscribed) {
-        document.querySelector("#watching").classList.add("active");
-    }
-    if (meta.feedback) {
-        document.querySelector("#useful").classList.add("active");
-    }
-    console.log("Is the user subscribed: " + meta.subscribed);
-    console.log("Has the user liked: " + meta.feedback);
-
-});
 
 let watchingButton = document.querySelector("#watching");
 watchingButton.addEventListener("click", function () {
     if (watchingButton.classList.contains("active")) {
         watchingButton.classList.remove("active");
-        postMeta[0] = 0;
-        updateMeta(postID, postMeta[0], postMeta[1]);
+        postMeta.subscribed = 0;
+        updateMeta(postID);
         return
     }
     watchingButton.classList.add("active");
-    postMeta[0] = 1;
-    updateMeta(postID, postMeta[0], postMeta[1]);
+    postMeta.subscribed = 1;
+    updateMeta(postID);
 });
 
 let usefulButton = document.querySelector("#useful");
 usefulButton.addEventListener("click", function () {
     if (usefulButton.classList.contains("active")) {
         usefulButton.classList.remove("active");
-        postMeta[1] = 0;
-        updateMeta(postID, postMeta[0], postMeta[1]);
+        postMeta.feedback = 0;
+        updateMeta(postID);
         return
     }
     usefulButton.classList.add("active");
-    postMeta[1] = 1;
-    console.log("Post Meta: " + postMeta[0] + " " + postMeta[1]);
-    updateMeta(postID, postMeta[0], postMeta[1]);
+    postMeta.feedback = 1;
+    updateMeta(postID,);
 });
 
