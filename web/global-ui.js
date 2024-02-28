@@ -1507,6 +1507,7 @@ function invitePopup() {
         content.appendChild(text);
 
         const emailInput = document.createElement("input");
+        emailInput.classList.add("modal-input", "text");
         emailInput.type = "email";
         emailInput.placeholder = "email@make-it-all.co.uk";
         emailInput.id = "invite-email";
