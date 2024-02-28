@@ -1,7 +1,10 @@
 import * as global from "../../global-ui.js";
 
 const postElement = document.querySelector(".post");
-
+const watchingButton = document.querySelector("#watching");
+const watchingTooltip = watchingButton.querySelector(".tooltiptext");
+const usefulButton = document.querySelector("#useful");
+const usefulTooltip = usefulButton.querySelector(".tooltiptext");
 
 let currentPost;
 
@@ -83,7 +86,7 @@ async function getPostData(postID) {
 
     content.ops.forEach((op, key) => {
         if (op.insert.image) {
-            indexMap[op.insert.image] = key;
+            indexMap[op.insert.image] = key; 
         }
     });
 
@@ -113,11 +116,13 @@ async function getPostData(postID) {
     postMeta.feedback = post.feedback;
 
     if (postMeta.subscribed) {
-        document.querySelector("#watching").classList.add("active");
+        watchingButton.classList.add("active");
     }
     if (postMeta.feedback) {
-        document.querySelector("#useful").classList.add("active");
+        usefulButton.classList.add("active");
     }
+
+    updateMetaTooltips();
 
     let emp_icon = global.employeeAvatarOrFallback(post.author);
     document.querySelector(".authorIcon").innerHTML = `<img src="${emp_icon}" class="avatar">`
@@ -146,9 +151,9 @@ document.querySelector("#scroll-to-top").addEventListener("click", function () {
 
 async function updateMeta(postID) {
     const response = await put_api(`/wiki/post.php/meta/${postID}`, postMeta);
+    updateMetaTooltips();
 }
 
-let watchingButton = document.querySelector("#watching");
 watchingButton.addEventListener("click", function () {
     if (watchingButton.classList.contains("active")) {
         watchingButton.classList.remove("active");
@@ -161,7 +166,6 @@ watchingButton.addEventListener("click", function () {
     updateMeta(postID);
 });
 
-let usefulButton = document.querySelector("#useful");
 usefulButton.addEventListener("click", function () {
     if (usefulButton.classList.contains("active")) {
         usefulButton.classList.remove("active");
@@ -174,3 +178,8 @@ usefulButton.addEventListener("click", function () {
     updateMeta(postID,);
 });
 
+
+function updateMetaTooltips() {
+    watchingTooltip.innerText = postMeta.subscribed ? "Unsubscribe" : "Subscribe to updates";
+    usefulTooltip.innerText = postMeta.feedback ? "Unmark as Useful" : "Mark as Useful";
+}

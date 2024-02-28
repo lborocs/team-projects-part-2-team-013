@@ -624,6 +624,12 @@
     border-radius: 4px;
 }
 
+.explainer-task-status.archived {
+    background-color: var(--archived-status-cell, rgba(188, 188, 188, 0.7));
+    border: none;
+    border-radius: 4px;
+}
+
 .avatar {
     width: 1.75rem;
     height: 1.75rem;
