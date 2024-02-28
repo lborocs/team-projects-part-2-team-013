@@ -468,6 +468,7 @@ function confirmDelete() {
 function manageTagsPopup() {
     const callback = (ctx) => {
         ctx.content.innerHTML = `
+            <div class="modal-text">Select tags to delete</div>
             <div class="tagsContainer">
                 <div class="title">
                     Assigned to posts
