@@ -13,8 +13,6 @@ const tagSearchInput = document.querySelector("#tag-search > .search-input");
 const tagSelection = document.querySelector('#tag-selection');
 
 
-const postDisabled = await global.siteSettings.get('postsEnabled');
-postDisabled ? document.getElementById("new-post").classList.add("disabled") : null;
 
 
 if (document.location.hash === "#nontechnical") {
@@ -134,6 +132,11 @@ const tagMap = new Map();
 const tagPromise = fetchTags();
 const searchPromise = searchPosts();
 
+global.siteSettings.get('postsEnabled').then((enabled) => {
+    if (!enabled) {
+        document.getElementById("new-post").classList.add("disabled");
+    }
+});
 
 
 async function searchPosts() {
