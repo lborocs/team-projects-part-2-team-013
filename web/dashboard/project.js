@@ -208,7 +208,7 @@ export async function init(id) {
                     beginAtZero: true,
                     stacked: true,
                     position: 'right',
-                    suggestedMax: archivedData.length,
+                    max: archivedData.values[0] + archivedData.values[1],
                     ticks: {
                         precision: 0,
                         maxTicksLimit: 5
