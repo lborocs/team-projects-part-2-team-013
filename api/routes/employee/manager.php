@@ -49,6 +49,14 @@ function r_manager_most_helpful_posts() {
     ));
 }
 
+function r_manager_least_helpful_posts() {
+    $posts = db_post_fetch_least_helpful();
+
+    respond_ok(array(
+        "posts"=>$posts
+    ));
+}
+
 
 function r_manager_employee_projects(RequestContext $ctx, string $args) {
 
@@ -109,6 +117,14 @@ register_route(new Route(
     AUTH_LEVEL_MANAGER,
     []
 ));
+register_route(new Route(
+    ["GET"],
+    "/leasthelpfulposts",
+    "r_manager_least_helpful_posts",
+    AUTH_LEVEL_MANAGER,
+    []
+));
+
 
 contextual_run();
 ?>

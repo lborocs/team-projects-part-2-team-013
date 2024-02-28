@@ -1474,6 +1474,7 @@ async function renderFromBreadcrumb(locations) {
             "You appear to have followed a link to a task that either does not exist or you do not have access to.",
             "warning"
         );
+        taskViewport.classList.remove("animate-spinner");
         return;
     } 
     showTaskInExplainer(taskID);
