@@ -348,6 +348,10 @@ input[type="radio"]:not(:checked) + label:hover {
     background-color: var(--white);
 }
 
+.ui-card.tight {
+    padding: 0;
+}
+
 .post-title i {
     font-size: 1.2em;
     color: #494b4e;
@@ -369,10 +373,10 @@ input[type="text"] {
     display: block;
     width: 100%;
     height: 100%;
-    padding: 0.5em;
-    padding-left: 1em;
+    padding: 1em;
+    padding-left: 1rem;
     border: none;
-    border-radius: 10px;
+    border-radius: 11px;
     font-size: 1em;
     font-weight: 600;
     font-family: var(--font-family);

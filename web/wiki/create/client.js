@@ -305,7 +305,7 @@ async function updateTags(postID, body) {
 }
 
 async function submitPost() {
-    var title = document.getElementsByClassName("post-title")[0].getElementsByTagName("input")[0].value;
+    const title = postTitleInput.value;
 
     // js has no native deep copy so we have to use json
     const content = JSON.parse(JSON.stringify(quill.getContents()));
@@ -321,7 +321,7 @@ async function submitPost() {
 
 
     var body = JSON.stringify(content);
-    var isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
+    var isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
 
     const checkTempPromises = currentTags.map((tag) => tag.checkTemp());
     Promise.all(checkTempPromises)
