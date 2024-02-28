@@ -550,7 +550,7 @@ async function avatarPopup() {
                         Upload new avatar:
                     </div>
                     <form>
-                        <input style="display: none;" type="file" id="image-upload" class="modal-input" accept="image/*">
+                        <input type="file" id="image-upload" class="modal-input" accept="image/*">
                         <label for="image-upload" class="text-button blue">
                             <div class="button-icon">
                                 <span class="material-symbols-rounded">add_photo_alternate</span>

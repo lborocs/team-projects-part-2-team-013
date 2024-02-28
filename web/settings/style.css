@@ -478,4 +478,7 @@ a {
         justify-content: center;
         gap: 1em;
     }
+    #image-upload {
+        display: none;
+    }
 }
