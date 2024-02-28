@@ -3,6 +3,10 @@
         height: max(auto, (100% - 3em));
     }
 
+    .main {
+        overflow-y: auto;
+    }
+
     .search {
         width: 100%;
     }
@@ -186,6 +190,7 @@
     .tab-selector {
         overflow-x: auto;
         overflow-y: hidden;
+        flex: 0 0 4rem;
     }
 
     .tab {
@@ -210,6 +215,7 @@
 
     .main > .content {
         margin-top: 0;
+        height: auto;
     }
 
     .email {
@@ -226,6 +232,11 @@
         .name {
             height: auto;
         }
+    }
+
+    .options {
+        max-height: unset;
+        margin-top: 0.5rem;
     }
 
 }
