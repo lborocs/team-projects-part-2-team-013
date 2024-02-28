@@ -182,13 +182,13 @@ async function updatePosts() {
  * 
  * @param {string} searchQuery - optional search query to filter posts by.
  * @param {Array<string>} selectedTags - optional array of tagIDs to filter posts by.
- * @param {number} isTechnical - optional flag to filter posts by category. 1 = technical, 0 = non-technical, 2 = all. Default 2.   
+ * @param {number} isTechnical - optional flag to filter posts by category. 1 = technical, 0 = non-technical, null = all.
  * 
  */
-async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechnical = 2) {
+async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechnical = null) {
     const tagParam = selectedTags.length ? `&tags=${selectedTags.join(",")}` : "";
     var res;
-    if (isTechnical === 2) {
+    if (isTechnical === null) {
         res = await get_api(`/wiki/post.php/posts?q=${searchQuery}${tagParam}`);
     } else {
         res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ?? ''}&q=${searchQuery}${tagParam}`);
@@ -283,34 +283,57 @@ async function deleteTag(tagID) {
 }
 
 
-fetchTags().then((tags) => {
-    searchPosts();
-});
+fetchTags();
+searchPosts();
 
 
-let postList = document.querySelectorAll('.post');
-function setUpPostsEventListeners() {
-    postList = document.querySelectorAll('.post');
+
+async function setUpPostsEventListeners() {
+    const me = (await global.getCurrentSession()).employee;
+    const postList = document.querySelectorAll('.post');
     postList.forEach((post) => {
-        post.querySelector(".delete-post").addEventListener("click", (event) => {
+        
+        const postID = post.getAttribute("data-postID");
+        const author = post.getAttribute("data-authorID");
+
+        const deleteButton = post.querySelector(".delete-post");
+        const editButton = post.querySelector(".edit-post");
+
+
+        if (!me.isManager && me.empID != author) {
+            deleteButton.remove();
+            editButton.remove();
+        }
+
+
+        deleteButton.addEventListener("click", (event) => {
             event.stopPropagation();
             event.preventDefault();
-            confirmDelete().then(() => {
-                post.remove();
-                let postID = post.getAttribute("data-postID");
-                console.log(postID);
-                delete_api(`/wiki/post.php/post/${postID}`).then((data) => {
-                    console.log(data);
-                });
-            }).catch(() => {
-                console.log('Deletion cancelled');
-            });
+            confirmDelete().then(async () => {
+                
+                const res = await delete_api(`/wiki/post.php/post/${postID}`);
+
+                if (res.successs) {
+                    post.remove();
+                    global.popupAlert(
+                        "Post Deleted",
+                        "The post has been successfully deleted.",
+                        "success"
+                    );
+                } else {
+                    global.popupAlert(
+                        "Unable to delete post",
+                        "The following error occurred: " + res.error.message,
+                        "error"
+                    );
+                }
+
+            }).catch();
         });
 
-        post.querySelector(".edit-post").addEventListener("click", (event) => {
+        editButton.addEventListener("click", (event) => {
             event.stopPropagation();
             event.preventDefault();
-            let postID = post.getAttribute("data-postID")
             window.location.href = `/wiki/create/#${postID}`;
         });
     })
@@ -332,6 +355,7 @@ function renderPostToFragment(postID, title, author, isTechnical, tags) {
     post.href = `/wiki/post/#${postID}`
     post.className = "post"
     post.setAttribute("data-postID", postID)
+    post.setAttribute("data-authorID", author.empID)
     post.setAttribute("data-isTechnical", isTechnical)
 
     const postInfo = document.createElement("div")
@@ -444,6 +468,7 @@ function confirmDelete() {
 function manageTagsPopup() {
     const callback = (ctx) => {
         ctx.content.innerHTML = `
+            <div class="modal-text">Select tags to delete</div>
             <div class="tagsContainer">
                 <div class="title">
                     Assigned to posts
@@ -501,16 +526,6 @@ document.getElementById("manage-tags").addEventListener("click", () => {
         console.log('Deletion cancelled');
     });
 });
-
-function closePopup() {
-    let popupDiv = document.querySelector('.popup');
-    let fullscreenDiv = document.querySelector('.fullscreen');
-    let dialog = popupDiv.querySelector('.popup-dialog');
-    dialog.style.transform = 'translateY(-1%)'
-    dialog.style.opacity = '0';
-    dialog.style.display = 'none';
-    fullscreenDiv.style.filter = 'none';
-}
 
 
 
