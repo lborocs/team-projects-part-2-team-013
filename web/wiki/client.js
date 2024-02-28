@@ -283,9 +283,9 @@ async function deleteTag(tagID) {
 }
 
 
-fetchTags().then((tags) => {
-    searchPosts();
-});
+fetchTags();
+searchPosts();
+
 
 
 async function setUpPostsEventListeners() {
