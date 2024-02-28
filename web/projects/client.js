@@ -2112,7 +2112,7 @@ async function renderTask(title, state = 0, ID = "", desc = "", createdBy = "", 
 
     let statusIcon;
     let overdueContainerClass = "";
-    let dateTooltip;
+    let dateTooltip = "";
 
     // Calculate the difference in days
     const diffInDays = Math.round((timestamp - dateToday) / (24 * 60 * 60 * 1000));
