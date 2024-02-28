@@ -19,7 +19,6 @@
 }
 
 .post {
-    max-width: 800px;
     width: min(800px, calc(100% - 2rem));
     margin: 1em;
     margin-top: 1em;
@@ -240,6 +239,7 @@
     padding-top: 1.5rem;
     padding-left: 0;
     padding-right: 1rem;
+    overflow-y: unset;
 }
 
 .ql-toolbar.ql-snow {
