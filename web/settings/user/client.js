@@ -283,37 +283,9 @@ function confirmDelete() {
     )
 }
 
-const sendButton = document.getElementById("reset-password");
-
-
-async function sendResetEmail(email) {
-    console.log("sending email")
-
-    const res = await post_api("/employee/session.php/resetpassword", {"email": email});
-
-    if (!res.success) {
-        alert(res.error.message);
-        return false;
-    }
-    return true;
-
-}
-
-async function handleClick() {
-    console.log("handle click")
-    const email = employeeEmail
-
-    if (await sendResetEmail(email)) {
-        alert("Email sent if it is linked to an account");
-    }
-}
-
 async function resetAvatarToDefault() {
     const body = {
         avatar: null,
     };
     return await patch_api(`/employee/employee.php/employee/${empID}`, body);
 }
-
-sendButton.addEventListener("click", handleClick);
-
