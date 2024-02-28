@@ -26,6 +26,10 @@ const assigneesButton = document.getElementById("assignees-column")
 let sortArray = [titleButton, dateButton, statusButton, assigneesButton];
 
 //single things
+
+const taskArea = document.querySelector(".taskarea");
+const taskViewport = document.querySelector(".taskarea .viewport");
+
 const taskGrid = document.querySelector(".taskgrid")
 const taskList = document.querySelector(".tasklist")
 const taskTable = document.querySelector(".tasktable")
@@ -71,6 +75,9 @@ const boardViewButton = document.getElementById('board-view-button');
 const pageBackButton = document.getElementById('page-back-button');
 const pageForwardButton = document.getElementById('page-forward-button');
 const pageNumberElement = document.querySelector('.page-number');
+const projectsContainer = document.querySelector("#projects-container");
+const projectsTable = document.querySelector("#projects-table");
+const projectsTableContainer = document.querySelector("#projects-table-container");
 const projectsTableEmptyState = document.querySelector('.projects-table-empty-state');
 
 const mobileNewTaskButton = document.getElementById('mobile-new-task')
@@ -176,7 +183,6 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
 }
 
 function clearProjectList() {
-    let projectsTable = document.querySelector("#projects-table");
     projectsTable.querySelector("tbody").replaceChildren();
     
 }
@@ -1434,6 +1440,7 @@ async function renderFromBreadcrumb(locations) {
     if (!projID) {
         return await fetchAndRenderAllProjects();
     }
+    taskViewport.classList.add("animate-spinner");
 
     try {
         setActivePane("individual-project-pane");
@@ -1444,16 +1451,21 @@ async function renderFromBreadcrumb(locations) {
     }
 
     if (!taskID) {
+        taskViewport.classList.remove("animate-spinner");
         return;
     }
     console.log(`[renderFromBreadcrumb] attempting to render task ${taskID}`);
     let task = document.getElementById(taskID);
     if (!task) {
-        alert("You appear to have followed a link to a task that either does not exist or you do not have access to.");
+        global.popupAlert(
+            "Unknown Task",
+            "You appear to have followed a link to a task that either does not exist or you do not have access to.",
+            "warning"
+        );
         return;
     } 
     showTaskInExplainer(taskID);
-
+    taskViewport.classList.remove("animate-spinner");
     return true;
 }
 
@@ -3907,9 +3919,10 @@ const projectSearchRollingTimeout = new global.ReusableRollingTimeout(
         console.log("[RollingProjectSearch] starting search for", search);
         searchAndRenderProjects();
     },
-    50
+    150
 );
 projectSearchInput.addEventListener("input", (e) => {
+    projectsContainer.classList.add("animate-spinner");
     projectSearchRollingTimeout.roll();
 })
 
@@ -3986,12 +3999,13 @@ async function checkNextPage() {
 
 async function searchAndRenderProjects() {
 
+    projectsContainer.classList.add("animate-spinner");
+
     document.title = "Projects";
 
     console.log(`Sorting by ${sortAttribute} in ${sortDirection} order`);
 
     const search = projectSearchInput.value;
-    const projectsTable = document.getElementById("projects-table");
 
     var route;
     if (!onlyMyProjects) {
@@ -4043,6 +4057,7 @@ async function searchAndRenderProjects() {
         projectsTableEmptyState.classList.add('norender');
     }
     
+    projectsContainer.classList.remove("animate-spinner");
     return res.data.projects;
 }
 

@@ -18,7 +18,7 @@
         
     }
 
-    .projects-container {
+    #projects-container {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -392,14 +392,11 @@
     font-size: 0.7em;
 }
 
-.project-table-div{
+#projects-table-container{
     width: 100%;
     overflow-y: auto;
     display: grid;
     scrollbar-gutter: stable;
-    &::-webkit-scrollbar-track {
-        background-color: var(--white);
-    }
     
 }
 
