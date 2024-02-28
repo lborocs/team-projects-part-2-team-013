@@ -24,7 +24,7 @@ const accountOptions = document.querySelectorAll('.account-option');
 function getQueryParam() {
     return window.location.hash.substring(1);
 }
-let empID = getQueryParam();
+const empID = getQueryParam();
 console.log("THE ID");
 console.log(empID);
 
@@ -239,6 +239,33 @@ deleteAccountButton.addEventListener('click', () => {
         })
 });
 
+let resetAvatarButton = document.querySelector('.reset-button');
+resetAvatarButton.addEventListener('click', () => {
+    let popupCallback = (context) => {
+        context.content.innerHTML = 'Are you sure you want to reset this user\'s avatar?';
+        context.actionButton.addEventListener('click', async () => {
+            await resetAvatarToDefault();
+            setUserData()
+            context.completeModal(true);
+        });
+    };
+
+    global.popupModal(
+        true,
+        'Reset Avatar',
+        popupCallback,
+        {
+            text: 'Confirm',
+            class: 'blue'
+        },
+        false
+    ).then(() => {
+        console.log('Modal completed successfully');
+    }).catch(() => {
+        console.log('Modal was canceled or closed');
+    });
+});
+
 function confirmDelete() {
 
     const callback = (ctx) => {
@@ -279,7 +306,13 @@ async function handleClick() {
     if (await sendResetEmail(email)) {
         alert("Email sent if it is linked to an account");
     }
+}
 
+async function resetAvatarToDefault() {
+    const body = {
+        avatar: null,
+    };
+    return await patch_api(`/employee/employee.php/employee/${empID}`, body);
 }
 
 sendButton.addEventListener("click", handleClick);
