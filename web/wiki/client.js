@@ -130,14 +130,12 @@ const tagMap = new Map();
 const tagPromise = fetchTags();
 const searchPromise = searchPosts();
 
-global.siteSettings.get('postsEnabled').then((enabled) => {
+global.siteSettings.get('postsEnabled').then(async (enabled) => {
+    const me = (await global.getCurrentSession()).employee;
     if (enabled == 2) {
-    document.getElementById("new-post").classList.add("disabled");
-    }
-    else if (enabled == 1) {
-        if (!me.isManager) {
-            document.getElementById("new-post").classList.add("disabled");
-        }
+        document.getElementById("new-post").classList.add("disabled");
+    } else if (enabled == 1 && !me.isManager) {
+        document.getElementById("new-post").classList.add("disabled");
     }
 });
 
