@@ -13,8 +13,11 @@ const tagSearchInput = document.querySelector("#tag-search > .search-input");
 const tagSelection = document.querySelector('#tag-selection');
 
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 if (document.location.hash === "#nontechnical") {
     document.getElementById("non-technical").checked = true;
     document.getElementById("technical").checked = false;
@@ -323,6 +326,15 @@ async function deleteTag(tagID) {
 
 async function setUpPostsEventListeners() {
     const me = (await global.getCurrentSession()).employee;
+    const postDisabled = await global.siteSettings.get('postsEnabled');
+    if (postDisabled == 2) {
+    document.getElementById("new-post").classList.add("disabled");
+    }
+    else if (postDisabled == 1) {
+        if (!me.isManager) {
+            document.getElementById("new-post").classList.add("disabled");
+        }
+    }
     const postList = document.querySelectorAll('.post');
     postList.forEach((post) => {
         
