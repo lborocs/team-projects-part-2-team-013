@@ -288,29 +288,52 @@ fetchTags().then((tags) => {
 });
 
 
-let postList = document.querySelectorAll('.post');
-function setUpPostsEventListeners() {
-    postList = document.querySelectorAll('.post');
+async function setUpPostsEventListeners() {
+    const me = (await global.getCurrentSession()).employee;
+    const postList = document.querySelectorAll('.post');
     postList.forEach((post) => {
-        post.querySelector(".delete-post").addEventListener("click", (event) => {
+        
+        const postID = post.getAttribute("data-postID");
+        const author = post.getAttribute("data-authorID");
+
+        const deleteButton = post.querySelector(".delete-post");
+        const editButton = post.querySelector(".edit-post");
+
+
+        if (!me.isManager && me.empID != author) {
+            deleteButton.remove();
+            editButton.remove();
+        }
+
+
+        deleteButton.addEventListener("click", (event) => {
             event.stopPropagation();
             event.preventDefault();
-            confirmDelete().then(() => {
-                post.remove();
-                let postID = post.getAttribute("data-postID");
-                console.log(postID);
-                delete_api(`/wiki/post.php/post/${postID}`).then((data) => {
-                    console.log(data);
-                });
-            }).catch(() => {
-                console.log('Deletion cancelled');
-            });
+            confirmDelete().then(async () => {
+                
+                const res = await delete_api(`/wiki/post.php/post/${postID}`);
+
+                if (res.successs) {
+                    post.remove();
+                    global.popupAlert(
+                        "Post Deleted",
+                        "The post has been successfully deleted.",
+                        "success"
+                    );
+                } else {
+                    global.popupAlert(
+                        "Unable to delete post",
+                        "The following error occurred: " + res.error.message,
+                        "error"
+                    );
+                }
+
+            }).catch();
         });
 
-        post.querySelector(".edit-post").addEventListener("click", (event) => {
+        editButton.addEventListener("click", (event) => {
             event.stopPropagation();
             event.preventDefault();
-            let postID = post.getAttribute("data-postID")
             window.location.href = `/wiki/create/#${postID}`;
         });
     })
@@ -332,6 +355,7 @@ function renderPostToFragment(postID, title, author, isTechnical, tags) {
     post.href = `/wiki/post/#${postID}`
     post.className = "post"
     post.setAttribute("data-postID", postID)
+    post.setAttribute("data-authorID", author.empID)
     post.setAttribute("data-isTechnical", isTechnical)
 
     const postInfo = document.createElement("div")
