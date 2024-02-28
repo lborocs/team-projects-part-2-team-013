@@ -138,7 +138,6 @@
     margin: 0 8px;
     width: 16px;
     height: 16px;
-    position: absolute;
     right: 10px;
     top: 20px;
     z-index: 9999;
@@ -254,9 +253,14 @@ input[type="text"] {
     font-size: 0.9em;
     font-weight: 600;
     color: #0f0f0f;
-    width: 50%;
     height: 2.5rem;
     text-align: center;
+}
+
+.category:first-child {
+    & label {
+        padding-right: 2rem;
+    }
 }
 
 .category > span {
@@ -331,6 +335,10 @@ input[type="radio"] + label {
 
 }
 
+input[type="radio"]:not(:checked) + label {
+    opacity: 0.8;
+}
+
 input[type="radio"]:not(:checked) + label:hover {
     background-color: var(--cool-grey);
     color: #2d2e30;
@@ -359,7 +367,7 @@ input[type="radio"]:not(:checked) + label:hover {
     margin-left: 0.5em;
 }
 
-#submitButton {
+#submit-button {
     white-space: nowrap;
     font-size: 16px;
     font-weight: 600;
@@ -414,26 +422,12 @@ input[type="text"]:focus-within {
     justify-content: flex-start;
 
     position: relative;
-    height: 4em;
-    padding: 5px;
+    height: 3.2rem;
+    padding: 0.25rem;
 
     border: 1px solid var(--border-clr);
     border-radius: 10px;
     background-color: var(--white);
-}
-
-.tag-input ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-}
-
-.tag-input li {
-    display: inline-block;
-    color: #333;
-    padding: 5px 10px;
-    width: 100%;
 }
 
 .tag-input input[type="text"] {
