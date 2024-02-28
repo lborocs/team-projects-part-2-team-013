@@ -35,15 +35,14 @@ var trainingData;
 if (projectID !== "") {
     console.log("[client.js] projectID: ", projectID);
     projectData = await project.init(projectID);
-    global.setBreadcrumb(["Manager's Dashboard", projectData.project.name], ["/dashboard/", "/dashboard/#" + projectData.project.projID]);
+    global.setBreadcrumb(["Projects", projectData.project.name, "Dashboard"], ["/projects/", "/projects/#" + projectData.project.projID, "/dashboard/#" + projectData.project.projID]);
     backToProject.href = `/projects/#${projectData.project.projID}/`;
 
 } else {
     console.log("[client.js] training dashboard");
     trainingData = training.init();
-    global.setBreadcrumb(["Manager's Dashboard"], ["/dashboard/"]);
+    global.setBreadcrumb(["Training Dashboard"], ["/dashboard/"]);
 }
-
 
 
 
@@ -61,9 +60,6 @@ Chart.defaults.animation.duration = 0;
 Chart.defaults.animations.x = false;
 Chart.defaults.animations.y = false;
 Chart.defaults.animations = true;
-
-
-
 
 
 
