@@ -105,9 +105,13 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
 
     // we can render tasks and projects asynchronously
     const projectLoader = getProjectById(id);
-    const taskLoader = fetchTasks(id)
+    const taskLoader = fetchTasks(id);
     
     const projectLoadedHandle = global.takeMutex("projectLoaded");
+
+    const taskRenderCompleteHandle = global.takeMutex("taskRenderComplete");
+    const projectRenderCompleteHandle = global.takeMutex("projectRenderComplete");
+
 
     taskLoader.then(async (tasks) => {
         globalTasksList = tasks;        
@@ -131,6 +135,7 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
 
         // render in board only
         renderTasks(tasks, RENDER_COLUMN);
+        global.releaseMutex("taskRenderComplete", taskRenderCompleteHandle);
         console.log("[renderIndividualProject] fetched & rendered tasks for project 0x" + id)
         console.log("global tasks list:")
         console.log(globalTasksList)
@@ -172,13 +177,15 @@ async function renderIndividualProject(id, setBreadcrumb = true) {
             projectPopup(project)
 
         });
+
+        global.releaseMutex("projectRenderComplete", projectRenderCompleteHandle);
     });
 
     teamLeaderEnableElementsIfTeamLeader()
 
     setActivePane("individual-project-pane");
     clearProjectList();
-    return await Promise.all([projectLoader, taskLoader]);
+    await global.waitMutex("taskRenderComplete");
 }
 
 function clearProjectList() {
@@ -212,14 +219,7 @@ function getActivePane() {
 async function addManHoursPopup(task) {
     console.log("[addManHoursPopup] Running addManHoursPopup")
 
-    let hours = Math.floor(task.expectedManHours / 3600);
-    let minutes = Math.round((task.expectedManHours / 3600 - hours) * 60);
-    let timeDisplay = "";
-    if (minutes > 0) {
-        timeDisplay = `${hours} hours ${minutes} minutes`;
-    } else {
-        timeDisplay = `${hours} hours`;
-    }
+    let timeDisplay = global.formatSecondsLong(task.expectedManHours);
 
 
     let hoursInput = 0;
@@ -227,17 +227,28 @@ async function addManHoursPopup(task) {
 
     const callback = (ctx) => {
         ctx.content.innerHTML = `
-        <div class="popup-subtitle">Title</div>
-            <div class="task-title">
-                ${task.title}
-            </div>
-            <div class="popup-subtitle">Expected man hours</div>
-            <div class="task-title">
-                ${timeDisplay}
+        <div class="submit-manhours-container">
+            <div class="submit-manhours-info">
+                <div>
+                    <div class="popup-subtitle">Task</div>
+                    <div class="task-title">${task.title}</div>
+                </div>
+                <div>
+                    <div class="popup-subtitle">Expected man hours</div>
+                    <div class="task-title">
+                        ${timeDisplay}
+                    </div>
+                </div>
+                <div>
+                    <div class="popup-subtitle">Spent so far</div>
+                    <div class="task-title">
+                        ${global.formatSecondsLong(task.totalManHours)}
+                    </div>
+                </div>
             </div>
             <div class="manhours-row">
                 <div class="manhours-label">
-                    Allocate expected man hours
+                    Submit your spent manhours
                 </div>
                 <div id="man-hours-and-minutes">
                     <div class="number-picker" id="add-man-hours-button2">
@@ -278,6 +289,7 @@ async function addManHoursPopup(task) {
                     </div>
                 </div>
             </div>
+        </div>
         `;
         let manhoursMinutesDropdown = ctx.content.querySelector("#manhours-minutes-dropdown")
         //man minutes picker logic
@@ -361,11 +373,20 @@ async function addManHoursPopup(task) {
             task.employeeManHours.push({empID: empID, manHours: manHours});
         }
         task.totalManHours = totalManHours;
-        renderTasks(globalTasksList);
-        showTaskInExplainer(taskID);
-
-
+        global.popupAlert(
+            "Manhours submitted",
+            "Your manhours have been logged successfully",
+            "success",
+        ).then(() => {
+            showTaskInExplainer(taskID);
+        });
     } else {
+        global.popupAlert(
+            "Failed to log your manhours",
+            "The following error was occured: " + res.error.message,
+            "error",
+        );
+
         console.error(`[addManHoursPopup] Failed to add ${manHours} to task ${taskID}`);
     }
 
