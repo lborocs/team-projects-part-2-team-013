@@ -15,6 +15,7 @@ export var overviewValues = {
     "totalManhours": 0
 }
 
+const intialDrawHandle = global.takeMutex("intialDraw");
 
 const dashboardContainer = document.querySelector(".dashboard-container");
 const overviewMetrics = document.querySelectorAll(".overview");
@@ -395,6 +396,8 @@ export async function init(id) {
 
     renderTableMetric();
     
+
+    global.releaseMutex("intialDraw", intialDrawHandle);
 
     return projectData;
 }
@@ -805,7 +808,14 @@ function renderTableMetric() {
 const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
+            console.log("[observer] observed intersection of: ", entry.target);
+            console.log(entry.target.children)
+            charts.filter(chart => entry.target.contains(chart.canvas)).forEach(chart => {
+                setTimeout(() => {
+                    chart.update();
+                    console.log("[observer] updated chart: ", chart.canvas.id);
+                }, 100);
+            });
             observer.unobserve(entry.target);
         }
     })
@@ -815,8 +825,10 @@ const observer = new IntersectionObserver((entries, observer) => {
     threshold: 0.8
 });
 
-document.querySelectorAll(".metric-card").forEach(card => {
-    observer.observe(card);
+global.waitMutex("intialDraw").then(() => {
+    document.querySelectorAll(".chart-box").forEach(card => {
+        observer.observe(card);
+    })
 })
 
 
