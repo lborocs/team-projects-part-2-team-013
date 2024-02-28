@@ -8,6 +8,7 @@ const RENDER_BOTH = 3;
 
 //important shit
 var globalTasksList = [];
+var globalArchivedTasksList = [];
 var globalAssignments = [];
 var globalCurrentProject;
 var globalCurrentTask;
@@ -555,7 +556,9 @@ function showTaskInExplainer(taskID) {
 
     explainerTaskContainer.setAttribute("task-id", taskID);
 
-    globalCurrentTask = globalTasksList.find((task) => {
+    let allTasks = [...globalTasksList, ...globalArchivedTasksList];
+
+    globalCurrentTask = allTasks.find((task) => {
         return task.taskID == taskID;
     });
 
@@ -1597,10 +1600,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         stateClass = "finished";
         icon = "check_circle";
         statusText = "Finished";
-    } else if (archived == 1){
-        stateClass = "archived";
-        icon = "archive";
-        statusText = "Archived";
     } else {
         console.error(`[renderTaskInList] invalid state (${state}) for task ${title}`);
     }
