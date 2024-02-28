@@ -242,6 +242,7 @@ input[type="text"] {
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-end;
+    gap: 1rem;
 }
 
 .category {
@@ -489,4 +490,64 @@ input[type="text"]:focus-within {
     flex-direction: column;
     justify-content: flex-start;
     gap: 0;
+}
+
+/* basic text spacing like markdown, not combined into one selector to allow configuration */
+.ql-snow .ql-editor {
+
+    & :first-child {
+        margin-top: 0;
+    }
+
+    & h1 {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    & h2 {
+        margin-top: 0.65em;
+        margin-bottom: 0.5em;
+    }
+
+    & h3 {
+        margin-top: 0.65em;
+        margin-bottom: 0.5em;
+    }
+
+
+    & p {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    & ul {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    & ol {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    & li {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    & blockquote {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    & pre {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
+    & img {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+
 }
