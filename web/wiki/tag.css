@@ -42,3 +42,31 @@
         cursor: pointer;
     }
 }
+
+.no-tags {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.25em;
+    padding-left: 0.75em;
+    padding-right: 0.75em;
+    border-radius: 1em;
+    color: #2d2e30;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    gap: 0.4em;
+    user-select: none;
+
+    background-color: transparent;
+    outline: solid 2px var(--border-clr);
+    outline-offset: -2px;
+    opacity: 0.8;
+    
+    & span {
+        color: #4e5057;
+        font-size: 16px;
+    }
+
+    
+}

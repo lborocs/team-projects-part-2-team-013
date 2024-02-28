@@ -102,10 +102,10 @@ class Tag {
                 console.log(tagsToDelete)
             }
             if (tagsToDelete.size > 0) {
-                document.getElementById("confirm-button").classList.remove("disabled");
+                document.querySelector("#action-button").classList.remove("disabled");
             }
             else {
-                document.getElementById("confirm-button").classList.add("disabled");
+                document.querySelector("#action-button").classList.add("disabled");
             }
         };
 
@@ -128,7 +128,7 @@ function renderTagInDeleter(tag, hasPostsContainer, noPostsContainer) {
 const postMap = new Map();
 const tagMap = new Map();
 const tagPromise = fetchTags();
-const searchPromise =searchPosts();
+const searchPromise = searchPosts();
 
 
 
@@ -229,7 +229,7 @@ async function renderPosts(posts) {
         }
 
         console.log("Rendering post");
-        const postElement = renderPostToFragment(post.postID, post.title, post.author, post.isTechnical, post.tags.map(tag => tag.name));
+        const postElement = renderPostToFragment(post.postID, post.title, post.author, post.isTechnical, post.tags);
         fragment.appendChild(postElement);
         postMap.set(post.postID, post);
         console.log(post);
@@ -291,6 +291,26 @@ async function deleteTag(tagID) {
         console.log("Tags failed to be deleted");
         return;
     }
+
+    //we show this on the client by removing the tag from memory and the page
+    tagMap.delete(tagID);
+    document.querySelectorAll('.tag').forEach((tag) => {
+        if (tag.getAttribute('tagID') === tagID) {
+
+            //if the tag is inside a post and there are no other tags in that container, we render the no-tags tag instead of leaving blank
+            if (tag.parentElement.parentElement.classList.contains('post-info') && tag.parentElement.querySelectorAll('.tag').length === 1){
+                const noTags = document.createElement('div');
+                noTags.classList.add('no-tags');
+                noTags.textContent = "No Topics";
+                tag.parentElement.appendChild(noTags);
+                tag.remove();
+            } else {
+                tag.remove();
+            }
+
+        }
+    })
+
 }
 
 
@@ -353,7 +373,7 @@ async function setUpPostsEventListeners() {
  * @param {string} title 
  * @param {string} author
  * @param {boolean} isTechnical - 1 if the post is technical, 0 if it is non-technical.
- * @param {Array<string>} tags - array of tags associated with the post. Defaults to ["No Tags"] to avoid null checks.
+ * @param {Array<string>} tags - array of tags associated with the post. Defaults to "No Topics" to avoid null checks.
  * @returns {HTMLElement} - constructed post element to be rendered in a fragment.
  */
 function renderPostToFragment(postID, title, author, isTechnical, tags) {
@@ -373,14 +393,26 @@ function renderPostToFragment(postID, title, author, isTechnical, tags) {
 
     const tagsContainer = document.createElement("div")
     tagsContainer.className = "tags"
-    const tagsArray = tags.length ? tags : ["No Tags"]
-    tagsArray.forEach(tag => {
+    const tagsArray = tags.length ? tags : null;
+    if (tagsArray) {
+        tagsArray.forEach(tag => {
+            console.error(tag)
+            const tagDiv = document.createElement("div")
+            tagDiv.className = "tag"
+            if (tag.tagID === 0) {
+                tagDiv.classList.add("no-tags")
+            }
+            tagDiv.setAttribute("name", tag.name)
+            tagDiv.setAttribute("tagid", tag.tagID)
+            tagDiv.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag.name}`;
+            tagsContainer.appendChild(tagDiv)
+        });
+    } else {
         const tagDiv = document.createElement("div")
-        tagDiv.className = "tag"
-        tagDiv.setAttribute("name", tag)
-        tagDiv.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag}`;
+        tagDiv.className = "no-tags"
+        tagDiv.textContent = "No Topics"
         tagsContainer.appendChild(tagDiv)
-    });
+    }
 
     const authorDiv = document.createElement("div")
     authorDiv.className = "author"
