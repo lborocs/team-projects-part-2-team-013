@@ -1,3 +1,7 @@
+.chart-box {
+    transition: opacity 0.2s ease-out;
+}
+
 .dashboard-container {
     display: grid;
     gap: 1.5rem;
