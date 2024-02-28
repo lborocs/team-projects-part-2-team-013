@@ -180,6 +180,6 @@ usefulButton.addEventListener("click", function () {
 
 
 function updateMetaTooltips() {
-    watchingTooltip.innerText = postMeta.subscribed ? "Unsubscribe" : "Subscribe to updates";
-    usefulTooltip.innerText = postMeta.feedback ? "Unmark as Useful" : "Mark as Useful";
+    watchingTooltip.innerText = postMeta.subscribed ? "Don't watch this post" : "Watch post for updates";
+    usefulTooltip.innerText = postMeta.feedback ? "Remove 'This was helpful'" : "This was helpful";
 }
