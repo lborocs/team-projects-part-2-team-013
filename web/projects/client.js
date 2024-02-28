@@ -102,84 +102,83 @@ console.log("[import] loaded client.js")
 
 
 async function renderIndividualProject(id, setBreadcrumb = true) {
-    let project = await getProjectById(id);
-    if (!project) {
-        console.error(`[renderIndividualProject] Error fetching project`);
-        return false;
-    }
 
-    globalCurrentProject = project;
-    document.title = project.name
-
-
-    let teamLeader = await global.getEmployeesById([project.teamLeader.empID]);
-    if (!teamLeader) {
-        console.error(`[renderIndividualProject] Error fetching team leader`);
-        return false;
-    }
-    teamLeader = teamLeader.get(project.teamLeader.empID);
-    taskCards.forEach((task) => {
-        task.remove()
-    })
-    taskRows.forEach((task) => {
-        task.remove()
-    }) 
-    let tasks = await fetchTasks(id);
-    if (!tasks) {
-        console.error(`[renderIndividualProject] Error fetching tasks`);
-        return false;
-    }
-    globalTasksList = tasks;
-
+    // we can render tasks and projects asynchronously
+    const projectLoader = getProjectById(id);
+    const taskLoader = fetchTasks(id)
     
-    const attributeSearch = await global.preferences.get_or_default('tasksort');
-    const sortDirection = await global.preferences.get_or_default('taskdirection');
+    const projectLoadedHandle = global.takeMutex("projectLoaded");
+
+    taskLoader.then(async (tasks) => {
+        globalTasksList = tasks;        
+        const attributeSearch = await global.preferences.get_or_default('tasksort');
+        const sortDirection = await global.preferences.get_or_default('taskdirection');
 
 
-    let sortColumn = taskList.querySelector(`[data-value=${attributeSearch}]`);
-    sortColumn.classList.add("sorting-by");
-    if (sortDirection === 'desc') {
-        sortColumn.classList.add("desc");
-    } else {
-        sortColumn.classList.add("asc")
-    }
+        let sortColumn = taskList.querySelector(`[data-value=${attributeSearch}]`);
+        sortColumn.classList.add("sorting-by");
+        if (sortDirection === 'desc') {
+            sortColumn.classList.add("desc");
+        } else {
+            sortColumn.classList.add("asc")
+        }
 
-    // tasks sort by for default sorting
-    taskListSortBy(sortColumn);
+        // render tasks must wait for the project
+        await global.waitMutex("projectLoaded");
 
-    // render in board only
-    renderTasks(tasks, RENDER_COLUMN);
-    console.log("[renderIndividualProject] fetched & rendered tasks for " + project.name)
-    console.log("global tasks list:")
-    console.log(globalTasksList)
+        // tasks sort by for default sorting
+        taskListSortBy(sortColumn);
 
-    
-    // unselect not this project
-    console.log("[renderIndividualProject] selected " + project.name)
-    if (setBreadcrumb) {
-        global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
-        dashboardRedirect.href = `/dashboard/#${id}`
-    }
+        // render in board only
+        renderTasks(tasks, RENDER_COLUMN);
+        console.log("[renderIndividualProject] fetched & rendered tasks for project 0x" + id)
+        console.log("global tasks list:")
+        console.log(globalTasksList)
+    });
+    projectLoader.then(async (project) => {
 
-    projectTitle.innerText = project.name;
-    mobileProjectTitle.innerText = project.name;
-    explainerTitle.innerText = project.name;
-    explainerDescription.innerHTML = project.description;
-    explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
-    explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
+        globalCurrentProject = project;
+        document.title = project.name
+        global.releaseMutex("projectLoaded", projectLoadedHandle);
 
-    //sets up the context menu event listener
-    const projectActions = document.querySelector(".project-bar > .project-actions");
-    projectActions.addEventListener("click", (e) => {
-        e.stopPropagation()
-        projectPopup(project)
+        global.getEmployeesById([project.teamLeader.empID]).then(map => {
+            let teamLeader = map.get(project.teamLeader.empID);
 
+            explainerTeamLeaderName.innerText = global.employeeToName(teamLeader);
+            explainerTeamLeaderAvatar.src = global.employeeAvatarOrFallback(teamLeader)
+        });
+        taskCards.forEach((task) => {
+            task.remove()
+        })
+        taskRows.forEach((task) => {
+            task.remove()
+        })
+        // unselect not this project
+        console.log("[renderIndividualProject] selected " + project.name)
+        if (setBreadcrumb) {
+            global.setBreadcrumb(["Projects", project.name], [window.location.pathname, "#" + id]);
+            dashboardRedirect.href = `/dashboard/#${id}`
+        }
+
+        projectTitle.innerText = project.name;
+        mobileProjectTitle.innerText = project.name;
+        explainerTitle.innerText = project.name;
+        explainerDescription.innerHTML = project.description;
+
+        //sets up the context menu event listener
+        const projectActions = document.querySelector(".project-bar > .project-actions");
+        projectActions.addEventListener("click", (e) => {
+            e.stopPropagation()
+            projectPopup(project)
+
+        });
     });
 
     teamLeaderEnableElementsIfTeamLeader()
 
     setActivePane("individual-project-pane");
     clearProjectList();
+    return await Promise.all([projectLoader, taskLoader]);
 }
 
 function clearProjectList() {
