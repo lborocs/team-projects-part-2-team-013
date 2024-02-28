@@ -2028,3 +2028,16 @@ td:has(#more) {
 .mobile-icons {
     display: none;
 }
+
+.submit-manhours-container {
+    width: 100%;
+    gap: 1em;
+    display: flex;
+    flex-direction: column;
+
+    .submit-manhours-info {
+        gap: 5em;
+        display: flex;
+        flex-direction: row;
+    }
+}

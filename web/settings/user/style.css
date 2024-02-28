@@ -164,15 +164,6 @@
 
 }
 
-#confirm-button{
-    background-color: rgb(214, 61, 61);
-    color: white;
-}
-
-#confirm-button:hover{
-    background-color: rgb(160, 41, 41);
-}
-
 .popup-dialog {
     top: 8%;
     display: flex;

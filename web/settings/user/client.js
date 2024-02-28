@@ -3,20 +3,18 @@ import * as global from "../../global-ui.js";
 const nameValues = document.querySelectorAll('.current-name');
 const accountCard = document.querySelector('.account-card');
 
-const changeButtons = document.querySelectorAll('#change-button');
-const cancelButtons = document.querySelectorAll('#cancel-button');
-const confirmButtons = document.querySelectorAll('#confirm-button');
-const nameInputs = document.querySelectorAll('.name-display-input');
+const firstNameOption = document.querySelector('#first-name-change');
+const secondNameOption = document.querySelector('#last-name-change');
 
-const firstNameChange = changeButtons[0];
-const firstNameCancel = cancelButtons[0];
-const firstNameConfirm = confirmButtons[0];
-const firstNameInput = nameInputs[0];
+const firstNameChange = firstNameOption.querySelector('.change-button');
+const firstNameCancel = firstNameOption.querySelector('.cancel-button');
+const firstNameConfirm = firstNameOption.querySelector('.confirm-button');
+const firstNameInput = firstNameOption.querySelector('.name-display-input');
 
-const secondNameChange = changeButtons[1];
-const secondNameCancel = cancelButtons[1];
-const secondNameConfirm = confirmButtons[1];
-const secondNameInput = nameInputs[1];
+const secondNameChange = secondNameOption.querySelector('.change-button');
+const secondNameCancel = secondNameOption.querySelector('.cancel-button');
+const secondNameConfirm = secondNameOption.querySelector('.confirm-button');
+const secondNameInput = secondNameOption.querySelector('.name-display-input');
 
 const accountDropdown = document.getElementById('account-dropdown');
 const accountOptions = document.querySelectorAll('.account-option');
@@ -64,7 +62,7 @@ document.addEventListener('click', (event) => {
     accountDropdown.classList.remove('open');
 });
 
-async function getEmployee(empID) {
+async function fetchCurrentEmployee() {
     console.log('fetching employee');
     const res = await get_api(`/employee/employee.php/employee/${empID}`);
     if (res.success) {
@@ -74,12 +72,19 @@ async function getEmployee(empID) {
         console.error('Request failed');
     }
 }
-getEmployee(empID);
 
+let currentEmployee;
+async function getEmployee(renew = false) {
+    if (currentEmployee && !renew) {
+        return currentEmployee;
+    }
+    currentEmployee = await fetchCurrentEmployee();
+    return currentEmployee;
+}
 
 
 async function setUserData() {
-    let empData = await getEmployee(empID);
+    let empData = await getEmployee(true);
     let emp = empData.employee;
     console.log("[setUserData] got employee", emp);
     console.log(emp);
@@ -251,15 +256,6 @@ function confirmDelete() {
     )
 }
 
-var employeeEmail
-async function updateEmployeeEmail(empID) {
-    const empData = await getEmployee(empID);
-    console.log(empData);
-    employeeEmail = empData.employee.email;
-    console.log("Employee Email: ");
-    console.log(employeeEmail);
-}
-updateEmployeeEmail(empID);
 const sendButton = document.getElementById("reset-password");
 
 

@@ -54,9 +54,9 @@ function setSearchPlaceholder(category) {
     if (category === 2) {
         placeholder = "Search all posts";
     } else if (category === 0) {
-        placeholder = "Search non-technical posts";
+        placeholder = "Search Non-Technical posts";
     } else if (category === 1) {
-        placeholder = "Search technical posts";
+        placeholder = "Search Technical posts";
     } else {
         console.error("Invalid category");
     }
@@ -127,6 +127,9 @@ function renderTagInDeleter(tag, hasPostsContainer, noPostsContainer) {
 
 const postMap = new Map();
 const tagMap = new Map();
+const tagPromise = fetchTags();
+const searchPromise =searchPosts();
+
 
 
 async function searchPosts() {
@@ -157,11 +160,13 @@ async function searchPosts() {
     });
     
     if (category === 2) {
-        await fetchAndRenderPosts(search, tags);
+        const posts = await fetchPosts(search, tags);
+        renderPosts(posts);
         setCurrentBreadcrumb(category);
         setSearchPlaceholder(category);
     } else {
-        await fetchAndRenderPosts(search, tags, category);
+        const posts = await fetchPosts(search, tags, category);
+        renderPosts(posts);
         setCurrentBreadcrumb(category);
         setSearchPlaceholder(category);
     }
@@ -178,14 +183,14 @@ async function updatePosts() {
 }
 
 /** 
- * fetches posts from server and bactch renders them into PostsContainer.
+ * fetches posts from the server
  * 
  * @param {string} searchQuery - optional search query to filter posts by.
  * @param {Array<string>} selectedTags - optional array of tagIDs to filter posts by.
  * @param {number} isTechnical - optional flag to filter posts by category. 1 = technical, 0 = non-technical, null = all.
  * 
  */
-async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechnical = null) {
+async function fetchPosts(searchQuery = "", selectedTags = [], isTechnical = null) {
     const tagParam = selectedTags.length ? `&tags=${selectedTags.join(",")}` : "";
     var res;
     if (isTechnical === null) {
@@ -194,8 +199,6 @@ async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechni
         res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ?? ''}&q=${searchQuery}${tagParam}`);
     }
 
-    console.log(res);
-
     if (res.success !== true) {
         console.log("Posts failed to be fetched");
         return;
@@ -203,10 +206,18 @@ async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechni
 
     console.log("Posts have been fetched");
 
+    return res.data.posts;
+}
+
+
+async function renderPosts(posts) {
     //fragment for batch rendering
+
+    await tagPromise;
+
     const fragment = new DocumentFragment();
 
-    res.data.posts.forEach(post => {
+    posts.forEach(post => {
         console.log(post);
         console.log(post.tags);
 
@@ -281,11 +292,6 @@ async function deleteTag(tagID) {
         return;
     }
 }
-
-
-fetchTags();
-searchPosts();
-
 
 
 async function setUpPostsEventListeners() {
@@ -473,24 +479,18 @@ function manageTagsPopup() {
                 <div class="title">
                     Assigned to posts
                 </div>
-                <div class="hasPosts">
-                    <div class="tags">
-
-                    </div>
+                <div class="has-posts">
                 </div>
                 <div class="title">
                     Not assigned to any post
                 </div>
-                <div class="noPosts">
-                    <div class="tags">
-
-                    </div>
+                <div class="no-posts">
                 </div>
             </div>
         `;
 
-        let hasPostsContainer = ctx.content.querySelector('.hasPosts');
-        let noPostsContainer = ctx.content.querySelector('.noPosts');
+        let hasPostsContainer = ctx.content.querySelector('.has-posts');
+        let noPostsContainer = ctx.content.querySelector('.no-posts');
 
         tagMap.forEach((tag) => {
             renderTagInDeleter(tag, hasPostsContainer, noPostsContainer);
