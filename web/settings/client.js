@@ -479,30 +479,157 @@ function passwordPopup() {
     const callback = (ctx) => {
         ctx.actionButton.classList.add('disabled');
 
-        ctx.content.innerHTML = `<div class="popup-inputs">
-            <div class="popup-subtitle">
-                Enter your current password:
+        ctx.content.innerHTML = `
+        <div class="popup-inputs">
+            <div class="input-container">
+                <label for="password">Current password</label>
+                <div class="textfield-container">
+                    <input type="password" placeholder="" id="current-password" class="textfield textfield-password" required>
+                    <span class="material-symbols-rounded" id="togglePassword">
+                        visibility_off
+                    </span>
+                </div>
             </div>
-            <input class="modal-input text" type="password" id="current-password" placeholder="Current Password">
         </div>
         <div class="popup-inputs">
-            <div class="popup-subtitle">
-                Set your new password:
-            </div>
+
             <div class="input-wrapper">
-                <input class="modal-input text" type="password" id="new-password" placeholder="New Password">
-                <input class="modal-input text" type="password" id="confirm-new-password" placeholder="Confirm New Password">
+
+                <div class="input-container">
+                    <label for="new-password">New password</label>
+                    <div class="textfield-container">
+                        <input type="password" placeholder="" id="new-password" class="textfield textfield-password" required>
+                        <span class="material-symbols-rounded" id="togglePassword">
+                            visibility_off
+                        </span>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <label for="confirm-new-password">Confirm new password</label>
+                    <div class="textfield-container">
+                        <input type="password" placeholder="" id="confirm-new-password" class="textfield textfield-password" required>
+                        <span class="material-symbols-rounded" id="togglePassword">
+                            visibility_off
+                        </span>
+                    </div>
+                </div>
+                <div class="password-criteria disabled">
+                    Your password must contain:
+                    <ul class="password-criteria">
+                        <li id="ten-chars">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 10 characters
+                            </div>
+                        </li>
+                        <li id="uppercase-letter">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 uppercase letter
+                            </div>
+                        </li>
+                        <li id="number">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 number
+                            </div>
+                        </li>
+                        <li id="special-char">
+                            <span class="material-symbols-rounded">
+                                radio_button_unchecked
+                            </span>
+                            <div class="text">
+                                At least 1 special character
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
                 <div class="error-message" id="password-error"></div>
+
             </div>
         </div>`
+
+        const PASS_COLOR = "#238823";
+        const PASS_ICON = 'check_circle';
+        const FAIL_COLOR = "#d2222d";
+        const FAIL_ICON = 'cancel';
+        const EMPTY_COLOR = "black"
+        const EMPTY_ICON = 'radio_button_unchecked';
 
         const newPasswordInput = ctx.content.querySelector('#new-password');
         const confirmPasswordInput = ctx.content.querySelector('#confirm-new-password');
         const currentPasswordInput = ctx.content.querySelector('#current-password');
+        const passwordCriteria = ctx.content.querySelector('.password-criteria');
+        const tenChars = ctx.content.querySelector('#ten-chars');
+        const uppercaseLetter = ctx.content.querySelector('#uppercase-letter');
+        const number = ctx.content.querySelector('#number');
+        const specialChar = ctx.content.querySelector('#special-char');
         const errorMessage = ctx.content.querySelector('#password-error');
 
-        const validatePassword = () => {
-            if (newPasswordInput.value !== confirmPasswordInput.value) {
+        newPasswordInput.addEventListener('input', updateCriteriaHints);
+        confirmPasswordInput.addEventListener('input', updateMatchingHint);
+
+
+        function resetCriteria(element) {
+            element.style.color = EMPTY_COLOR;
+            element.querySelector("span").textContent = EMPTY_ICON;
+        }
+        
+        function updateCriteriaHints() {
+            passwordCriteria.classList.remove("disabled");
+        
+            const passwordValue = newPasswordInput.value;
+            if (passwordValue.length === 0) {
+                resetCriteria(tenChars);
+                resetCriteria(uppercaseLetter);
+                resetCriteria(number);
+                resetCriteria(specialChar);
+                ctx.actionButton.classList.add("disabled");
+                return;
+            }
+        
+            //im declaring these explicitly to make the contitions more readable
+            const passwordLength = passwordValue.length;
+            const passwordHasUppercase = /[A-Z]/.test(passwordValue);
+            const passwordHasNumber = /\d/.test(passwordValue);
+            const passwordHasSpecialChar = /[!@#$%^&*()\-_=+{};:,<.>'`\"\ ]/.test(passwordValue); //same regex as in the backend
+        
+            let results = []
+            results[0] = showCriteriaResult(passwordLength >= 10, tenChars);
+            results[1] = showCriteriaResult(passwordHasUppercase && passwordLength !== 0, uppercaseLetter);
+            results[2] = showCriteriaResult(passwordHasNumber && passwordLength !== 0, number);
+            results[3] = showCriteriaResult(passwordHasSpecialChar, specialChar);
+        
+            let allClear = results.every(result => result === true);
+            if (allClear) {
+                ctx.actionButton.classList.remove("disabled");
+            } else {
+                ctx.actionButton.classList.add("disabled");
+            }
+        
+        }
+        
+        function showCriteriaResult(condition, element) {
+            if (condition) {
+                element.style.color = PASS_COLOR;
+                element.querySelector("span").textContent = PASS_ICON
+                return true;
+            } else {
+                element.style.color = FAIL_COLOR;
+                element.querySelector("span").textContent = FAIL_ICON;
+                return false;
+            }
+        }
+
+        function updateMatchingHint() {
+            if (confirmPasswordInput.value != "" && newPasswordInput.value !== confirmPasswordInput.value) {
                 errorMessage.innerText = "Passwords do not match";
                 ctx.actionButton.classList.add('disabled');
                 return;
@@ -510,9 +637,6 @@ function passwordPopup() {
             errorMessage.innerText = "";
             ctx.actionButton.classList.remove('disabled');
         }
-
-        newPasswordInput.addEventListener('input', validatePassword);
-        confirmPasswordInput.addEventListener('input', validatePassword);
 
         ctx.actionButton.addEventListener('pointerup', async () => {
             const res = await patch_api('/employee/session.php/account', {
