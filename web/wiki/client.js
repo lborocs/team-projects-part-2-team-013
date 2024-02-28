@@ -473,24 +473,18 @@ function manageTagsPopup() {
                 <div class="title">
                     Assigned to posts
                 </div>
-                <div class="hasPosts">
-                    <div class="tags">
-
-                    </div>
+                <div class="has-posts">
                 </div>
                 <div class="title">
                     Not assigned to any post
                 </div>
-                <div class="noPosts">
-                    <div class="tags">
-
-                    </div>
+                <div class="no-posts">
                 </div>
             </div>
         `;
 
-        let hasPostsContainer = ctx.content.querySelector('.hasPosts');
-        let noPostsContainer = ctx.content.querySelector('.noPosts');
+        let hasPostsContainer = ctx.content.querySelector('.has-posts');
+        let noPostsContainer = ctx.content.querySelector('.no-posts');
 
         tagMap.forEach((tag) => {
             renderTagInDeleter(tag, hasPostsContainer, noPostsContainer);
