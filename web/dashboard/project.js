@@ -837,12 +837,23 @@ const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             console.log("[observer] observed intersection of: ", entry.target);
-            console.log(entry.target.children)
             charts.filter(chart => entry.target.contains(chart.canvas)).forEach(chart => {
+
+                // update line charts when they are in view
+                // cause chart.js renders wrong when they are not in view
+
+                const types = chart.config.data.datasets.map(dataset => dataset.type);
+                console.log("[observer] chart: ", types);
+                if (!types.includes("line")) {
+                    return;
+                }
+
+                entry.target.classList.add("animate-spinner");
                 setTimeout(() => {
                     chart.update();
                     console.log("[observer] updated chart: ", chart.canvas.id);
-                }, 100);
+                    entry.target.classList.remove("animate-spinner");
+                }, 500);
             });
             observer.unobserve(entry.target);
         }
@@ -853,10 +864,9 @@ const observer = new IntersectionObserver((entries, observer) => {
     threshold: 0.8
 });
 
-global.waitMutex("intialDraw").then(() => {
-    document.querySelectorAll(".chart-box").forEach(card => {
-        observer.observe(card);
-    })
+
+document.querySelectorAll(".chart-box").forEach(card => {
+    observer.observe(card);
 })
 
 
