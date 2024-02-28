@@ -3,6 +3,13 @@
     gap: 1em;
 }
 
+
+.title {
+    font-weight: 700;
+    font-size: 24px;
+}
+
+
 .popover {
     position: absolute;
     border: solid 1px rgba(105,112,125, 0.1);
@@ -30,10 +37,6 @@
     padding-bottom: 5px;
     gap: 2px;
 }
-
-
-
-
 
 .show-more {
     background-color: transparent;
@@ -194,7 +197,6 @@ input[type="text"] {
 
 
 #editor {
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     border-radius: 10px;
     width: 100%;
     border: solid 1px var(--border-clr);
@@ -229,31 +231,56 @@ input[type="text"] {
 .items {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: space-between;
+    align-items: center;
     gap: 1rem;
     height: 100%;
-    width: auto;
-    justify-content: space-between;
 }
 
+.submit-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+.category {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    font-size: 0.9em;
+    font-weight: 600;
+    color: #0f0f0f;
+    width: 50%;
+    height: 2.5rem;
+    text-align: center;
+}
+
+.category > span {
+    color: #4e5057;
+}
+
+.category:hover {
+    color: #2d2e30;
+}
 
 .type-of-post {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     list-style: none;
     justify-content: space-between;
     justify-self: center;
-    width: auto;
+    gap: 0.5rem;
+    padding: 0.5rem;
     font-weight: 600;
-    height: 4em;
-    align-items: center;
+    align-items: flex-start;
     color: #555555;
-    background-color: #eeeeee;
-    border-radius: 10px;
+    background-color: var(--white);
+    border-radius: 11px;
     border: solid 1px var(--border-clr);
     transition: 0.1s ease-out;
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
 }
 
 input[type="radio"] {
@@ -265,58 +292,60 @@ input[type="radio"] {
 }
 
 label {
-    background-color: none;
-    color: #2d2e30;
-    border-radius: 6px;
     height: calc(100%);
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    padding-left: 0.5rem;
+    padding-right: 1.5rem;
+    gap: 0.5rem;
     cursor: pointer;
+    background-color: rgba(0,0,0,0);
+    color: #2d2e30;
+    border-radius: 6px;
     transition: 0.1s ease-out;
+
+    .icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .name {
+        white-space: nowrap;
+    }
 }
 
 
 input[type="radio"]:checked + label {
     display: flex;
-    justify-content: center;
-    background-color: var(--white);
+    background-color: var(--make-it-all-highlight);
     color: #2d2e30;
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     width: 100%;
 
 }
 input[type="radio"] + label {
     display: flex;
-    justify-content: center;
-    color: #555555;
     width: 100%;
 
 }
-.category {
-    font-size: 0.9em;
-    font-weight: 600;
+
+input[type="radio"]:not(:checked) + label:hover {
+    background-color: var(--cool-grey);
     color: #2d2e30;
-    width: 50%;
-    height: 3.5em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    text-align: center;
-    
+    transition-duration: 0.1s;
 }
 
-.post-title {
+.ui-card {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
     width: 100%;
-    height: 4em;
-    margin-bottom: 0;
-    border-radius: 10px;
+    padding: 0.5rem;
+    border-radius: 11px;
     border: 1px solid var(--border-clr);
     background-color: var(--white);
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
 }
 
 .post-title i {
@@ -385,7 +414,6 @@ input[type="text"]:focus-within {
 
     border: 1px solid var(--border-clr);
     border-radius: 10px;
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
     background-color: var(--white);
 }
 
@@ -441,7 +469,6 @@ input[type="text"]:focus-within {
     border-top-right-radius: 10px;
     border: solid 1px var(--border-clr);
     background-color: var(--white);
-    box-shadow: 0px 0px 4px rgba(0,0,0,0.12);
 }
 
 .ql-snow * {

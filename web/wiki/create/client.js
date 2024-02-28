@@ -2,12 +2,16 @@ import * as global from "../../global-ui.js"
 
 const tags = document.getElementById("tags");
 const input = document.getElementById("input-tag");
-const submitButton = document.getElementById("submitButton");
+const submitButton = document.getElementById("submit-button");
 var editing = false;
 var postBeingEdited = null;
 var anyChanges = false;
 var currentTags = [];
 var selectTags = [];
+
+const postTitleInput = document.getElementById("post-title-input");
+const categorySelector = document.querySelector(".type-of-post");
+var isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
 
 
 class Tag {
@@ -180,7 +184,7 @@ tagsList.then((tagsList) => {
     let postID = getQueryParam();
     if (postID != "") {
         editing = true;
-        document.querySelector("#submitButton").innerHTML = '<div class="button-text">Update post </div> <div class="button-icon"> <span class="material-symbols-rounded">done</span> </div>';
+        submitButton.innerHTML = '<div class="button-text">Update post </div> <div class="button-icon"> <span class="material-symbols-rounded">done</span> </div>';
         document.querySelector("#title").innerHTML = "Edit Post";
         getPostData(postID).then((post) => {
             console.log(post);
@@ -427,8 +431,8 @@ if (editing) {
 //stops user accidentally discarding changes by refreshing or closing the page
 const changeListener = setInterval(() => {
     let quillContent = JSON.stringify(quill.getContents());
-    let postTitle = document.querySelector(".post-title input").value;
-    let isTechnical = document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked;
+    let postTitle = postTitleInput.value;
+    let isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
 
     anyChanges = false;
     if (editing && postBeingEdited) {
@@ -453,6 +457,7 @@ const changeListener = setInterval(() => {
             anyChanges = true;
         }
     }
+    submitButton.classList.remove("disabled");
 }, 1000);
 window.addEventListener('beforeunload', (event) => {
     if (!anyChanges) {
