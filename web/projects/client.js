@@ -72,6 +72,7 @@ const explainerTaskManhours = document.querySelector(".manhours-container")
 const dashboardRedirect = document.getElementById('dashboard-redirect');
 const listViewButton = document.getElementById('list-view-button');
 const boardViewButton = document.getElementById('board-view-button');
+const archiveButton = document.getElementById("view-archived-button");
 const pageBackButton = document.getElementById('page-back-button');
 const pageForwardButton = document.getElementById('page-forward-button');
 const pageNumberElement = document.querySelector('.page-number');
@@ -102,6 +103,8 @@ console.log("[import] loaded client.js")
 
 
 async function renderIndividualProject(id, setBreadcrumb = true, archived=0) {
+    
+    updateArchiveButton(archived);
 
     // we can render tasks and projects asynchronously
     const projectLoader = getProjectById(id);
@@ -1529,6 +1532,7 @@ async function renderFromBreadcrumb(locations) {
     } catch (e) {
         setActivePane("select-projects-pane");
         await fetchAndRenderAllProjects();
+        console.error(e);
     }
 
     if (!taskID) {
@@ -4240,7 +4244,6 @@ async function getProjectPreferences() {
     console.log(`[SET DEFAULT PREFERENCES] - projectOrder: ${sortDirection}`);
 }
 
-let archiveButton = document.getElementById("view-archived-button");
 archiveButton.addEventListener("click", async () => {
 
     let projID = globalCurrentProject.projID;
