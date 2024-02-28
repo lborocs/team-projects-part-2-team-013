@@ -2690,6 +2690,16 @@ async function addTask() {
                 task.assignments = assignmentRes.data.assigned;
                 globalTasksList.push(task);
                 searchAndRenderTasks();
+
+                const pseudoAssignments = assignedEmployeesArray.map((empID) => {
+                    return {
+                        employee: {empID},
+                        task: {taskID:task.taskID},
+                    }
+                });
+
+                renderAssignments(pseudoAssignments)
+
                 dialog.style.transform = 'translateY(-1%)'
                 dialog.style.opacity = '0';
                 dialog.style.display = 'none';
