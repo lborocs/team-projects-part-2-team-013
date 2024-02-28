@@ -1097,6 +1097,9 @@ sup {
 
 .animate-spinner {
     position: relative;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
 }
 
 .animate-spinner::after {
@@ -1109,11 +1112,12 @@ sup {
     content: "";
     width: 1.5rem;
     height: 1.5rem;
-    border: 3px solid var(--icon-clr);
+    border: 3px solid rgba(140,140,150);
     border-top-color: transparent;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     transform: translate(-50%, -50%);
+    transition: 0.1s ease-out;
 }
 
 @keyframes spin {
