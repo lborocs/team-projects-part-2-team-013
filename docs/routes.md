@@ -125,6 +125,21 @@ Written/designed by aidan F223129
     }
     ```
 
+- [x] **/employee/manager.php/leasthelpfulposts**
+  - GET (return least helpful posts ever)
+        ```jsonc
+    {
+      "success":true,
+      "data":[
+        {
+          "posts":[
+            {..post, "helpful":"int"}
+          ]
+        }
+      ]
+    }
+    ```
+
 - [x] **/employee/manager.php/employeeprojects/:EMP_ID:**
   - GET (get another users projects they are in)
       @me for your own projects, not all,
