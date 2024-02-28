@@ -750,8 +750,7 @@ async function avatarPopup() {
         global.getCurrentSession().then(session => {
             ctx.content.querySelector('.avatar-preview').src = global.employeeAvatarOrFallback(session.employee);
             if (session.employee.avatar == null) {
-                resetButton.classList.add('norender');
-                resetButton.classList.remove('modal-tip');
+                resetContainer.classList.add('disabled');
             }
         });
 

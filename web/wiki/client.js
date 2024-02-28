@@ -13,10 +13,6 @@ const tagSearchInput = document.querySelector("#tag-search > .search-input");
 const tagSelection = document.querySelector('#tag-selection');
 
 
-const postDisabled = await global.siteSettings.get('postsEnabled');
-postDisabled ? document.getElementById("new-post").classList.add("disabled") : null;
-
-
 if (document.location.hash === "#nontechnical") {
     document.getElementById("non-technical").checked = true;
     document.getElementById("technical").checked = false;
@@ -32,7 +28,7 @@ if (document.location.hash === "#nontechnical") {
 }
 
 function setCurrentBreadcrumb(category) {
-    console.error(category);
+    console.log(category);
     category = parseInt(category);
     let label;
     let hash;
@@ -46,7 +42,7 @@ function setCurrentBreadcrumb(category) {
         label = "Technical";
         hash = "technical";
     } else {
-        console.error("Invalid category");
+        console.log("Invalid category");
     }
 
     global.setBreadcrumb(["Wiki", label], ["/wiki/", `#${hash}`]);
@@ -62,7 +58,7 @@ function setSearchPlaceholder(category) {
     } else if (category === 1) {
         placeholder = "Search Technical posts";
     } else {
-        console.error("Invalid category");
+        console.log("Invalid category");
     }
 
     searchInput.placeholder = placeholder;
@@ -134,6 +130,16 @@ const tagMap = new Map();
 const tagPromise = fetchTags();
 const searchPromise = searchPosts();
 
+global.siteSettings.get('postsEnabled').then((enabled) => {
+    if (enabled == 2) {
+    document.getElementById("new-post").classList.add("disabled");
+    }
+    else if (enabled == 1) {
+        if (!me.isManager) {
+            document.getElementById("new-post").classList.add("disabled");
+        }
+    }
+});
 
 
 async function searchPosts() {
@@ -400,7 +406,7 @@ function renderPostToFragment(postID, title, author, isTechnical, tags) {
     const tagsArray = tags.length ? tags : null;
     if (tagsArray) {
         tagsArray.forEach(tag => {
-            console.error(tag)
+            console.log(tag)
             const tagDiv = document.createElement("div")
             tagDiv.className = "tag"
             if (tag.tagID === 0) {
