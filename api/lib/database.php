@@ -708,6 +708,42 @@ function db_post_fetch_most_helpful() {
     return $data;
 }
 
+function db_post_fetch_least_helpful() {
+    global $db;
+
+    $query = $db->prepare(
+        "SELECT `POSTS`.postID, `POSTS`.postTitle, `POSTS`.postAuthor, `POSTS`.postCreatedAt, `POSTS`.postIsTechnical,
+        GROUP_CONCAT(DISTINCT `POST_TAGS`.tagID SEPARATOR '" . DB_ARRAY_DELIMITER . "') as tags,
+        COUNT(`EMPLOYEE_POST_META`.empID) as helpful
+        FROM `POSTS`
+        LEFT JOIN `POST_TAGS`
+            ON `POSTS`.postID = `POST_TAGS`.postID
+        LEFT JOIN `EMPLOYEE_POST_META`
+            ON `EMPLOYEE_POST_META`.postID = `POSTS`.postID AND `EMPLOYEE_POST_META`.postMetaFeedback = 1
+        GROUP BY `POSTS`.postID
+        ORDER BY helpful ASC
+        LIMIT " . DATA_FETCH_LIMIT
+    );
+
+    $result = $query->execute();
+
+    if (!$result) {
+        respond_database_failure();
+    }
+
+    $res = $query->get_result();
+
+    $data = [];
+    while ($row = $res->fetch_assoc()) {
+        $encoded = parse_database_row($row, TABLE_POSTS, [
+            "helpful"=>"integer",
+            "tags"=>"a-binary",
+        ]);
+        array_push($data, $encoded);
+    }
+    return $data;
+}
+
 
 function db_post_fetch(string $hex_post_id, string $fetcher_id) {
     global $db;
