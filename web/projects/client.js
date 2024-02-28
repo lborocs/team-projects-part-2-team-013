@@ -8,6 +8,7 @@ const RENDER_BOTH = 3;
 
 //important shit
 var globalTasksList = [];
+var globalArchivedTasksList = [];
 var globalAssignments = [];
 var globalCurrentProject;
 var globalCurrentTask;
@@ -530,7 +531,9 @@ function showTaskInExplainer(taskID) {
 
     explainerTaskContainer.setAttribute("task-id", taskID);
 
-    globalCurrentTask = globalTasksList.find((task) => {
+    let allTasks = [...globalTasksList, ...globalArchivedTasksList];
+
+    globalCurrentTask = allTasks.find((task) => {
         return task.taskID == taskID;
     });
 
@@ -1528,10 +1531,6 @@ function renderTaskInList(title, state = 0, ID = "", desc = "", assignee = "", d
         stateClass = "finished";
         icon = "check_circle";
         statusText = "Finished";
-    } else if (archived == 1){
-        stateClass = "archived";
-        icon = "archive";
-        statusText = "Archived";
     } else {
         console.error(`[renderTaskInList] invalid state (${state}) for task ${title}`);
     }
@@ -4173,6 +4172,7 @@ async function getProjectPreferences() {
 
 async function getArchived(projID){
     let res = await get_api(`/project/task.php/tasks/${projID}?archived=1`);
+    globalArchivedTasksList = res.data.tasks;
     return res.data.tasks;
 }
 
