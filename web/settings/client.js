@@ -550,7 +550,13 @@ async function avatarPopup() {
                         Upload new avatar:
                     </div>
                     <form>
-                        <input type="file" id="image-upload" class="modal-input" accept="image/*">
+                        <input style="display: none;" type="file" id="image-upload" class="modal-input" accept="image/*">
+                        <label for="image-upload" class="text-button blue">
+                            <div class="button-icon">
+                                <span class="material-symbols-rounded">add_photo_alternate</span>
+                            </div>
+                            <div class="button-text">Choose File</div>
+                        </label>
                     </form>
                 </div>
                 <div class="avatar-container">
@@ -569,18 +575,18 @@ async function avatarPopup() {
 
         const resetButtonPrompt = document.createElement('div');
         resetButtonPrompt.classList.add("text-button");
-        resetButtonPrompt.innerHTML = `<div class="button-text">Delete My Avatar</div>`;
+        resetButtonPrompt.innerHTML = `<div class="button-text">Reset My Avatar</div>`;
         resetContainer.appendChild(resetButtonPrompt);
 
         const cancelResetButton = document.createElement('div');
         cancelResetButton.classList.add("text-button", "norender");
-        cancelResetButton.innerHTML = `<div class="button-text">Go Back</div>`;
+        cancelResetButton.innerHTML = `<div class="button-text">Cancel</div>`;
         resetContainer.appendChild(cancelResetButton);
 
 
         const resetButton = document.createElement('div');
         resetButton.classList.add("text-button", "red", "norender");
-        resetButton.innerHTML = `<div class="button-text">Delete It</div>`;
+        resetButton.innerHTML = `<div class="button-text">Reset</div>`;
         resetContainer.appendChild(resetButton);
 
 
@@ -594,7 +600,7 @@ async function avatarPopup() {
             resetButtonPrompt.classList.add('norender');
             cancelResetButton.classList.remove('norender');
             resetButton.classList.remove('norender');
-            errorMessage.innerText = "Are you sure you want to delete your avatar?";
+            errorMessage.innerText = "Are you sure you want to reset your avatar?";
         });
 
 
@@ -657,7 +663,7 @@ async function avatarPopup() {
     ).then(() => {
         global.popupAlert(
             "Avatar Updated",
-            "Your avatar has been updated successfully, it make take a few minutes to update everywhere.",
+            "Your avatar has been updated successfully, it make take a few minutes to appear everywhere.",
             "success"
         ).catch();
     });
