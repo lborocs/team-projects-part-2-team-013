@@ -182,13 +182,13 @@ async function updatePosts() {
  * 
  * @param {string} searchQuery - optional search query to filter posts by.
  * @param {Array<string>} selectedTags - optional array of tagIDs to filter posts by.
- * @param {number} isTechnical - optional flag to filter posts by category. 1 = technical, 0 = non-technical, 2 = all. Default 2.   
+ * @param {number} isTechnical - optional flag to filter posts by category. 1 = technical, 0 = non-technical, null = all.
  * 
  */
-async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechnical = 2) {
+async function fetchAndRenderPosts(searchQuery = "", selectedTags = [], isTechnical = null) {
     const tagParam = selectedTags.length ? `&tags=${selectedTags.join(",")}` : "";
     var res;
-    if (isTechnical === 2) {
+    if (isTechnical === null) {
         res = await get_api(`/wiki/post.php/posts?q=${searchQuery}${tagParam}`);
     } else {
         res = await get_api(`/wiki/post.php/posts?is_technical=${isTechnical ?? ''}&q=${searchQuery}${tagParam}`);
