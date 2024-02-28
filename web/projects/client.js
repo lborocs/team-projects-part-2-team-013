@@ -352,6 +352,19 @@ async function addManHoursPopup(task) {
 
     if (res.success) {
         console.log(`[addManHoursPopup] Added ${manHours} to task ${taskID}`);
+        let session = await global.getCurrentSession();
+        let empID = session.employee.empID;
+        let entry = task.employeeManHours.find(entry => entry.empID === empID);
+        if (entry) {
+            entry.manHours += manHours;
+        } else {
+            task.employeeManHours.push({empID: empID, manHours: manHours});
+        }
+        task.totalManHours = totalManHours;
+        renderTasks(globalTasksList);
+        showTaskInExplainer(taskID);
+
+
     } else {
         console.error(`[addManHoursPopup] Failed to add ${manHours} to task ${taskID}`);
     }
