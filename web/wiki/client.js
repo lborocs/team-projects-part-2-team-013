@@ -28,7 +28,7 @@ if (document.location.hash === "#nontechnical") {
 }
 
 function setCurrentBreadcrumb(category) {
-    console.error(category);
+    console.log(category);
     category = parseInt(category);
     let label;
     let hash;
@@ -42,7 +42,7 @@ function setCurrentBreadcrumb(category) {
         label = "Technical";
         hash = "technical";
     } else {
-        console.error("Invalid category");
+        console.log("Invalid category");
     }
 
     global.setBreadcrumb(["Wiki", label], ["/wiki/", `#${hash}`]);
@@ -58,7 +58,7 @@ function setSearchPlaceholder(category) {
     } else if (category === 1) {
         placeholder = "Search Technical posts";
     } else {
-        console.error("Invalid category");
+        console.log("Invalid category");
     }
 
     searchInput.placeholder = placeholder;
@@ -404,7 +404,7 @@ function renderPostToFragment(postID, title, author, isTechnical, tags) {
     const tagsArray = tags.length ? tags : null;
     if (tagsArray) {
         tagsArray.forEach(tag => {
-            console.error(tag)
+            console.log(tag)
             const tagDiv = document.createElement("div")
             tagDiv.className = "tag"
             if (tag.tagID === 0) {

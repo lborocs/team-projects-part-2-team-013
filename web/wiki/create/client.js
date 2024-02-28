@@ -182,28 +182,49 @@ tagsList.then((tagsList) => {
         temp.addToSelect();
 
     });
+
     organiseSelect();
     let postID = getQueryParam();
+
+    if (postID == "") {
+        global.setBreadcrumb(["Wiki", "Create Post"], ["/wiki/", "/wiki/create/"]);
+        pageTitle.innerHTML = "Create Post";
+        return
+    }
+
     if (postID != "") {
         editing = true;
+
+        //sets the breadcrumb and title for editing
+        if (editing) {
+            global.setBreadcrumb(["Wiki", "Edit Post"], ["/wiki/", `/wiki/create/#${postID}`]);
+            pageTitle.innerHTML = "Edit Post";
+            document.title = "Edit Post";
+        } 
+
         submitButton.innerHTML = '<div class="button-text">Update post </div> <div class="button-icon"> <span class="material-symbols-rounded">done</span> </div>';
         document.querySelector("#title").innerHTML = "Edit Post";
         getPostData(postID).then((post) => {
+
             console.log(post);
             postBeingEdited = post;
+
             const postContent = JSON.parse(post.content);
             postTitleInput.value = post.title;
+
             console.log("setting cotnent to", postContent);
             quill.setContents(postContent);
+
             if (post.isTechnical == 1) {
                 document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked = true;
-            }
-            else {
+            } else {
                 document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[1].checked = true;
             }
+
             if (post.tags == null || post.tags.length == 0) {
                 //if the post you're editing has no tags
             }
+
             else {
                 document.querySelector("#placeholderTag").classList.add("norender")
                 post.tags.forEach((tag) => {
@@ -212,7 +233,8 @@ tagsList.then((tagsList) => {
                     temp.addTag();
                 });
             }
-        });
+
+        })
     }
 });
 
@@ -423,13 +445,7 @@ document.querySelector(".search-input").addEventListener("blur", function () {
 submitButton.addEventListener("click", submitPost);
 
 
-//sets the breadcrumb and title to wiki/create
-if (editing) {
-    global.setBreadcrumb(["Wiki", "Edit Post"], ["/wiki/", "/wiki/create/"]);
-    pageTitle.innerHTML = "Edit Post";
-} else {
-    global.setBreadcrumb(["Wiki", "Create Post"], ["/wiki/", `/wiki/create/#${getQueryParam()}`]);
-}
+
 
 //stops user accidentally discarding changes by refreshing or closing the page
 const changeListener = setInterval(() => {
