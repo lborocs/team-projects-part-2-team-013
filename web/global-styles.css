@@ -225,31 +225,32 @@ input {
 }
 
 .tooltip.tooltip-right .tooltiptext {
-    top: 100%;
-    right: -400%;
-    transform: translate(0, 0);
+    top: 0%;
+    left: 105%;
+    transform: translate(0, -50%);
 }
 
 .tooltip.tooltip-right .tooltiptext::after {
-    bottom: 100%;
-    right: 75%;
+    top: 50%;
+    left: -8px;
     margin-top: -5px;
     border-style: solid;
-    border-color: transparent transparent #2f2f2fcc transparent;
+    border-color: transparent #2f2f2fcc transparent transparent;
 }
 
 .tooltip.tooltip-left .tooltiptext {
-    top: 100%;
-    right: 0;
-    transform: translate(0, 0);
+    top: 0;
+    right: 105%;
+    transform: translate(0, -50%);
 }
 
 .tooltip.tooltip-left .tooltiptext::after {
-    bottom: 100%;
-    left: 92%;
+    top: 50%;
+    right: -8px;
     margin-top: -5px;
+    border-width: 5px;
     border-style: solid;
-    border-color: transparent transparent #2f2f2fcc transparent;
+    border-color: transparent transparent transparent #2f2f2fcc;
 }
 
 .tooltip.tooltip-above .tooltiptext {

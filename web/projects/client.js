@@ -635,8 +635,11 @@ function showTaskInExplainer(taskID) {
     let statusElement = document.querySelector(".status");
     let explainerTaskStatusElement = document.querySelector(".explainer-task-status");
     statusElement.innerHTML = globalCurrentTask.state == 0 ? "Not Started" : globalCurrentTask.state == 1 ? "In Progress" : "Finished";
-    explainerTaskStatusElement.classList.remove("not-started", "in-progress", "finished");
-    if (globalCurrentTask.state == 0) {
+    explainerTaskStatusElement.classList.remove("not-started", "in-progress", "finished", "archived");
+    console.error(globalCurrentTask);
+    if (globalCurrentTask.archived == 1) {
+        explainerTaskStatusElement.classList.add("archived");
+    } else if (globalCurrentTask.state == 0) {
         explainerTaskStatusElement.classList.add("not-started");
     } else if (globalCurrentTask.state == 1) {
         explainerTaskStatusElement.classList.add("in-progress");
@@ -719,7 +722,7 @@ async function renderAssignmentsInExplainer(taskID) {
 
         let assignmentElem = document.createElement("div");
         assignmentElem.classList.add("assignment");
-        assignmentElem.classList.add("tooltip", "tooltip-under");
+        assignmentElem.classList.add("tooltip", "tooltip-right");
 
         assignmentElem.innerHTML = `
             <p class="tooltiptext">${emp_name}</p>
