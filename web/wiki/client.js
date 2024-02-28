@@ -526,15 +526,5 @@ document.getElementById("manage-tags").addEventListener("click", () => {
     });
 });
 
-function closePopup() {
-    let popupDiv = document.querySelector('.popup');
-    let fullscreenDiv = document.querySelector('.fullscreen');
-    let dialog = popupDiv.querySelector('.popup-dialog');
-    dialog.style.transform = 'translateY(-1%)'
-    dialog.style.opacity = '0';
-    dialog.style.display = 'none';
-    fullscreenDiv.style.filter = 'none';
-}
-
 
 
