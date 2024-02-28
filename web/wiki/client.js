@@ -129,13 +129,19 @@ const postMap = new Map();
 const tagMap = new Map();
 const tagPromise = fetchTags();
 const searchPromise = searchPosts();
+function addDisabledTooltip() {
+    let disabledTooltip = document.getElementById("new-post-wrapper");
+    disabledTooltip.classList.add("tooltip", "tooltip-under");
+    disabledTooltip.innerHTML += `
+        <p class="tooltiptext">Posts are Disabled</p>
+    `;
+    document.getElementById("new-post").classList.add("disabled");
+}
 
 global.siteSettings.get('postsEnabled').then(async (enabled) => {
     const me = (await global.getCurrentSession()).employee;
-    if (enabled == 2) {
-        document.getElementById("new-post").classList.add("disabled");
-    } else if (enabled == 1 && !me.isManager) {
-        document.getElementById("new-post").classList.add("disabled");
+    if (enabled == 2 || (enabled == 1 && !me.isManager)) {
+        addDisabledTooltip();
     }
 });
 

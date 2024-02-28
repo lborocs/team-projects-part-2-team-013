@@ -265,7 +265,7 @@ function r_session_register_otp(RequestContext $ctx, string $args) {
     $token = auth_signup_create_token($email, SIGNUP_MODE::SIGNUP_SELF);
 
     if (db_account_fetch($email)) {
-        $message = "Someone tried to register with your email, if this was you please reset your password, if this was not you can safely ignore this email.";
+        $message = "Someone tried to register with your email, if this was you and you have forgotten your password you can reset it via the login, if this was not you can safely ignore this email.";
     } else {
         $message = "Please click the following link to complete your registration process, this link will expire in 30 minutes: https://013.team/register/#". $token;
     }
@@ -414,7 +414,7 @@ function r_employee_invite(RequestContext $ctx, string $args) {
 
     $name = $inviter["firstName"] ?? "" . " " . $inviter["lastName"];
 
-    $message = "$name has invited to register for Make-It-All, click here to complete your registration, this link will expire in 5 days: https://013.team/register/#". $token;
+    $message = "$name has invited you to register for Make-It-All, click here to complete your registration, this link will expire in 5 days: https://013.team/register/#". $token;
 
     send_email($email, $email, "Your invitation to 013.team", $message);
 

@@ -452,6 +452,10 @@ input[type="text"] {
     display: none;
 }
 
+#new-post-wrapper {
+    height: 100%;
+}
+
 #mobile-new-post {
     position: sticky;
     bottom: 0.5rem;
@@ -461,6 +465,7 @@ input[type="text"] {
 }
 
 #new-post {
+    height: 100%;
     background-color: #3098ff;
     color: var(--white);
 }
