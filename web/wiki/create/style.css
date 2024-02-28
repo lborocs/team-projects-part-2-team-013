@@ -211,6 +211,12 @@ input[type="text"] {
     gap: 0.5rem;
     overflow-x: auto;
     display: flex;
+
+    .empty-state {
+        font-size: 14px;
+        font-weight: 600;
+        color: #4e5057;
+    }
 }
 
 #placeholderTag {
@@ -239,8 +245,9 @@ input[type="text"] {
 .submit-row {
     display: flex;
     flex-direction: row;
-    align-items: flex-start;
+    align-items: stretch;
     justify-content: flex-end;
+    height: 54px;
     gap: 1rem;
 }
 
@@ -428,13 +435,26 @@ input[type="text"]:focus-within {
     border: 1px solid var(--border-clr);
     border-radius: 10px;
     background-color: var(--white);
+
+    .search-icon {
+        padding-left: 0.5rem;
+        & span {
+            color: #2d2e30;
+            font-size: 24px;
+        }
+    }
 }
 
 .tag-input input[type="text"] {
     border: none;
     outline: none;
-    padding: 5px;
+    padding: 0.5rem;
     font-size: 14px;
+}
+
+.tag-input input[type="text"]::placeholder {
+    color: #2d2e30;
+    user-select: none;
 }
 
 .tag-input input[type="text"]:focus {

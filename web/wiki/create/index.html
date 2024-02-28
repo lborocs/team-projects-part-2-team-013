@@ -84,22 +84,26 @@
                     </div>
 
                     <div class="submit-row">
-                        <div class="ui-card" id="listOfTags">
-                            <span class="material-symbols-rounded" id="placeholderTag">sell</span>
-                        </div>
-                        <div class="options"><!--used to be called search-dropdown-->
+                        <div class="options">
                             <div class="search-dropdown">
-                                <div class="tag-input"><!--used to have class search-->
-                                    <input class="search-input" type="text" id="input-tag" placeholder="Tags ..." />
+                                <div class="tag-input">
                                     <div class="search-icon" id="glass">
-                                        <span class="material-symbols-rounded">search</span>
+                                        <span class="material-symbols-rounded">box_add</span>
                                     </div>
+                                    <input class="search-input" type="text" id="input-tag" placeholder="Set Topics" />
+                                    
                                     <div class="popover">
                                         <div class="employee-list">
 
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="ui-card" id="listOfTags">
+                            <span class="material-symbols-rounded" id="placeholderTag">sell</span>
+                            <div class="empty-state">
+                                Topics you add appear here
                             </div>
                         </div>
                         <div class="text-button blue disabled" id="submit-button">
