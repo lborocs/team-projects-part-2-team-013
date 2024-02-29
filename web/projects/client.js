@@ -1382,18 +1382,30 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
             } else if (count === MAX_RENDERED_USERS) {
                 assignmentElem.classList.add("tooltip", "tooltip-left");
                 let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - MAX_RENDERED_USERS;
+                if (additionalUsers > 1) {
+                    const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
+                    const url = "data:image/svg+xml;base64," + btoa(icon);
+                
+                    assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
+                    <img src="${url}" class="task-avatar">`
 
-                const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
-                const url = "data:image/svg+xml;base64," + btoa(icon);
-            
-                assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
-                <img src="${url}" class="task-avatar">`
+                    if (update & RENDER_COLUMN) {
+                        usersAssigned.appendChild(assignmentElem);
+                    }
+                    if (update & RENDER_LIST) {
+                        usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                    }
+                } else {
+                    assignmentElem.classList.add("tooltip", "tooltip-left");
+                    assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
+                    <img src="${emp_icon}" class="task-avatar">`
 
-                if (update & RENDER_COLUMN) {
-                    usersAssigned.appendChild(assignmentElem);
-                }
-                if (update & RENDER_LIST) {
-                    usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                    if (update & RENDER_COLUMN) {
+                        usersAssigned.appendChild(assignmentElem);
+                    }
+                    if (update & RENDER_LIST) {
+                        usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                    }
                 }
             }
             taskUserCount.set(assignment.task.taskID, count + 1);
