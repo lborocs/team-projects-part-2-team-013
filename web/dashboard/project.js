@@ -745,7 +745,7 @@ function renderTableMetric() {
 
 
     //here is where the data actually comes in
-    let tasks = projectData.tasks.tasks;
+    let tasks = projectData.tasks.tasks.sort((a, b) => a.state - b.state);
     let assignments = projectData.tasks.assignments;
     tasks.forEach(task => {
         let avatars = "";
