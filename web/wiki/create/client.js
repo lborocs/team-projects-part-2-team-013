@@ -164,7 +164,6 @@ async function renderPostInEditor(post) {
         STATE.previousImages.set(url, image.index);
 
         op.insert.image = url;
-        op.insert.previousID = image.index;
     });
 
     editor.setContents(content);

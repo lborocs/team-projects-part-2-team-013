@@ -277,7 +277,7 @@ function edit_post_images($bucket_id, string $before, string $after, array $befo
 
     $asset_map = [];
     foreach ($before_assets as $asset) {
-        $asset_map[$asset["index"]] = $asset;
+        $asset_map[$asset["index"]] = $asset["asset"];
     }
 
     foreach ($indexes_to_delete as $index) {
@@ -299,7 +299,10 @@ function edit_post_images($bucket_id, string $before, string $after, array $befo
         Asset::from_db($asset)->delete();
     }
 
-    db_post_bind_assets($bucket_id, $assets_to_add);
+    if (count($assets_to_add) > 0) {
+
+        db_post_bind_assets($bucket_id, $assets_to_add);
+    }
 
 }
 
@@ -439,7 +442,7 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
             array_key_exists("images", $body)
             || post_body_get_image_indexes($before_content) != post_body_get_image_indexes($after_content)
         ) {
-            edit_post_images($url_specifiers[0], $before_content, $after_content, $assets, $body["images"]);
+            edit_post_images($url_specifiers[0], $before_content, $after_content, $assets, $body["images"] ?? []);
         }
         unset($body["images"]);
 
