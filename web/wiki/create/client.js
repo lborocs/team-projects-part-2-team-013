@@ -46,6 +46,7 @@ function createImageID() {
     while (STATE.usedImageIDs.has(id)) {
         id++;
     };
+    STATE.usedImageIDs.add(id);
     return id;
 }
 
@@ -475,6 +476,11 @@ async function setPostTags(editing, postID) {
 }
 
 async function handleTagRes(res) {
+
+    if (res == undefined) {
+        return;
+    }
+
 
     if (res.success == true) {
         console.log("tags set successfully");
