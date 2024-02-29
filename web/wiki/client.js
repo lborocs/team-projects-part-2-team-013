@@ -477,11 +477,7 @@ function renderPostToFragment(postID, title, author, isTechnical, tags) {
     return post
 }
 
-
-searchInput.addEventListener("input", updatePosts)
-
-tagSearchInput.addEventListener("input", () => {
-
+function updateTagView(){
     const tags = tagSelection.querySelectorAll('.tag')
 
     let found = false
@@ -510,8 +506,16 @@ tagSearchInput.addEventListener("input", () => {
         document.querySelector('.tag-selection-no-results').classList.add('norender')
         tagSelection.classList.remove('norender')
     }
+}
 
-})
+searchInput.addEventListener("input", updatePosts)
+
+document.getElementById("clearTagView").addEventListener("click", () => {
+    tagSearchInput.value = "";
+    updateTagView();
+});
+
+tagSearchInput.addEventListener("input", updateTagView)
 
 document.querySelectorAll('input[name="category"]').forEach((radio) => {
     radio.addEventListener('change', () => {

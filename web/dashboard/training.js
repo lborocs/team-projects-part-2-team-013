@@ -55,15 +55,31 @@ export async function init() {
             helpfulLabels = trainingData.helpfulPosts.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
             helpfulTooltips = trainingData.helpfulPosts.map(post => post.title)
 
-            //format to new limit
-            postViews.length = CHART_DATA_LIMIT;
-            postLabels.length = CHART_DATA_LIMIT;
-            tagViews.length = CHART_DATA_LIMIT;
-            tagLabels.length = CHART_DATA_LIMIT;
-            watchedPosts.length = CHART_DATA_LIMIT;
-            watchedLabels.length = CHART_DATA_LIMIT;
-            helpfulPosts.length = CHART_DATA_LIMIT;
-            helpfulLabels.length = CHART_DATA_LIMIT;
+            //conditionally checks if the lenght actually exceed the limit, if we dont check the charts stretch out
+            if (postViews.length > CHART_DATA_LIMIT) {
+                postViews.length = CHART_DATA_LIMIT;
+            }
+            if (postLabels.length > CHART_DATA_LIMIT) {
+                postLabels.length = CHART_DATA_LIMIT;
+            }
+            if (tagViews.length > CHART_DATA_LIMIT) {
+                tagViews.length = CHART_DATA_LIMIT;
+            }
+            if (tagLabels.length > CHART_DATA_LIMIT) {
+                tagLabels.length = CHART_DATA_LIMIT;
+            }
+            if (watchedPosts.length > CHART_DATA_LIMIT) {
+                watchedPosts.length = CHART_DATA_LIMIT;
+            }
+            if (watchedLabels.length > CHART_DATA_LIMIT) {
+                watchedLabels.length = CHART_DATA_LIMIT;
+            }
+            if (helpfulPosts.length > CHART_DATA_LIMIT) {
+                helpfulPosts.length = CHART_DATA_LIMIT;
+            }
+            if (helpfulLabels.length > CHART_DATA_LIMIT) {
+                helpfulLabels.length = CHART_DATA_LIMIT;
+            }
 
             //update the charts
             postsChart.data.labels = postLabels;
@@ -89,10 +105,10 @@ export async function init() {
     
 
     //creates metric-cards to put the charts in
-    renderEmptyMetric("popular-posts-chart", "Top Viewed Posts");
-    renderEmptyMetric("popular-tags-chart", "Top Viewed Topics");
-    renderEmptyMetric("watched-posts-chart", "Most Watched Posts");
-    renderEmptyMetric("helpful-posts-chart", "Most Helpful Posts");;
+    renderEmptyMetric("popular-posts-chart", "Top Viewed Posts", "The top viewed posts in the last 30 days");
+    renderEmptyMetric("popular-tags-chart", "Top Viewed Topics", "The top viewed topics in the last 30 days");
+    renderEmptyMetric("watched-posts-chart", "Most Watched Posts", "The posts with the most employees watching them");
+    renderEmptyMetric("helpful-posts-chart", "Most Helpful Posts", "The posts which the most employees marked 'Found this Helpul' in the last 30 days");
 
     //gets all the needed data into a single point
     let trainingData = await getData();
@@ -147,6 +163,7 @@ export async function init() {
                     'rgba(54, 162, 235, 1)',
                     'rgba(255, 206, 86, 1)',
                 ],
+                borderRadius: 3,
                 borderWidth: 1
             }]
         },
@@ -178,6 +195,7 @@ export async function init() {
                 data: tagViews, 
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
                 borderColor: 'rgba(54, 162, 235, 1)',
+                borderRadius: 3,
                 borderWidth: 1
             }]
         },
@@ -210,6 +228,7 @@ export async function init() {
                 data: watchedPosts, 
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
                 borderColor: 'rgba(255, 99, 132, 1)',
+                borderRadius: 3,
                 borderWidth: 1
             }]
         },
@@ -240,6 +259,7 @@ export async function init() {
                 data: helpfulPosts, 
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
+                borderRadius: 3,
                 borderWidth: 1
             }]
         },
@@ -262,7 +282,7 @@ export async function init() {
 
 }
 
-function renderEmptyMetric(id, title) {
+function renderEmptyMetric(id, title, description = "") {
     let metricCard = document.createElement("div");
     metricCard.classList.add("metric-card");
     metricCard.classList.add("training")
@@ -274,6 +294,15 @@ function renderEmptyMetric(id, title) {
             ${title}
         </div>
     `;
+
+    if (description) {
+        metricTitle.innerHTML += `
+            <div class="info tooltip tooltip-left">
+                <span class="material-symbols-rounded">info</span>
+                <p class="tooltiptext">${description}</p>
+            </div>
+        `;
+    }
 
     metricCard.appendChild(metricTitle);
 

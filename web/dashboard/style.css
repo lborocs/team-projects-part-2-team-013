@@ -100,9 +100,12 @@
             
         }
 
-        .context-menu {
+        .info {
             color: var(--text-off-black, #0f0f0f);
             margin-right: 0.25rem;
+            user-select: none;
+            cursor: pointer;
+
         }
     }
 
@@ -322,10 +325,6 @@
             margin-right: 0.25rem;
             margin-left: 0.25rem;
         }
-    }
-
-    .title.training-only {
-        margin-left: 1rem;
     }
 
     .time-selection {
