@@ -269,12 +269,6 @@
         }
 
     }
-
-    .overview:hover {
-        cursor: pointer;
-        background-color: var(--light-grey-bg, #f1f1f1);
-    
-    }
 }
 
 
@@ -726,6 +720,11 @@ a {
         background-color: var(--light-gray-bg, #f1f1f1);
 
     }
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 

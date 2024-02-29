@@ -81,7 +81,7 @@ export async function init(id) {
     overviewValues.completedTasks = completionData.values[2]
 
     overviewValues.overdueTasksCurrent = projectData.tasks.tasks.filter(task => (task.dueDate && task.dueDate < new Date().getTime()) && task.state != 2).length,
-    overviewValues.overdueTasksTotal = projectData.tasks.tasks.filter(task => (task.dueDate && task.completedAt && task.dueDate < task.completedAt) && task.state == 2).length
+    overviewValues.overdueTasksTotal = overviewValues.overdueTasksCurrent + projectData.tasks.tasks.filter(task => task.state == 2 && task.completedAt > task.dueDate).length
     
     overviewValues.totalManhours = 0
     projectData.tasks.tasks.forEach(task => {
@@ -92,8 +92,8 @@ export async function init(id) {
         const dueInDays = Math.ceil((projectData.project.dueDate - new Date().getTime()) / (1000 * 60 * 60 * 24));
         overviewValues.dueInDays = global.formatDayDelta(dueInDays);
     } else {
-        overviewValues.dueInDays = "No Due Date";
-        document.querySelector("#due-date-container")?.classList.add("norender");
+        overviewValues.dueInDays = "Not set";
+        document.querySelector("#due-date-container")?.classList.add("disabled");
     }
 
 
@@ -498,11 +498,11 @@ async function getHistoricalCompletionData(projectData, dayDelta) {
 async function getTaskCompletion(projectData) {
     let completed = 0;
     let inProgress = 0;
-    let toDo = 0;
+    let notStarted = 0;
     projectData.tasks.tasks.forEach(task => {
         switch (task.state) {
             case 0:
-                toDo++;
+                notStarted++;
                 break;
             case 1:
                 inProgress++;
@@ -513,8 +513,8 @@ async function getTaskCompletion(projectData) {
         }
     });
     return {
-        labels: ["To-do", "In-Progress", "Finished"],
-        values:[toDo, inProgress, completed]
+        labels: ["Not-Started", "In-Progress", "Finished"],
+        values:[notStarted, inProgress, completed]
     };
 }
 
