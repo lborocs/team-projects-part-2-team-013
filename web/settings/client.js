@@ -580,7 +580,18 @@ function passwordPopup() {
         newPasswordInput.addEventListener('input', updateCriteriaHints);
         confirmPasswordInput.addEventListener('input', updateMatchingHint);
 
-
+        document.querySelectorAll('#togglePassword').forEach((toggle) => {
+            toggle.addEventListener('click', (event) => {
+                let input = event.target.previousElementSibling;
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    event.target.textContent = "visibility";
+                } else {
+                    input.type = 'password';
+                    event.target.textContent = "visibility_off";
+                }
+            });
+        });
         function resetCriteria(element) {
             element.style.color = EMPTY_COLOR;
             element.querySelector("span").textContent = EMPTY_ICON;
