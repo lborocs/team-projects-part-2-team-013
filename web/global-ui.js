@@ -1518,12 +1518,15 @@ function invitePopup() {
             if (emailInput.value.includes("@") && emailInput.value.includes(".")){
                 actionButton.classList.remove("disabled");
 
-                if (e.key == "Enter") {
-                    ctx.completeModal(true);
-                }
-
             } else {
                 actionButton.classList.add("disabled");
+            }
+        });
+
+        emailInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && emailInput.value.includes("@") && emailInput.value.includes(".")) {
+                e.preventDefault();
+                ctx.completeModal(true);
             }
         });
 
