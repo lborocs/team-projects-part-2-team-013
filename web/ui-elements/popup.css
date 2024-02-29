@@ -121,5 +121,11 @@
 
 }
 
+#project-popup {
+    .text-button.red {
+        opacity: 0.8;
+    }
+}
+
 
 

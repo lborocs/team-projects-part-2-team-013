@@ -3002,6 +3002,23 @@ function confirmDelete() {
     );
 }
 
+function confirmDeleteProject(name) {
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+            <div class="modal-text">Are you sure you want to delete "${name}"?</div>
+            <div class="modal-subtext">All data in this project will be lost.</div>
+        `;
+    }
+
+    return global.popupModal(
+        false,
+        "Delete Project",
+        callback,
+        {text: "Delete", class:"red"}
+    );
+
+}
+
 
 window.onload = function() {
     let deleteTaskButtons = document.querySelectorAll(".delete-button");
@@ -3739,10 +3756,10 @@ async function projectPopup(project){
                 <div class="created-at view-only">
                     Project created ${new Date(project.createdAt).toLocaleDateString()}
                 </div>
-                <div class="text-button edit-only" id="delete-button">
+                <div class="text-button red edit-only" id="delete-button">
                     <div class="button-icon">
                         <span class="material-symbols-rounded">
-                            inventory_2
+                            delete
                         </span>
                     </div>
                     <div class="button-text">
@@ -3994,17 +4011,45 @@ async function projectPopup(project){
     deleteButton.addEventListener('click', async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        let confirmed = await confirmDelete();
-        if (confirmed) {
+        confirmDeleteProject(project.name).then(async () => {
             let res = await delete_api(`/project/project.php/project/${project.projID}`);
             if (res.success) {
-                console.log("[projectPopup] project deleted successfully")
-                resolve();
+                console.error("[projectPopup] project deleted successfully")
+                dialog.style.transform = 'translateY(-1%)'
+                dialog.style.opacity = '0';
+                dialog.style.display = 'none';
+                fullscreenDiv.style.filter = 'none';
+
+                fullscreenDiv.style.pointerEvents = 'auto';
+                Array.from(document.querySelectorAll('.main')).forEach((element) => {
+                    element.style.pointerEvents = 'auto';
+                })
+                if (getActivePane() == "individual-project-pane") {
+                    window.location.href = "./";
+                }
+
+                await searchAndRenderProjects();
             } else {
                 console.error("[projectPopup] couldn't delete project")
+                dialog.style.transform = 'translateY(-1%)'
+                dialog.style.opacity = '0';
+                dialog.style.display = 'none';
+                fullscreenDiv.style.filter = 'none';
+
+                fullscreenDiv.style.pointerEvents = 'auto';
+                Array.from(document.querySelectorAll('.main')).forEach((element) => {
+                    element.style.pointerEvents = 'auto';
+                })
+                console.log("[addTaskDiscardButton] rejecting")
+
+                await searchAndRenderProjects();
             }
-        }
-        
+        }).catch(async (e) => {
+            console.log('[DeletTaskButtonsClick] Deletion cancelled');
+            console.log(e)
+            await projectPopup(project);
+        });
+
     })
 
 
