@@ -506,6 +506,10 @@
         font-weight: 600;
     }
 
+    .manhours-container > .description-header {
+        margin-bottom: 0.5rem;
+    }
+
     .description {
         font-size: 1em;
         font-weight: 500;
@@ -1790,9 +1794,10 @@
     border-radius: 3px;
     background-color: var(--light-grey-bg);
 
-
-    .manhours-label {
-        margin-right: 1rem;
+    .colon {
+        position: relative;
+        top: 11px;
+        font-size: 16px;
     }
 }
 /* project table column width definitions */
@@ -1924,6 +1929,7 @@
         display: flex;
         flex-direction: row;
         gap: 0.5em;
+        margin-top: 0.25rem;
         align-items: center;
         justify-content: space-between;
         width: 100%;
@@ -2015,7 +2021,7 @@ td:has(#more) {
 
 .manhours-submitted:has(.manhours-submitted-row) {
     border-bottom: solid 1px var(--border-clr);
-    padding-bottom: 0.25em;
+    padding-bottom: 0.5rem;
 }
 
 #mobile-search-icon {

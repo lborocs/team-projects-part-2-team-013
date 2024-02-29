@@ -2547,28 +2547,26 @@ async function addTask() {
                             Hours
                         </div>
                     </div>
-
+                    <div class="colon">:</div>
                     <div class="number-picker" id="expected-man-minutes">
-                        <div class="number-picker" id="expected-man-minutes">
-                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
-                                <div class="dropdown-text">
-                                    0
-                                </div>
-                                <div class="dropdown-chevron">
-                                    <span class="material-symbols-rounded">
-                                        expand_more
-                                    </span>
-                                </div>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-option" id="manhours-minutes0">0</div>
-                                    <div class="dropdown-option" id="manhours-minutes15">15</div>
-                                    <div class="dropdown-option" id="manhours-minutes30">30</div>
-                                    <div class="dropdown-option" id="manhours-minutes45">45</div>
-                                </div>
+                        <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                            <div class="dropdown-text">
+                                0
                             </div>
-                            <div class="manhours-label">
-                                Minutes
+                            <div class="dropdown-chevron">
+                                <span class="material-symbols-rounded">
+                                    expand_more
+                                </span>
                             </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-option" id="manhours-minutes0">0</div>
+                                <div class="dropdown-option" id="manhours-minutes15">15</div>
+                                <div class="dropdown-option" id="manhours-minutes30">30</div>
+                                <div class="dropdown-option" id="manhours-minutes45">45</div>
+                            </div>
+                        </div>
+                        <div class="manhours-label">
+                            Minutes
                         </div>
                     </div>
                 </div>
@@ -3492,29 +3490,28 @@ async function editTaskPopup(task) {
                                 expand_less
                             </span>
                         </div>
-                        <div class="popup-subtitle">Hours</div>
+                        <div class="manhours-label">Hours</div>
                     </div>
+                    <div class="colon">:</div>
                     <div class="number-picker" id="expected-man-minutes">
-                        <div class="number-picker" id="expected-man-minutes">
-                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
-                                <div class="dropdown-text">
-                                    ${minutesInput}
-                                </div>
-                                <div class="dropdown-chevron">
-                                    <span class="material-symbols-rounded">
-                                        expand_more
-                                    </span>
-                                </div>
-                                <div class="dropdown-menu">
-                                    <div class="dropdown-option" id="manhours-minutes0" value="0">0</div>
-                                    <div class="dropdown-option" id="manhours-minutes15" value="15">15</div>
-                                    <div class="dropdown-option" id="manhours-minutes30" value="30">30</div>
-                                    <div class="dropdown-option" id="manhours-minutes45" value="45">45</div>
-                                </div>
+                        <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                            <div class="dropdown-text">
+                                ${minutesInput}
                             </div>
-                            <div class="popup-subtitle">
-                                Minutes
+                            <div class="dropdown-chevron">
+                                <span class="material-symbols-rounded">
+                                    expand_more
+                                </span>
                             </div>
+                            <div class="dropdown-menu">
+                                <div class="dropdown-option" id="manhours-minutes0" value="0">0</div>
+                                <div class="dropdown-option" id="manhours-minutes15" value="15">15</div>
+                                <div class="dropdown-option" id="manhours-minutes30" value="30">30</div>
+                                <div class="dropdown-option" id="manhours-minutes45" value="45">45</div>
+                            </div>
+                        </div>
+                        <div class="manhours-label">
+                            Minutes
                         </div>
                     </div>
                 </div>
