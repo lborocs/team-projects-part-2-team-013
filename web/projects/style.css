@@ -574,11 +574,11 @@
     border-radius: 6px;
 }
 
-.team-leader-name:hover {
+/* .team-leader-name:hover {
     background-color: var(--box-shadow-softer-clr, rgba(0,0,0,0.1));
     cursor: pointer;
     transition: 0.1s ease-out;
-}
+} */
 
 .team-leader-title {
     font-weight: 400;
