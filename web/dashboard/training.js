@@ -28,6 +28,8 @@ export async function init() {
     renderEmptyMetric("popular-tags-chart", "Top Viewed Topics");
     renderEmptyMetric("watched-posts-chart", "Most Watched Posts");
     renderEmptyMetric("helpful-posts-chart", "Most Helpful Posts");
+    renderEmptyMetric("unhelpful-posts-chart", "Least Helpful Posts");
+    renderEmptyMetric("unhelpful-in-popular-chart", "Least Helpful Posts in Top Viewed");
 
     //gets all the needed data into a single point
     let trainingData = await getData();
@@ -50,6 +52,17 @@ export async function init() {
     const helpfulLabels = trainingData.helpfulPosts.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
     const helpfulTooltips = trainingData.helpfulPosts.map(post => post.title)
 
+    //"least helpful" here means the posts with the least helpfuls that are also in the top viewed
+    const leastHelpfulPosts = trainingData.unhelpfulPostsInPopular.map(post => post.helpful)
+    //get the views from each leastHelpfulPosts object
+    const leastHelpfulViews = trainingData.unhelpfulPostsInPopular.map(post => post.views)
+    const leastHelpfulHelpfuls = trainingData.unhelpfulPostsInPopular.map(post => post.helpful)
+
+
+    const leastHelpfulLabels = trainingData.unhelpfulPostsInPopular.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
+    const leastHelpfulTooltips = trainingData.unhelpfulPostsInPopular.map(post => post.title)
+
+
     //limits the number of items shown by the charts so the data isnt overwhelming
     //the ability to change this may be implemented
     postViews.length = CHART_DATA_LIMIT;
@@ -60,6 +73,8 @@ export async function init() {
     watchedLabels.length = CHART_DATA_LIMIT;
     helpfulPosts.length = CHART_DATA_LIMIT;
     helpfulLabels.length = CHART_DATA_LIMIT;
+    leastHelpfulPosts.length = CHART_DATA_LIMIT;
+    leastHelpfulLabels.length = CHART_DATA_LIMIT;
 
 
 
@@ -196,6 +211,7 @@ export async function init() {
 
 
 
+
 }
 
 function renderEmptyMetric(id, title) {
@@ -239,18 +255,24 @@ export async function getData(daysInPast = 30) {
     const viewsRes = await get_api(`/employee/manager.php/mostviewedposts?delta=${time}`)
     const subscriptionsRes = await get_api(`/employee/manager.php/mostsubscribedposts`)
     const helpfulRes = await get_api(`/employee/manager.php/mosthelpfulposts`)
+    const unhelpfulRes = await get_api(`/employee/manager.php/leasthelpfulposts`)
 
     const popularTags = tagsRes.data.tags;
     const popularPosts = viewsRes.data.posts;
     const watchedPosts = subscriptionsRes.data.posts;
     const helpfulPosts = helpfulRes.data.posts;
+    const unhelpfulPosts = unhelpfulRes.data.posts;
+
+
+
+
 
 
     data = {
         popularTags,
         popularPosts,
         helpfulPosts,
-        watchedPosts
+        watchedPosts,
     }
     return data;
 }

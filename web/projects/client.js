@@ -390,7 +390,7 @@ async function addManHoursPopup(task) {
     } else {
         global.popupAlert(
             "Failed to log your manhours",
-            "The following error was occured: " + res.error.message,
+            res.error.message,
             "error",
         );
 

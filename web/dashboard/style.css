@@ -263,6 +263,11 @@
         
         }
 
+        .green {
+            color: #2e7d32;
+            background-color: rgba(0,128,0,0.1);
+        }
+
     }
 
     .overview:hover {
