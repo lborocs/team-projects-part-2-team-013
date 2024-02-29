@@ -619,6 +619,11 @@ editor.on("text-change", () => {
     STATE.anyChanges = true;
 });
 
+categorySelector.addEventListener("input", () => {
+    submitButton.classList.remove("disabled");
+    STATE.anyChanges = true;
+});
+
 
 
 
