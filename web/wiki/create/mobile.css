@@ -19,6 +19,18 @@
         align-items: center;
     }
 
+    #page-title {
+        display: none;
+    }
+
+    .type-of-post {
+        width: 100%;
+    }
+
+    .category {
+        width: 100%;
+    }
+
     .post {
         margin-left: 1em;
         margin-right: 1em;
