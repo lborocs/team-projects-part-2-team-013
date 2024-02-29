@@ -148,7 +148,7 @@ async function renderPostInEditor(post) {
     const indexMap = {};
 
     content.ops.forEach((op, key) => {
-        if (op.insert.image) {
+        if (op.insert.image !== undefined) {
             indexMap[op.insert.image] = key; 
             STATE.usedImageIDs.add(op.insert.image);
         }
@@ -164,7 +164,6 @@ async function renderPostInEditor(post) {
         STATE.previousImages.set(url, image.index);
 
         op.insert.image = url;
-        op.insert.previousID = image.index;
     });
 
     editor.setContents(content);
@@ -591,7 +590,7 @@ async function editPost() {
             const tagRes = await setTagsPromise;
             handleTagRes(tagRes).then(() => {
                 STATE.anyChanges = false;
-                window.location.href = `/wiki/post/#${res.data.postID}`;
+                window.location.href = `/wiki/post/#${STATE.originalPost.postID}`;
             });
         });
     } else {

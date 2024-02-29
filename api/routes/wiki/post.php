@@ -277,7 +277,7 @@ function edit_post_images($bucket_id, string $before, string $after, array $befo
 
     $asset_map = [];
     foreach ($before_assets as $asset) {
-        $asset_map[$asset["index"]] = $asset;
+        $asset_map[$asset["index"]] = $asset["asset"];
     }
 
     foreach ($indexes_to_delete as $index) {
@@ -299,7 +299,10 @@ function edit_post_images($bucket_id, string $before, string $after, array $befo
         Asset::from_db($asset)->delete();
     }
 
-    db_post_bind_assets($bucket_id, $assets_to_add);
+    if (count($assets_to_add) > 0) {
+
+        db_post_bind_assets($bucket_id, $assets_to_add);
+    }
 
 }
 
@@ -418,6 +421,17 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
 
         $assets = db_post_fetch_assets($ctx->post["postID"]);
 
+        $post_id = $url_specifiers[0];
+
+        $assets = array_map(
+            function($asset) use ($post_id) {
+                $asset["asset"]["bucketID"] = $post_id;
+                $asset["asset"]["assetType"] = ASSET_TYPE::POST_MEDIA;
+                return $asset;
+            },
+            $assets
+        );
+
         if (strcmp($before_content, $after_content) == 0) {
             respond_bad_request("Expected post content to be different", ERROR_BODY_FIELD_INVALID_DATA);
         } else {
@@ -428,7 +442,7 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
             array_key_exists("images", $body)
             || post_body_get_image_indexes($before_content) != post_body_get_image_indexes($after_content)
         ) {
-            edit_post_images($url_specifiers[0], $before_content, $after_content, $assets, $body["images"]);
+            edit_post_images($url_specifiers[0], $before_content, $after_content, $assets, $body["images"] ?? []);
         }
         unset($body["images"]);
 
@@ -442,7 +456,21 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
 }
 
 function _delete_post(RequestContext $ctx, array $url_specifiers) {
-    db_post_delete($url_specifiers[0]);
+
+    $post_id = $url_specifiers[0];
+
+    $images = array_map(
+        function($asset) use ($post_id) {
+            $asset["asset"]["bucketID"] = $post_id;
+            $asset["asset"]["assetType"] = ASSET_TYPE::POST_MEDIA;
+            return $asset["asset"];
+        },
+        db_post_fetch_assets($ctx->post["postID"])
+    );
+    foreach ($images as $image) {
+        Asset::from_db($image)->delete();
+    }
+    db_post_delete($post_id);
     respond_no_content();
 }
 

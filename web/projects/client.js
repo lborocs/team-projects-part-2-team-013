@@ -1342,7 +1342,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         return employees.get(a.employee.empID).deleted - employees.get(b.employee.empID).deleted;
     });
 
-    const MAX_RENDERED_USERS = 5;
+    const MAX_RENDERED_USERS = 3;
     const MAX_RENDERED_USERS_LIST = 3;
 
 
@@ -2832,6 +2832,16 @@ async function addTask() {
             });   
             if (assignmentRes.success) {
                 task.assignments = assignmentRes.data.assigned;
+                task.employeeManHours = [];
+                task.assignments.forEach((assignment) => {
+                    //task.manHours is an array of objects, each containing empID, manhours
+                    task.employeeManHours.push({
+                        empID: assignment,
+                        employeeManHours: 0
+                    });
+                })
+                console.error(task)
+                console.error(globalTasksList)
                 globalTasksList.push(task);
                 searchAndRenderTasks();
 
@@ -2842,7 +2852,7 @@ async function addTask() {
                     }
                 });
 
-                renderAssignments(pseudoAssignments)
+                renderAssignments(pseudoAssignments);
 
                 dialog.style.transform = 'translateY(-1%)'
                 dialog.style.opacity = '0';

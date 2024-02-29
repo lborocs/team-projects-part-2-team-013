@@ -369,10 +369,11 @@ async function setUpPostsEventListeners() {
             event.stopPropagation();
             event.preventDefault();
             confirmDelete().then(async () => {
-                
+                console.log("Deleting post");
+                console.log(postID);
                 const res = await delete_api(`/wiki/post.php/post/${postID}`);
 
-                if (res.successs) {
+                if (res.success) {
                     post.remove();
                     global.popupAlert(
                         "Post Deleted",
