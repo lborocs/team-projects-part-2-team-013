@@ -85,11 +85,13 @@ async function getPostData(postID) {
     const indexMap = {};
 
     content.ops.forEach((op, key) => {
-        if (op.insert.image) {
+        if (op.insert.image !== undefined) {
             indexMap[op.insert.image] = key; 
         }
     });
 
+    console.log("content", content);
+    console.log("indexMap", indexMap);
 
     post.images.forEach((image) => {
         const asset = image.asset;

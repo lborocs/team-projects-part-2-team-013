@@ -22,6 +22,10 @@
         font-size: 16px;
 
     }
+    &.selected {
+        transition: background-color 0.05s ease-out;
+        background-color: var(--make-it-all-highlight);
+    }
 }
 
 #tagCloseButton {
@@ -66,7 +70,21 @@
     & span {
         color: #4e5057;
         font-size: 16px;
-    }
+    }    
+}
 
+.tag-selection{
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    overflow-y: auto;
+    overflow-x: clip;
     
+    .tag:hover {
+        cursor: pointer;
+    }
 }

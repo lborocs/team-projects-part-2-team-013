@@ -1,33 +1,59 @@
 import * as global from "../../global-ui.js"
 
-const tags = document.getElementById("tags");
-const input = document.getElementById("input-tag");
+const fullScreenDiv = document.querySelector(".main");
+
+
+const postTagsList = document.querySelector("#listOfTags > .tags");
+const postTagsListEmptyState = document.querySelector("#listOfTags > .empty-state");
 const submitButton = document.getElementById("submit-button");
-var editing = false;
-var postBeingEdited = null;
-
-var anyChanges = false;
-
-var currentTags = [];
-
-var selectTags = [];
+const submitButtonLabel = submitButton.querySelector(".button-text");
+const selectTagsButton = document.getElementById("add-tags-button");
 
 const pageTitle = document.getElementById("page-title");
 
+
 const postTitleInput = document.getElementById("post-title-input");
 const categorySelector = document.querySelector(".type-of-post");
-var isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
 
-const selectedTagsRow = document.getElementById("listOfTags");
 
-const selectTagsButton = document.getElementById("add-tags-button");
+const STATE = {
+    editing: true,
+    originalPost: null,
+    currentTags: new Set(),
+    anyChanges: false,
+    usedImageIDs: new Set(),
+    previousImages: new Map(),
+}
+
+document.state = STATE;
+const tagMap = new Map();
+
+
+const promises = {
+    tags: fetchTags(),
+    post: fetchPost(),
+}
+
+setEditing();
+
+function getPostId() {
+    return window.location.hash.substring(1);
+}
+
+function createImageID() {
+    let id = 0;
+    while (STATE.usedImageIDs.has(id)) {
+        id++;
+    };
+    return id;
+}
+
 selectTagsButton.addEventListener("click", () => {
     selectTagsPopup()
 });
 
-const globalTagsList = await fetchTags();
 
-let globalCurrentTags = [];
+
 
 function renderTag(tag, parent) {
     let tagDiv = document.createElement("div");
@@ -41,67 +67,97 @@ function renderTag(tag, parent) {
 }
 
 
-function getQueryParam() {
-    return window.location.hash.substring(1);
-}
-
-function findTag(tagID) {
-    return function (tag) {
-        return tag.tagID === tagID;
-    }
-}
 
 async function fetchTags() {
-    const data = await get_api("/wiki/post.php/tags");
-    console.log(data);
-    if (data.success == true) {
-        console.log("Tags have been fetched")
-        console.log(data.data.tags);
-        return data.data.tags;
+    const res = await get_api("/wiki/post.php/tags");
+
+    if (res.success == true) {
+        res.data.tags.forEach((tag) => {
+            tagMap.set(tag.tagID, tag);
+        });
     } else {
-        console.log("Tags failed to be fetched")
+        global.popupAlert(
+            "Sorry, we couldn't fetch topics right now, please try again.",
+            "The following error occured: " + res.error.message,
+            "error"
+        );
+    }
+}
+
+async function fetchPost() {
+
+    let postID = getPostId();
+
+    const res = await get_api(`/wiki/post.php/post/${postID}`);
+    if (res.success == true) {
+        STATE.originalPost = res.data;
+    } else {
+        global.popupAlert(
+            "Sorry, we couldn't find the post you're trying to edit",
+            "The following error occured: " + res.error.message,
+            "error"
+        ).finally(() => {
+            window.location.href = "/wiki/";
+        });
     }
 }
 
 
-function setEditing() {
-    let postID = getQueryParam();
+async function setEditing() {
+    let postID = getPostId();
 
     if (postID == "") {
         global.setBreadcrumb(["Wiki", "Create Post"], ["/wiki/", "/wiki/create/"]);
         pageTitle.innerHTML = "Create Post";
+        STATE.editing = false;
         return
     }
 
-    if (postID != "") {
-        editing = true;
-    
-        //sets the breadcrumb, title, submit button text for editing
-        if (editing) {
-            global.setBreadcrumb(["Wiki", "Edit Post"], ["/wiki/", `/wiki/create/#${postID}`]);
-            pageTitle.innerHTML = "Edit Post";
-            document.title = "Edit Post";
-            submitButton.innerHTML = '<div class="button-text">Update post </div> <div class="button-icon"> <span class="material-symbols-rounded">done</span> </div>';
-            getPostData(postID).then((post) => {
-                renderPostInEditor(post);
-            });
-        }
-    }
-        
+    STATE.editing = true;
+
+    //sets the breadcrumb, title, submit button text for editing
+    global.setBreadcrumb(["Wiki", "Edit Post"], ["/wiki/", `/wiki/create/#${postID}`]);
+    pageTitle.innerHTML = "Edit Post";
+    document.title = "Edit Post";
+    submitButtonLabel.innerText = "Save Changes";
+
+    await promises.post;
+
+    await renderPostInEditor(STATE.originalPost);
+
 }
 
-function renderPostInEditor(post) {
-    console.log("Rendering post in editor");
-    console.log(post);
-    postBeingEdited = post;
-    console.error(postBeingEdited)
-    console.error(globalCurrentTags)
+async function renderPostInEditor(post) {
 
-    const postContent = JSON.parse(post.content);
+    const content = JSON.parse(post.content);
+
+    const indexMap = {};
+
+    content.ops.forEach((op, key) => {
+        if (op.insert.image) {
+            indexMap[op.insert.image] = key; 
+            STATE.usedImageIDs.add(op.insert.image);
+        }
+    });
+
+
+    post.images.forEach((image) => {
+        const asset = image.asset;
+        const op = content.ops[indexMap[image.index]]
+
+        const url = global.assetToUrl(global.ASSET_TYPE_POST, post.postID, asset.assetID, asset.contentType);
+
+        STATE.previousImages.set(url, image.index);
+
+        op.insert.image = url;
+        op.insert.previousID = image.index;
+    });
+
+    editor.setContents(content);
+
+
     postTitleInput.value = post.title;
 
-    console.log("setting cotnent to", postContent);
-    quill.setContents(postContent);
 
     if (post.isTechnical == 1) {
         document.getElementsByClassName("type-of-post")[0].getElementsByTagName("input")[0].checked = true;
@@ -113,35 +169,15 @@ function renderPostInEditor(post) {
         return
     }
 
-    post.tags.forEach((tag) => {
-        let tagObj = globalTagsList.find(findTag(tag.tagID));
-        globalCurrentTags.push(tagObj);
-        renderTag(tagObj, tags);
+    await promises.tags;
+
+    post.tags.forEach((tagID) => {    
+        addTagToCurrentList(tagID);
     });
-    console.error(globalCurrentTags)
 }
 
 
-
-
-async function getPostData(postID) {
-    const data = await get_api(`/wiki/post.php/post/${postID}`);
-    if (!data.success) {
-        console.error("[getPostData] error fetching post: ", data.data);
-        return;
-    }
-    const post = data.data;
-
-    //post.title
-    //post.content
-    //post.author.firstName
-    //post.author.lastName)
-    // global.formatDateFull(new Date(post.createdAt * 1000))
-    //post.postID
-    return post
-}
-
-var quill = new Quill('#editor', {
+const editor = new Quill('#editor', {
     modules: {
         'toolbar': [
             ['bold', 'italic', 'underline'],
@@ -153,141 +189,17 @@ var quill = new Quill('#editor', {
     },
     theme: 'snow'
 });
-document.editor = quill;
-
-
-
-
-
-async function createPost(data) {
-    const response = await post_api("/wiki/post.php/post", data);
-    console.log(response);
-    return response.data.postID
-}
-async function updatePost(postID, data) {
-    const response = await patch_api("/wiki/post.php/post/" + postID, data);
-    console.log(response);
-}
-async function updateTags(postID, body) {
-    const response = await put_api("/wiki/post.php/post/" + postID + "/tags", body);
-    console.log(response);
-}
-
-async function submitPost() {
-    const title = postTitleInput.value;
-
-    // js has no native deep copy so we have to use json
-    const content = JSON.parse(JSON.stringify(quill.getContents()));
-    const images = {};
-
-    Object.entries(content.ops).forEach(([key, value]) => {
-        if (value.insert.image) {
-            // remove the data:image tag
-            images[key] = value.insert.image.split(",")[1];
-            content.ops[key].insert.image = `${key}`;
-        }
-    });
-
-
-    var body = JSON.stringify(content);
-    var isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
-
-    const checkTempPromises = currentTags.map((tag) => tag.checkTemp());
-    Promise.all(checkTempPromises)
-        .then(async () => {
-            var tagsToSubmit = [];
-            currentTags.forEach((tag) => {
-                tagsToSubmit.push(tag.tagID);
-            });
-            console.log(tagsToSubmit);
-           
-            var tagBody = {
-                "tags": tagsToSubmit,
-            };
-            console.log("tag body")
-            console.log(tagBody);
-            if (editing) {
-
-                let postBody = {}
-
-                let postID = getQueryParam()
-
-                const existingData = await getPostData(postID)
-
-                if (existingData.title != title) {
-                    console.log(existingData.title, title)
-                    postBody.title = title;
-                }
-
-                if (existingData.content != body) {
-                    console.log(existingData.content)
-                    console.log(body)
-                    postBody.content = body;
-                }
-
-                if (existingData.isTechnical != isTechnical) {
-                    console.log(existingData.isTechnical, isTechnical)
-                    postBody.isTechnical = isTechnical + 0;
-                }
-
-                if (Object.keys(images).length > 0) {
-                    console.log(images)
-                    postBody.images = images;
-                }
-
-                if (Object.keys(postBody).length === 0) {
-                    console.log("No changes to post")
-                    updateTags(postID, tagBody).then(() => {
-                        // window.location.href = "../";
-                    });
-                    return;
-                }
-
-                updatePost(postID, postBody).then(() => {
-                    updateTags(postID, tagBody).then(() => {
-                        // window.location.href = "../";
-                    });
-                });
-            } else {
-
-                let postBody = {
-                    "isTechnical": isTechnical + 0,
-                    "title": title,
-                    "content": body,
-                    "images": images
-                }
-                
-                console.log(postBody);
-
-                let postID = createPost(postBody);
-                postID.then((postID) => {
-                    console.log(postID);
-                    console.log("This is the post ID")
-                    console.log(tagBody);
-                    console.log("This is the tagBody")
-                    updateTags(postID, tagBody).then(() => {
-                        // window.location.href = "../";
-                    });
-                });
-            }
-        });
-}
-
-const sleep = (ms) => {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-};
-
-submitButton.addEventListener("click", submitPost);
 
 
 
 //modal for when the user wants to add tags
 async function selectTagsPopup() {
 
+    await promises.tags;
+    await promises.post;
+
     let fragment = document.createDocumentFragment();
-    globalTagsList.forEach((tag) => {
+    tagMap.forEach((tag) => {
         renderTag(tag, fragment);
     });
 
@@ -306,38 +218,41 @@ async function selectTagsPopup() {
                 </div>
             </div>
 
-            <div class="tags-list">
+            <div id="modal-tags-list" class="tag-selection">
                 
             </div>
         </div>
         `;
-        const tagSearchList = ctx.content.querySelector(".tags-list");
+
+        ctx.cancelButton.classList.add("norender");
+
+        const tagSearchList = ctx.content.querySelector("#modal-tags-list");
         tagSearchList.appendChild(fragment);
 
-        tagSearchList.forEach((tag) => {
+
+        Array.from(tagSearchList.children).forEach((tag) => {
             if (!tag.classList.contains("tag")) {
                 return;
             }
+            const tagID = tag.getAttribute("tagID");
+
+            if (STATE.currentTags.has(tagID)) {
+                tag.classList.add("selected");
+            }
+
             tag.addEventListener("click", () => {
-                let tagID = tag.getAttribute("tagID");
- 
-                if (globalCurrentTags.includes(tagID)) {
-                    globalCurrentTags = globalCurrentTags.filter((tag) => tag !== tagID);
+                
+
+                if (STATE.currentTags.has(tagID)) {
+                    removeTagFromCurrentList(tagID);
                     tag.classList.remove("selected");
                 } else {
-                    globalCurrentTags.push(tagID);
+                    addTagToCurrentList(tagID);
                     tag.classList.add("selected");
                 }
-
             });
 
         });
-
-                
-                
-
-
-
 
         let searchInput = ctx.content.querySelector("#tag-modal-search");
 
@@ -346,17 +261,12 @@ async function selectTagsPopup() {
             let tags = tagSearchList.querySelectorAll(".tag");
             tags.forEach((tag) => {
                 if (tag.getAttribute("name").toLowerCase().includes(searchValue.toLowerCase())) {
-                    tag.style.display = "block";
+                    tag.classList.remove("norender");
                 } else {
-                    tag.style.display = "none";
+                    tag.classList.add("norender");
                 }
             });
         })
-
-
-        
-        
-
     }
 
     
@@ -364,92 +274,181 @@ async function selectTagsPopup() {
         false,
         "Select Topics",
         callback,
-        {text:"Submit", class:"blue"},
+        {text:"Done", class:"blue"},
     )
-    let manHours = hoursInput * 3600 + minutesInput * 60;
-    
-    //we dont submit if they havent entered any hours
-    if (manHours === 0) {
+
+}
+
+
+function addTagToCurrentList(tagID) {
+    let tag = tagMap.get(tagID);
+
+    console.log(STATE.currentTags)
+
+    console.log("[addTagToCurrentList] adding",tag.name)
+
+    if (STATE.currentTags.has(tagID)) {
+        return;
+    }
+    STATE.currentTags.add(tagID);
+    renderTag(tag, postTagsList);
+    tagListShowAsNeeded();
+}
+
+function removeTagFromCurrentList(tagID) {
+    let tag = tagMap.get(tagID);
+
+    console.log("[removeTagFromCurrentList] removing",tag.name)
+
+    console.log(STATE.currentTags)
+
+    if (!STATE.currentTags.has(tagID)) {
+        return;
+    }
+    STATE.currentTags.delete(tagID);
+    let element = postTagsList.querySelector(`[tagID="${tagID}"]`);
+    element.remove();
+    tagListShowAsNeeded();
+}
+
+function tagListShowAsNeeded() {
+    if (STATE.currentTags.size != 0) {
+        postTagsListEmptyState.classList.add("norender");
+        postTagsList.classList.remove("norender");
+    } else {
+        postTagsListEmptyState.classList.remove("norerender");
+        postTagsList.classList.add("norender");
+    }
+}
+
+
+submitButton.addEventListener("pointerup", async () => {
+
+    if (submitButton.classList.contains("disabled")) {
         return;
     }
 
-    //api requires the full man hours, not just the current addition
-    let totalManHours = task.totalManHours + manHours;
-    totalManHours = parseInt(totalManHours);
-    totalManHours = Math.floor(totalManHours);
+    if (STATE.editing) {
+        await editPost();
+    } else {
+        await createPost();
+    }
 
-    let projID = globalCurrentProject.projID;
-    let taskID = task.taskID;
+});
 
-    let res = await put_api(`/project/task.php/manhours/${projID}/${taskID}`, {manHours: totalManHours});
 
-    if (res.success) {
-        console.log(`[addManHoursPopup] Added ${manHours} to task ${taskID}`);
-        let session = await global.getCurrentSession();
-        let empID = session.employee.empID;
-        let entry = task.employeeManHours.find(entry => entry.empID === empID);
-        if (entry) {
-            entry.manHours += manHours;
-        } else {
-            task.employeeManHours.push({empID: empID, manHours: manHours});
+async function editPost() {
+    
+    const imageMap = new Map();
+
+    // deep copy the content so we dont mess it up on failure
+    const content = JSON.parse(JSON.stringify(editor.getContents()));
+    const previousContent = JSON.parse(STATE.originalPost.content);
+
+    console.log("content", content);
+    console.log("previousImages", STATE.previousImages); 
+
+    content.ops.forEach((op) => {
+        if (op.insert.image) {
+
+            const data = op.insert.image;
+
+            // old image, no need to edit
+            if (data.startsWith("https")) {
+                op.insert.image = STATE.previousImages.get(data);
+                return;
+            }
+
+            // remove the data url
+            const imageData = data.split(",")[1];
+            const imageID = createImageID();
+            imageMap.set(imageID, imageData);
+            op.insert.image = imageID;
         }
-        task.totalManHours = totalManHours;
+    });
+
+
+    const body = {}
+
+
+    if (content !== previousContent) {
+        body.content = JSON.stringify(content);
+        if (imageMap.size != 0) {
+            body.images = Object.fromEntries(imageMap);
+        }
+    }
+
+    if (postTitleInput.value !== STATE.originalPost.title) {
+        body.title = postTitleInput.value;
+    }
+
+    if (categorySelector.getElementsByTagName("input")[0].checked+0 !== STATE.originalPost.isTechnical) {
+        body.isTechnical = categorySelector.getElementsByTagName("input")[0].checked + 0;
+    }
+
+    fullScreenDiv.classList.add("animate-spinner");
+    const res = await patch_api(`/wiki/post.php/post/${STATE.originalPost.postID}`, body);
+    fullScreenDiv.classList.remove("animate-spinner");
+
+    if (res.success == true) {
         global.popupAlert(
-            "Manhours submitted",
-            "Your manhours have been logged successfully",
-            "success",
-        ).then(() => {
-            showTaskInExplainer(taskID);
+            "Post updated successfully",
+            "Your post has been updated",
+            "success"
+        ).finally(() => {
+            window.location.href = `/wiki/post/#${STATE.originalPost.postID}`;
         });
     } else {
         global.popupAlert(
-            "Failed to log your manhours",
-            "The following error was occured: " + res.error.message,
-            "error",
+            "Sorry, we couldn't update the post",
+            "The following error occured: " + res.error.message,
+            "error"
         );
-
-        console.error(`[addManHoursPopup] Failed to add ${manHours} to task ${taskID}`);
     }
 
 }
 
 
 
+
 //stops user accidentally discarding changes by refreshing or closing the page
 const changeListener = setInterval(() => {
-    let quillContent = JSON.stringify(quill.getContents());
+    let quillContent = JSON.stringify(editor.getContents());
     let postTitle = postTitleInput.value;
     let isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
 
-    anyChanges = false;
-    if (editing && postBeingEdited) {
+    STATE.anyChanges = false;
+    if (STATE.editing) {
         
-        if (quillContent !== JSON.stringify(postBeingEdited.content)) {
-            anyChanges = true;
+        if (quillContent !== JSON.stringify(STATE.originalPost.content)) {
+            STATE.anyChanges = true;
         }
 
-        if (postTitle !== postBeingEdited.title) {
-            anyChanges = true;
+        if (postTitle !== STATE.originalPost.title) {
+            STATE.anyChanges = true;
         }
 
-        if (isTechnical !== postBeingEdited.isTechnical) {
-            anyChanges = true;
+        if (isTechnical !== STATE.originalPost.isTechnical) {
+            STATE.anyChanges = true;
         }
 
     } else {
         if (quillContent !== '{"ops":[{"insert":"\\n"}]}') {
-            anyChanges = true;
+            STATE.anyChanges = true;
         }
         if (postTitle !== "") {
-            anyChanges = true;
+            STATE.anyChanges = true;
         }
     }
     submitButton.classList.remove("disabled");
 }, 1000);
+
+
 window.addEventListener('beforeunload', (event) => {
-    if (!anyChanges) {
+    if (!STATE.anyChanges) {
         return;
     }
+    return
     event.preventDefault();
 
     //resets the sidebar item selection if they made one
@@ -464,6 +463,4 @@ window.addEventListener('beforeunload', (event) => {
 
 
 //init the page
-
-setEditing();
 

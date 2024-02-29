@@ -248,26 +248,6 @@ body {
     width: 100%;
 }
 
-#tag-selection{
-    height: 100%;
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding-bottom: 1rem;
-    overflow-y: auto;
-    overflow-x: clip;
-    
-    .tag:hover {
-        cursor: pointer;
-    }
-
-    .selected {
-        transition: background-color 0.05s ease-out;
-        background-color: var(--make-it-all-highlight);
-    }
-}
 
 .post {
     text-decoration: none;
