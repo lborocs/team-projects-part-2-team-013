@@ -2610,10 +2610,10 @@ async function addTask() {
     //flatpickr for date picker
     let datePickerInput = popupDiv.querySelector('.date-picker-input')
 
-    let projectDueDate = globalCurrentProject.dueDate ? new Date(globalCurrentProject.dueDate) : new Date();
+    let setDate = Math.max(globalCurrentProject.dueDate, Date.now());
 
     let fp = flatpickr(datePickerInput, {
-        defaultDate: projectDueDate,
+        defaultDate: setDate,
         dateFormat: 'd/m/Y',
         altInput: true,
         altFormat: 'F j, Y',
@@ -2746,6 +2746,10 @@ async function addTask() {
         let expectedManHours = hoursInput + minutesInput;
         let dueDate = fp.selectedDates[0];
         let dueDateTimestamp = dueDate ? dueDate.getTime() : null;
+        if (dueDateTimestamp) {
+            // set to 11:59
+            dueDateTimestamp += 43194000;
+        }
         let state = 0;
         let assignedEmployeesArray = [...assignedEmployees];
         //post the task without assignments
