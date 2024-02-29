@@ -448,6 +448,7 @@ input[type="text"] {
     height: 100%;
     background-color: #3098ff;
     color: var(--white);
+    border-radius: 7px;
 }
 
 #new-post:hover {
