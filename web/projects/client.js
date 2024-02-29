@@ -1839,6 +1839,8 @@ function setupDropdownEventListeners(taskRow) {
                 console.error(`[setupDropdownEventListeners] failed to update task ${taskID} to state 0`);
             }
         });
+        globalTasksList.find(task => task.taskID === taskID).state = 0;
+        renderTasks(globalTasksList);
     });
 
     dropdownInProgress.addEventListener("click", () => {
@@ -1860,6 +1862,8 @@ function setupDropdownEventListeners(taskRow) {
                 console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 1`);
             }
         });
+        globalTasksList.find(task => task.taskID === taskID).state = 1;
+        renderTasks(globalTasksList);
     });
 
     dropdownFinished.addEventListener("click", () => {
@@ -1881,6 +1885,8 @@ function setupDropdownEventListeners(taskRow) {
                 console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 2`);
             }
         });
+        globalTasksList.find(task => task.taskID === taskID).state = 2;
+        renderTasks(globalTasksList);
     });
 }
 
