@@ -220,7 +220,6 @@ export async function init(id) {
                     max: archivedData.values[0] + archivedData.values[1],
                     ticks: {
                         precision: 0,
-                        maxTicksLimit: 5
                     },
                     grid: {
                         display: false
@@ -242,8 +241,8 @@ export async function init(id) {
             labels: tasksPerEmployeeData.labels,
             datasets: [{
                 label: "Tasks Per Employee",
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(188,219,245,0.7)',
+                borderColor: ['rgba(188,219,245,0.85)'],
                 borderWidth: 2,
                 borderRadius: 4,
                 data: tasksPerEmployeeData.values
@@ -692,6 +691,7 @@ function renderTableMetric() {
     let metricCard = document.createElement("div");
     metricCard.classList.add("metric-card");
     metricCard.classList.add("non-canvas");
+    metricCard.classList.add("colspan-2");
 
     let metricTitle = document.createElement("div");
     metricTitle.classList.add("metric-title");
