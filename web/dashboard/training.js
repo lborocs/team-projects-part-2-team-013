@@ -27,9 +27,7 @@ export async function init() {
     renderEmptyMetric("popular-posts-chart", "Top Viewed Posts");
     renderEmptyMetric("popular-tags-chart", "Top Viewed Topics");
     renderEmptyMetric("watched-posts-chart", "Most Watched Posts");
-    renderEmptyMetric("helpful-posts-chart", "Most Helpful Posts");
-    renderEmptyMetric("unhelpful-posts-chart", "Least Helpful Posts");
-    renderEmptyMetric("unhelpful-in-popular-chart", "Least Helpful Posts in Top Viewed");
+    renderEmptyMetric("helpful-posts-chart", "Most Helpful Posts");;
 
     //gets all the needed data into a single point
     let trainingData = await getData();
@@ -52,16 +50,6 @@ export async function init() {
     const helpfulLabels = trainingData.helpfulPosts.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
     const helpfulTooltips = trainingData.helpfulPosts.map(post => post.title)
 
-    //"least helpful" here means the posts with the least helpfuls that are also in the top viewed
-    const leastHelpfulPosts = trainingData.unhelpfulPostsInPopular.map(post => post.helpful)
-    //get the views from each leastHelpfulPosts object
-    const leastHelpfulViews = trainingData.unhelpfulPostsInPopular.map(post => post.views)
-    const leastHelpfulHelpfuls = trainingData.unhelpfulPostsInPopular.map(post => post.helpful)
-
-
-    const leastHelpfulLabels = trainingData.unhelpfulPostsInPopular.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
-    const leastHelpfulTooltips = trainingData.unhelpfulPostsInPopular.map(post => post.title)
-
 
     //limits the number of items shown by the charts so the data isnt overwhelming
     //the ability to change this may be implemented
@@ -73,8 +61,6 @@ export async function init() {
     watchedLabels.length = CHART_DATA_LIMIT;
     helpfulPosts.length = CHART_DATA_LIMIT;
     helpfulLabels.length = CHART_DATA_LIMIT;
-    leastHelpfulPosts.length = CHART_DATA_LIMIT;
-    leastHelpfulLabels.length = CHART_DATA_LIMIT;
 
 
 
