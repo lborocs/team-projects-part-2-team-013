@@ -107,6 +107,15 @@ export async function init(id) {
         //the id of each .value element is the same as the id of the metric so we can easily unwrap the object into the UI
         //to add more overviews just add more .overview elements and set their id to a key in the overviewValues object 
         value.innerHTML = overviewValues[value.id];
+
+        //if the metric is for overdue tasks, add red class to the value if it's greater than 0
+        if (value.id.includes("overdueTasksCurrent") && overviewValues[value.id] > 0) {
+            value.parentElement.classList.add("red");
+        }
+
+        if (value.id.includes("overdueTasksTotal") && overviewValues[value.id] > 0) {
+            value.parentElement.classList.add("orange");
+        }
         
 
     });
