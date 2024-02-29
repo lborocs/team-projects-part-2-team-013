@@ -5,8 +5,11 @@ const input = document.getElementById("input-tag");
 const submitButton = document.getElementById("submit-button");
 var editing = false;
 var postBeingEdited = null;
+
 var anyChanges = false;
+
 var currentTags = [];
+
 var selectTags = [];
 
 const pageTitle = document.getElementById("page-title");
@@ -15,110 +18,27 @@ const postTitleInput = document.getElementById("post-title-input");
 const categorySelector = document.querySelector(".type-of-post");
 var isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
 
+const selectedTagsRow = document.getElementById("listOfTags");
 
-class Tag {
-    constructor(name, tagID) {
-        this.tagID = tagID;
-        this.name = name;
-        this.element = null;
-        this.newTag = null;
-    }
-    addTag() {
-        const newElement = document.createElement("div");
-        document.querySelector("#placeholderTag").classList.add("norender")
-        newElement.className = "tag";
-        newElement.innerHTML = '<span class="material-symbols-rounded">sell</span>' + this.name + '<span class="material-symbols-rounded" id="tagCloseButton">close</span>';
-        document.querySelector("#listOfTags").appendChild(newElement);
-        this.newTag = newElement;
-        this.addDeleteListener();
+const selectTagsButton = document.getElementById("add-tags-button");
+selectTagsButton.addEventListener("click", () => {
+    selectTagsPopup()
+});
 
-    }
+const globalTagsList = await fetchTags();
 
-    addDeleteListener() {
-        this.newTag.addEventListener("click", (event) => this.removeTag());
-    }
+let globalCurrentTags = [];
 
-    removeTag() {
-        document.querySelector("#listOfTags").removeChild(this.newTag);
-        if (this.tagID != 0) {
-            selectTags.push(this);
-            //this.addToSelect();
-            //organiseSelect();
-        }
-        const index = currentTags.indexOf(this);
-        if (index !== -1) {
-            currentTags.splice(index, 1);
-        }
-        console.log(currentTags);
-        console.log("This is currentTags")
-        if (currentTags.length == 0) {
-            document.querySelector("#placeholderTag").classList.remove("norender")
-        }
-    }
+function renderTag(tag, parent) {
+    let tagDiv = document.createElement("div");
 
-    async checkTemp() {
-        console.log("Checking tag: ", this.name);
-        console.log("Tag ID: ", this.tagID);
-        if (this.tagID != 0) {
-            return
-        }
-        this.tagID = await this.createTag(this.name);
-    }
+    tagDiv.classList.add("tag");
+    tagDiv.setAttribute("name", tag.name);
+    tagDiv.setAttribute("tagID", tag.tagID);
 
-    async createTag(tag) {
-        console.log("Creating tag: ", tag);
-        var data = {
-            "name": tag,
-            "colour": 0
-        }
-        const result = await post_api(`/wiki/post.php/tag`, data);
-        if (!result.success) {
-            console.error("[getPostData] error making tag: ", result.data);
-            return;
-        }
-        return result.data.tagID;
-    }
-
-    // addToSelect() {
-    //     const newSelectTag = document.createElement("div");
-    //     newSelectTag.className = "name-card";
-    //     newSelectTag.innerHTML = `<span class="material-symbols-rounded">sell</span>${this.name}`;
-    //     document.querySelector(".employee-list").appendChild(newSelectTag);
-    //     this.element = newSelectTag;
-    //     console.log('Added to select: ', this.name);
-    //     this.addSelectListener();
-    // }
-
-    addSelectListener() {
-        console.log('Adding click listener to: ', this.element);
-        this.element.addEventListener("mousedown", (event) => {
-            event.stopPropagation();
-            this.clickedSelect();
-        });
-    }
-
-    clickedSelect() {
-        console.log('Tag clicked: ', this.name);
-        currentTags.push(this);
-        this.addTag();
-        this.removeFromSelect();
-    }
-
-    removeFromSelect() {
-        document.querySelector(".employee-list").removeChild(this.element);
-        selectTags = selectTags.filter(a => a.tagID !== this.tagID);
-        //organiseSelect();
-    }
-
-    deRender() {
-        this.element.classList.add("norender");
-    }
-
-    render() {
-        this.element.classList.remove("norender");
-    }
+    tagDiv.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag.name}`;
+    parent.appendChild(tagDiv);
 }
-
 
 
 function getQueryParam() {
@@ -142,19 +62,6 @@ async function fetchTags() {
         console.log("Tags failed to be fetched")
     }
 }
-
-let tagsList = fetchTags();
-tagsList.then((tagsList) => {
-    tagsList.forEach((tag) => {
-        let temp = new Tag(tag.name, tag.tagID);
-        selectTags.push(temp);
-        //temp.addToSelect();
-
-    });
-
-    setEditing()
-    
-});
 
 
 function setEditing() {
@@ -187,6 +94,8 @@ function renderPostInEditor(post) {
     console.log("Rendering post in editor");
     console.log(post);
     postBeingEdited = post;
+    console.error(postBeingEdited)
+    console.error(globalCurrentTags)
 
     const postContent = JSON.parse(post.content);
     postTitleInput.value = post.title;
@@ -201,17 +110,15 @@ function renderPostInEditor(post) {
     }
 
     if (post.tags == null || post.tags.length == 0) {
-        //if the post you're editing has no tags
+        return
     }
 
-    else {
-        document.querySelector("#placeholderTag").classList.add("norender")
-        post.tags.forEach((tag) => {
-            let temp = new Tag(tagsList.find(findTag(tag)).name, tag);
-            currentTags.push(temp);
-            temp.addTag();
-        });
-    }
+    post.tags.forEach((tag) => {
+        let tagObj = globalTagsList.find(findTag(tag.tagID));
+        globalCurrentTags.push(tagObj);
+        renderTag(tagObj, tags);
+    });
+    console.error(globalCurrentTags)
 }
 
 
@@ -376,6 +283,137 @@ submitButton.addEventListener("click", submitPost);
 
 
 
+//modal for when the user wants to add tags
+async function selectTagsPopup() {
+
+    let fragment = document.createDocumentFragment();
+    globalTagsList.forEach((tag) => {
+        renderTag(tag, fragment);
+    });
+
+    const callback = (ctx) => {
+        ctx.content.innerHTML = `
+        <div class="select-tags-container">
+            <div class="search">
+                <input class="search-input"  id="tag-modal-search" type="text" autocomplete="off" placeholder="Search Topics">
+
+                </input>
+                <div class="search-icon">
+                    <span class="material-symbols-rounded">search</span>
+                </div>
+                <div class="search-icon clear-icon" stlye="display: none;">
+                    <span class="material-symbols-rounded">close</span>
+                </div>
+            </div>
+
+            <div class="tags-list">
+                
+            </div>
+        </div>
+        `;
+        const tagSearchList = ctx.content.querySelector(".tags-list");
+        tagSearchList.appendChild(fragment);
+
+        tagSearchList.forEach((tag) => {
+            if (!tag.classList.contains("tag")) {
+                return;
+            }
+            tag.addEventListener("click", () => {
+                let tagID = tag.getAttribute("tagID");
+ 
+                if (globalCurrentTags.includes(tagID)) {
+                    globalCurrentTags = globalCurrentTags.filter((tag) => tag !== tagID);
+                    tag.classList.remove("selected");
+                } else {
+                    globalCurrentTags.push(tagID);
+                    tag.classList.add("selected");
+                }
+
+            });
+
+        });
+
+                
+                
+
+
+
+
+        let searchInput = ctx.content.querySelector("#tag-modal-search");
+
+        searchInput.addEventListener("input", () => {
+            let searchValue = searchInput.value;
+            let tags = tagSearchList.querySelectorAll(".tag");
+            tags.forEach((tag) => {
+                if (tag.getAttribute("name").toLowerCase().includes(searchValue.toLowerCase())) {
+                    tag.style.display = "block";
+                } else {
+                    tag.style.display = "none";
+                }
+            });
+        })
+
+
+        
+        
+
+    }
+
+    
+    await global.popupModal(
+        false,
+        "Select Topics",
+        callback,
+        {text:"Submit", class:"blue"},
+    )
+    let manHours = hoursInput * 3600 + minutesInput * 60;
+    
+    //we dont submit if they havent entered any hours
+    if (manHours === 0) {
+        return;
+    }
+
+    //api requires the full man hours, not just the current addition
+    let totalManHours = task.totalManHours + manHours;
+    totalManHours = parseInt(totalManHours);
+    totalManHours = Math.floor(totalManHours);
+
+    let projID = globalCurrentProject.projID;
+    let taskID = task.taskID;
+
+    let res = await put_api(`/project/task.php/manhours/${projID}/${taskID}`, {manHours: totalManHours});
+
+    if (res.success) {
+        console.log(`[addManHoursPopup] Added ${manHours} to task ${taskID}`);
+        let session = await global.getCurrentSession();
+        let empID = session.employee.empID;
+        let entry = task.employeeManHours.find(entry => entry.empID === empID);
+        if (entry) {
+            entry.manHours += manHours;
+        } else {
+            task.employeeManHours.push({empID: empID, manHours: manHours});
+        }
+        task.totalManHours = totalManHours;
+        global.popupAlert(
+            "Manhours submitted",
+            "Your manhours have been logged successfully",
+            "success",
+        ).then(() => {
+            showTaskInExplainer(taskID);
+        });
+    } else {
+        global.popupAlert(
+            "Failed to log your manhours",
+            "The following error was occured: " + res.error.message,
+            "error",
+        );
+
+        console.error(`[addManHoursPopup] Failed to add ${manHours} to task ${taskID}`);
+    }
+
+}
+
+
 
 //stops user accidentally discarding changes by refreshing or closing the page
 const changeListener = setInterval(() => {
@@ -426,4 +464,6 @@ window.addEventListener('beforeunload', (event) => {
 
 
 //init the page
+
 setEditing();
+
