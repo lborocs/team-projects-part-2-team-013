@@ -418,6 +418,17 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
 
         $assets = db_post_fetch_assets($ctx->post["postID"]);
 
+        $post_id = $url_specifiers[0];
+
+        $assets = array_map(
+            function($asset) use ($post_id) {
+                $asset["asset"]["bucketID"] = $post_id;
+                $asset["asset"]["assetType"] = ASSET_TYPE::POST_MEDIA;
+                return $asset;
+            },
+            $assets
+        );
+
         if (strcmp($before_content, $after_content) == 0) {
             respond_bad_request("Expected post content to be different", ERROR_BODY_FIELD_INVALID_DATA);
         } else {
@@ -442,7 +453,21 @@ function _edit_post(RequestContext $ctx, array $body, array $url_specifiers) {
 }
 
 function _delete_post(RequestContext $ctx, array $url_specifiers) {
-    db_post_delete($url_specifiers[0]);
+
+    $post_id = $url_specifiers[0];
+
+    $images = array_map(
+        function($asset) use ($post_id) {
+            $asset["asset"]["bucketID"] = $post_id;
+            $asset["asset"]["assetType"] = ASSET_TYPE::POST_MEDIA;
+            return $asset["asset"];
+        },
+        db_post_fetch_assets($ctx->post["postID"])
+    );
+    foreach ($images as $image) {
+        Asset::from_db($image)->delete();
+    }
+    db_post_delete($post_id);
     respond_no_content();
 }
 
