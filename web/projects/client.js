@@ -1342,7 +1342,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
         return employees.get(a.employee.empID).deleted - employees.get(b.employee.empID).deleted;
     });
 
-    const MAX_RENDERED_USERS = 5;
+    const MAX_RENDERED_USERS = 3;
     const MAX_RENDERED_USERS_LIST = 3;
 
 
