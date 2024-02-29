@@ -55,15 +55,31 @@ export async function init() {
             helpfulLabels = trainingData.helpfulPosts.map(post => global.trimText(post.title, CHART_LABEL_LIMIT))
             helpfulTooltips = trainingData.helpfulPosts.map(post => post.title)
 
-            //format to new limit
-            postViews.length = CHART_DATA_LIMIT;
-            postLabels.length = CHART_DATA_LIMIT;
-            tagViews.length = CHART_DATA_LIMIT;
-            tagLabels.length = CHART_DATA_LIMIT;
-            watchedPosts.length = CHART_DATA_LIMIT;
-            watchedLabels.length = CHART_DATA_LIMIT;
-            helpfulPosts.length = CHART_DATA_LIMIT;
-            helpfulLabels.length = CHART_DATA_LIMIT;
+            //conditionally checks if the lenght actually exceed the limit, if we dont check the charts stretch out
+            if (postViews.length > CHART_DATA_LIMIT) {
+                postViews.length = CHART_DATA_LIMIT;
+            }
+            if (postLabels.length > CHART_DATA_LIMIT) {
+                postLabels.length = CHART_DATA_LIMIT;
+            }
+            if (tagViews.length > CHART_DATA_LIMIT) {
+                tagViews.length = CHART_DATA_LIMIT;
+            }
+            if (tagLabels.length > CHART_DATA_LIMIT) {
+                tagLabels.length = CHART_DATA_LIMIT;
+            }
+            if (watchedPosts.length > CHART_DATA_LIMIT) {
+                watchedPosts.length = CHART_DATA_LIMIT;
+            }
+            if (watchedLabels.length > CHART_DATA_LIMIT) {
+                watchedLabels.length = CHART_DATA_LIMIT;
+            }
+            if (helpfulPosts.length > CHART_DATA_LIMIT) {
+                helpfulPosts.length = CHART_DATA_LIMIT;
+            }
+            if (helpfulLabels.length > CHART_DATA_LIMIT) {
+                helpfulLabels.length = CHART_DATA_LIMIT;
+            }
 
             //update the charts
             postsChart.data.labels = postLabels;
