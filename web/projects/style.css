@@ -2050,6 +2050,14 @@ td:has(#more) {
     }
 }
 
+.date-picker-row {
+    display: flex;
+    flex-direction: row;
+    gap: 0.8em;
+    width: 100%;
+
+}
+
 .disabled {
     opacity: 0.5;
 }
