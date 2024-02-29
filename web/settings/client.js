@@ -333,6 +333,9 @@ logoutButton.addEventListener('click', () => {
 
 firstNameChange.addEventListener('click', () => {
     console.log('change button clicked');
+    if (firstNameInput.classList.contains('disabled')){
+        firstNameInput.innerHTML = "";
+    }
     firstNameChange.classList.add('norender');
     firstNameCancel.classList.remove('norender');
     firstNameConfirm.classList.remove('norender');
@@ -417,12 +420,14 @@ async function resetName(n){
     let employeeData = await global.getCurrentSession();
     let emp = employeeData.employee;
     if (emp.firstName == null){
-        var firstName = "N/A";
+        var firstName = "Not set";
+        
     } else{
         var firstName = emp.firstName;
     }
     var lastName = emp.lastName;
     if (n == 1){
+        firstNameInput.classList.add('disabled');
         firstNameInput.innerHTML = firstName;
     } else if (n == 2){
         secondNameInput.innerHTML = lastName;
@@ -431,7 +436,6 @@ async function resetName(n){
 async function changeFirstName(newName) {
     if (newName == "N/A" || newName.trim() == ""){
         newName = null;
-        firstNameInput.innerHTML = "N/A";
     }
     const body = {
         firstName: newName,
