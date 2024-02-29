@@ -64,7 +64,7 @@ function renderTag(tag, parent) {
     tagDiv.setAttribute("tagID", tag.tagID);
 
     tagDiv.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag.name}`;
-    parent.appendChild(tagDiv);
+    parent.insertBefore(tagDiv, parent.firstChild);
     return tagDiv;
 }
 
@@ -126,12 +126,14 @@ async function setEditing() {
     STATE.editing = true;
 
     //sets the breadcrumb, title, submit button text for editing
-    global.setBreadcrumb(["Wiki", "Edit Post"], ["/wiki/", `/wiki/create/#${postID}`]);
     pageTitle.innerHTML = "Edit Post";
     document.title = "Edit Post";
     submitButtonLabel.innerText = "Save Changes";
 
     await promises.post;
+
+    global.setBreadcrumb(["Wiki", `Editing ${STATE.originalPost.title}`], ["/wiki/", `/wiki/create/#${postID}`]);
+
 
     await renderPostInEditor(STATE.originalPost);
     STATE.initialDrawComplete = true;
