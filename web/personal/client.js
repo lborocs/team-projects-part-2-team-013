@@ -474,6 +474,7 @@ function personalCardEditMode(id) {
                 personalCard.classList.remove('edit-mode')
                 saveButton.classList.add('norender')
                 personalIcons.classList.remove('norender')
+                global.animate(personalCard, "flash")
                 resolve()
             }
         })
@@ -488,6 +489,7 @@ function personalCardEditMode(id) {
             personalCard.classList.remove('edit-mode')
             saveButton.classList.add('norender')
             personalIcons.classList.remove('norender')
+            global.animate(personalCard, "flash")
             resolve()
         })
 
