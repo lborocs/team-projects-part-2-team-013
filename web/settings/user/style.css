@@ -211,3 +211,8 @@
     border-radius: 0.2em;
     cursor: text;
 }
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}

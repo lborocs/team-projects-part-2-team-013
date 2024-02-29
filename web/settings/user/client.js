@@ -106,7 +106,8 @@ async function setUserData() {
     accountCard.querySelector('.role').innerText = isManager ? "Manager" : "Employee";
     accountCard.querySelector('.icon span').innerHTML = isManager ? "admin_panel_settings" : "person";
     if (emp.firstName == null){
-        var firstName = "N/A";
+        var firstName = "Not set";
+        firstNameInput.classList.add('disabled');
     } else{
         var firstName = emp.firstName;
     }
@@ -119,18 +120,27 @@ setUserData();
 
 firstNameChange.addEventListener('click', () => {
     console.log('change button clicked');
+    if (firstNameInput.classList.contains('disabled')){
+        firstNameInput.innerHTML = "";
+    }
     firstNameChange.classList.add('norender');
     firstNameCancel.classList.remove('norender');
     firstNameConfirm.classList.remove('norender');
     firstNameInput.setAttribute('contenteditable', 'true');
     firstNameInput.classList.add('editable');
+    firstNameInput.classList.remove('disabled');
+
+    secondNameChange.classList.remove('norender');
+    secondNameCancel.classList.add('norender');
+    secondNameConfirm.classList.add('norender');
+    secondNameInput.setAttribute('contenteditable', 'false');
+    secondNameInput.classList.remove('editable');
     firstNameInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
             firstNameConfirm.click();
         }
     });
-
 });
 
 firstNameCancel.addEventListener('click', () => {
@@ -159,6 +169,12 @@ secondNameChange.addEventListener('click', () => {
     secondNameConfirm.classList.remove('norender');
     secondNameInput.setAttribute('contenteditable', 'true');
     secondNameInput.classList.add('editable');
+
+    firstNameChange.classList.remove('norender');
+    firstNameCancel.classList.add('norender');
+    firstNameConfirm.classList.add('norender');
+    firstNameInput.setAttribute('contenteditable', 'false');
+    firstNameInput.classList.remove('editable');
     secondNameInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
@@ -188,11 +204,15 @@ secondNameConfirm.addEventListener('click', async () => {
 
 async function resetName(n){
     console.log('resetting name');
-    let emp = await getEmployee();
+    let emp = await getEmployee(true);
     if (emp.firstName == null){
-        var firstName = "N/A";
+        var firstName = "Not set";
+        firstNameInput.classList.add('disabled');
     } else{
         var firstName = emp.firstName;
+        console.log("[resetName] got employee")
+        console.log(emp)
+        
     }
     var lastName = emp.lastName;
     if (n == 1){
@@ -203,9 +223,10 @@ async function resetName(n){
 }
 
 async function changeFirstName(newName) {
-    if (newName == "N/A" || newName.trim() == ""){
+    if (newName.trim() == ""){
         newName = null;
-        firstNameInput.innerHTML = "N/A";
+        firstNameInput.innerHTML = "Not set";
+        firstNameInput.classList.add('disabled');
     }
     const body = {
         firstName: newName,
