@@ -579,6 +579,9 @@
     cursor: pointer;
     transition: 0.1s ease-out;
 } */
+#manhours-minutes0, #manhours-minutes15, #manhours-minutes30, #manhours-minutes45 {
+    height: 22px;
+}
 
 .team-leader-title {
     font-weight: 400;
@@ -1348,7 +1351,7 @@
 }
 
 .popupDialog {
-    top: 8%;
+    top: 5%;
     display: flex;
     opacity: 0;
     flex-direction: column;
