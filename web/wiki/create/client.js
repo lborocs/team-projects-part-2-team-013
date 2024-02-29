@@ -591,7 +591,7 @@ async function editPost() {
             const tagRes = await setTagsPromise;
             handleTagRes(tagRes).then(() => {
                 STATE.anyChanges = false;
-                window.location.href = `/wiki/post/#${res.data.postID}`;
+                window.location.href = `/wiki/post/#${STATE.originalPost.postID}`;
             });
         });
     } else {
