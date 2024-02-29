@@ -1036,6 +1036,7 @@
 
     .disabled {
         color: rgba(0, 0, 0, 0.3);
+        opacity: 1;
     }
 }
 
@@ -1902,6 +1903,7 @@
 
     .disabled {
         color: rgba(0,0,0,0.4);
+        opacity: 1;
     }
 
 }
@@ -2046,4 +2048,8 @@ td:has(#more) {
         display: flex;
         flex-direction: row;
     }
+}
+
+.disabled {
+    opacity: 0.5;
 }

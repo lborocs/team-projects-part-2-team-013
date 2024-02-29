@@ -626,6 +626,15 @@ function showTaskInExplainer(taskID) {
     `;
 
     let addManHoursButton = explainerTaskManhours.querySelector('#add-man-hours');
+    let session = global.getCurrentSession().then((session) => {
+        if (!globalCurrentTask.assignments.includes(session.employee.empID)) {
+            addManHoursButton.classList.add('disabled');
+        } else {
+            addManHoursButton.classList.remove('disabled');
+        }
+    });
+
+
     if (addManHoursButton) {
         addManHoursButton.addEventListener('click', function() {
             addManHoursPopup(globalCurrentTask);
