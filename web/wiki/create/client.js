@@ -23,6 +23,7 @@ const STATE = {
     anyChanges: false,
     usedImageIDs: new Set(),
     previousImages: new Map(),
+    initialDrawComplete: false,
 }
 
 document.state = STATE;
@@ -48,7 +49,7 @@ function createImageID() {
     return id;
 }
 
-selectTagsButton.addEventListener("click", () => {
+selectTagsButton.addEventListener("pointerup", () => {
     selectTagsPopup()
 });
 
@@ -88,6 +89,10 @@ async function fetchPost() {
 
     let postID = getPostId();
 
+    if (!postID || postID == "") {
+        return
+    }
+
     const res = await get_api(`/wiki/post.php/post/${postID}`);
     if (res.success == true) {
         STATE.originalPost = res.data;
@@ -97,6 +102,7 @@ async function fetchPost() {
             "The following error occured: " + res.error.message,
             "error"
         ).finally(() => {
+            STATE.anyChanges = false;
             window.location.href = "/wiki/";
         });
     }
@@ -106,10 +112,13 @@ async function fetchPost() {
 async function setEditing() {
     let postID = getPostId();
 
-    if (postID == "") {
+    document.postID = postID;
+
+    if (!postID || postID == "") {
         global.setBreadcrumb(["Wiki", "Create Post"], ["/wiki/", "/wiki/create/"]);
         pageTitle.innerHTML = "Create Post";
         STATE.editing = false;
+        STATE.initialDrawComplete = true;
         return
     }
 
@@ -124,6 +133,7 @@ async function setEditing() {
     await promises.post;
 
     await renderPostInEditor(STATE.originalPost);
+    STATE.initialDrawComplete = true;
 
 }
 
@@ -240,8 +250,10 @@ async function selectTagsPopup() {
                 tag.classList.add("selected");
             }
 
-            tag.addEventListener("click", () => {
+            tag.addEventListener("pointerup", () => {
                 
+                STATE.anyChanges = true;
+                submitButton.classList.remove("disabled");
 
                 if (STATE.currentTags.has(tagID)) {
                     removeTagFromCurrentList(tagID);
@@ -283,7 +295,6 @@ async function selectTagsPopup() {
 function addTagToCurrentList(tagID) {
     let tag = tagMap.get(tagID);
 
-    console.log(STATE.currentTags)
 
     console.log("[addTagToCurrentList] adding",tag.name)
 
@@ -299,8 +310,6 @@ function removeTagFromCurrentList(tagID) {
     let tag = tagMap.get(tagID);
 
     console.log("[removeTagFromCurrentList] removing",tag.name)
-
-    console.log(STATE.currentTags)
 
     if (!STATE.currentTags.has(tagID)) {
         return;
@@ -335,6 +344,109 @@ submitButton.addEventListener("pointerup", async () => {
     }
 
 });
+
+async function createPost() {
+
+    fullScreenDiv.classList.add("animate-spinner");
+
+    const imageMap = new Map();
+
+    const content = JSON.parse(JSON.stringify(editor.getContents()));
+
+    content.ops.forEach((op) => {
+        if (op.insert.image) {
+            const data = op.insert.image;
+            const imageData = data.split(",")[1];
+            const imageID = createImageID();
+            imageMap.set(imageID, imageData);
+            op.insert.image = imageID;
+        }
+    });
+
+    const body = {
+        title: postTitleInput.value,
+        content: JSON.stringify(content),
+        isTechnical: categorySelector.getElementsByTagName("input")[0].checked + 0,
+        images: Object.fromEntries(imageMap),
+    }
+
+    const res = await post_api("/wiki/post.php/post", body);
+    fullScreenDiv.classList.remove("animate-spinner");
+
+    if (res.success == true) {
+        const setTagsPromise = setPostTags(false, res.data.postID);
+        global.popupAlert(
+            "Post created successfully",
+            "Your post has been created",
+            "success"
+        ).finally(async () => {
+            const tagRes = await setTagsPromise;
+            handleTagRes(tagRes).then(() => {
+                STATE.anyChanges = false;
+                window.location.href = `/wiki/post/#${res.data.postID}`;
+            });
+        });
+    } else {
+        global.popupAlert(
+            "Sorry, we couldn't create the post",
+            "The following error occured: " + res.error.message,
+            "error"
+        );
+    }
+
+}
+
+
+
+function setEquality(set1, set2) {
+    if (set1.size != set2.size) {
+        return false;
+    }
+    for (let item of set1) {
+        if (!set2.has(item)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
+async function setPostTags(editing, postID) {
+
+    if (editing) {
+        // if editing then we only set tags if they have changed
+        if (setEquality(STATE.currentTags, new Set(STATE.originalPost.tags))) { return; }
+    } else {
+        // if creating then we only set tags if there are any
+        if (STATE.currentTags.size == 0) { return; }
+    }
+
+
+    const tags = Array.from(STATE.currentTags);
+
+    const body = {
+        tags: tags,
+    }
+
+    const res = await put_api(`/wiki/post.php/post/${postID}/tags`, body);
+
+    return res;
+}
+
+async function handleTagRes(res) {
+
+    if (res.success == true) {
+        console.log("tags set successfully");
+    } else {
+        return global.popupAlert(
+            "Unable to set topics for post",
+            "The following error occured: " + res.error.message,
+            "error"
+        );
+    }
+
+}
+
 
 
 async function editPost() {
@@ -371,8 +483,9 @@ async function editPost() {
     const body = {}
 
 
-    if (content !== previousContent) {
-        body.content = JSON.stringify(content);
+    const jsonContent = JSON.stringify(content);
+    if (jsonContent !== STATE.originalPost.content) {
+        body.content = jsonContent;
         if (imageMap.size != 0) {
             body.images = Object.fromEntries(imageMap);
         }
@@ -386,17 +499,53 @@ async function editPost() {
         body.isTechnical = categorySelector.getElementsByTagName("input")[0].checked + 0;
     }
 
-    fullScreenDiv.classList.add("animate-spinner");
-    const res = await patch_api(`/wiki/post.php/post/${STATE.originalPost.postID}`, body);
-    fullScreenDiv.classList.remove("animate-spinner");
+    let res;
+    // only edit if there are changes
+    if (Object.keys(body).length != 0) {
+        fullScreenDiv.classList.add("animate-spinner");
+        res = await patch_api(`/wiki/post.php/post/${STATE.originalPost.postID}`, body);
+        fullScreenDiv.classList.remove("animate-spinner");
+    }
+
+    // only change tags if there are changes
+    if (res == undefined) {
+        const tagRes = await setPostTags(true, STATE.originalPost.postID);
+        if (tagRes == undefined) {
+            return;
+        }
+
+        if (tagRes.success == true) {
+            global.popupAlert(
+                "Post updated successfully",
+                "The topics for your post have been updated successfully",
+                "success"
+            ).finally(() => {
+                STATE.anyChanges = false;
+                window.location.href = `/wiki/post/#${STATE.originalPost.postID}`;
+            });
+        } else {
+            global.popupAlert(
+                "Sorry, we couldn't update the post topics",
+                "The following error occured: " + tagRes.error.message,
+                "error"
+            );
+        }
+        return;
+    }
+
 
     if (res.success == true) {
+        const setTagsPromise = setPostTags(true, STATE.originalPost.postID);
         global.popupAlert(
             "Post updated successfully",
             "Your post has been updated",
             "success"
-        ).finally(() => {
-            window.location.href = `/wiki/post/#${STATE.originalPost.postID}`;
+        ).finally(async () => {
+            const tagRes = await setTagsPromise;
+            handleTagRes(tagRes).then(() => {
+                STATE.anyChanges = false;
+                window.location.href = `/wiki/post/#${res.data.postID}`;
+            });
         });
     } else {
         global.popupAlert(
@@ -412,43 +561,33 @@ async function editPost() {
 
 
 //stops user accidentally discarding changes by refreshing or closing the page
-const changeListener = setInterval(() => {
-    let quillContent = JSON.stringify(editor.getContents());
-    let postTitle = postTitleInput.value;
-    let isTechnical = categorySelector.getElementsByTagName("input")[0].checked;
+postTitleInput.addEventListener("input", () => {
 
-    STATE.anyChanges = false;
-    if (STATE.editing) {
-        
-        if (quillContent !== JSON.stringify(STATE.originalPost.content)) {
-            STATE.anyChanges = true;
-        }
-
-        if (postTitle !== STATE.originalPost.title) {
-            STATE.anyChanges = true;
-        }
-
-        if (isTechnical !== STATE.originalPost.isTechnical) {
-            STATE.anyChanges = true;
-        }
-
-    } else {
-        if (quillContent !== '{"ops":[{"insert":"\\n"}]}') {
-            STATE.anyChanges = true;
-        }
-        if (postTitle !== "") {
-            STATE.anyChanges = true;
-        }
-    }
     submitButton.classList.remove("disabled");
-}, 1000);
+
+
+    STATE.anyChanges = true;
+});
+
+editor.on("text-change", () => {
+
+
+    if (!STATE.initialDrawComplete) {
+        return;
+    }
+
+    submitButton.classList.remove("disabled");
+    STATE.anyChanges = true;
+});
+
+
 
 
 window.addEventListener('beforeunload', (event) => {
     if (!STATE.anyChanges) {
         return;
     }
-    return
+
     event.preventDefault();
 
     //resets the sidebar item selection if they made one
