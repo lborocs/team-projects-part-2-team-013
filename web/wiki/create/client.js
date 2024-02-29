@@ -65,6 +65,7 @@ function renderTag(tag, parent) {
 
     tagDiv.innerHTML = `<span class="material-symbols-rounded">sell</span>${tag.name}`;
     parent.appendChild(tagDiv);
+    return tagDiv;
 }
 
 
@@ -216,15 +217,19 @@ async function selectTagsPopup() {
     const callback = (ctx) => {
         ctx.content.innerHTML = `
         <div class="select-tags-container">
-            <div class="search">
-                <input class="search-input"  id="tag-modal-search" type="text" autocomplete="off" placeholder="Search Topics">
-
-                </input>
-                <div class="search-icon">
-                    <span class="material-symbols-rounded">search</span>
+            <div class="input-container">
+                <div class="search">
+                    <input class="search-input"  id="tag-modal-search" type="text" autocomplete="off" placeholder="Type to search or create">
+                    </input>
+                    <div class="search-icon">
+                        <span class="material-symbols-rounded">search</span>
+                    </div>
+                    <div class="search-icon clear-icon">
+                        <span class="material-symbols-rounded">close</span>
+                    </div>
                 </div>
-                <div class="search-icon clear-icon" stlye="display: none;">
-                    <span class="material-symbols-rounded">close</span>
+                <div class="text-button blue disabled" id="create-new-topic">
+                    <div class="button-text">Create New</div>
                 </div>
             </div>
 
@@ -237,8 +242,37 @@ async function selectTagsPopup() {
         ctx.cancelButton.classList.add("norender");
 
         const tagSearchList = ctx.content.querySelector("#modal-tags-list");
+        const createButton = ctx.content.querySelector("#create-new-topic");
+        let searchInput = ctx.content.querySelector("#tag-modal-search");
+
+
+
         tagSearchList.appendChild(fragment);
 
+        createButton.addEventListener("pointerup", async () => {
+            if (createButton.classList.contains("disabled")) {
+                return;
+            }
+            ctx.content.classList.add("animate-spinner");
+
+            const tagName = searchInput.value;
+
+            const res = await post_api("/wiki/post.php/tag", { name: tagName, colour: 0 });
+
+            ctx.content.classList.remove("animate-spinner");
+            
+            if (res.success == true) {
+                tagMap.set(res.data.tagID, res.data);
+                let elem = renderTag(res.data, tagSearchList);
+                elem.classList.add("selected");
+                addTagToCurrentList(res.data.tagID);
+                STATE.anyChanges = true;
+                submitButton.classList.remove("disabled");
+                createButton.classList.add("disabled");
+            }
+            
+            
+        });
 
         Array.from(tagSearchList.children).forEach((tag) => {
             if (!tag.classList.contains("tag")) {
@@ -266,10 +300,15 @@ async function selectTagsPopup() {
 
         });
 
-        let searchInput = ctx.content.querySelector("#tag-modal-search");
-
         searchInput.addEventListener("input", () => {
             let searchValue = searchInput.value;
+
+            if (searchValue.length == 0) {
+                createButton.classList.add("disabled");
+            } else {
+                createButton.classList.remove("disabled");
+            }
+
             let tags = tagSearchList.querySelectorAll(".tag");
             tags.forEach((tag) => {
                 if (tag.getAttribute("name").toLowerCase().includes(searchValue.toLowerCase())) {
