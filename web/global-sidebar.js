@@ -107,7 +107,13 @@ if (items !== null) {
             return
         }
 
-        if (window.location.pathname.startsWith(item.getAttribute('href')) || window.location.href.endsWith(item.getAttribute('href'))) {
+        // ignore breadcrumb in page detection
+        const ref = item.getAttribute('href')?.split('#')[0];
+
+        if (
+            window.location.pathname.startsWith(ref) ||
+            window.location.href.endsWith(ref)
+        ) {
             item.classList.add("selected");
         }
     })
