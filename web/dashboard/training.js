@@ -203,6 +203,7 @@ export async function init() {
 function renderEmptyMetric(id, title) {
     let metricCard = document.createElement("div");
     metricCard.classList.add("metric-card");
+    metricCard.classList.add("training")
 
     let metricTitle = document.createElement("div");
     metricTitle.classList.add("metric-title");

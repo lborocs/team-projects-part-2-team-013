@@ -271,6 +271,10 @@
     }
 }
 
+.metric-card.training {
+    height: 100%;
+}
+
 
 .dashboard-header {
     display: flex;
