@@ -32,15 +32,7 @@
         width: 100%;
     }
 
-    #new-post {
-        display: none;
-    }
-
-    #mobile-new-post {
-        display: flex;
-    }
-
-    #mobile-filters {
+    #mobile-category {
         display: flex;
     }
 }

@@ -11,6 +11,25 @@ const searchBarFilters = document.querySelector(".post-filters");
 const searchInput = document.getElementById("inputField")
 const tagSearchInput = document.querySelector("#tag-search > .search-input");
 const tagSelection = document.querySelector('#tag-selection');
+const mobileCategory = document.querySelector('#mobile-category');
+
+
+mobileCategory.addEventListener('change', () => {
+    const selectedCategory = mobileCategory.value
+    document.getElementById("non-technical").checked = false
+    document.getElementById("technical").checked = false
+    document.getElementById("all").checked = false
+
+    if (selectedCategory === "0") {
+        document.getElementById("non-technical").checked = true
+    } else if (selectedCategory === "1") {
+        document.getElementById("technical").checked = true
+    } else if (selectedCategory === "2") {
+        document.getElementById("all").checked = true
+    }
+    
+    updatePosts()
+})
 
 
 if (document.location.hash === "#nontechnical") {

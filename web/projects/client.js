@@ -1343,6 +1343,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
     });
 
     const MAX_RENDERED_USERS = 5;
+    const MAX_RENDERED_USERS_LIST = 3;
 
 
     assignments.forEach((assignment) => {
@@ -1367,7 +1368,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
 
         if (usersAssigned) {
             let count = taskUserCount.get(assignment.task.taskID) || 0;
-            if (count < MAX_RENDERED_USERS) {
+            if (count < MAX_RENDERED_USERS_LIST) {
                 assignmentElem.classList.add("tooltip", "tooltip-left");
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
@@ -1378,22 +1379,41 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
                 if (update & RENDER_LIST) {
                     usersAssignedList.appendChild(assignmentElem.cloneNode(true));
                 }
-
-            } else if (count === MAX_RENDERED_USERS) {
+            } else if (count < MAX_RENDERED_USERS){
                 assignmentElem.classList.add("tooltip", "tooltip-left");
-                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - MAX_RENDERED_USERS;
-
-                const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
-                const url = "data:image/svg+xml;base64," + btoa(icon);
-            
-                assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
-                <img src="${url}" class="task-avatar">`
+                assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
+                <img src="${emp_icon}" class="task-avatar">`
 
                 if (update & RENDER_COLUMN) {
                     usersAssigned.appendChild(assignmentElem);
                 }
-                if (update & RENDER_LIST) {
-                    usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+            } else if (count === MAX_RENDERED_USERS || (update & RENDER_LIST && count === MAX_RENDERED_USERS_LIST)) {
+                assignmentElem.classList.add("tooltip", "tooltip-left");
+                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - (update & RENDER_LIST ? MAX_RENDERED_USERS_LIST : MAX_RENDERED_USERS);
+                if (additionalUsers > 1) {
+                    const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
+                    const url = "data:image/svg+xml;base64," + btoa(icon);
+                
+                    assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
+                    <img src="${url}" class="task-avatar">`
+        
+                    if (update & RENDER_COLUMN) {
+                        usersAssigned.appendChild(assignmentElem);
+                    }
+                    if (update & RENDER_LIST) {
+                        usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                    }
+                } else {
+                    assignmentElem.classList.add("tooltip", "tooltip-left");
+                    assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
+                    <img src="${emp_icon}" class="task-avatar">`
+        
+                    if (update & RENDER_COLUMN) {
+                        usersAssigned.appendChild(assignmentElem);
+                    }
+                    if (update & RENDER_LIST) {
+                        usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                    }
                 }
             }
             taskUserCount.set(assignment.task.taskID, count + 1);
@@ -1819,6 +1839,8 @@ function setupDropdownEventListeners(taskRow) {
                 console.error(`[setupDropdownEventListeners] failed to update task ${taskID} to state 0`);
             }
         });
+        globalTasksList.find(task => task.taskID === taskID).state = 0;
+        renderTasks(globalTasksList);
     });
 
     dropdownInProgress.addEventListener("click", () => {
@@ -1840,6 +1862,8 @@ function setupDropdownEventListeners(taskRow) {
                 console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 1`);
             }
         });
+        globalTasksList.find(task => task.taskID === taskID).state = 1;
+        renderTasks(globalTasksList);
     });
 
     dropdownFinished.addEventListener("click", () => {
@@ -1861,6 +1885,8 @@ function setupDropdownEventListeners(taskRow) {
                 console.error(`[setupDropdownEventListeners] Failed to update task ${taskID} to state 2`);
             }
         });
+        globalTasksList.find(task => task.taskID === taskID).state = 2;
+        renderTasks(globalTasksList);
     });
 }
 
@@ -2512,31 +2538,38 @@ async function addTask() {
                     </div>
                 </div>
             </div>
+            <div class="popup-subtitle">
+                Expected man hours
+            </div>
             <div class="manhours-row">
-                <div class="manhours-label">
-                    Expected man hours
-                </div>
-                <div id="man-hours-and-minutes">
-                    <div class="number-picker" id="expected-man-hours">
-                        <div class = "stepper decrement" tabindex="0">
-                            <span class="material-symbols-rounded">
-                                expand_more
-                            </span>
-                        </div>
-
-                        <input type="number" class="number-input" value="1" min="0" tabindex="0">
-
-                        <div class="stepper increment" tabindex="0">
-                            <span class="material-symbols-rounded">
-                                expand_less
-                            </span>
-                        </div>
-                        <div class="manhours-label">
-                            Hours
-                        </div>
+                <div class="headers">
+                    <div class="manhours-label">
+                        Hours
                     </div>
+                    <div class="colon">:</div>
+                    <div class="manhours-label">
+                        Minutes
+                    </div>
+                </div>
+                <div class="pickers">
+                
+                    <div id="man-hours-and-minutes">
+                        <div class="number-picker" id="expected-man-hours">
+                            <div class = "stepper decrement" tabindex="0">
+                                <span class="material-symbols-rounded">
+                                    expand_more
+                                </span>
+                            </div>
 
-                    <div class="number-picker" id="expected-man-minutes">
+                            <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+                            <div class="stepper increment" tabindex="0">
+                                <span class="material-symbols-rounded">
+                                    expand_less
+                                </span>
+                            </div>
+                        </div>
+                        <div class="colon">:</div>
                         <div class="number-picker" id="expected-man-minutes">
                             <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
                                 <div class="dropdown-text">
@@ -2553,9 +2586,6 @@ async function addTask() {
                                     <div class="dropdown-option" id="manhours-minutes30">30</div>
                                     <div class="dropdown-option" id="manhours-minutes45">45</div>
                                 </div>
-                            </div>
-                            <div class="manhours-label">
-                                Minutes
                             </div>
                         </div>
                     </div>
@@ -3467,22 +3497,32 @@ async function editTaskPopup(task) {
                 Expected Man Hours
             </div>
             <div class="manhours-row">
-                <div id="man-hours-and-minutes">
-                    <div class="number-picker" id="add-man-hours-button2">
-                        <div class = "stepper decrement" tabindex="0">
-                            <span class="material-symbols-rounded">
-                                expand_more
-                            </span>
-                        </div>
-                        <input type="number" class="number-input" value="${hoursInput}" min="0" tabindex="0">
-                        <div class="stepper increment" tabindex="0">
-                            <span class="material-symbols-rounded">
-                                expand_less
-                            </span>
-                        </div>
-                        <div class="popup-subtitle">Hours</div>
+                <div class="headers">
+                    <div class="manhours-label">
+                        Hours
                     </div>
-                    <div class="number-picker" id="expected-man-minutes">
+                    <div class="colon">:</div>
+                    <div class="manhours-label">
+                        Minutes
+                    </div>
+                </div>
+                <div class="pickers">
+
+                    <div id="man-hours-and-minutes">
+                        <div class="number-picker" id="add-man-hours-button2">
+                            <div class = "stepper decrement" tabindex="0">
+                                <span class="material-symbols-rounded">
+                                    expand_more
+                                </span>
+                            </div>
+                            <input type="number" class="number-input" value="${hoursInput}" min="0" tabindex="0">
+                            <div class="stepper increment" tabindex="0">
+                                <span class="material-symbols-rounded">
+                                    expand_less
+                                </span>
+                            </div>
+                        </div>
+                        <div class="colon">:</div>
                         <div class="number-picker" id="expected-man-minutes">
                             <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
                                 <div class="dropdown-text">
@@ -3499,9 +3539,6 @@ async function editTaskPopup(task) {
                                     <div class="dropdown-option" id="manhours-minutes30" value="30">30</div>
                                     <div class="dropdown-option" id="manhours-minutes45" value="45">45</div>
                                 </div>
-                            </div>
-                            <div class="popup-subtitle">
-                                Minutes
                             </div>
                         </div>
                     </div>

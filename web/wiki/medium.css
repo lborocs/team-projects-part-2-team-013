@@ -9,6 +9,10 @@
 
 
     }
+
+    #new-post-wrapper {
+        aspect-ratio: 1;
+    }
 }
 
 
