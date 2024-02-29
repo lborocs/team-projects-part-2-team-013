@@ -3621,6 +3621,18 @@ async function editTaskPopup(task) {
 
             //adds event listeners to employee list
             let employeeListOptions = empList.querySelectorAll(".name-card");
+
+            employeeListOptions.forEach((option) => {
+                let empID = option.getAttribute("data-id");
+            
+                // Check if the employee is already assigned to the task
+                if (assignedEmployees.has(empID)) {
+                    option.classList.add('selected');
+                    option.querySelector('.icon').innerHTML = "check";
+                    assignedEmployees.add(empID);
+                }
+            });
+
             employeeListOptions.forEach((option) => {
                 option.addEventListener("click", () => {
 
