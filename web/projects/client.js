@@ -2538,49 +2538,55 @@ async function addTask() {
                     </div>
                 </div>
             </div>
+            <div class="popup-subtitle">
+                Expected man hours
+            </div>
             <div class="manhours-row">
-                <div class="manhours-label">
-                    Expected man hours
-                </div>
-                <div id="man-hours-and-minutes">
-                    <div class="number-picker" id="expected-man-hours">
-                        <div class = "stepper decrement" tabindex="0">
-                            <span class="material-symbols-rounded">
-                                expand_more
-                            </span>
-                        </div>
-
-                        <input type="number" class="number-input" value="1" min="0" tabindex="0">
-
-                        <div class="stepper increment" tabindex="0">
-                            <span class="material-symbols-rounded">
-                                expand_less
-                            </span>
-                        </div>
-                        <div class="manhours-label">
-                            Hours
-                        </div>
+                <div class="headers">
+                    <div class="manhours-label">
+                        Hours
                     </div>
                     <div class="colon">:</div>
-                    <div class="number-picker" id="expected-man-minutes">
-                        <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
-                            <div class="dropdown-text">
-                                0
-                            </div>
-                            <div class="dropdown-chevron">
+                    <div class="manhours-label">
+                        Minutes
+                    </div>
+                </div>
+                <div class="pickers">
+                
+                    <div id="man-hours-and-minutes">
+                        <div class="number-picker" id="expected-man-hours">
+                            <div class = "stepper decrement" tabindex="0">
                                 <span class="material-symbols-rounded">
                                     expand_more
                                 </span>
                             </div>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-option" id="manhours-minutes0">0</div>
-                                <div class="dropdown-option" id="manhours-minutes15">15</div>
-                                <div class="dropdown-option" id="manhours-minutes30">30</div>
-                                <div class="dropdown-option" id="manhours-minutes45">45</div>
+
+                            <input type="number" class="number-input" value="1" min="0" tabindex="0">
+
+                            <div class="stepper increment" tabindex="0">
+                                <span class="material-symbols-rounded">
+                                    expand_less
+                                </span>
                             </div>
                         </div>
-                        <div class="manhours-label">
-                            Minutes
+                        <div class="colon">:</div>
+                        <div class="number-picker" id="expected-man-minutes">
+                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                                <div class="dropdown-text">
+                                    0
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option" id="manhours-minutes0">0</div>
+                                    <div class="dropdown-option" id="manhours-minutes15">15</div>
+                                    <div class="dropdown-option" id="manhours-minutes30">30</div>
+                                    <div class="dropdown-option" id="manhours-minutes45">45</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3491,41 +3497,49 @@ async function editTaskPopup(task) {
                 Expected Man Hours
             </div>
             <div class="manhours-row">
-                <div id="man-hours-and-minutes">
-                    <div class="number-picker" id="add-man-hours-button2">
-                        <div class = "stepper decrement" tabindex="0">
-                            <span class="material-symbols-rounded">
-                                expand_more
-                            </span>
-                        </div>
-                        <input type="number" class="number-input" value="${hoursInput}" min="0" tabindex="0">
-                        <div class="stepper increment" tabindex="0">
-                            <span class="material-symbols-rounded">
-                                expand_less
-                            </span>
-                        </div>
-                        <div class="manhours-label">Hours</div>
+                <div class="headers">
+                    <div class="manhours-label">
+                        Hours
                     </div>
                     <div class="colon">:</div>
-                    <div class="number-picker" id="expected-man-minutes">
-                        <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
-                            <div class="dropdown-text">
-                                ${minutesInput}
-                            </div>
-                            <div class="dropdown-chevron">
+                    <div class="manhours-label">
+                        Minutes
+                    </div>
+                </div>
+                <div class="pickers">
+
+                    <div id="man-hours-and-minutes">
+                        <div class="number-picker" id="add-man-hours-button2">
+                            <div class = "stepper decrement" tabindex="0">
                                 <span class="material-symbols-rounded">
                                     expand_more
                                 </span>
                             </div>
-                            <div class="dropdown-menu">
-                                <div class="dropdown-option" id="manhours-minutes0" value="0">0</div>
-                                <div class="dropdown-option" id="manhours-minutes15" value="15">15</div>
-                                <div class="dropdown-option" id="manhours-minutes30" value="30">30</div>
-                                <div class="dropdown-option" id="manhours-minutes45" value="45">45</div>
+                            <input type="number" class="number-input" value="${hoursInput}" min="0" tabindex="0">
+                            <div class="stepper increment" tabindex="0">
+                                <span class="material-symbols-rounded">
+                                    expand_less
+                                </span>
                             </div>
                         </div>
-                        <div class="manhours-label">
-                            Minutes
+                        <div class="colon">:</div>
+                        <div class="number-picker" id="expected-man-minutes">
+                            <div class="dropdown" id="manhours-minutes-dropdown" tabindex="0">
+                                <div class="dropdown-text">
+                                    ${minutesInput}
+                                </div>
+                                <div class="dropdown-chevron">
+                                    <span class="material-symbols-rounded">
+                                        expand_more
+                                    </span>
+                                </div>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-option" id="manhours-minutes0" value="0">0</div>
+                                    <div class="dropdown-option" id="manhours-minutes15" value="15">15</div>
+                                    <div class="dropdown-option" id="manhours-minutes30" value="30">30</div>
+                                    <div class="dropdown-option" id="manhours-minutes45" value="45">45</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
