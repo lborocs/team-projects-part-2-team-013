@@ -1343,6 +1343,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
     });
 
     const MAX_RENDERED_USERS = 5;
+    const MAX_RENDERED_USERS_LIST = 3;
 
 
     assignments.forEach((assignment) => {
@@ -1367,7 +1368,7 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
 
         if (usersAssigned) {
             let count = taskUserCount.get(assignment.task.taskID) || 0;
-            if (count < MAX_RENDERED_USERS) {
+            if (count < MAX_RENDERED_USERS_LIST) {
                 assignmentElem.classList.add("tooltip", "tooltip-left");
                 assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
                 <img src="${emp_icon}" class="task-avatar">`
@@ -1378,22 +1379,41 @@ async function renderAssignments(assignments, update = RENDER_BOTH) {
                 if (update & RENDER_LIST) {
                     usersAssignedList.appendChild(assignmentElem.cloneNode(true));
                 }
-
-            } else if (count === MAX_RENDERED_USERS) {
+            } else if (count < MAX_RENDERED_USERS){
                 assignmentElem.classList.add("tooltip", "tooltip-left");
-                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - MAX_RENDERED_USERS;
-
-                const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
-                const url = "data:image/svg+xml;base64," + btoa(icon);
-            
-                assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
-                <img src="${url}" class="task-avatar">`
+                assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
+                <img src="${emp_icon}" class="task-avatar">`
 
                 if (update & RENDER_COLUMN) {
                     usersAssigned.appendChild(assignmentElem);
                 }
-                if (update & RENDER_LIST) {
-                    usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+            } else if (count === MAX_RENDERED_USERS || (update & RENDER_LIST && count === MAX_RENDERED_USERS_LIST)) {
+                assignmentElem.classList.add("tooltip", "tooltip-left");
+                let additionalUsers = assignments.filter(a => a.task.taskID === assignment.task.taskID).length - (update & RENDER_LIST ? MAX_RENDERED_USERS_LIST : MAX_RENDERED_USERS);
+                if (additionalUsers > 1) {
+                    const icon = global.generateAvatarSvg("+" + additionalUsers, "dfdfdf");
+                    const url = "data:image/svg+xml;base64," + btoa(icon);
+                
+                    assignmentElem.innerHTML = `<p class="tooltiptext">${additionalUsers} more users assigned</p>
+                    <img src="${url}" class="task-avatar">`
+        
+                    if (update & RENDER_COLUMN) {
+                        usersAssigned.appendChild(assignmentElem);
+                    }
+                    if (update & RENDER_LIST) {
+                        usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                    }
+                } else {
+                    assignmentElem.classList.add("tooltip", "tooltip-left");
+                    assignmentElem.innerHTML = `<p class="tooltiptext">${emp_name}</p>
+                    <img src="${emp_icon}" class="task-avatar">`
+        
+                    if (update & RENDER_COLUMN) {
+                        usersAssigned.appendChild(assignmentElem);
+                    }
+                    if (update & RENDER_LIST) {
+                        usersAssignedList.appendChild(assignmentElem.cloneNode(true));
+                    }
                 }
             }
             taskUserCount.set(assignment.task.taskID, count + 1);
