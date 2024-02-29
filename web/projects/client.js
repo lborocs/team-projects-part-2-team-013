@@ -645,7 +645,6 @@ function showTaskInExplainer(taskID) {
     let explainerTaskStatusElement = document.querySelector(".explainer-task-status");
     statusElement.innerHTML = globalCurrentTask.state == 0 ? "Not Started" : globalCurrentTask.state == 1 ? "In Progress" : "Finished";
     explainerTaskStatusElement.classList.remove("not-started", "in-progress", "finished", "archived");
-    console.error(globalCurrentTask);
     if (globalCurrentTask.archived == 1) {
         explainerTaskStatusElement.classList.add("archived");
     } else if (globalCurrentTask.state == 0) {
@@ -2450,10 +2449,19 @@ async function addTask() {
                 </span>
             </div>
             </div>
+            <div class="popup-subtitle">
+                Title
+            </div>
             <input type="text" placeholder="Task title" class="add-task-title-input">
             
+            <div class="popup-subtitle">
+                Description
+            </div>
             <div class="add-task-description-container">
                 <div id="description-editor"></div>
+            </div>
+            <div class="popup-subtitle">
+                Assigned Employees
             </div>
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
@@ -2485,6 +2493,23 @@ async function addTask() {
                 </div>
                 <div class="assigned-employees">
                 
+                </div>
+            </div>
+
+            <div class="popup-subtitle">
+                Due Date
+            </div>
+            <div class="date-picker-row">
+                <div class="date-picker" id="due-date">
+                    <div class="date-picker-icon">
+                        <span class="material-symbols-rounded">event</span>
+                    </div>
+                    <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
+                </div>
+                <div class="text-button" id="reset-date-button">
+                    <div class="button-text">
+                        Clear date
+                    </div>
                 </div>
             </div>
             <div class="manhours-row">
@@ -2537,12 +2562,6 @@ async function addTask() {
                 </div>
             </div>
 
-            <div class="date-picker" id="due-date">
-                <div class="date-picker-icon">
-                    <span class="material-symbols-rounded">event</span>
-                </div>
-                <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
-            </div>
             <div class="confirm-buttons-row">
                 <div class="text-button" id="discard-button">
                     <div class="button-text">
@@ -2621,6 +2640,8 @@ async function addTask() {
 
     let setDate = Math.max(globalCurrentProject.dueDate, Date.now());
 
+    let dateReset = popupDiv.querySelector('#reset-date-button');
+
     let fp = flatpickr(datePickerInput, {
         defaultDate: setDate,
         dateFormat: 'd/m/Y',
@@ -2631,6 +2652,10 @@ async function addTask() {
             datePickerInput.dispatchEvent(new Event('change'))
         }
     })
+
+    dateReset.addEventListener("click", () => {
+        fp.clear();
+    });
 
     let assignedEmployees = new Set();
     let assignedEmployeesDiv = popupDiv.querySelector('.assigned-employees');
@@ -3081,10 +3106,19 @@ async function addProject() {
                 </span>
             </div>
             </div>
+            <div class="popup-subtitle">
+                Title
+            </div>
             <input type="text" placeholder="project title" class="add-project-title-input">
             
+            <div class="popup-subtitle">
+                Description
+            </div>
             <div class="add-project-description-container">
                 <div id="description-editor"></div>
+            </div>
+            <div class="popup-subtitle">
+                Team Leader
             </div>
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
@@ -3119,11 +3153,21 @@ async function addProject() {
                 </div>
             </div>
             
-            <div class="date-picker" id="due-date">
-                <div class="date-picker-icon">
-                    <span class="material-symbols-rounded">event</span>
+            <div class="popup-subtitle">
+                Due Date
+            </div>
+            <div class="date-picker-row">
+                <div class="date-picker" id="due-date">
+                    <div class="date-picker-icon">
+                        <span class="material-symbols-rounded">event</span>
+                    </div>
+                    <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
                 </div>
-                <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
+                <div class="text-button" id="reset-date-button">
+                    <div class="button-text">
+                        Clear date
+                    </div>
+                </div>
             </div>
             <div class="confirm-buttons-row">
                 <div class="text-button" id="discard-button">
@@ -3153,6 +3197,8 @@ async function addProject() {
         theme: 'snow'
     });
 
+    let dateReset = popupDiv.querySelector('#reset-date-button');
+
     //flatpickr for date picker
     let datePickerInput = popupDiv.querySelector('.date-picker-input')
     let fp = flatpickr(datePickerInput, {
@@ -3164,6 +3210,10 @@ async function addProject() {
             datePickerInput.dispatchEvent(new Event('change'))
         }
     })
+
+    dateReset.addEventListener("click", () => {
+        fp.clear();
+    });
 
     let assignedTeamLeader;
     let assignedTeamLeaderDiv = popupDiv.querySelector('.assigned-team-leader');
@@ -3336,7 +3386,6 @@ async function editTaskPopup(task) {
     task.assignments.forEach((assignment) => {
         assignedEmployees.add(assignment);
     })
-    console.error(assignedEmployees)
 
     const employeeMap = await global.getEmployeesById(task.assignments);
 
@@ -3351,20 +3400,18 @@ async function editTaskPopup(task) {
     const callback = (ctx) => {
         ctx.content.innerHTML = `
 
+            <div class="popup-subtitle">
+                Title
+            </div>
             <input type="text" placeholder="${task.title}" class="add-task-title-input">
             
+            <div class="popup-subtitle">
+                Description
+            </div>
             <div class="add-task-description-container">
                 <div id="description-editor"></div>
             </div>
-            <div class="popup-subtitle">
-                Due Date
-            </div>
-            <div class="date-picker" id="due-date">
-                <div class="date-picker-icon">
-                    <span class="material-symbols-rounded">event</span>
-                </div>
-                <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
-            </div>
+            
             <div class="popup-subtitle">Assigned Employees</div>
             <div class="dropdown-and-employee-list">
                 <div class="search-dropdown" id="employee-select" tabindex="0">
@@ -3398,8 +3445,26 @@ async function editTaskPopup(task) {
                 
                 </div>
             </div>
+
             <div class="popup-subtitle">
-                Allocated Man Hours
+                Due Date
+            </div>
+            <div class="date-picker-row">
+                <div class="date-picker" id="due-date">
+                    <div class="date-picker-icon">
+                        <span class="material-symbols-rounded">event</span>
+                    </div>
+                    <input class="date-picker-input" type="text" placeholder="Due Date" tabindex="0"></input>
+                </div>
+                <div class="text-button" id="reset-date-button">
+                    <div class="button-text">
+                        Clear
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup-subtitle">
+                Expected Man Hours
             </div>
             <div class="manhours-row">
                 <div id="man-hours-and-minutes">
@@ -3506,6 +3571,8 @@ async function editTaskPopup(task) {
             theme: 'snow'
         });
 
+        let dateReset = ctx.content.querySelector('#reset-date-button');
+
         //flatpickr for date picker
         let datePickerInput = ctx.content.querySelector('.date-picker-input')
         fp = flatpickr(datePickerInput, {
@@ -3517,6 +3584,10 @@ async function editTaskPopup(task) {
                 datePickerInput.dispatchEvent(new Event('change'))
             }
         })
+
+        dateReset.addEventListener("click", () => {
+            fp.clear();
+        });
 
         let assignedEmployeesDiv = ctx.content.querySelector('.assigned-employees');
         let empList = ctx.content.querySelector('#employee-select > .popover > .employee-list');
