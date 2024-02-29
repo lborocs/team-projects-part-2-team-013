@@ -3109,7 +3109,7 @@ async function addProject() {
             <div class="popup-subtitle">
                 Title
             </div>
-            <input type="text" placeholder="project title" class="add-project-title-input">
+            <input type="text" placeholder="Project title" class="add-project-title-input">
             
             <div class="popup-subtitle">
                 Description
