@@ -148,7 +148,7 @@ async function renderPostInEditor(post) {
     const indexMap = {};
 
     content.ops.forEach((op, key) => {
-        if (op.insert.image) {
+        if (op.insert.image !== undefined) {
             indexMap[op.insert.image] = key; 
             STATE.usedImageIDs.add(op.insert.image);
         }
