@@ -598,14 +598,9 @@ a {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-
+                display: none;
             }
 
-        }
-
-        .header-td:hover {
-            cursor: pointer;
-            background-color: var(--light-gray-bg, #f1f1f1);
         }
 
         .status-column {
@@ -696,6 +691,7 @@ a {
         .open-in-new {
             opacity: 0;
             transition: opacity 0.1s ease-out;
+            display: none;
         }
     
     }
